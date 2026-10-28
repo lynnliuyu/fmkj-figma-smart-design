@@ -3,6 +3,8 @@ import { PRIVATE_BUILD_TRACE_EXCLUDES } from "./lib/build-artifact-policy.mjs"
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // Figma 开发版演示库（lib/demo-db.ts）在运行时加载 WASM，不能被打包。
+  serverExternalPackages: ["@electric-sql/pglite"],
   // Dynamic filesystem reads must never carry local customer drawings, backups,
   // credentials or generated installers into the standalone application.
   outputFileTracingExcludes: { "**/*": PRIVATE_BUILD_TRACE_EXCLUDES },

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { adminApiErrorResponse } from "@/lib/admin-api"
 import { requireSuperAdmin } from "@/lib/admin-auth"
 import { fallbackProducts } from "@/lib/fallback-products"
-import { demoProducts, isDemoMode } from "@/lib/demo-data"
 import {
   createAdminProduct,
   productSelectionMutationFields,
@@ -45,13 +44,6 @@ export async function GET(request: NextRequest) {
   // 成本只给经营者看：企业里的编辑/查看者拿不到，界面上显示「仅管理者可见」。
   // 报价保存时服务端会用目录成本兜底，所以不影响毛利统计。
   const showCost = canViewProductCost(await getCurrentAccountContext(request))
-  if (isDemoMode()) {
-    return NextResponse.json({
-      data: demoProducts.map((product) => shapeProduct(product, showCost)),
-      source: "demo",
-      total: demoProducts.length,
-    })
-  }
   if (hasDatabaseUrl()) {
     return getProductsFromPostgres(showCost)
   }

@@ -75,6 +75,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.12",
     "@eslint/eslintrc": "^3",
     "@mlightcad/libredwg-web": "0.8.0",
     "@tailwindcss/postcss": "^4.1.18",

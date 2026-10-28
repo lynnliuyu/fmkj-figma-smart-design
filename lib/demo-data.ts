@@ -8,6 +8,9 @@ export function isDemoMode(): boolean {
   return process.env.FMKJ_DEMO_MODE === "1"
 }
 
+/** 演示账号（只存在于 Figma 开发版的本地演示库里）。 */
+export const DEMO_ADMIN = { email: "demo@fmkj.dev", password: "demo1234", name: "演示管理员" }
+
 const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString()
 const daysLater = (days: number) => new Date(Date.now() + days * 86_400_000).toISOString()
 

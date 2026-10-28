@@ -1,14 +1,18 @@
 import { Pool } from "pg"
 
+import { demoPool } from "./demo-db"
+
 let pool: Pool | null = null
 
 export function hasDatabaseUrl() {
-  // Figma 开发版的演示模式：不连数据库，走开发环境已有的本地兜底与示例数据。
-  if (process.env.FMKJ_DEMO_MODE === "1") return false
+  // Figma 开发版的演示模式：使用进程内的 PGlite 演示库（见 lib/demo-db.ts）。
+  if (process.env.FMKJ_DEMO_MODE === "1") return true
   return Boolean(databaseConnectionString() || databaseConnectionConfig())
 }
 
 export function getPool() {
+  if (process.env.FMKJ_DEMO_MODE === "1") return demoPool as unknown as Pool
+
   if (!hasDatabaseUrl()) {
     throw new Error("Database environment variables are not set")
   }
