@@ -88,5 +88,12 @@ export const Projects: CollectionConfig = {
       ],
     },
     { name: 'notes', label: '备注', type: 'textarea', maxLength: 2000 },
+    {
+      // Excalidraw 场景（elements / appState / files），在前台点位图页面编辑。
+      name: 'pointMap',
+      label: '点位图',
+      type: 'json',
+      admin: { hidden: true },
+    },
   ],
 }

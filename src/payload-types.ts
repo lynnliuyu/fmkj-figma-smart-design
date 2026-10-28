@@ -271,6 +271,15 @@ export interface Project {
   nextAction?: string | null;
   nextActionDueAt?: string | null;
   notes?: string | null;
+  pointMap?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -714,6 +723,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   nextAction?: T;
   nextActionDueAt?: T;
   notes?: T;
+  pointMap?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, MapPinned } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -31,9 +31,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/projects"><ChevronLeft className="size-4" />项目列表</Link>
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
+          <Link href="/projects"><ChevronLeft className="size-4" />项目列表</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link href={`/projects/${project.id}/point-map`}><MapPinned className="size-4" />点位图</Link>
+        </Button>
+      </div>
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">{project.name}</h1>
