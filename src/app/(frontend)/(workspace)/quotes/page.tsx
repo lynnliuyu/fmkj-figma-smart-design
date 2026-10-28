@@ -1,8 +1,11 @@
+import Form from 'next/form'
 import Link from 'next/link'
 import { Check, FileText, Search } from 'lucide-react'
 import type { Where } from 'payload'
 
 import { Badge } from '@/components/ui/badge'
+import { LinkPending } from '@/components/link-pending'
+import { SearchSubmit } from '@/components/search-submit'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -22,7 +25,17 @@ export default async function QuotesPage({ searchParams }: { searchParams: Promi
   const where: Where = { and: [] }
   if (q.trim()) where.and!.push({ or: [{ title: { like: q.trim() } }, { 'project.name': { like: q.trim() } }, { 'project.customerName': { like: q.trim() } }] })
   if (status) where.and!.push({ status: { equals: status } })
-  const result = await payload.find({ collection: 'quotes', where, depth: 1, limit: 500, sort: '-updatedAt', user, overrideAccess: false })
+  const result = await payload.find({
+    collection: 'quotes',
+    where,
+    depth: 1,
+    limit: 500,
+    sort: '-updatedAt',
+    user,
+    overrideAccess: false,
+    select: { title: true, project: true, status: true, total: true, updatedAt: true },
+    populate: { projects: { name: true, customerName: true } },
+  })
   const quotes = result.docs as Quote[]
 
   const href = (patch: Record<string, string>) => {
@@ -42,20 +55,20 @@ export default async function QuotesPage({ searchParams }: { searchParams: Promi
       </header>
 
       <div className="flex flex-col gap-3">
-        <form action="/quotes" className="flex flex-wrap items-center gap-2">
+        <Form action="/quotes" className="flex flex-wrap items-center gap-2">
           {status ? <input type="hidden" name="status" value={status} /> : null}
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input name="q" defaultValue={q} placeholder="搜索报价、项目或客户" aria-label="搜索报价" className="pl-9" />
           </div>
-          <Button type="submit" variant="outline">搜索</Button>
-        </form>
+          <SearchSubmit />
+        </Form>
         <div className="flex flex-wrap gap-1.5">
           {[{ value: '', label: '全部' }, ...QUOTE_STATUSES].map((s) => {
             const active = status === s.value
             return (
               <Button key={s.value || 'all'} asChild size="sm" variant={active ? 'default' : 'outline'}>
-                <Link href={href({ status: s.value })}>{active && <Check className="size-3.5" />}{s.label}</Link>
+                <Link href={href({ status: s.value })}>{active && <Check className="size-3.5" />}<LinkPending />{s.label}</Link>
               </Button>
             )
           })}

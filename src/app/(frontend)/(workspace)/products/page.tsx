@@ -1,7 +1,10 @@
+import Form from 'next/form'
 import Link from 'next/link'
 import { Check, ImageIcon, PackageSearch, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { LinkPending } from '@/components/link-pending'
+import { SearchSubmit } from '@/components/search-submit'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -31,9 +34,18 @@ export default async function ProductsPage({
   if (brand) where.and!.push({ 'brand.slug': { equals: brand } })
 
   const [products, categories, brands] = await Promise.all([
-    payload.find({ collection: 'products', where, depth: 1, limit: 200, user, overrideAccess: false }),
-    payload.find({ collection: 'categories', limit: 100, user, overrideAccess: false }),
-    payload.find({ collection: 'brands', limit: 100, sort: 'name', user, overrideAccess: false }),
+    payload.find({
+      collection: 'products',
+      where,
+      depth: 1,
+      limit: 200,
+      user,
+      overrideAccess: false,
+      select: { name: true, sku: true, brand: true, category: true, platforms: true, image: true, description: true, price: true, cost: true, unit: true, stock: true },
+      populate: { brands: { name: true }, categories: { name: true }, media: { url: true, alt: true } },
+    }),
+    payload.find({ collection: 'categories', limit: 100, depth: 0, user, overrideAccess: false, select: { name: true, slug: true } }),
+    payload.find({ collection: 'brands', limit: 100, sort: 'name', depth: 0, user, overrideAccess: false, select: { name: true, slug: true } }),
   ])
   const showCost = user?.role === 'admin' || user?.role === 'manager'
 
@@ -50,7 +62,7 @@ export default async function ProductsPage({
       <div className="flex flex-wrap gap-1.5">
         <Button asChild size="sm" variant={!active ? 'default' : 'outline'}>
           <Link href={filterHref({ [key]: '' })} aria-current={!active ? 'true' : undefined}>
-            {!active && <Check className="size-3.5" />}全部
+            {!active && <Check className="size-3.5" />}<LinkPending />全部
           </Link>
         </Button>
         {items.map((item) => {
@@ -58,7 +70,7 @@ export default async function ProductsPage({
           return (
             <Button key={item.id} asChild size="sm" variant={isActive ? 'default' : 'outline'}>
               <Link href={filterHref({ [key]: isActive ? '' : item.slug })} aria-current={isActive ? 'true' : undefined}>
-                {isActive && <Check className="size-3.5" />}
+                {isActive && <Check className="size-3.5" />}<LinkPending />
                 {item.name}
               </Link>
             </Button>
@@ -79,15 +91,15 @@ export default async function ProductsPage({
       </header>
 
       <div className="flex flex-col gap-3">
-        <form className="flex flex-wrap items-center gap-2" action="/products">
+        <Form action="/products" className="flex flex-wrap items-center gap-2">
           {category ? <input type="hidden" name="category" value={category} /> : null}
           {brand ? <input type="hidden" name="brand" value={brand} /> : null}
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input name="q" defaultValue={q} placeholder="搜索名称或型号" aria-label="搜索产品" className="pl-9" />
           </div>
-          <Button type="submit">搜索</Button>
-        </form>
+          <SearchSubmit variant="default" />
+        </Form>
         <div className="flex flex-col gap-4 rounded-xl bg-muted/60 p-4">
           {facet('分类', category, 'category', categories.docs as Category[])}
           {facet('品牌', brand, 'brand', brands.docs as Brand[])}

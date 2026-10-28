@@ -1,8 +1,11 @@
+import Form from 'next/form'
 import Link from 'next/link'
 import { Check, FolderKanban, Plus, Search } from 'lucide-react'
 import type { Where } from 'payload'
 
 import { Badge } from '@/components/ui/badge'
+import { LinkPending } from '@/components/link-pending'
+import { SearchSubmit } from '@/components/search-submit'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -33,7 +36,18 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   }
   if (stage) where.and!.push({ stage: { equals: stage } })
 
-  const result = await payload.find({ collection: 'projects', where, depth: 1, limit: 500, sort: '-updatedAt', user, overrideAccess: false })
+  const result = await payload.find({
+    collection: 'projects',
+    where,
+    depth: 1,
+    limit: 500,
+    sort: '-updatedAt',
+    user,
+    overrideAccess: false,
+    // 列表不需要点位图等大字段，只取显示用的列。
+    select: { name: true, customerName: true, community: true, stage: true, status: true, owner: true, updatedAt: true },
+    populate: { users: { name: true } },
+  })
   const projects = result.docs as Project[]
 
   const href = (patch: Record<string, string>) => {
@@ -60,21 +74,21 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       </header>
 
       <div className="flex flex-col gap-3">
-        <form action="/projects" className="flex flex-wrap items-center gap-2">
+        <Form action="/projects" className="flex flex-wrap items-center gap-2">
           {stage ? <input type="hidden" name="stage" value={stage} /> : null}
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input name="q" defaultValue={q} placeholder="搜索项目、客户、小区或电话" aria-label="搜索项目" className="pl-9" />
           </div>
-          <Button type="submit" variant="outline">搜索</Button>
-        </form>
+          <SearchSubmit />
+        </Form>
         <div className="flex flex-wrap gap-1.5">
           {[{ value: '', label: '全部' }, ...PROJECT_STAGES].map((s) => {
             const active = stage === s.value
             return (
               <Button key={s.value || 'all'} asChild size="sm" variant={active ? 'default' : 'outline'}>
                 <Link href={href({ stage: s.value })} aria-current={active ? 'true' : undefined}>
-                  {active && <Check className="size-3.5" />}
+                  {active && <Check className="size-3.5" />}<LinkPending />
                   {s.label}
                 </Link>
               </Button>

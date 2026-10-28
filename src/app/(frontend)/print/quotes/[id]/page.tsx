@@ -17,7 +17,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/quotes/${id}`)
   const payload = await getPayloadClient()
-  const quote = await payload.findByID({ collection: 'quotes', id, depth: 2, user, overrideAccess: false }).catch(() => null)
+  const quote = await payload.findByID({ collection: 'quotes', id, depth: 2, user, overrideAccess: false, populate: { projects: { pointMap: false } } }).catch(() => null)
   if (!quote) notFound()
   const project = typeof quote.project === 'object' ? (quote.project as Project) : null
   const company = await payload.findGlobal({ slug: 'company-settings', depth: 1, user, overrideAccess: false })

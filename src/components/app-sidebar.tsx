@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Building2, ChevronsUpDown, Command, FileText, FolderKanban, LogOut, PackageSearch } from "lucide-react"
 
+import { LinkPending } from "@/components/link-pending"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -94,6 +95,7 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.label}</span>
+                      <LinkPending className="ml-auto size-3.5" />
                     </Link>
                   </SidebarMenuButton>
                 )}

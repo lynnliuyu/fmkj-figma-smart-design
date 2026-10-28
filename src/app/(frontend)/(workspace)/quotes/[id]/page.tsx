@@ -13,7 +13,7 @@ export default async function QuotePage({ params }: { params: Promise<{ id: stri
   const { id } = await params
   const user = await appAuth.getCurrentUser()
   const payload = await getPayloadClient()
-  const quote = await payload.findByID({ collection: 'quotes', id, depth: 1, user, overrideAccess: false }).catch(() => null)
+  const quote = await payload.findByID({ collection: 'quotes', id, depth: 1, user, overrideAccess: false, populate: { projects: { name: true, customerName: true }, products: { name: true } } }).catch(() => null)
   if (!quote) notFound()
   const project = typeof quote.project === 'object' ? (quote.project as Project) : null
 

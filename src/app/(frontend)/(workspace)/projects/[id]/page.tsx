@@ -24,7 +24,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const user = await appAuth.getCurrentUser()
   const payload = await getPayloadClient()
   const project = await payload
-    .findByID({ collection: 'projects', id, depth: 1, user, overrideAccess: false })
+    .findByID({ collection: 'projects', id, depth: 1, user, overrideAccess: false, select: { pointMap: false }, populate: { users: { name: true } } })
     .catch(() => null)
   if (!project) notFound()
 
