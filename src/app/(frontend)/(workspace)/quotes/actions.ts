@@ -58,10 +58,11 @@ export async function createQuoteFromProject(form: FormData) {
     }))
   }
 
+  const company = await payload.findGlobal({ slug: 'company-settings', depth: 0, user, overrideAccess: false })
   const existing = await payload.count({ collection: 'quotes', where: { project: { equals: project.id } }, user, overrideAccess: false })
   const quote = await payload.create({
     collection: 'quotes',
-    data: { title: `${project.name} 报价${existing.totalDocs ? ` ${existing.totalDocs + 1}` : ''}`, project: project.id, status: 'draft', items, fees: [], discount: 0 },
+    data: { title: `${project.name} 报价${existing.totalDocs ? ` ${existing.totalDocs + 1}` : ''}`, project: project.id, status: 'draft', items, fees: [], discount: 0, notes: company.quoteNotes ?? null },
     user,
     overrideAccess: false,
     depth: 0,

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronsUpDown, Command, FileText, FolderKanban, LogOut, PackageSearch } from "lucide-react"
+import { Building2, ChevronsUpDown, Command, FileText, FolderKanban, LogOut, PackageSearch } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -29,7 +29,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-export type SidebarUser = { name: string; email: string; roleLabel: string }
+export type SidebarUser = { name: string; email: string; roleLabel: string; isAdmin: boolean }
 
 const nav: { icon: typeof PackageSearch; label: string; url: string; soon?: boolean }[] = [
   { icon: FolderKanban, label: "项目", url: "/projects" },
@@ -101,6 +101,21 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+        {user.isAdmin ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>设置</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname.startsWith("/settings")} tooltip="公司信息">
+                  <Link href="/settings">
+                    <Building2 />
+                    <span>公司信息</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        ) : null}
       </SidebarContent>
 
       <SidebarFooter>

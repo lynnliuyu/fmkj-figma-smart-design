@@ -3,11 +3,13 @@ import { notFound, redirect } from 'next/navigation'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { yuan } from '@/lib/quotes'
-import type { Project, User } from '@/payload-types'
+import Image from 'next/image'
+
+import type { Media, Project, User } from '@/payload-types'
 
 import { PrintButton } from './print-button'
 
-export const metadata = { title: '报价单 · FMKJ' }
+export const metadata = { title: '报价单' }
 
 /** 给客户的报价单：独立于系统外框，A4 打印 / 另存为 PDF。 */
 export default async function PrintQuotePage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,6 +20,10 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
   const quote = await payload.findByID({ collection: 'quotes', id, depth: 2, user, overrideAccess: false }).catch(() => null)
   if (!quote) notFound()
   const project = typeof quote.project === 'object' ? (quote.project as Project) : null
+  const company = await payload.findGlobal({ slug: 'company-settings', depth: 1, user, overrideAccess: false })
+  const logo = company.logo && typeof company.logo === 'object' ? (company.logo as Media) : null
+  const qr = company.qrCode && typeof company.qrCode === 'object' ? (company.qrCode as Media) : null
+  const contact = [company.phone && `电话：${company.phone}`, company.email && `邮箱：${company.email}`, company.address && `地址：${company.address}`].filter(Boolean) as string[]
   const owner = project && typeof project.owner === 'object' ? (project.owner as User | null) : null
   const date = new Date(quote.updatedAt).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -28,9 +34,14 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
       </div>
       <article className="mx-auto max-w-[210mm] bg-white px-[14mm] py-[16mm] text-[13px] leading-relaxed text-neutral-900 shadow-sm print:max-w-none print:p-0 print:shadow-none">
         <header className="flex items-start justify-between border-b border-neutral-300 pb-5">
-          <div>
-            <div className="text-lg font-semibold">FMKJ 智能家居</div>
-            <div className="text-xs text-neutral-500">全屋智能方案 · 设计 · 安装 · 售后</div>
+          <div className="flex items-center gap-3">
+            {logo?.url ? (
+              <Image src={logo.url} alt={logo.alt || company.name} width={logo.width ?? 96} height={logo.height ?? 96} className="h-12 w-auto object-contain" unoptimized />
+            ) : null}
+            <div>
+              <div className="text-lg font-semibold">{company.name}</div>
+              {company.slogan ? <div className="text-xs text-neutral-500">{company.slogan}</div> : null}
+            </div>
           </div>
           <div className="text-right">
             <div className="text-2xl font-semibold tracking-wide">报价单</div>
@@ -95,9 +106,24 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
           </section>
         ) : null}
 
+        {contact.length || qr?.url ? (
+          <section className="mt-8 flex items-center justify-between gap-6 border-t border-neutral-200 pt-3 text-[12px] break-inside-avoid">
+            <div>
+              <div className="mb-1 font-medium">联系我们</div>
+              {contact.map((line) => <p key={line} className="text-neutral-600">{line}</p>)}
+            </div>
+            {qr?.url ? (
+              <figure className="flex flex-col items-center gap-1">
+                <Image src={qr.url} alt={qr.alt || '二维码'} width={88} height={88} className="size-[88px] object-contain" unoptimized />
+                {company.qrCaption ? <figcaption className="text-[10px] text-neutral-500">{company.qrCaption}</figcaption> : null}
+              </figure>
+            ) : null}
+          </section>
+        ) : null}
+
         <footer className="mt-12 grid grid-cols-2 gap-8 text-[12px] break-inside-avoid">
           <div className="border-t border-neutral-400 pt-2 text-neutral-500">客户确认签字 / 日期</div>
-          <div className="border-t border-neutral-400 pt-2 text-neutral-500">FMKJ 盖章 / 日期</div>
+          <div className="border-t border-neutral-400 pt-2 text-neutral-500">{company.name} 盖章 / 日期</div>
         </footer>
       </article>
     </div>

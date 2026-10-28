@@ -118,8 +118,12 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'company-settings': CompanySetting;
+  };
+  globalsSelect: {
+    'company-settings': CompanySettingsSelect<false> | CompanySettingsSelect<true>;
+  };
   locale: 'en';
   widgets: {
     welcome: WelcomeWidget;
@@ -992,6 +996,62 @@ export interface PayloadLlmInstructionsSelect<T extends boolean = true> {
   updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-settings".
+ */
+export interface CompanySetting {
+  id: string;
+  name: string;
+  slogan?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  logo?: (string | null) | Media;
+  qrCode?: (string | null) | Media;
+  qrCaption?: string | null;
+  quoteNotes?: string | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-settings_select".
+ */
+export interface CompanySettingsSelect<T extends boolean = true> {
+  name?: T;
+  slogan?: T;
+  phone?: T;
+  email?: T;
+  address?: T;
+  logo?: T;
+  qrCode?: T;
+  qrCaption?: T;
+  quoteNotes?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

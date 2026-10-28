@@ -13,6 +13,7 @@ import { Projects } from './collections/Projects'
 import { Quotes } from './collections/Quotes'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
+import { CompanySettings } from './globals/CompanySettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -37,6 +38,7 @@ export default buildFigmaConfig({
     supportedLanguages: { 'en': adminLanguage },
   },
   collections: [Admins, Users, Projects, Quotes, Products, Brands, Categories, Media, Folders, Tags],
+  globals: [CompanySettings],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

@@ -31,11 +31,14 @@ export function QuoteEditor({
   quote: initial,
   project,
   products,
+  costs,
   readOnly,
 }: {
   quote: QuoteState
   project: { id: string; name: string; customerName: string } | null
   products: ProductOption[]
+  /** 仅管理员 / 经理会收到成本；为 null 时不显示成本与毛利。 */
+  costs: Record<string, number> | null
   readOnly: boolean
 }) {
   const router = useRouter()
@@ -59,6 +62,19 @@ export function QuoteEditor({
   }
 
   const totals = useMemo(() => quoteTotals(quote.items, quote.fees, quote.discount), [quote])
+  const unitCost = (l: Line) => (costs && l.product ? costs[l.product] : undefined)
+  const margin = useMemo(() => {
+    if (!costs) return null
+    let cost = 0
+    let missing = 0
+    for (const l of quote.items) {
+      const c = l.product ? costs[l.product] : undefined
+      if (c === undefined) missing++
+      else cost += c * l.quantity
+    }
+    const profit = totals.total - cost
+    return { cost, profit, rate: totals.total > 0 ? profit / totals.total : 0, missing }
+  }, [costs, quote.items, totals.total])
 
   useEffect(() => {
     if (!dirty) return
@@ -179,6 +195,7 @@ export function QuoteEditor({
               <TableHeader>
                 <TableRow>
                   <TableHead className="pl-6">产品</TableHead>
+                  {costs ? <TableHead className="text-right">成本</TableHead> : null}
                   <TableHead className="text-right">单价</TableHead>
                   <TableHead className="text-right">数量</TableHead>
                   <TableHead className="text-right">小计</TableHead>
@@ -192,6 +209,11 @@ export function QuoteEditor({
                       <div className="font-medium">{l.name}</div>
                       <div className="text-xs text-muted-foreground">{[l.sku, l.unit && `单位：${l.unit}`].filter(Boolean).join(' · ')}</div>
                     </TableCell>
+                    {costs ? (
+                      <TableCell className="text-right text-sm text-muted-foreground tabular-nums">
+                        {unitCost(l) === undefined ? '—' : yuan(unitCost(l))}
+                      </TableCell>
+                    ) : null}
                     <TableCell className="text-right">{numInput(l.price, (n) => updateLine(l.key, { price: n }), `${l.name} 单价`, 'ml-auto w-28')}</TableCell>
                     <TableCell key={`q-${l.rev ?? 0}`} className="text-right">{numInput(l.quantity, (n) => updateLine(l.key, { quantity: n }), `${l.name} 数量`, 'ml-auto w-20')}</TableCell>
                     <TableCell className="text-right font-medium tabular-nums">{yuan(l.price * l.quantity)}</TableCell>
@@ -207,7 +229,7 @@ export function QuoteEditor({
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell className="pl-6" colSpan={3}>产品小计</TableCell>
+                  <TableCell className="pl-6" colSpan={costs ? 4 : 3}>产品小计</TableCell>
                   <TableCell className="text-right font-semibold tabular-nums">{yuan(totals.productTotal)}</TableCell>
                   {readOnly ? null : <TableCell />}
                 </TableRow>
@@ -256,6 +278,19 @@ export function QuoteEditor({
               <span className="font-medium">报价总额</span>
               <span className="text-2xl font-bold tabular-nums">{yuan(totals.total)}</span>
             </div>
+            {margin ? (
+              <div className="mt-3 space-y-1.5 rounded-lg bg-muted/60 p-3">
+                <div className="text-xs font-medium text-muted-foreground">内部参考 · 仅管理员和经理可见，不会打印</div>
+                <div className="flex justify-between"><span className="text-muted-foreground">产品成本</span><span className="tabular-nums">{yuan(margin.cost)}</span></div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">毛利</span>
+                  <span className={`font-semibold tabular-nums ${margin.profit < 0 ? 'text-destructive-strong' : 'text-success'}`}>
+                    {yuan(margin.profit)}（{(margin.rate * 100).toFixed(1)}%）
+                  </span>
+                </div>
+                {margin.missing ? <p className="text-xs text-warning">有 {margin.missing} 行产品未设置成本，毛利按 0 成本计算</p> : null}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>
