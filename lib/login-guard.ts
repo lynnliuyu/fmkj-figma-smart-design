@@ -1,4 +1,4 @@
-import { getPool } from "./server-db"
+import { getPool, hasDatabaseUrl } from "./server-db"
 
 /**
  * 登录与验证码的频率限制。
@@ -30,6 +30,13 @@ export type RateLimitStatus = {
 function db(dependencies: LoginGuardDependencies): Queryable {
   return dependencies.db ?? (getPool() as unknown as Queryable)
 }
+
+/** 没有数据库（本地开发兜底 / 演示模式）时不做次数限制，否则登录前就会报错。 */
+function noDatabase(dependencies: LoginGuardDependencies): boolean {
+  return !dependencies.db && !hasDatabaseUrl()
+}
+
+const UNLIMITED: RateLimitStatus = { allowed: true, retryAfterSeconds: 0, used: 0 }
 
 export function normalizeLoginTarget(value: unknown): string {
   return String(value ?? "").trim().toLowerCase()
@@ -76,6 +83,7 @@ export async function checkLoginAllowed(
   client: string,
   dependencies: LoginGuardDependencies = {},
 ): Promise<RateLimitStatus> {
+  if (noDatabase(dependencies)) return UNLIMITED
   const normalized = normalizeLoginTarget(target)
   const byTarget = await countWithin(`target:${normalized}`, LOGIN_TARGET_LIMIT.limit, LOGIN_TARGET_LIMIT.windowSeconds, dependencies)
   if (!byTarget.allowed) return byTarget
@@ -86,12 +94,14 @@ export async function checkLoginAllowed(
 
 /** 记一次失败。成功时不记，避免正常用户把自己顶到上限。 */
 export async function recordLoginFailure(target: string, client: string, dependencies: LoginGuardDependencies = {}): Promise<void> {
+  if (noDatabase(dependencies)) return
   await record(`target:${normalizeLoginTarget(target)}`, dependencies)
   if (client) await record(`client:${client}`, dependencies)
 }
 
 /** 登录成功后清零，本账号的历史失败不再累计。 */
 export async function clearLoginFailures(target: string, client: string, dependencies: LoginGuardDependencies = {}): Promise<void> {
+  if (noDatabase(dependencies)) return
   const keys = [`target:${normalizeLoginTarget(target)}`]
   if (client) keys.push(`client:${client}`)
   await db(dependencies).query("delete from login_attempts where key = any($1)", [keys])
@@ -102,6 +112,7 @@ export async function clearLoginFailures(target: string, client: string, depende
  * 顺带把过期很久的记录清掉，这张表本来就是按目标+时间查的。
  */
 export async function checkSendCodeAllowed(target: string, dependencies: LoginGuardDependencies = {}): Promise<RateLimitStatus> {
+  if (noDatabase(dependencies)) return UNLIMITED
   const normalized = normalizeLoginTarget(target)
   const result = await db(dependencies).query(
     `select count(*)::int as count,
@@ -121,5 +132,6 @@ export async function checkSendCodeAllowed(target: string, dependencies: LoginGu
 
 /** 顺手清理：一天前的登录失败记录留着没有用。 */
 export async function pruneLoginAttempts(dependencies: LoginGuardDependencies = {}): Promise<void> {
+  if (noDatabase(dependencies)) return
   await db(dependencies).query("delete from login_attempts where occurred_at < now() - interval '1 day'")
 }

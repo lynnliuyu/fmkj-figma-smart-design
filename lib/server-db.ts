@@ -3,6 +3,8 @@ import { Pool } from "pg"
 let pool: Pool | null = null
 
 export function hasDatabaseUrl() {
+  // Figma 开发版的演示模式：不连数据库，走开发环境已有的本地兜底与示例数据。
+  if (process.env.FMKJ_DEMO_MODE === "1") return false
   return Boolean(databaseConnectionString() || databaseConnectionConfig())
 }
 

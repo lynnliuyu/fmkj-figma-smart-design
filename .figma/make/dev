@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Figma 开发版：沙箱连不上外部 PostgreSQL，用演示模式（不连库）预览页面。
+export FMKJ_DEMO_MODE="${FMKJ_DEMO_MODE:-1}"
 exec pnpm exec next dev --turbopack --hostname 0.0.0.0 --port "$PORT"
