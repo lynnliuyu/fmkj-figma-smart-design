@@ -1,10 +1,11 @@
+import { ShieldCheck } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 import { appAuth } from '@/lib/app-auth'
 
 import { LoginForm } from './login-form'
 
-export const metadata = { title: '登录 · 繁梦空间' }
+export const metadata = { title: '登录 · FMKJ 项目管理' }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
   if (await appAuth.getCurrentUser()) redirect('/products')
@@ -12,30 +13,35 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const redirectTo = from?.startsWith('/') && !from.startsWith('//') ? from : '/products'
 
   return (
-    <main className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
-      <section className="relative hidden overflow-hidden bg-zinc-950 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:44px_44px]" />
-        <div className="relative flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-white text-sm font-bold text-zinc-950">FM</div>
+    <main className="grid min-h-screen bg-background lg:grid-cols-2">
+      <div className="hidden border-r bg-muted/40 p-10 lg:flex lg:flex-col lg:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <ShieldCheck className="size-5" />
+          </div>
           <div>
-            <p className="font-semibold">繁梦空间</p>
-            <p className="text-xs text-zinc-400">智能家居项目管理与方案报价</p>
+            <p className="leading-none font-semibold">FMKJ</p>
+            <p className="mt-1 text-xs text-muted-foreground">项目运营后台</p>
           </div>
         </div>
-        <div className="relative max-w-md space-y-4">
-          <p className="text-3xl leading-snug font-semibold">项目、点位、产品与报价，在一个工作台里完成</p>
-          <p className="text-sm leading-6 text-zinc-400">登录后查看产品库、维护方案并输出客户报价。</p>
+        <div className="max-w-xl space-y-5">
+          <p className="text-3xl font-semibold tracking-normal">项目、产品、报价和交付记录统一管理</p>
+          <p className="text-base leading-7 text-muted-foreground">登录后可以查看项目流程、产品库、方案报价、附件和团队权限。</p>
         </div>
-        <p className="relative text-xs text-zinc-500">FMKJ V4</p>
-      </section>
-
-      <section className="flex items-center justify-center bg-zinc-50 px-6 py-12">
-        <div className="w-full max-w-sm">
-          <h1 className="text-2xl font-semibold tracking-tight">登录工作台</h1>
-          <p className="mt-2 text-sm text-zinc-500">使用管理员为你开通的员工账号登录</p>
+      </div>
+      <div className="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
+        <div className="mx-auto w-full max-w-sm">
+          <div className="mb-8 flex justify-center lg:hidden">
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <ShieldCheck className="size-5" />
+              </div>
+              <span className="text-lg font-semibold">FMKJ</span>
+            </div>
+          </div>
           <LoginForm redirectTo={redirectTo} />
         </div>
-      </section>
+      </div>
     </main>
   )
 }

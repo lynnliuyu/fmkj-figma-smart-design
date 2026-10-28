@@ -1,6 +1,10 @@
 import React from "react"
 import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import Script from "next/script"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { BodyCustomCode, renderHeadCustomCode } from "@/lib/make-custom-code"
 import {
   makeSiteSettings,
@@ -8,11 +12,13 @@ import {
 } from "@/lib/make-site-settings"
 import "./styles.css"
 
-const defaultTitle = "next-app"
+const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
+
+const defaultTitle = "FMKJ 项目管理"
 const title = makeSiteSettings.title ?? defaultTitle
 const description =
   makeSiteSettings.description ??
-  "Built with Next.js, Payload CMS, and Tailwind CSS"
+  "项目流程、产品库、方案报价与团队协作后台"
 const favicon = makeSiteSettings.icons?.icon
 const socialImage = makeSiteSettings.openGraph?.image
 const googleAnalyticsId = sanitizeHtmlAttribute(
@@ -48,17 +54,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const language = sanitizeHtmlAttribute(makeSiteSettings.language) || "en"
+  const language = sanitizeHtmlAttribute(makeSiteSettings.language) || "zh-CN"
   const addBypassLinks = makeSiteSettings.accessibility?.addBypassLinks === true
   const customScripts = makeSiteSettings.customScripts
 
   return (
-    <html lang={language}>
+    <html lang={language} suppressHydrationWarning className={`${fontSans.variable} bg-background`}>
       <head>
         {renderHeadCustomCode(customScripts?.headStart, "head-start")}
         {renderHeadCustomCode(customScripts?.headEnd, "head-end")}
       </head>
-      <body className="min-h-screen bg-white text-zinc-950 antialiased">
+      <body className="min-h-screen antialiased">
         <BodyCustomCode html={customScripts?.bodyStart} />
         {addBypassLinks && (
           <a className="figma-bypass-link" href="#root">
@@ -66,7 +72,10 @@ export default function RootLayout({
           </a>
         )}
         <div id="root" tabIndex={-1}>
-          {children}
+          <ThemeProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+            <Toaster />
+          </ThemeProvider>
         </div>
         {googleAnalyticsId && (
           <>

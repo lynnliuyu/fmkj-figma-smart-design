@@ -1,11 +1,17 @@
 import Link from 'next/link'
+import { Check, ImageIcon, PackageSearch, Search } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import type { Brand, Category, Media, Product } from '@/payload-types'
 import type { Where } from 'payload'
 
-export const metadata = { title: '产品库 · 繁梦空间' }
+export const metadata = { title: '产品库 · FMKJ 项目管理' }
 
 const yuan = (value: number | null | undefined) =>
   typeof value === 'number' ? `¥${value.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}` : '—'
@@ -38,94 +44,120 @@ export default async function ProductsPage({
     return query ? `/products?${query}` : '/products'
   }
 
-  const chip = (active: boolean) =>
-    `rounded-full border px-3 py-1 text-sm transition ${active ? 'border-zinc-900 bg-zinc-900 text-white' : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400'}`
+  const facet = (label: string, active: string, key: 'category' | 'brand', items: { id: number | string; slug: string; name: string }[]) => (
+    <div className="flex flex-col gap-2">
+      <div className="text-xs font-medium text-muted-foreground">{label}</div>
+      <div className="flex flex-wrap gap-1.5">
+        <Button asChild size="sm" variant={!active ? 'default' : 'outline'}>
+          <Link href={filterHref({ [key]: '' })} aria-current={!active ? 'true' : undefined}>
+            {!active && <Check className="size-3.5" />}全部
+          </Link>
+        </Button>
+        {items.map((item) => {
+          const isActive = active === item.slug
+          return (
+            <Button key={item.id} asChild size="sm" variant={isActive ? 'default' : 'outline'}>
+              <Link href={filterHref({ [key]: isActive ? '' : item.slug })} aria-current={isActive ? 'true' : undefined}>
+                {isActive && <Check className="size-3.5" />}
+                {item.name}
+              </Link>
+            </Button>
+          )
+        })}
+      </div>
+    </div>
+  )
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">产品库</h1>
-          <p className="mt-1 text-sm text-zinc-500">共 {products.totalDocs} 个在售产品{showCost ? '，成本仅管理员与经理可见' : ''}</p>
-        </div>
-        <form className="flex gap-2" action="/products">
+    <section className="flex flex-col gap-5">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight">产品库</h1>
+        <p className="text-sm text-muted-foreground">
+          共 <span className="font-medium text-foreground tabular-nums">{products.totalDocs}</span> 个在售产品
+          {showCost ? '，成本仅管理员与经理可见' : ''}
+        </p>
+      </header>
+
+      <div className="flex flex-col gap-3">
+        <form className="flex flex-wrap items-center gap-2" action="/products">
           {category ? <input type="hidden" name="category" value={category} /> : null}
           {brand ? <input type="hidden" name="brand" value={brand} /> : null}
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="搜索名称或型号"
-            className="h-10 w-64 rounded-lg border border-zinc-300 bg-white px-3 text-sm outline-none focus:border-zinc-900"
-          />
-          <button className="h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800">搜索</button>
+          <div className="relative w-full sm:w-80">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input name="q" defaultValue={q} placeholder="搜索名称或型号" aria-label="搜索产品" className="pl-9" />
+          </div>
+          <Button type="submit">搜索</Button>
         </form>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="w-10 text-xs text-zinc-500">分类</span>
-          <Link href={filterHref({ category: '' })} className={chip(!category)}>全部</Link>
-          {(categories.docs as Category[]).map((c) => (
-            <Link key={c.id} href={filterHref({ category: c.slug })} className={chip(category === c.slug)}>{c.name}</Link>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="w-10 text-xs text-zinc-500">品牌</span>
-          <Link href={filterHref({ brand: '' })} className={chip(!brand)}>全部</Link>
-          {(brands.docs as Brand[]).map((b) => (
-            <Link key={b.id} href={filterHref({ brand: b.slug })} className={chip(brand === b.slug)}>{b.name}</Link>
-          ))}
+        <div className="flex flex-col gap-4 rounded-xl bg-muted/60 p-4">
+          {facet('分类', category, 'category', categories.docs as Category[])}
+          {facet('品牌', brand, 'brand', brands.docs as Brand[])}
         </div>
       </div>
 
       {products.docs.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-zinc-300 bg-white px-6 py-16 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-16 text-center">
+          <PackageSearch className="size-8 text-muted-foreground" />
           <p className="font-medium">没有找到符合条件的产品</p>
-          <p className="mt-1 text-sm text-zinc-500">换个关键词或筛选条件试试；管理员可在后台添加产品。</p>
+          <p className="text-sm text-muted-foreground">换个关键词或筛选条件试试；管理员可在后台添加产品。</p>
+          <Button asChild variant="outline" size="sm" className="mt-2">
+            <Link href="/products">清除筛选</Link>
+          </Button>
         </div>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {(products.docs as Product[]).map((p) => {
             const image = typeof p.image === 'object' ? (p.image as Media | null) : null
             const b = typeof p.brand === 'object' ? (p.brand as Brand) : null
             const c = typeof p.category === 'object' ? (p.category as Category) : null
+            const stock = typeof p.stock === 'number' ? p.stock : null
             return (
-              <li key={p.id} className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white">
-                <div className="flex aspect-[4/3] items-center justify-center bg-zinc-100">
-                  {image?.url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={image.url} alt={image.alt ?? p.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <span className="text-3xl font-semibold text-zinc-300">{(c?.name ?? p.name).slice(0, 2)}</span>
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col gap-2 p-4">
-                  <div className="flex items-center gap-2 text-xs text-zinc-500">
-                    <span>{b?.name ?? '未知品牌'}</span>
-                    <span>·</span>
-                    <span>{c?.name ?? '未分类'}</span>
+              <li key={p.id}>
+                <Card className="h-full gap-0 overflow-hidden p-0 transition-colors hover:border-primary/50">
+                  <div className="flex aspect-[4/3] w-full items-center justify-center bg-muted">
+                    {image?.url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={image.url} alt={image.alt ?? p.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <ImageIcon className="size-8 text-muted-foreground/50" aria-hidden="true" />
+                    )}
                   </div>
-                  <p className="leading-snug font-medium">{p.name}</p>
-                  <p className="font-mono text-xs text-zinc-500">{p.sku}</p>
-                  {p.description ? <p className="line-clamp-2 text-sm text-zinc-600">{p.description}</p> : null}
-                  <div className="mt-auto flex flex-wrap gap-1 pt-1">
-                    {(p.platforms ?? []).map((platform) => (
-                      <span key={platform} className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600">{platform}</span>
-                    ))}
-                  </div>
-                  <div className="flex items-end justify-between border-t border-zinc-100 pt-3">
-                    <p className="text-lg font-semibold">
-                      {yuan(p.price)}
-                      <span className="ml-1 text-xs font-normal text-zinc-500">/ {p.unit}</span>
+                  <div className="flex flex-1 flex-col gap-3 p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="min-w-0 text-sm leading-snug font-semibold">{p.name}</h2>
+                      {c ? <Badge variant="secondary" className="shrink-0">{c.name}</Badge> : null}
+                    </div>
+                    <p className="flex flex-wrap gap-x-1.5 text-xs text-muted-foreground">
+                      <span>{b?.name ?? '未知品牌'}</span>
+                      <span aria-hidden="true" className="text-muted-foreground/60">/</span>
+                      <span className="break-all">{p.sku}</span>
                     </p>
-                    {showCost ? <p className="text-xs text-zinc-500">成本 {yuan(p.cost)}</p> : null}
+                    {p.description ? <p className="line-clamp-2 text-sm text-muted-foreground">{p.description}</p> : null}
+                    {p.platforms?.length ? (
+                      <div className="flex flex-wrap gap-1">
+                        {p.platforms.map((platform) => (
+                          <Badge key={platform} variant="outline">{platform}</Badge>
+                        ))}
+                      </div>
+                    ) : null}
+                    <div className="mt-auto flex items-end justify-between gap-2 pt-1">
+                      <div>
+                        <span className="text-lg font-bold tabular-nums">{yuan(p.price)}</span>
+                        <span className="ml-1 text-xs text-muted-foreground">/ {p.unit}</span>
+                        {showCost ? <p className="text-xs text-muted-foreground tabular-nums">成本 {yuan(p.cost)}</p> : null}
+                      </div>
+                      {stock !== null ? (
+                        <Badge variant={stock > 0 ? 'secondary' : 'destructive'} className="tabular-nums">
+                          {stock > 0 ? `库存 ${stock}` : '缺货'}
+                        </Badge>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
+                </Card>
               </li>
             )
           })}
         </ul>
       )}
-    </div>
+    </section>
   )
 }
