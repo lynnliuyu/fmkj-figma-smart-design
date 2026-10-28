@@ -1,0 +1,418 @@
+{
+  "schemaVersion": 1,
+  "document": "system-map.html",
+  "asOf": "2026-10-21",
+  "sourceScope": "original-business-working-tree",
+  "sourceCommit": "fd35a650ffcebb4d2e4a5e6689d3fcfd17c2ffb2",
+  "includesUncommittedChanges": true,
+  "validationScope": "static code and accepted architecture documents; no runtime acceptance implied",
+  "skill": {
+    "name": "diagram-design",
+    "version": "2.6.115",
+    "sourceCommit": "f2f4d49",
+    "source": "https://github.com/cathrynlavery/diagram-design"
+  },
+  "modules": [
+    {
+      "id": "UI-01",
+      "name": "浏览器工作台",
+      "status": "代码已存在",
+      "responsibility": "项目、点位设计、产品选型、报价和客户交付的交互入口。",
+      "sources": [
+        "components/projects/point-map-workbench.tsx",
+        "components/quotes/quote-builder.tsx",
+        "components/projects/project-presentation.tsx"
+      ]
+    },
+    {
+      "id": "CACHE-01",
+      "name": "本机草稿缓存",
+      "status": "代码已存在",
+      "responsibility": "IndexedDB 保存浏览器编辑副本与图片，不等于服务器数据库已保存。",
+      "sources": [
+        "lib/point-map-local-store.ts"
+      ],
+      "rule": "ADR 0009"
+    },
+    {
+      "id": "API-01",
+      "name": "认证与业务 API",
+      "status": "代码已存在",
+      "responsibility": "JWT 登录、服务端身份、业务权限、输入及版本校验；同一 Next.js 应用中的路由。",
+      "sources": [
+        "middleware.ts",
+        "lib/auth.ts",
+        "lib/account-context.ts",
+        "lib/account-gates.ts",
+        "app/api/"
+      ]
+    },
+    {
+      "id": "CORE-01",
+      "name": "业务服务",
+      "status": "代码已存在",
+      "responsibility": "账号与企业、产品核验、点位、报价、固定交付、工单与项目执行。",
+      "sources": [
+        "lib/product-admin-service.ts",
+        "lib/point-map-service.ts",
+        "lib/quote-save.ts",
+        "lib/project-delivery-service.ts",
+        "lib/work-order-service.ts",
+        "lib/account-system/platform-admin-service.ts"
+      ]
+    },
+    {
+      "id": "DB-01",
+      "name": "业务数据库",
+      "status": "代码已存在",
+      "responsibility": "通过 pg 连接 PostgreSQL，保存业务资料及固定交付快照；图中不展示真实记录或凭据。",
+      "sources": [
+        "lib/server-db.ts",
+        "scripts/run-migration.mjs",
+        "scripts/neon-init.sql"
+      ]
+    },
+    {
+      "id": "UPLOAD-01",
+      "name": "通用文件上传",
+      "status": "代码已存在；依赖外部配置",
+      "responsibility": "当前通用上传接口使用 Vercel Blob；完全离线的通用上传尚需本地存储适配。",
+      "sources": [
+        "app/api/upload/route.ts"
+      ]
+    },
+    {
+      "id": "ASSET-01",
+      "name": "站内素材",
+      "status": "代码已存在",
+      "responsibility": "public/assets 提供站内产品图与图标；固定交付在受控范围内归档图片字节。",
+      "sources": [
+        "public/assets/",
+        "lib/product-visual-assets-service.ts",
+        "lib/project-delivery-service.ts"
+      ]
+    },
+    {
+      "id": "CAD-01",
+      "name": "独立本机 CAD 工具",
+      "status": "本机工具；尚未接入项目 API",
+      "responsibility": "CADCraft CLI、Python 和 Poppler 导出 PDF/PNG，人工复核并导入；不是 Next.js 内置 CAD 编辑器。",
+      "sources": [
+        "scripts/cad-export-api.mjs",
+        "scripts/start-cad-export-web.mjs",
+        "scripts/export-cad-review.mjs",
+        "docs/cad-export-api.md"
+      ]
+    },
+    {
+      "id": "OUT-01",
+      "name": "客户交付文件",
+      "status": "代码已存在",
+      "responsibility": "从固定 V 版本生成 PNG、PDF、CSV 和完整 JSON；草稿检查图与固定客户交付区分。",
+      "sources": [
+        "lib/project-delivery-client.ts",
+        "lib/point-map-print.ts",
+        "lib/point-map-render.ts"
+      ],
+      "rule": "ADR 0005 / 0007"
+    },
+    {
+      "id": "CAT-01",
+      "name": "官方产品资料与授权服务",
+      "status": "目标设计；待建设",
+      "responsibility": "私有主库按订阅范围发布产品资料，客户端通过 API 同步，不直接连接官方数据库。",
+      "sources": [
+        "docs/adr/0010-hosted-local-deployment-and-optional-catalog.md"
+      ],
+      "target": true
+    },
+    {
+      "id": "REL-01",
+      "name": "正式版本发布服务",
+      "status": "有 CI 与 Docker 基础；发布闭环待建设",
+      "responsibility": "发布可核验的版本清单、固定镜像与更新说明；升级与产品同步独立。",
+      "sources": [
+        ".github/workflows/ci.yml",
+        "Dockerfile",
+        "docker-compose.yml"
+      ],
+      "target": true
+    },
+    {
+      "id": "HOST-01",
+      "name": "线上托管主机",
+      "status": "目标设计；未上线",
+      "responsibility": "运行共同业务核心及独立部署管理端；开放前验收企业数据隔离。",
+      "sources": [
+        "docs/deployment-and-catalog-architecture.md"
+      ],
+      "target": true
+    },
+    {
+      "id": "HOST-DATA-01",
+      "name": "托管业务数据与文件",
+      "status": "目标设计；待部署验收",
+      "responsibility": "托管 PostgreSQL 与持久化文件存储；按业务空间隔离。",
+      "sources": [
+        "docs/deployment-and-catalog-architecture.md"
+      ],
+      "target": true
+    },
+    {
+      "id": "LOCAL-01",
+      "name": "黑豹 X2 本地设备",
+      "status": "目标设计；未完成发货验收",
+      "responsibility": "预装同一应用镜像与独立部署管理端；核心流程离线工作，联网后选择升级和产品同步。",
+      "sources": [
+        "docs/deployment-and-catalog-architecture.md"
+      ],
+      "target": true
+    },
+    {
+      "id": "LOCAL-DATA-01",
+      "name": "本地业务数据与文件",
+      "status": "数据库基础已有；完整离线适配待建",
+      "responsibility": "本机 PostgreSQL 与持久化文件；可显式配置用户自己的数据库；不因接官方产品库上传客户资料。",
+      "sources": [
+        "docker-compose.db.yml",
+        "lib/server-db.ts",
+        "docs/deployment-and-catalog-architecture.md"
+      ],
+      "target": true
+    }
+  ],
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "name": "完全离线的文件存储",
+      "current": "通用上传当前调用 Vercel Blob。",
+      "target": "增加本地文件适配与持久化数据卷，断网验收。",
+      "modules": "UPLOAD-01 / LOCAL-DATA-01"
+    },
+    {
+      "id": "GAP-02",
+      "name": "官方产品库授权同步",
+      "current": "已有本地产品管理、核验和版本规则。",
+      "target": "增加来源映射、本地覆盖、订阅范围、差异预览与幂等同步。",
+      "modules": "CAT-01"
+    },
+    {
+      "id": "GAP-03",
+      "name": "正式镜像发布与一键更新",
+      "current": "已有 Dockerfile、Compose 和 CI。",
+      "target": "增加可信版本清单、独立部署管理、备份、迁移和健康检查。",
+      "modules": "REL-01"
+    },
+    {
+      "id": "GAP-04",
+      "name": "线上企业隔离与到期政策",
+      "current": "已有企业与权限基础。",
+      "target": "逐接口验证隔离；分别确定托管、设备维护和产品库权益。",
+      "modules": "HOST-01"
+    },
+    {
+      "id": "GAP-05",
+      "name": "CAD 工具产品化",
+      "current": "独立本机导出工具与网页已存在。",
+      "target": "正式接入前明确部署依赖、任务隔离及人工复核入口。",
+      "modules": "CAD-01"
+    }
+  ],
+  "evidence": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "0be6fdc9b3b0f1acf14c56e849578540f8507086d0265608fd21864805fe3eff",
+      "kind": "file"
+    },
+    {
+      "path": "CONTEXT.md",
+      "sha256": "d1b8bd7bcc1a3ecdd8f64bec405b2f0c49fe1de4965eb68c175dd6846e3481e8",
+      "kind": "file"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "108f6cee15c6d935f24501b5eeaf3381b2e0d20d68ef04530a99e94add4c04a8",
+      "kind": "file"
+    },
+    {
+      "path": "app/api/",
+      "sha256": null,
+      "kind": "directory"
+    },
+    {
+      "path": "app/api/upload/route.ts",
+      "sha256": "c434a9b7f77cfad56d2b4c82158dca6d6bbc2856d0cb18b6c39ee5f9f0428120",
+      "kind": "file"
+    },
+    {
+      "path": "components/projects/point-map-workbench.tsx",
+      "sha256": "bd8ee70679dfa699560d85b51487a5dbe4e9c3502788a5e937f6bc82a61cb212",
+      "kind": "file"
+    },
+    {
+      "path": "components/projects/project-presentation.tsx",
+      "sha256": "9b68903997d527b54114d1290376243ec1a951b40df4d2275760bbce4b4d6dd9",
+      "kind": "file"
+    },
+    {
+      "path": "components/quotes/quote-builder.tsx",
+      "sha256": "3b22f9b7f8251607ecb21f8a3a8b4f077ca01893f100e4dec8897a79a63de607",
+      "kind": "file"
+    },
+    {
+      "path": "docker-compose.db.yml",
+      "sha256": "add321b95e25dc0612b8a3ddcadc9ec008ab4ed368fb86269b0310a423e5c67c",
+      "kind": "file"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "eb988876889d3526b77665174e1314954be44f43b9d0e755e962ab67b8bd97a7",
+      "kind": "file"
+    },
+    {
+      "path": "docs/adr/0005-project-delivery-and-reusable-visuals.md",
+      "sha256": "9b9d97362e3064799ecb241a42423021189c0c8174a353f3b8803beed5025fdb",
+      "kind": "file"
+    },
+    {
+      "path": "docs/adr/0006-project-quotation-defaults-and-linked-deletion.md",
+      "sha256": "99fdee6195ebeb5ef9138405cf82ed8346e25ffcd8e575c0376ad8a7f72f9d48",
+      "kind": "file"
+    },
+    {
+      "path": "docs/adr/0007-fixed-delivery-outputs-and-editor-responsibilities.md",
+      "sha256": "84247ff8bbcd9b5dcd3774d5e58a12388eea1c62c7426638bf4421b2bbe0cc5e",
+      "kind": "file"
+    },
+    {
+      "path": "docs/adr/0010-hosted-local-deployment-and-optional-catalog.md",
+      "sha256": "8b3be871ed622a3bbe5ae2a408e1c3b2ddb9dbabc4157a1bff1ddf3dbbffffc5",
+      "kind": "file"
+    },
+    {
+      "path": "docs/cad-export-api.md",
+      "sha256": "eb53ecacf29a82be7568c27624aa272186889a3a990395fe97c4235c0c19ab70",
+      "kind": "file"
+    },
+    {
+      "path": "docs/deployment-and-catalog-architecture.md",
+      "sha256": "b7dc8d7924f76a9556f834fc03a9a5eb7d79f05e27bfd4381f0d71c45bc8264f",
+      "kind": "file"
+    },
+    {
+      "path": "lib/account-context.ts",
+      "sha256": "8e51ca2acaddf3bc5bd4533e4ba8bf343f0982fe3e3319138c6776e4dc31a0d4",
+      "kind": "file"
+    },
+    {
+      "path": "lib/account-gates.ts",
+      "sha256": "e603cd15fa1c03e3f3d76f92cffcfb2c6835dc915d795a254c6814da675e7f89",
+      "kind": "file"
+    },
+    {
+      "path": "lib/account-system/platform-admin-service.ts",
+      "sha256": "2493f0b128d603d6367e54d5f11ec3f794213b21343e9f37c01e2ae09139d440",
+      "kind": "file"
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "fee720115c9c840a2667cb0670e0f82f14c75e13463e08c1c534c1572790e4e2",
+      "kind": "file"
+    },
+    {
+      "path": "lib/point-map-local-store.ts",
+      "sha256": "d0bb4744c18dccbeced3573a9307ba10ad5fc5cf375afcdf9077d1dd4c69fbca",
+      "kind": "file"
+    },
+    {
+      "path": "lib/point-map-print.ts",
+      "sha256": "76677397088d73967e8957ec4646be15d7c9036f7ebfc0b89d8d4919e63cb7fb",
+      "kind": "file"
+    },
+    {
+      "path": "lib/point-map-render.ts",
+      "sha256": "fe960a943d7ffad53a356fffccf747ac689ffbb459f22869f3dd72260091ff9e",
+      "kind": "file"
+    },
+    {
+      "path": "lib/point-map-service.ts",
+      "sha256": "d88f34ccd7054e2744bf0cf9b55082f92be2fee38fa958e419bb5fb14cd80dc4",
+      "kind": "file"
+    },
+    {
+      "path": "lib/product-admin-service.ts",
+      "sha256": "17e7e91f60ffc80ad4b0ace1caa61a2a6589a8d8f2245d22d2290cecce03e5b9",
+      "kind": "file"
+    },
+    {
+      "path": "lib/product-visual-assets-service.ts",
+      "sha256": "71af98a50432ec9d0f9ec7dfbacc849dc9eec0e9bbe862682d7faa25ea2aa76f",
+      "kind": "file"
+    },
+    {
+      "path": "lib/project-delivery-client.ts",
+      "sha256": "9aae102cfd99a5e02ddbcddb8cf621935a3ed1eff5cae562ab2ecbdf5fa2b531",
+      "kind": "file"
+    },
+    {
+      "path": "lib/project-delivery-service.ts",
+      "sha256": "6a5f3c8b74283e4c24a1ae266d552f0198d289feeb3517df11c13667ba232707",
+      "kind": "file"
+    },
+    {
+      "path": "lib/quote-save.ts",
+      "sha256": "19c41e5da7a97b095af12042b6cc6cb4a8c63763f10c327158b2c99b03146c5a",
+      "kind": "file"
+    },
+    {
+      "path": "lib/server-db.ts",
+      "sha256": "35119dd4281f27ced75689ea5fa7e563f2eabeb934ee2dfdc596a58c5707ce46",
+      "kind": "file"
+    },
+    {
+      "path": "lib/work-order-service.ts",
+      "sha256": "7c2c8488b903878b76646edd234ca865b93c44750345074ade81efc7d0a80cfb",
+      "kind": "file"
+    },
+    {
+      "path": "middleware.ts",
+      "sha256": "08792696c8da9b7fb94f8df0ebf4f1f99ee1f8089eb5ce4fe67208ed80664624",
+      "kind": "file"
+    },
+    {
+      "path": "plans/028-hosted-local-and-catalog-foundation.md",
+      "sha256": "962ad0abc605b956dc6547651d5482ff97a5b135027ecd7173dc7433453ff980",
+      "kind": "file"
+    },
+    {
+      "path": "public/assets/",
+      "sha256": null,
+      "kind": "directory"
+    },
+    {
+      "path": "scripts/cad-export-api.mjs",
+      "sha256": "9dcef9e815404771fccede895e58f52d55e1a77309821f8f14cbd7264e36bdf4",
+      "kind": "file"
+    },
+    {
+      "path": "scripts/export-cad-review.mjs",
+      "sha256": "4aa49363e1ac136cb0e4c2c04a599c7ee58fd09cc93346f238ab634a125b25b5",
+      "kind": "file"
+    },
+    {
+      "path": "scripts/neon-init.sql",
+      "sha256": "884dcc4c9c671ed606606f0a2231789df84881f7e8a7973053519683b30659a4",
+      "kind": "file"
+    },
+    {
+      "path": "scripts/run-migration.mjs",
+      "sha256": "ac68e594bbdeae96c3d32984402d9b886e7d7ff07fe17b6a9b168dc27e898785",
+      "kind": "file"
+    },
+    {
+      "path": "scripts/start-cad-export-web.mjs",
+      "sha256": "b981f62cbb178d58ecf5384a40f6e045b314898ae55524feb43d8dca61baf1df",
+      "kind": "file"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+# 本地设备版编排（黑豹 X2 等预装小服务器）：业务应用 + 设备本机 PostgreSQL。
+#
+# 与仓库根目录的 docker-compose.yml（开发用、带 build）分开：
+# - 设备只从镜像仓库拉取固定版本，不在设备上构建；设备拉不通 Docker Hub 时也能工作。
+# - 业务库跟着设备走，断网仍可用；备份脚本覆盖 fmkj-v3-db 与 fmkj-v3-uploads 两个卷。
+#
+# 用法（设备上 /opt/fmkj/app）：
+#   docker compose -f docker-compose.appliance.yml up -d postgres        # 先起库
+#   docker compose -f docker-compose.appliance.yml run --rm app node scripts/run-migration.mjs
+#   docker compose -f docker-compose.appliance.yml run --rm app node scripts/seed-admin.mjs --email=... --password=...
+#   docker compose -f docker-compose.appliance.yml up -d                 # 起应用
+#
+# 镜像与版本写在与本文件同目录的 .env 里（compose 的插值文件，不进版本库）：
+#   FMKJ_IMAGE=registry.example.com/fmkj-v3:v0.1.0
+#   FMKJ_VERSION=v0.1.0
+#   POSTGRES_IMAGE=postgres:17-alpine
+name: fmkj
+
+# 容器名与数据卷名可以用环境变量改（默认与以前完全一致）。同一台机器上要再跑一套
+# 做验证或演示时，改这几个变量就不会跟正式那套撞名；出货设备保持默认即可。
+services:
+  postgres:
+    # 设备可能拉不通 Docker Hub（黑豹 X2 实测 registry-1.docker.io 不可达），
+    # 所以这里允许指向自建仓库里的 postgres 镜像副本。
+    image: ${POSTGRES_IMAGE:-postgres:17-alpine}
+    container_name: ${FMKJ_DB_CONTAINER:-fmkj-v3-db}
+    restart: unless-stopped
+    # POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB 与应用的 DATABASE_URL 写在同一个
+    # .env.production 里，避免口令散落两处。注意两者必须一致。
+    env_file:
+      - .env.production
+    volumes:
+      - fmkj-db:/var/lib/postgresql/data
+    healthcheck:
+      # $$ 转义给容器内 shell，读的是容器自己的环境变量。
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # 更新请求目录要属于应用用户（uid 1001），否则页面点「立即更新」会 EACCES（黑豹 X2 真机实测）。
+  # 应用只写得了 requests/ 这一层；管家的状态与日志在上一层、由 root 拥有，应用读得到、改不了。
+  deploy-state-init:
+    image: ${POSTGRES_IMAGE:-postgres:17-alpine}
+    command: ["sh", "-c", "mkdir -p /data/deploy-state/requests && chown -R 1001:1001 /data/deploy-state/requests"]
+    volumes:
+      - ./deploy-state:/data/deploy-state
+
+  # Docker 建数据卷时归 root，应用容器以普通账号（1001）运行，不修正的话
+  # 首次上传会 EACCES: mkdir '/data/uploads/contracts'（黑豹 X2 真机实测）。
+  uploads-init:
+    image: ${ALPINE_IMAGE:-alpine}
+    container_name: ${FMKJ_APP_CONTAINER:-fmkj-v3}-uploads-init
+    command: ["sh", "-c", "mkdir -p /data/uploads && chown -R 1001:1001 /data/uploads"]
+    restart: "no"
+    volumes:
+      - fmkj-uploads:/data/uploads
+
+  app:
+    image: ${FMKJ_IMAGE:-fmkj-v3:latest}
+    container_name: ${FMKJ_APP_CONTAINER:-fmkj-v3}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      uploads-init:
+        condition: service_completed_successfully
+      deploy-state-init:
+        condition: service_completed_successfully
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+      FMKJ_VERSION: ${FMKJ_VERSION:-unknown}
+      # 附件默认落本地数据卷（本地设备版不需要外部对象存储）。
+      FILE_STORAGE: ${FILE_STORAGE:-local}
+      FMKJ_STORAGE_ROOT: /data/uploads
+      # 管理员页面读更新/备份结果、写「更新请求」的位置；宿主机脚本读写同一个目录。
+      # 应用只对下面的 requests/ 子目录有写权限，请求里只有版本号，由更新管家校验后执行（ADR 0010）。
+      FMKJ_DEPLOY_STATE_DIR: /data/deploy-state
+      # 设备是客户自己买的机器：不开放陌生人自助注册（账号由管理员在后台添加）。
+      # 内网穿透把它暴露到公网时，这一条尤其重要。
+      FMKJ_ALLOW_SELF_SIGNUP: ${FMKJ_ALLOW_SELF_SIGNUP:-false}
+      # 设备版没接短信服务：登录页不显示短信验证码入口，免得点了收不到码。
+      FMKJ_ALLOW_SMS_LOGIN: ${FMKJ_ALLOW_SMS_LOGIN:-false}
+    ports:
+      # 默认监听所有网卡，局域网内直接访问 http://<设备IP>:8890；
+      # 只想本机访问就设 FMKJ_BIND=127.0.0.1，再用 SSH 端口转发。
+      - "${FMKJ_BIND:-0.0.0.0}:${FMKJ_PORT:-8890}:3000"
+    volumes:
+      - fmkj-uploads:/data/uploads
+      # 读写挂载，但只有 requests/ 子目录属于应用用户：能提交更新请求，改不了管家的状态与日志。
+      - ./deploy-state:/data/deploy-state
+
+volumes:
+  fmkj-uploads:
+    name: ${FMKJ_UPLOADS_VOLUME:-fmkj-v3-uploads}
+  fmkj-db:
+    name: ${FMKJ_DB_VOLUME:-fmkj-v3-db}

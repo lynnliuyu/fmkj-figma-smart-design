@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "songti sc",
+        "files": [
+          "components/projects/first-proposal-document.css"
+        ],
+        "createdAt": "2026-10-27T12:31:08.143Z",
+        "reason": "既有首次提案标题有意采用宋体装饰字族；docs/first-proposal-templates.md 记录杂志式与画廊式版式，ADR 0012 要求独立提案风格。本次只改PDF封装，保留既有设计。"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "georgia",
+        "files": [
+          "components/projects/first-proposal-document.css"
+        ],
+        "createdAt": "2026-10-27T12:32:09.769Z",
+        "reason": "既有首次提案装饰数字与英文标题有意使用衬线字族，属于 docs/first-proposal-templates.md 和 ADR 0012 记录的独立杂志/画廊式排版。本次只改PDF封装，保留既有设计。"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "tests/customer-pdf.test.ts"
+        ],
+        "createdAt": "2026-10-27T12:42:12.814Z",
+        "reason": "测试夹具仅验证现有 Inter @font-face 的URL解析与内嵌保留，不定义产品界面字体；属于测试代码误报。"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "components/business/document-brand.tsx"
+        ],
+        "createdAt": "2026-10-27T13:13:40.698Z",
+        "reason": "项目 DESIGN.md 2026-10-22 已记录有意保留 Inter：保持现有字体并统一样式；本次 PDF 页脚沿用该字族，不在模版分页改进中另换品牌字体。"
+      }
+    ]
+  }
+}

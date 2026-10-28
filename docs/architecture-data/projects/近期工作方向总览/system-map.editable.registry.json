@@ -1,0 +1,3634 @@
+{
+  "schemaVersion": 1,
+  "document": "system-map.drawio",
+  "savedAt": "2026-10-21T15:18:34.019023+00:00",
+  "interpretation": "User-editable architecture intent. Status and code references are declarations, not an implementation audit.",
+  "pages": [
+    {
+      "id": "overview",
+      "name": "00 总览 · 六条工作主线",
+      "nodes": [
+        {
+          "label": "<div style=\"line-height:1.45\"><b>近期工作方向</b><br><span style=\"font-size:20px\">设计交付 · 工具产品\n内容与运营</span></div>",
+          "sourceRefs": "[\"/Users/noonebook/Documents/ChatGPT/mac本机管理/AI会话整理索引-2026-10-21.md\"]",
+          "tooltip": "由近期会话与本地资料归纳，方向名称为本次整理总结，非新的业务优先级决定。",
+          "id": "center",
+          "geometry": {
+            "height": "150",
+            "width": "310",
+            "x": "1010",
+            "y": "615",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>空间设计与智能家居</b><br><span style=\"font-size:17px\">客户项目 · 方案交付</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "space",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "610",
+            "y": "259",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "CAD → 点位 → 报价 → 客户交付",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "id": "space-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "186",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：三图对照、PDF 母版、电竞房白模",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "id": "space-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "274",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：交付自动套用、选型核验与页面简化",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "id": "space-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "362",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>Ai-Copilot 与模型服务</b><br><span style=\"font-size:17px\">客户端 · 后台 · 发布</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "copilot",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "1460",
+            "y": "259",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "安装汉化 → 账号积分 → 模型服务",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "id": "copilot-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "186",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：客户端改版、网关定价与订阅路由",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "id": "copilot-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "274",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：Windows 验收、版本与下载站一致",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "id": "copilot-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "362",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>网盘电商与自动化</b><br><span style=\"font-size:17px\">货源 · 订单 · 发货</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "commerce",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "610",
+            "y": "649",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "资源整理 → 商品配置 → 订单 → 发货",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "id": "commerce-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "576",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：闲管家对接、巡检、公众号规划",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "id": "commerce-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "664",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：欠单核对、批量配置、部署边界",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "id": "commerce-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "752",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>内容创作与获客</b><br><span style=\"font-size:17px\">案例 · 教程 · 视觉资产</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "content",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "1460",
+            "y": "649",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "产品 / 设计案例 → 教程 → 多平台内容",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "id": "content-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "576",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：直播背景、图文、封面、横竖视频",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "id": "content-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "664",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：统一素材与脚本，补齐配音流程",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "id": "content-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "752",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>AI 日报与知识资产</b><br><span style=\"font-size:17px\">收集 · 筛选 · 复用</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "knowledge",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "610",
+            "y": "1039",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "账号 / 开源信息 → 候选池 → 日报 / 文章",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "id": "knowledge-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "966",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：日报方案、公众号分工、知识库探索",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "id": "knowledge-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "1054",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：采集接入、翻译筛选与模板复用",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "id": "knowledge-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "90",
+            "y": "1142",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>基础设施与 AI 协作</b><br><span style=\"font-size:17px\">本机 · 部署 · 会话管理</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "请用底部分页打开专题分图。",
+          "id": "infra",
+          "geometry": {
+            "height": "102",
+            "width": "280",
+            "x": "1460",
+            "y": "1039",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "Mac + Docker + 云服务 + AI 会话",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "id": "infra-0",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "966",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有：内存调整、编辑器、会话分类与索引",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "id": "infra-1",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "1054",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续：部署分工、服务稳定与成本效率",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "id": "infra-2",
+          "geometry": {
+            "height": "72",
+            "width": "400",
+            "x": "1860",
+            "y": "1142",
+            "as": "geometry"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e-space",
+          "source": "center",
+          "target": "space",
+          "value": ""
+        },
+        {
+          "id": "e-space-0",
+          "source": "space",
+          "target": "space-0",
+          "value": ""
+        },
+        {
+          "id": "e-space-1",
+          "source": "space",
+          "target": "space-1",
+          "value": ""
+        },
+        {
+          "id": "e-space-2",
+          "source": "space",
+          "target": "space-2",
+          "value": ""
+        },
+        {
+          "id": "e-copilot",
+          "source": "center",
+          "target": "copilot",
+          "value": ""
+        },
+        {
+          "id": "e-copilot-0",
+          "source": "copilot",
+          "target": "copilot-0",
+          "value": ""
+        },
+        {
+          "id": "e-copilot-1",
+          "source": "copilot",
+          "target": "copilot-1",
+          "value": ""
+        },
+        {
+          "id": "e-copilot-2",
+          "source": "copilot",
+          "target": "copilot-2",
+          "value": ""
+        },
+        {
+          "id": "e-commerce",
+          "source": "center",
+          "target": "commerce",
+          "value": ""
+        },
+        {
+          "id": "e-commerce-0",
+          "source": "commerce",
+          "target": "commerce-0",
+          "value": ""
+        },
+        {
+          "id": "e-commerce-1",
+          "source": "commerce",
+          "target": "commerce-1",
+          "value": ""
+        },
+        {
+          "id": "e-commerce-2",
+          "source": "commerce",
+          "target": "commerce-2",
+          "value": ""
+        },
+        {
+          "id": "e-content",
+          "source": "center",
+          "target": "content",
+          "value": ""
+        },
+        {
+          "id": "e-content-0",
+          "source": "content",
+          "target": "content-0",
+          "value": ""
+        },
+        {
+          "id": "e-content-1",
+          "source": "content",
+          "target": "content-1",
+          "value": ""
+        },
+        {
+          "id": "e-content-2",
+          "source": "content",
+          "target": "content-2",
+          "value": ""
+        },
+        {
+          "id": "e-knowledge",
+          "source": "center",
+          "target": "knowledge",
+          "value": ""
+        },
+        {
+          "id": "e-knowledge-0",
+          "source": "knowledge",
+          "target": "knowledge-0",
+          "value": ""
+        },
+        {
+          "id": "e-knowledge-1",
+          "source": "knowledge",
+          "target": "knowledge-1",
+          "value": ""
+        },
+        {
+          "id": "e-knowledge-2",
+          "source": "knowledge",
+          "target": "knowledge-2",
+          "value": ""
+        },
+        {
+          "id": "e-infra",
+          "source": "center",
+          "target": "infra",
+          "value": ""
+        },
+        {
+          "id": "e-infra-0",
+          "source": "infra",
+          "target": "infra-0",
+          "value": ""
+        },
+        {
+          "id": "e-infra-1",
+          "source": "infra",
+          "target": "infra-1",
+          "value": ""
+        },
+        {
+          "id": "e-infra-2",
+          "source": "infra",
+          "target": "infra-2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-space",
+      "name": "01 空间设计与智能家居",
+      "nodes": [
+        {
+          "label": "<div style=\"line-height:1.45\"><b>空间设计与智能家居</b><br><span style=\"font-size:20px\">客户项目 · 方案交付</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "id": "topic",
+          "geometry": {
+            "height": "150",
+            "width": "330",
+            "x": "70",
+            "y": "615",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "方向与业务链",
+          "id": "g-0",
+          "geometry": {
+            "height": "88",
+            "width": "330",
+            "x": "540",
+            "y": "256",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>设计站主线</b><br><span style=\"font-size:17px\">客户项目 → 图纸底图 → 点位与场景 → 方案报价 → 固定交付版本</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "客户项目 → 图纸底图 → 点位与场景 → 方案报价 → 固定交付版本",
+          "id": "g0-n0",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "179",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>图纸与专业方案</b><br><span style=\"font-size:17px\">CAD 批量导出、布局 / 灯光 / 开关配准；家装工具补充弱电、水电专项图</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "CAD 批量导出、布局 / 灯光 / 开关配准；家装工具补充弱电、水电专项图",
+          "id": "g0-n1",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "267",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>产品资产与选型</b><br><span style=\"font-size:17px\">设备类型、具体 SKU、价格和图例分开管理；位置确认与产品核验分别记录</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "设备类型、具体 SKU、价格和图例分开管理；位置确认与产品核验分别记录",
+          "id": "g0-n2",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "355",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "已有成果 · 记录依据",
+          "id": "g-1",
+          "geometry": {
+            "height": "88",
+            "width": "330",
+            "x": "540",
+            "y": "551",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>CAD 导出与三图工作台</b><br><span style=\"font-size:17px\">会话记录：13 张图与合并 PDF；邦泰 r6 草稿支持布局 / 灯光 / 开关对照</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "会话记录：13 张图与合并 PDF；邦泰 r6 草稿支持布局 / 灯光 / 开关对照",
+          "id": "g1-n0",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "474",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>客户资料与可复用母版</b><br><span style=\"font-size:17px\">设计方案及报价 PDF V1 样稿；家装设备图例、正交线路；Blender 电竞房白模</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "设计方案及报价 PDF V1 样稿；家装设备图例、正交线路；Blender 电竞房白模",
+          "id": "g1-n1",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "562",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>近期页面优化</b><br><span style=\"font-size:17px\">计划 032 记录：产品库分页、筛选折叠、报价列宽、列表统计及共享外壳已处理</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "计划 032 记录：产品库分页、筛选折叠、报价列宽、列表统计及共享外壳已处理",
+          "id": "g1-n2",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "650",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "接续重点 · 需核实",
+          "id": "g-2",
+          "geometry": {
+            "height": "88",
+            "width": "330",
+            "x": "540",
+            "y": "846",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>交付流程收口</b><br><span style=\"font-size:17px\">核实 PDF 自动套用接入情况；区分草稿、数据库保存、固定版本与实际导出</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "核实 PDF 自动套用接入情况；区分草稿、数据库保存、固定版本与实际导出",
+          "id": "g2-n0",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "769",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>真实项目复核</b><br><span style=\"font-size:17px\">复核具体 SKU、配套范围与价格；历史邦泰草稿和报价不直接视作最新交付</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "复核具体 SKU、配套范围与价格；历史邦泰草稿和报价不直接视作最新交付",
+          "id": "g2-n1",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "857",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>设计站体验与长期维护</b><br><span style=\"font-size:17px\">继续收敛点位页说明与入口；页面简化、点位保存失败及填充图例结合当前分支核对</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "继续收敛点位页说明与入口；页面简化、点位保存失败及填充图例结合当前分支核对",
+          "id": "g2-n2",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "945",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "资料与关联项目",
+          "id": "g-3",
+          "geometry": {
+            "height": "88",
+            "width": "330",
+            "x": "540",
+            "y": "1141",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>PDF 母版与规范</b><br><span style=\"font-size:17px\">README.md · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/繁梦空间设计站/docs/templates/pdf/README.md",
+          "id": "g3-n0",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "1064",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>近期优化计划</b><br><span style=\"font-size:17px\">032-full-page-review-and-simplification.md · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/繁梦空间设计站/plans/032-full-page-review-and-simplification.md",
+          "id": "g3-n1",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "1152",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.45\"><b>家装与三维资产</b><br><span style=\"font-size:17px\">家装 2D 工具提供专项图；Blender 电竞房白模用于资产替换与展示，3D 不是当前 2D 主线前提</span></div>",
+          "sourceRefs": "[\"01a15a14-8fcb-7ec0-9961-b90e0fa40cf4\", \"01a13eec-8924-78e0-997f-2af02c68efba\", \"01a135cb-edb2-7c80-b019-f5fc83061374\"]",
+          "tooltip": "家装 2D 工具提供专项图；Blender 电竞房白模用于资产替换与展示，3D 不是当前 2D 主线前提",
+          "id": "g3-n2",
+          "geometry": {
+            "height": "78",
+            "width": "1260",
+            "x": "1010",
+            "y": "1240",
+            "as": "geometry"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-copilot",
+      "name": "02 Ai-Copilot 与模型服务",
+      "nodes": [
+        {
+          "id": "topic",
+          "label": "<div style=\"line-height:1.45\"><b>Ai-Copilot 与模型服务</b><br><span style=\"font-size:20px\">客户端 · 后台 · 发布</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "615",
+            "width": "330",
+            "height": "150"
+          }
+        },
+        {
+          "id": "g-0",
+          "label": "产品与服务边界",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g0-n0",
+          "label": "<div style=\"line-height:1.45\"><b>客户端</b><br><span style=\"font-size:17px\">Codex 安装、汉化、配置、启动；Claude 镜像安装；保持 Figma 设计风格</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "Codex 安装、汉化、配置、启动；Claude 镜像安装；保持 Figma 设计风格",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n1",
+          "label": "<div style=\"line-height:1.45\"><b>商家后台</b><br><span style=\"font-size:17px\">模型管理、渠道配置、客户账号与积分；商品、权益、兑换码及订单履约</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "模型管理、渠道配置、客户账号与积分；商品、权益、兑换码及订单履约",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n2",
+          "label": "<div style=\"line-height:1.45\"><b>模型网关</b><br><span style=\"font-size:17px\">拆分网关维护负担；New API 价格、模型映射、身份路由与订阅档位</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "拆分网关维护负担；New API 价格、模型映射、身份路由与订阅档位",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-1",
+          "label": "已有成果 · 记录依据",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g1-n0",
+          "label": "<div style=\"line-height:1.45\"><b>界面与安装改造</b><br><span style=\"font-size:17px\">客户端有多轮改版；Claude 镜像安装改动已提交隔离分支，记录中尚未发布</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "客户端有多轮改版；Claude 镜像安装改动已提交隔离分支，记录中尚未发布",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n1",
+          "label": "<div style=\"line-height:1.45\"><b>模型服务规则</b><br><span style=\"font-size:17px\">会话记录：普通用户固定 Luna，Go 按映射，Plus 的 Astra 转 Luna，Pro 等按映射</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "会话记录：普通用户固定 Luna，Go 按映射，Plus 的 Astra 转 Luna，Pro 等按映射",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n2",
+          "label": "<div style=\"line-height:1.45\"><b>后台体验与宣传站</b><br><span style=\"font-size:17px\">模型管理两步搜索侧栏、商品交付流程重构；已有公开宣传下载站及推广素材</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "模型管理两步搜索侧栏、商品交付流程重构；已有公开宣传下载站及推广素材",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-2",
+          "label": "接续重点 · 需核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g2-n0",
+          "label": "<div style=\"line-height:1.45\"><b>先统一发布事实</b><br><span style=\"font-size:17px\">各会话版本不同：0.1.126、0.1.151 等仅是历史记录；先确认主分支、构建与正式通道</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "各会话版本不同：0.1.126、0.1.151 等仅是历史记录；先确认主分支、构建与正式通道",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n1",
+          "label": "<div style=\"line-height:1.45\"><b>原生实机验收</b><br><span style=\"font-size:17px\">核对 Windows 安装 / 启动 / 升级、签名与更新源；源码推送和候选包不等同正式发布</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "核对 Windows 安装 / 启动 / 升级、签名与更新源；源码推送和候选包不等同正式发布",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n2",
+          "label": "<div style=\"line-height:1.45\"><b>业务链与错误反馈</b><br><span style=\"font-size:17px\">复核积分、兑换码发货、订阅与模型调用；跟进 account_busy、402 等历史故障是否闭环</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "复核积分、兑换码发货、订阅与模型调用；跟进 account_busy、402 等历史故障是否闭环",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-3",
+          "label": "资料与关联项目",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g3-n0",
+          "label": "<div style=\"line-height:1.45\"><b>客户端与后台工作区</b><br><span style=\"font-size:17px\">工作台；发布以各仓库当前文档和实际产物为准 · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/工作台；发布以各仓库当前文档和实际产物为准",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n1",
+          "label": "<div style=\"line-height:1.45\"><b>宣传设计与视频</b><br><span style=\"font-size:17px\">social-v2 · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/工作台/aicopilot/output/social-v2/",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n2",
+          "label": "<div style=\"line-height:1.45\"><b>连向内容获客与电商</b><br><span style=\"font-size:17px\">客户端教程和案例提供推广素材；商品与兑换码衔接销售和交付，网关承担模型服务</span></div>",
+          "sourceRefs": "[\"01a12636-d517-7460-abb1-0ad4ae9f14e8\", \"01a13333-e703-7911-b311-3be58d1f79c9\", \"01a1083b-2dba-7113-ad48-9c346e81c3ee\"]",
+          "tooltip": "客户端教程和案例提供推广素材；商品与兑换码衔接销售和交付，网关承担模型服务",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-commerce",
+      "name": "03 网盘电商与自动化",
+      "nodes": [
+        {
+          "id": "topic",
+          "label": "<div style=\"line-height:1.45\"><b>网盘电商与自动化</b><br><span style=\"font-size:20px\">货源 · 订单 · 发货</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "615",
+            "width": "330",
+            "height": "150"
+          }
+        },
+        {
+          "id": "g-0",
+          "label": "运营业务链",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g0-n0",
+          "label": "<div style=\"line-height:1.45\"><b>货源与资料</b><br><span style=\"font-size:17px\">网盘资源整理、转存、商品素材与个人资料站；保留产品来源和使用边界</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "网盘资源整理、转存、商品素材与个人资料站；保留产品来源和使用边界",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n1",
+          "label": "<div style=\"line-height:1.45\"><b>销售与履约</b><br><span style=\"font-size:17px\">闲鱼 / 闲管家虚拟货源、商品关联、卡密池、订单台账与自动发货</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "闲鱼 / 闲管家虚拟货源、商品关联、卡密池、订单台账与自动发货",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n2",
+          "label": "<div style=\"line-height:1.45\"><b>拓展方向</b><br><span style=\"font-size:17px\">千牛 / 淘宝 API、爱果自动发货对接；小红书跨境订单 API 属于单独调研方向</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "千牛 / 淘宝 API、爱果自动发货对接；小红书跨境订单 API 属于单独调研方向",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-1",
+          "label": "已有成果 · 记录依据",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g1-n0",
+          "label": "<div style=\"line-height:1.45\"><b>闲管家接口排查经验</b><br><span style=\"font-size:17px\">公网网关、路径、两套签名参数、返回字段类型与时间戳均有历史排查记录</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "公网网关、路径、两套签名参数、返回字段类型与时间戳均有历史排查记录",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n1",
+          "label": "<div style=\"line-height:1.45\"><b>WorkBuddy 运营任务</b><br><span style=\"font-size:17px\">「更新把」「闲鱼夜间订单巡检」「每日运营体检」保存清单、排查与巡检内容</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "「更新把」「闲鱼夜间订单巡检」「每日运营体检」保存清单、排查与巡检内容",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n2",
+          "label": "<div style=\"line-height:1.45\"><b>公众号内容工具链</b><br><span style=\"font-size:17px\">开源软件公众号已有 W1 候选池、W2 成稿、W3 工具链与台账、W4 合规研究任务</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "开源软件公众号已有 W1 候选池、W2 成稿、W3 工具链与台账、W4 合规研究任务",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-2",
+          "label": "接续重点 · 需核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g2-n0",
+          "label": "<div style=\"line-height:1.45\"><b>先核对当前订单</b><br><span style=\"font-size:17px\">历史欠单清单需重新对照订单与卡密记录；确认是否手工发过，避免重复补发</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "历史欠单清单需重新对照订单与卡密记录；确认是否手工发过，避免重复补发",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n1",
+          "label": "<div style=\"line-height:1.45\"><b>完成配置闭环</b><br><span style=\"font-size:17px\">核实批量商品发货设置、账号对接和订单巡检是否已收尾，不凭旧清单执行</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "核实批量商品发货设置、账号对接和订单巡检是否已收尾，不凭旧清单执行",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n2",
+          "label": "<div style=\"line-height:1.45\"><b>明确本地 / 云端分工</b><br><span style=\"font-size:17px\">网关、公众号与运营台迁移方案待核实；Mac 的素材生产、OCR 与网盘能力需保留边界</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "网关、公众号与运营台迁移方案待核实；Mac 的素材生产、OCR 与网盘能力需保留边界",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-3",
+          "label": "资料与关联项目",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g3-n0",
+          "label": "<div style=\"line-height:1.45\"><b>运营工作区</b><br><span style=\"font-size:17px\">百度网盘mcp · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "/Users/noonebook/WorkBuddy/百度网盘mcp",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n1",
+          "label": "<div style=\"line-height:1.45\"><b>历史补发清单</b><br><span style=\"font-size:17px\">待补发清单.md · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "/Users/noonebook/WorkBuddy/百度网盘mcp/out/待补发清单.md",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n2",
+          "label": "<div style=\"line-height:1.45\"><b>DeepSeek 部署讨论</b><br><span style=\"font-size:17px\">「黑豹X2 Docker环境检查」保存公网入口、图床、反向隧道和迁移边界说明</span></div>",
+          "sourceRefs": "[\"01a11bf3-7854-79a0-b991-5e1824882158\"]",
+          "tooltip": "「黑豹X2 Docker环境检查」保存公网入口、图床、反向隧道和迁移边界说明",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-content",
+      "name": "04 内容创作与获客",
+      "nodes": [
+        {
+          "id": "topic",
+          "label": "<div style=\"line-height:1.45\"><b>内容创作与获客</b><br><span style=\"font-size:20px\">案例 · 教程 · 视觉资产</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "615",
+            "width": "330",
+            "height": "150"
+          }
+        },
+        {
+          "id": "g-0",
+          "label": "内容定位与渠道",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g0-n0",
+          "label": "<div style=\"line-height:1.45\"><b>可持续题材</b><br><span style=\"font-size:17px\">Codex 安装汉化、Ai-Copilot 功能教程、智能家居设计案例与开源工具介绍</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "Codex 安装汉化、Ai-Copilot 功能教程、智能家居设计案例与开源工具介绍",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n1",
+          "label": "<div style=\"line-height:1.45\"><b>发布形态</b><br><span style=\"font-size:17px\">抖音直播 / 短视频、小红书图文、B 站教程、公众号文章与下载站 SEO</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "抖音直播 / 短视频、小红书图文、B 站教程、公众号文章与下载站 SEO",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n2",
+          "label": "<div style=\"line-height:1.45\"><b>关联业务</b><br><span style=\"font-size:17px\">把真实产品和客户设计过程转为内容，再引导到下载站、服务咨询与商品入口</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "把真实产品和客户设计过程转为内容，再引导到下载站、服务咨询与商品入口",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-1",
+          "label": "已有成果 · 记录依据",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g1-n0",
+          "label": "<div style=\"line-height:1.45\"><b>图文与封面</b><br><span style=\"font-size:17px\">Windows 安装六张图、客户端图标版图文、B 站与抖音封面、多款直播背景</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "Windows 安装六张图、客户端图标版图文、B 站与抖音封面、多款直播背景",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n1",
+          "label": "<div style=\"line-height:1.45\"><b>视频与品牌展示</b><br><span style=\"font-size:17px\">Ai-Copilot 9:16 社交展示版、横版宣传片；已有 Figma 设计与轨道动效素材</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "Ai-Copilot 9:16 社交展示版、横版宣传片；已有 Figma 设计与轨道动效素材",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n2",
+          "label": "<div style=\"line-height:1.45\"><b>可复用制作资产</b><br><span style=\"font-size:17px\">黑金透明直播 PNG、制作提示词、发布文案、电竞房白模、SVG 动画作品</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "黑金透明直播 PNG、制作提示词、发布文案、电竞房白模、SVG 动画作品",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-2",
+          "label": "接续重点 · 需核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g2-n0",
+          "label": "<div style=\"line-height:1.45\"><b>建立统一素材入口</b><br><span style=\"font-size:17px\">将脚本、封面、录屏、横竖成片与发布文案按主题关联，减少重复制作</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "将脚本、封面、录屏、横竖成片与发布文案按主题关联，减少重复制作",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n1",
+          "label": "<div style=\"line-height:1.45\"><b>语音克隆与配音</b><br><span style=\"font-size:17px\">IndexTTS 已有声音预设；历史远程 Gradio 调用不兼容，手动生成路径需再核实</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "IndexTTS 已有声音预设；历史远程 Gradio 调用不兼容，手动生成路径需再核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n2",
+          "label": "<div style=\"line-height:1.45\"><b>真实演示与版本同步</b><br><span style=\"font-size:17px\">教程画面跟随实际客户端；示意界面、模拟数据和功能边界保留清楚说明</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "教程画面跟随实际客户端；示意界面、模拟数据和功能边界保留清楚说明",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-3",
+          "label": "资料与关联项目",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g3-n0",
+          "label": "<div style=\"line-height:1.45\"><b>透明直播背景</b><br><span style=\"font-size:17px\">04-black-gold-transparent.png · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "/Users/noonebook/Documents/Codex/2026-10-20/new-chat/outputs/04-black-gold-transparent.png",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n1",
+          "label": "<div style=\"line-height:1.45\"><b>安装图文与文案</b><br><span style=\"font-size:17px\">social-install-guide-20261013 · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/工作台/output/social-install-guide-20261013/",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n2",
+          "label": "<div style=\"line-height:1.45\"><b>横竖宣传片</b><br><span style=\"font-size:17px\">横版在工作台根目录；竖版在 aicopilot/output/social-v2，成果索引保存完整路径</span></div>",
+          "sourceRefs": "[\"01a1594b-e275-7f83-9d3e-4ac6b2864602\", \"01a12f4e-5fce-7bd1-86d0-8382fab96970\", \"01a0f322-399a-7d41-a8b4-ae1840798781\"]",
+          "tooltip": "横版在工作台根目录；竖版在 aicopilot/output/social-v2，成果索引保存完整路径",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-knowledge",
+      "name": "05 AI 日报与知识资产",
+      "nodes": [
+        {
+          "id": "topic",
+          "label": "<div style=\"line-height:1.45\"><b>AI 日报与知识资产</b><br><span style=\"font-size:20px\">收集 · 筛选 · 复用</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "615",
+            "width": "330",
+            "height": "150"
+          }
+        },
+        {
+          "id": "g-0",
+          "label": "信息产品方向",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g0-n0",
+          "label": "<div style=\"line-height:1.45\"><b>AI 创作日报</b><br><span style=\"font-size:17px\">关注模型、创作工具与开源项目；从指定账号和公开资料形成候选信息</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "关注模型、创作工具与开源项目；从指定账号和公开资料形成候选信息",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n1",
+          "label": "<div style=\"line-height:1.45\"><b>开源工具公众号</b><br><span style=\"font-size:17px\">候选池 → 内容成稿 → 工具链与台账 → 合规核对，复用 WorkBuddy 已有任务</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "候选池 → 内容成稿 → 工具链与台账 → 合规核对，复用 WorkBuddy 已有任务",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n2",
+          "label": "<div style=\"line-height:1.45\"><b>个人知识资料库</b><br><span style=\"font-size:17px\">沉淀项目说明、操作流程、资料来源和工具经验，供后续设计与开发检索</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "沉淀项目说明、操作流程、资料来源和工具经验，供后续设计与开发检索",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-1",
+          "label": "已有成果 · 记录依据",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g1-n0",
+          "label": "<div style=\"line-height:1.45\"><b>日报模板与采集方案</b><br><span style=\"font-size:17px\">已讨论可复用视频模板；X 信息已有监控方案，历史会话显示自动采集尚未接入</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "已讨论可复用视频模板；X 信息已有监控方案，历史会话显示自动采集尚未接入",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n1",
+          "label": "<div style=\"line-height:1.45\"><b>知识库部署探索</b><br><span style=\"font-size:17px\">Paperclip 部署讨论延伸至 WeKnora，本机容器启动与端口调整有记录</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "Paperclip 部署讨论延伸至 WeKnora，本机容器启动与端口调整有记录",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n2",
+          "label": "<div style=\"line-height:1.45\"><b>已有会话索引</b><br><span style=\"font-size:17px\">43 条 Codex 保留会话、重要成果路径与历史待办已整理，可作为知识入口</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "43 条 Codex 保留会话、重要成果路径与历史待办已整理，可作为知识入口",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-2",
+          "label": "接续重点 · 需核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g2-n0",
+          "label": "<div style=\"line-height:1.45\"><b>采集闭环</b><br><span style=\"font-size:17px\">确认采集来源与接入方式，完成去重、翻译、筛选、来源保留和人工复核</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "确认采集来源与接入方式，完成去重、翻译、筛选、来源保留和人工复核",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n1",
+          "label": "<div style=\"line-height:1.45\"><b>模板化产出</b><br><span style=\"font-size:17px\">把日报脚本、字幕、封面与视频模板联动，再复用到公众号和短视频</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "把日报脚本、字幕、封面与视频模板联动，再复用到公众号和短视频",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n2",
+          "label": "<div style=\"line-height:1.45\"><b>知识库真正可用</b><br><span style=\"font-size:17px\">核实 WeKnora 健康、资料导入与检索质量；容器启动不代表知识库已验收</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "核实 WeKnora 健康、资料导入与检索质量；容器启动不代表知识库已验收",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-3",
+          "label": "资料与关联项目",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g3-n0",
+          "label": "<div style=\"line-height:1.45\"><b>AI 日报工作区</b><br><span style=\"font-size:17px\">ai日报 · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/ai日报",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n1",
+          "label": "<div style=\"line-height:1.45\"><b>知识库与内容联动</b><br><span style=\"font-size:17px\">知识库保存来源与经验；日报供给内容选题；内容反馈再补充候选池</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "知识库保存来源与经验；日报供给内容选题；内容反馈再补充候选池",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n2",
+          "label": "<div style=\"line-height:1.45\"><b>会话成果入口</b><br><span style=\"font-size:17px\">AI会话整理索引-2026-10-21.md · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a11ff2-b198-71f3-acc2-3482efac2cd9\", \"01a0e5ec-168e-7f01-8c2d-fb6daf69bd45\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/mac本机管理/AI会话整理索引-2026-10-21.md",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-infra",
+      "name": "06 基础设施与 AI 协作",
+      "nodes": [
+        {
+          "id": "topic",
+          "label": "<div style=\"line-height:1.45\"><b>基础设施与 AI 协作</b><br><span style=\"font-size:20px\">本机 · 部署 · 会话管理</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "615",
+            "width": "330",
+            "height": "150"
+          }
+        },
+        {
+          "id": "g-0",
+          "label": "支撑能力",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g0-n0",
+          "label": "<div style=\"line-height:1.45\"><b>本机开发环境</b><br><span style=\"font-size:17px\">Mac、Docker、项目开发服务、CAD / Blender / Screen Studio 与浏览器工具</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "Mac、Docker、项目开发服务、CAD / Blender / Screen Studio 与浏览器工具",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n1",
+          "label": "<div style=\"line-height:1.45\"><b>跨设备与部署</b><br><span style=\"font-size:17px\">本机 Mac、黑豹 X2、公网服务器与 SSH 隧道；职责和数据落点分别管理</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "本机 Mac、黑豹 X2、公网服务器与 SSH 隧道；职责和数据落点分别管理",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g0-n2",
+          "label": "<div style=\"line-height:1.45\"><b>AI 协作工具</b><br><span style=\"font-size:17px\">Codex、Claude、DeepSeek Harness、WorkBuddy；配合 RTK、ECC 与运行时诊断</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "Codex、Claude、DeepSeek Harness、WorkBuddy；配合 RTK、ECC 与运行时诊断",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-1",
+          "label": "已有成果 · 本次核实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g1-n0",
+          "label": "<div style=\"line-height:1.45\"><b>可编辑架构工具</b><br><span style=\"font-size:17px\">fmkj-architecture-editor 容器运行正常；多项目、原生 draw.io 分页与保存备份</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "fmkj-architecture-editor 容器运行正常；多项目、原生 draw.io 分页与保存备份",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n1",
+          "label": "<div style=\"line-height:1.45\"><b>会话整理</b><br><span style=\"font-size:17px\">Codex 归档 11 条、保留 43 条、改名 41 条、建立 5 类；Claude 归档 3 条、改名 2 条</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "Codex 归档 11 条、保留 43 条、改名 41 条、建立 5 类；Claude 归档 3 条、改名 2 条",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g1-n2",
+          "label": "<div style=\"line-height:1.45\"><b>资源优化记录</b><br><span style=\"font-size:17px\">Docker 内存调整、Mac 内存分析、Computer Use 诊断与 RTK / ECC 安装记录已保留</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "Docker 内存调整、Mac 内存分析、Computer Use 诊断与 RTK / ECC 安装记录已保留",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-2",
+          "label": "接续重点 · 建议",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g2-n0",
+          "label": "<div style=\"line-height:1.45\"><b>先梳理服务依赖</b><br><span style=\"font-size:17px\">识别哪些服务用于客户项目或订单履约，再决定部署迁移与资源优化</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "识别哪些服务用于客户项目或订单履约，再决定部署迁移与资源优化",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n1",
+          "label": "<div style=\"line-height:1.45\"><b>保持会话与成果一致</b><br><span style=\"font-size:17px\">按项目和具体主题命名；有改动、资产、决策或待办的会话保留；纯回显归档</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "按项目和具体主题命名；有改动、资产、决策或待办的会话保留；纯回显归档",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g2-n2",
+          "label": "<div style=\"line-height:1.45\"><b>提升维护效率</b><br><span style=\"font-size:17px\">减少重复入口和重复模型上下文；将已确认的工作流、验收与发布事实写回项目资料</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "减少重复入口和重复模型上下文；将已确认的工作流、验收与发布事实写回项目资料",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g-3",
+          "label": "资料与关联项目",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "g3-n0",
+          "label": "<div style=\"line-height:1.45\"><b>会话与成果索引</b><br><span style=\"font-size:17px\">AI会话整理索引-2026-10-21.md · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/mac本机管理/AI会话整理索引-2026-10-21.md",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n1",
+          "label": "<div style=\"line-height:1.45\"><b>编辑器数据主文件</b><br><span style=\"font-size:17px\">system-map.drawio · 完整路径见节点数据</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "/Users/noonebook/Documents/ChatGPT/繁梦空间设计站/docs/architecture-data/projects/近期工作方向总览/system-map.drawio",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "g3-n2",
+          "label": "<div style=\"line-height:1.45\"><b>工作闭环</b><br><span style=\"font-size:17px\">基础设施支撑设计交付、产品研发、内容生产与电商履约，不单独改变业务规则</span></div>",
+          "sourceRefs": "[\"01a14dc6-33ab-7f23-8b3e-efdc8e629142\", \"01a12f48-4bd2-79e0-a098-bd005b1fe26b\", \"01a15e5b-23ab-7790-ba21-76f10fe10111\"]",
+          "tooltip": "基础设施支撑设计交付、产品研发、内容生产与电商履约，不单独改变业务规则",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "eg-0",
+          "source": "topic",
+          "target": "g-0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n0",
+          "source": "g-0",
+          "target": "g0-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n1",
+          "source": "g-0",
+          "target": "g0-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g0-n2",
+          "source": "g-0",
+          "target": "g0-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-1",
+          "source": "topic",
+          "target": "g-1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n0",
+          "source": "g-1",
+          "target": "g1-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n1",
+          "source": "g-1",
+          "target": "g1-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g1-n2",
+          "source": "g-1",
+          "target": "g1-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-2",
+          "source": "topic",
+          "target": "g-2",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n0",
+          "source": "g-2",
+          "target": "g2-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n1",
+          "source": "g-2",
+          "target": "g2-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g2-n2",
+          "source": "g-2",
+          "target": "g2-n2",
+          "value": ""
+        },
+        {
+          "id": "eg-3",
+          "source": "topic",
+          "target": "g-3",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n0",
+          "source": "g-3",
+          "target": "g3-n0",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n1",
+          "source": "g-3",
+          "target": "g3-n1",
+          "value": ""
+        },
+        {
+          "id": "e-g3-n2",
+          "source": "g-3",
+          "target": "g3-n2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "connections",
+      "name": "07 工作闭环与建议顺序",
+      "nodes": [
+        {
+          "id": "loop",
+          "label": "<div style=\"line-height:1.45\"><b>复用已有积累</b><br><span style=\"font-size:20px\">交付 → 案例 → 内容\n工具 → 自动化 → 维护</span></div>",
+          "geometry": {
+            "as": "geometry",
+            "x": "70",
+            "y": "610",
+            "width": "330",
+            "height": "160"
+          }
+        },
+        {
+          "id": "cg0",
+          "label": "先确认交付事实",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "256",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "c0-0",
+          "label": "<div style=\"line-height:1.45\"><b>设计交付闭环</b><br><span style=\"font-size:17px\">图纸与点位、报价、PDF 母版连成一次真实客户交付；保留固定版本与验证证据</span></div>",
+          "tooltip": "图纸与点位、报价、PDF 母版连成一次真实客户交付；保留固定版本与验证证据",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "179",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c0-1",
+          "label": "<div style=\"line-height:1.45\"><b>客户端发布闭环</b><br><span style=\"font-size:17px\">先确认当前版本，再核对原生验收、下载包和更新源，不沿用旧会话的发布结论</span></div>",
+          "tooltip": "先确认当前版本，再核对原生验收、下载包和更新源，不沿用旧会话的发布结论",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "267",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c0-2",
+          "label": "<div style=\"line-height:1.45\"><b>订单履约闭环</b><br><span style=\"font-size:17px\">核实当前订单及卡密记录，再处理欠单与批量配置；不直接执行历史清单</span></div>",
+          "tooltip": "核实当前订单及卡密记录，再处理欠单与批量配置；不直接执行历史清单",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "355",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "cg1",
+          "label": "把成果变成内容",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "551",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "c1-0",
+          "label": "<div style=\"line-height:1.45\"><b>真实项目 → 教程与案例</b><br><span style=\"font-size:17px\">用设计站、客户端的真实流程生成录屏、图文和案例，减少凭空重复设计</span></div>",
+          "tooltip": "用设计站、客户端的真实流程生成录屏、图文和案例，减少凭空重复设计",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "474",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c1-1",
+          "label": "<div style=\"line-height:1.45\"><b>统一视觉与声音</b><br><span style=\"font-size:17px\">现有 Figma、封面、直播背景、横竖视频和声音预设组合成模板</span></div>",
+          "tooltip": "现有 Figma、封面、直播背景、横竖视频和声音预设组合成模板",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "562",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c1-2",
+          "label": "<div style=\"line-height:1.45\"><b>内容 → 业务入口</b><br><span style=\"font-size:17px\">教程链接下载站，设计案例链接服务介绍；选题和素材保存在统一索引</span></div>",
+          "tooltip": "教程链接下载站，设计案例链接服务介绍；选题和素材保存在统一索引",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "650",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "cg2",
+          "label": "让信息与工具复用",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "846",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "c2-0",
+          "label": "<div style=\"line-height:1.45\"><b>采集 → 候选池 → 日报</b><br><span style=\"font-size:17px\">先补来源、去重和人工筛选，再接翻译、视频模板与公众号成稿</span></div>",
+          "tooltip": "先补来源、去重和人工筛选，再接翻译、视频模板与公众号成稿",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "769",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c2-1",
+          "label": "<div style=\"line-height:1.45\"><b>案例与经验 → 知识库</b><br><span style=\"font-size:17px\">保存工作流、图纸规范、安装发布经验及故障原因；检索时带来源</span></div>",
+          "tooltip": "保存工作流、图纸规范、安装发布经验及故障原因；检索时带来源",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "857",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c2-2",
+          "label": "<div style=\"line-height:1.45\"><b>图纸与代码 → 架构图</b><br><span style=\"font-size:17px\">用当前编辑器维护方向与项目关系；图中状态变化时同步证据和日期</span></div>",
+          "tooltip": "用当前编辑器维护方向与项目关系；图中状态变化时同步证据和日期",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "945",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "cg3",
+          "label": "保持基础设施稳定",
+          "geometry": {
+            "as": "geometry",
+            "x": "540",
+            "y": "1141",
+            "width": "330",
+            "height": "88"
+          }
+        },
+        {
+          "id": "c3-0",
+          "label": "<div style=\"line-height:1.45\"><b>服务职责先清楚</b><br><span style=\"font-size:17px\">本机生产、X2 运算和云端入口分别梳理；迁移前确认数据与服务依赖</span></div>",
+          "tooltip": "本机生产、X2 运算和云端入口分别梳理；迁移前确认数据与服务依赖",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1064",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c3-1",
+          "label": "<div style=\"line-height:1.45\"><b>会话按主题持续整理</b><br><span style=\"font-size:17px\">保留成果、决策和待办；结束的纯测试归档；不按「你好」等标题直接删除</span></div>",
+          "tooltip": "保留成果、决策和待办；结束的纯测试归档；不按「你好」等标题直接删除",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1152",
+            "width": "1260",
+            "height": "78"
+          }
+        },
+        {
+          "id": "c3-2",
+          "label": "<div style=\"line-height:1.45\"><b>下一次复盘</b><br><span style=\"font-size:17px\">优先回看待核实节点：已完成就补证据，未完成再选一个边界明确的事项推进</span></div>",
+          "tooltip": "优先回看待核实节点：已完成就补证据，未完成再选一个边界明确的事项推进",
+          "geometry": {
+            "as": "geometry",
+            "x": "1010",
+            "y": "1240",
+            "width": "1260",
+            "height": "78"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "ce0",
+          "source": "loop",
+          "target": "cg0",
+          "value": ""
+        },
+        {
+          "id": "ce-c0-0",
+          "source": "cg0",
+          "target": "c0-0",
+          "value": ""
+        },
+        {
+          "id": "ce-c0-1",
+          "source": "cg0",
+          "target": "c0-1",
+          "value": ""
+        },
+        {
+          "id": "ce-c0-2",
+          "source": "cg0",
+          "target": "c0-2",
+          "value": ""
+        },
+        {
+          "id": "ce1",
+          "source": "loop",
+          "target": "cg1",
+          "value": ""
+        },
+        {
+          "id": "ce-c1-0",
+          "source": "cg1",
+          "target": "c1-0",
+          "value": ""
+        },
+        {
+          "id": "ce-c1-1",
+          "source": "cg1",
+          "target": "c1-1",
+          "value": ""
+        },
+        {
+          "id": "ce-c1-2",
+          "source": "cg1",
+          "target": "c1-2",
+          "value": ""
+        },
+        {
+          "id": "ce2",
+          "source": "loop",
+          "target": "cg2",
+          "value": ""
+        },
+        {
+          "id": "ce-c2-0",
+          "source": "cg2",
+          "target": "c2-0",
+          "value": ""
+        },
+        {
+          "id": "ce-c2-1",
+          "source": "cg2",
+          "target": "c2-1",
+          "value": ""
+        },
+        {
+          "id": "ce-c2-2",
+          "source": "cg2",
+          "target": "c2-2",
+          "value": ""
+        },
+        {
+          "id": "ce3",
+          "source": "loop",
+          "target": "cg3",
+          "value": ""
+        },
+        {
+          "id": "ce-c3-0",
+          "source": "cg3",
+          "target": "c3-0",
+          "value": ""
+        },
+        {
+          "id": "ce-c3-1",
+          "source": "cg3",
+          "target": "c3-1",
+          "value": ""
+        },
+        {
+          "id": "ce-c3-2",
+          "source": "cg3",
+          "target": "c3-2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "detail-project-logic",
+      "name": "08 项目整体逻辑开发图",
+      "nodes": [
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">A 业务主链</div><div style=\"font-size:17px;line-height:1.45;margin-top:6px\">客户从需求到交付 当前代码已跑通</div>",
+          "id": "stage-A",
+          "geometry": {
+            "x": "70",
+            "y": "230",
+            "width": "300",
+            "height": "210",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">收到需求 · 建项目</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">客户与项目基本信息；property_type 决定平层 / 别墅楼层模板</div>",
+          "id": "BIZ-REQ",
+          "moduleId": "BIZ-REQ",
+          "title": "收到需求 · 建项目",
+          "description": "客户与项目基本信息；property_type 决定平层 / 别墅楼层模板",
+          "status": "current-workflow",
+          "code": "app/projects",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 029",
+          "tooltip": "客户与项目基本信息；property_type 决定平层 / 别墅楼层模板",
+          "geometry": {
+            "x": "430",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">图纸与净底</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">DWG 逐页对照 → 人工确认方案 → 净底长边 3000px、四周约 3% 留白</div>",
+          "id": "BIZ-DRAWING",
+          "moduleId": "BIZ-DRAWING",
+          "title": "图纸与净底",
+          "description": "DWG 逐页对照 → 人工确认方案 → 净底长边 3000px、四周约 3% 留白",
+          "status": "current-workflow",
+          "code": "scripts/export-cad-review.mjs;scripts/prepare-cad-floorplan.mjs",
+          "rules": "ADR 0008",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 022—025",
+          "tooltip": "DWG 逐页对照 → 人工确认方案 → 净底长边 3000px、四周约 3% 留白",
+          "geometry": {
+            "x": "708",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">点位设计与选型</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">楼层 / 点位 / 场景；设备类型 → 关键参数 → 具体 SKU；位置确认与选型核验分开</div>",
+          "id": "BIZ-POINT",
+          "moduleId": "BIZ-POINT",
+          "title": "点位设计与选型",
+          "description": "楼层 / 点位 / 场景；设备类型 → 关键参数 → 具体 SKU；位置确认与选型核验分开",
+          "status": "current-workflow",
+          "code": "components/projects/point-map-workbench.tsx;lib/point-map-service.ts",
+          "rules": "ADR 0003 / 0007",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 016—020、024",
+          "tooltip": "楼层 / 点位 / 场景；设备类型 → 关键参数 → 具体 SKU；位置确认与选型核验分开",
+          "geometry": {
+            "x": "986",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">方案报价</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">报价单独立保存；默认型号可作明确标注的未核验报价；项目换型不写全局</div>",
+          "id": "BIZ-QUOTE",
+          "moduleId": "BIZ-QUOTE",
+          "title": "方案报价",
+          "description": "报价单独立保存；默认型号可作明确标注的未核验报价；项目换型不写全局",
+          "status": "current-workflow",
+          "code": "components/quotes/quote-builder.tsx;lib/quote-save.ts",
+          "rules": "ADR 0006",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 021、026",
+          "tooltip": "报价单独立保存；默认型号可作明确标注的未核验报价；项目换型不写全局",
+          "geometry": {
+            "x": "1264",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">点位草稿保存</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">云端 JSONB + revision 乐观锁是唯一权威；本机 IndexedDB 只是副本</div>",
+          "id": "BIZ-DRAFT",
+          "moduleId": "BIZ-DRAFT",
+          "title": "点位草稿保存",
+          "description": "云端 JSONB + revision 乐观锁是唯一权威；本机 IndexedDB 只是副本",
+          "status": "current-workflow",
+          "code": "lib/point-map-design.ts",
+          "rules": "ADR 0001 / 0007",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 030.1 / 030.2 已实现",
+          "tooltip": "云端 JSONB + revision 乐观锁是唯一权威；本机 IndexedDB 只是副本",
+          "geometry": {
+            "x": "1542",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">固定交付版本</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">不可变 V 版本 = 点位 + 净底 + 场景 + 报价 + 商品图字节；按内容去重</div>",
+          "id": "BIZ-DELIVERY",
+          "moduleId": "BIZ-DELIVERY",
+          "title": "固定交付版本",
+          "description": "不可变 V 版本 = 点位 + 净底 + 场景 + 报价 + 商品图字节；按内容去重",
+          "status": "current-workflow",
+          "code": "lib/project-delivery-service.ts",
+          "rules": "ADR 0005",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "",
+          "tooltip": "不可变 V 版本 = 点位 + 净底 + 场景 + 报价 + 商品图字节；按内容去重",
+          "geometry": {
+            "x": "1820",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">导出与客户交付</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">客户 PNG、报价 PDF、方案 PDF、CSV、完整 JSON；草稿检查图不作客户出口</div>",
+          "id": "BIZ-EXPORT",
+          "moduleId": "BIZ-EXPORT",
+          "title": "导出与客户交付",
+          "description": "客户 PNG、报价 PDF、方案 PDF、CSV、完整 JSON；草稿检查图不作客户出口",
+          "status": "current-workflow",
+          "code": "lib/point-map-print.ts;lib/project-delivery-client.ts",
+          "rules": "ADR 0007",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "",
+          "tooltip": "客户 PNG、报价 PDF、方案 PDF、CSV、完整 JSON；草稿检查图不作客户出口",
+          "geometry": {
+            "x": "2098",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">备份与留档</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">设备备份 = pg_dump + 上传卷 + metadata；恢复需预检，当前单实例</div>",
+          "id": "BIZ-BACKUP",
+          "moduleId": "BIZ-BACKUP",
+          "title": "备份与留档",
+          "description": "设备备份 = pg_dump + 上传卷 + metadata；恢复需预检，当前单实例",
+          "status": "current-workflow",
+          "code": "scripts/deploy/backup-local.mjs",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Plan 033：真机已完成备份与真实恢复",
+          "tooltip": "设备备份 = pg_dump + 上传卷 + metadata；恢复需预检，当前单实例",
+          "geometry": {
+            "x": "2376",
+            "y": "270",
+            "width": "248",
+            "height": "130",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">B 系统分层</div><div style=\"font-size:17px;line-height:1.45;margin-top:6px\">一套业务核心 两种部署形态</div>",
+          "id": "stage-B",
+          "geometry": {
+            "x": "70",
+            "y": "470",
+            "width": "300",
+            "height": "400",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">页面与组件层 · app/ + components/</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">项目工作台、点位编辑器、报价页、客户交付页；共享外壳与侧边栏导航</div>",
+          "id": "SYS-UI",
+          "moduleId": "SYS-UI",
+          "title": "页面与组件层 · app/ + components/",
+          "description": "项目工作台、点位编辑器、报价页、客户交付页；共享外壳与侧边栏导航",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "项目工作台、点位编辑器、报价页、客户交付页；共享外壳与侧边栏导航",
+          "tooltip": "项目工作台、点位编辑器、报价页、客户交付页；共享外壳与侧边栏导航",
+          "geometry": {
+            "x": "430",
+            "y": "490",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">接口与鉴权层 · app/api/ + middleware.ts</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">JWT 会话与服务端权限；除 /api/auth 外都要守卫；令牌只在服务端之间传递</div>",
+          "id": "SYS-API",
+          "moduleId": "SYS-API",
+          "title": "接口与鉴权层 · app/api/ + middleware.ts",
+          "description": "JWT 会话与服务端权限；除 /api/auth 外都要守卫；令牌只在服务端之间传递",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "JWT 会话与服务端权限；除 /api/auth 外都要守卫；令牌只在服务端之间传递",
+          "tooltip": "JWT 会话与服务端权限；除 /api/auth 外都要守卫；令牌只在服务端之间传递",
+          "geometry": {
+            "x": "430",
+            "y": "564",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">业务规则层 · lib/</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">点位合同、报价保存与联动删除、交付快照、账号套餐与权限策略</div>",
+          "id": "SYS-CORE",
+          "moduleId": "SYS-CORE",
+          "title": "业务规则层 · lib/",
+          "description": "点位合同、报价保存与联动删除、交付快照、账号套餐与权限策略",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "点位合同、报价保存与联动删除、交付快照、账号套餐与权限策略",
+          "tooltip": "点位合同、报价保存与联动删除、交付快照、账号套餐与权限策略",
+          "geometry": {
+            "x": "430",
+            "y": "638",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">数据与文件层</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">Postgres：项目 / 点位 JSONB 草稿 + revision / 报价 / 固定交付 / 产品；上传附件卷；本机 IndexedDB 只作副本</div>",
+          "id": "SYS-DATA",
+          "moduleId": "SYS-DATA",
+          "title": "数据与文件层",
+          "description": "Postgres：项目 / 点位 JSONB 草稿 + revision / 报价 / 固定交付 / 产品；上传附件卷；本机 IndexedDB 只作副本",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "Postgres：项目 / 点位 JSONB 草稿 + revision / 报价 / 固定交付 / 产品；上传附件卷；本机 IndexedDB 只作副本",
+          "tooltip": "Postgres：项目 / 点位 JSONB 草稿 + revision / 报价 / 固定交付 / 产品；上传附件卷；本机 IndexedDB 只作副本",
+          "geometry": {
+            "x": "430",
+            "y": "712",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">运行形态 · 一套业务核心两种部署</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">本地设备版（Docker + 本机 Postgres，离线可用，已真机验证）/ 线上托管（待企业隔离与文件越权验收）</div>",
+          "id": "SYS-RUN",
+          "moduleId": "SYS-RUN",
+          "title": "运行形态 · 一套业务核心两种部署",
+          "description": "本地设备版（Docker + 本机 Postgres，离线可用，已真机验证）/ 线上托管（待企业隔离与文件越权验收）",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "本地设备版（Docker + 本机 Postgres，离线可用，已真机验证）/ 线上托管（待企业隔离与文件越权验收）",
+          "tooltip": "本地设备版（Docker + 本机 Postgres，离线可用，已真机验证）/ 线上托管（待企业隔离与文件越权验收）",
+          "geometry": {
+            "x": "430",
+            "y": "786",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">C 支撑与运维</div><div style=\"font-size:17px;line-height:1.45;margin-top:6px\">跨业务复用 不改变业务规则</div>",
+          "id": "stage-C",
+          "geometry": {
+            "x": "70",
+            "y": "890",
+            "width": "300",
+            "height": "470",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">账号与权限</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">个人免费 / 个人升级版 / 企业主 / 企业子 + 超级管理员；套餐限制与权限点分开判定</div>",
+          "id": "SUP-ACCOUNT",
+          "moduleId": "SUP-ACCOUNT",
+          "title": "账号与权限",
+          "description": "个人免费 / 个人升级版 / 企业主 / 企业子 + 超级管理员；套餐限制与权限点分开判定",
+          "status": "current-workflow",
+          "code": "lib/permission-policy.ts;lib/account-plan-policy.ts",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "个人免费 / 个人升级版 / 企业主 / 企业子 + 超级管理员；套餐限制与权限点分开判定",
+          "tooltip": "个人免费 / 个人升级版 / 企业主 / 企业子 + 超级管理员；套餐限制与权限点分开判定",
+          "geometry": {
+            "x": "430",
+            "y": "910",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">产品库与选型核验</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">大类 / 设备类型 / 系列 / SKU / 配套用料分开；未核验报价逐行标识</div>",
+          "id": "SUP-CATALOG",
+          "moduleId": "SUP-CATALOG",
+          "title": "产品库与选型核验",
+          "description": "大类 / 设备类型 / 系列 / SKU / 配套用料分开；未核验报价逐行标识",
+          "status": "current-workflow",
+          "code": "lib/product-admin-service.ts",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "大类 / 设备类型 / 系列 / SKU / 配套用料分开；未核验报价逐行标识",
+          "tooltip": "大类 / 设备类型 / 系列 / SKU / 配套用料分开；未核验报价逐行标识",
+          "geometry": {
+            "x": "430",
+            "y": "984",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">图纸与 CAD 桥</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">逐页对照、净底提取、同坐标参考图、点位 CAD 往返；托管接口 /v1/exports、/v1/cad-imports</div>",
+          "id": "SUP-CAD",
+          "moduleId": "SUP-CAD",
+          "title": "图纸与 CAD 桥",
+          "description": "逐页对照、净底提取、同坐标参考图、点位 CAD 往返；托管接口 /v1/exports、/v1/cad-imports",
+          "status": "current-workflow",
+          "code": "scripts/export-cad-review.mjs;lib/point-map-cad-contract.ts",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "逐页对照、净底提取、同坐标参考图、点位 CAD 往返；托管接口 /v1/exports、/v1/cad-imports",
+          "tooltip": "逐页对照、净底提取、同坐标参考图、点位 CAD 往返；托管接口 /v1/exports、/v1/cad-imports",
+          "geometry": {
+            "x": "430",
+            "y": "1058",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">架构图与 Agent 协作</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">docs/architecture/system-map.drawio 14 页 + registry；pnpm arch:read / --diff 回读</div>",
+          "id": "SUP-ARCH",
+          "moduleId": "SUP-ARCH",
+          "title": "架构图与 Agent 协作",
+          "description": "docs/architecture/system-map.drawio 14 页 + registry；pnpm arch:read / --diff 回读",
+          "status": "current-workflow",
+          "code": "docs/architecture/system-map.drawio",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "docs/architecture/system-map.drawio 14 页 + registry；pnpm arch:read / --diff 回读",
+          "tooltip": "docs/architecture/system-map.drawio 14 页 + registry；pnpm arch:read / --diff 回读",
+          "geometry": {
+            "x": "430",
+            "y": "1132",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">备份与恢复</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">pg_dump + 上传卷 + metadata.json；当前单实例，多实例选择与恢复授权未实现</div>",
+          "id": "SUP-BACKUP",
+          "moduleId": "SUP-BACKUP",
+          "title": "备份与恢复",
+          "description": "pg_dump + 上传卷 + metadata.json；当前单实例，多实例选择与恢复授权未实现",
+          "status": "current-workflow",
+          "code": "scripts/deploy/backup-local.mjs",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "pg_dump + 上传卷 + metadata.json；当前单实例，多实例选择与恢复授权未实现",
+          "tooltip": "pg_dump + 上传卷 + metadata.json；当前单实例，多实例选择与恢复授权未实现",
+          "geometry": {
+            "x": "430",
+            "y": "1206",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">软件更新与发行</div><div style=\"font-size:15px;line-height:1.45;margin-top:6px\">update-local.mjs 状态机已真机验证；可信版本清单未实现；开源脱敏导出机制已演练</div>",
+          "id": "SUP-RELEASE",
+          "moduleId": "SUP-RELEASE",
+          "title": "软件更新与发行",
+          "description": "update-local.mjs 状态机已真机验证；可信版本清单未实现；开源脱敏导出机制已演练",
+          "status": "current-workflow",
+          "code": "scripts/deploy/update-local.mjs;scripts/open-source-export.mjs",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "update-local.mjs 状态机已真机验证；可信版本清单未实现；开源脱敏导出机制已演练",
+          "tooltip": "update-local.mjs 状态机已真机验证；可信版本清单未实现；开源脱敏导出机制已演练",
+          "geometry": {
+            "x": "430",
+            "y": "1280",
+            "width": "2200",
+            "height": "64",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">D 开发状态</div><div style=\"font-size:17px;line-height:1.45;margin-top:6px\">按计划表与架构图 2026-10-21</div>",
+          "id": "stage-D",
+          "geometry": {
+            "x": "70",
+            "y": "1390",
+            "width": "300",
+            "height": "560",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">D1 已完成 · 有代码与验收记录</div>",
+          "id": "stage-D1",
+          "geometry": {
+            "x": "430",
+            "y": "1410",
+            "width": "706",
+            "height": "56",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">账号 / 权限 / 套餐与工作台</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 001—015；隔离环境验收通过</div>",
+          "id": "DONE-ACCOUNT",
+          "moduleId": "DONE-ACCOUNT",
+          "title": "账号 / 权限 / 套餐与工作台",
+          "description": "计划 001—015；隔离环境验收通过",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 001—015；隔离环境验收通过",
+          "tooltip": "计划 001—015；隔离环境验收通过",
+          "geometry": {
+            "x": "430",
+            "y": "1480",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">点位图工作流、保存与固定交付</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 016—021、030.1 / 030.2</div>",
+          "id": "DONE-POINT",
+          "moduleId": "DONE-POINT",
+          "title": "点位图工作流、保存与固定交付",
+          "description": "计划 016—021、030.1 / 030.2",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 016—021、030.1 / 030.2",
+          "tooltip": "计划 016—021、030.1 / 030.2",
+          "geometry": {
+            "x": "430",
+            "y": "1558",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">DWG 逐页对照、尺寸与留白统一</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 022—025；ADR 0008</div>",
+          "id": "DONE-DRAWING",
+          "moduleId": "DONE-DRAWING",
+          "title": "DWG 逐页对照、尺寸与留白统一",
+          "description": "计划 022—025；ADR 0008",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 022—025；ADR 0008",
+          "tooltip": "计划 022—025；ADR 0008",
+          "geometry": {
+            "x": "430",
+            "y": "1636",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">三图对照与本机图片存储</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 027；IndexedDB 迁移与邦泰 r6 验收</div>",
+          "id": "DONE-STORE",
+          "moduleId": "DONE-STORE",
+          "title": "三图对照与本机图片存储",
+          "description": "计划 027；IndexedDB 迁移与邦泰 r6 验收",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 027；IndexedDB 迁移与邦泰 r6 验收",
+          "tooltip": "计划 027；IndexedDB 迁移与邦泰 r6 验收",
+          "geometry": {
+            "x": "430",
+            "y": "1714",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">导航收口与全站页面审查</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 029、032</div>",
+          "id": "DONE-NAV",
+          "moduleId": "DONE-NAV",
+          "title": "导航收口与全站页面审查",
+          "description": "计划 029、032",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 029、032",
+          "tooltip": "计划 029、032",
+          "geometry": {
+            "x": "430",
+            "y": "1792",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">CAD 导出接口 + 导入生成点位</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">计划 031 标 DONE；客户自部署联调仍需确认</div>",
+          "id": "DONE-CAD",
+          "moduleId": "DONE-CAD",
+          "title": "CAD 导出接口 + 导入生成点位",
+          "description": "计划 031 标 DONE；客户自部署联调仍需确认",
+          "status": "current-workflow",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "计划 031 标 DONE；客户自部署联调仍需确认",
+          "tooltip": "计划 031 标 DONE；客户自部署联调仍需确认",
+          "geometry": {
+            "x": "430",
+            "y": "1870",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">D2 进行中 · 已接通待核验收口</div>",
+          "id": "stage-D2",
+          "geometry": {
+            "x": "1177",
+            "y": "1410",
+            "width": "706",
+            "height": "56",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">020 产品规格与选型映射</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">实现与隔离验收已完成；正式产品资料与价格仍待逐条核验</div>",
+          "id": "WIP-CATALOG",
+          "moduleId": "WIP-CATALOG",
+          "title": "020 产品规格与选型映射",
+          "description": "实现与隔离验收已完成；正式产品资料与价格仍待逐条核验",
+          "status": "in-progress",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "实现与隔离验收已完成；正式产品资料与价格仍待逐条核验",
+          "tooltip": "实现与隔离验收已完成；正式产品资料与价格仍待逐条核验",
+          "geometry": {
+            "x": "1177",
+            "y": "1480",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">030.3 / 030.4 保存冲突与多端策略</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">单人单机可缓；属 P2 待定</div>",
+          "id": "WIP-DRAFT",
+          "moduleId": "WIP-DRAFT",
+          "title": "030.3 / 030.4 保存冲突与多端策略",
+          "description": "单人单机可缓；属 P2 待定",
+          "status": "in-progress",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "单人单机可缓；属 P2 待定",
+          "tooltip": "单人单机可缓；属 P2 待定",
+          "geometry": {
+            "x": "1177",
+            "y": "1558",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">033 本地设备版更新与运营方接口</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">真机已验证首次部署、备份恢复与 v0.1.0→v0.1.1 更新</div>",
+          "id": "WIP-APPLIANCE",
+          "moduleId": "WIP-APPLIANCE",
+          "title": "033 本地设备版更新与运营方接口",
+          "description": "真机已验证首次部署、备份恢复与 v0.1.0→v0.1.1 更新",
+          "status": "in-progress",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "真机已验证首次部署、备份恢复与 v0.1.0→v0.1.1 更新",
+          "tooltip": "真机已验证首次部署、备份恢复与 v0.1.0→v0.1.1 更新",
+          "geometry": {
+            "x": "1177",
+            "y": "1636",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">033 上游接口与文件存储真机验收</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">管理端可见性未做；业务数据不经过上游请求</div>",
+          "id": "WIP-UPSTREAM",
+          "moduleId": "WIP-UPSTREAM",
+          "title": "033 上游接口与文件存储真机验收",
+          "description": "管理端可见性未做；业务数据不经过上游请求",
+          "status": "in-progress",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "管理端可见性未做；业务数据不经过上游请求",
+          "tooltip": "管理端可见性未做；业务数据不经过上游请求",
+          "geometry": {
+            "x": "1177",
+            "y": "1714",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">D3 待开发 / 规划 · 图上仍是虚线</div>",
+          "id": "stage-D3",
+          "geometry": {
+            "x": "1924",
+            "y": "1410",
+            "width": "706",
+            "height": "56",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">028 线上托管版开放</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">企业数据隔离与文件存储越权验收通过后才能开放；尚未上线</div>",
+          "id": "PLAN-HOSTED",
+          "moduleId": "PLAN-HOSTED",
+          "title": "028 线上托管版开放",
+          "description": "企业数据隔离与文件存储越权验收通过后才能开放；尚未上线",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "企业数据隔离与文件存储越权验收通过后才能开放；尚未上线",
+          "tooltip": "企业数据隔离与文件存储越权验收通过后才能开放；尚未上线",
+          "geometry": {
+            "x": "1924",
+            "y": "1480",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">官方产品资料同步</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">只有接口合同（plans/033 033.3），尚未实现</div>",
+          "id": "PLAN-SYNC",
+          "moduleId": "PLAN-SYNC",
+          "title": "官方产品资料同步",
+          "description": "只有接口合同（plans/033 033.3），尚未实现",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "只有接口合同（plans/033 033.3），尚未实现",
+          "tooltip": "只有接口合同（plans/033 033.3），尚未实现",
+          "geometry": {
+            "x": "1924",
+            "y": "1558",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">034 实心图标 v2</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">原型方向已确认；44 个点位图标待生成；v1 资产不删</div>",
+          "id": "PLAN-ICON",
+          "moduleId": "PLAN-ICON",
+          "title": "034 实心图标 v2",
+          "description": "原型方向已确认；44 个点位图标待生成；v1 资产不删",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "原型方向已确认；44 个点位图标待生成；v1 资产不删",
+          "tooltip": "原型方向已确认；44 个点位图标待生成；v1 资产不删",
+          "geometry": {
+            "x": "1924",
+            "y": "1636",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">CAD 服务上传 / 户型图带标记 / 自动布点报价</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">规划项；不新增第二套采购计算或导出来源</div>",
+          "id": "PLAN-AUTO",
+          "moduleId": "PLAN-AUTO",
+          "title": "CAD 服务上传 / 户型图带标记 / 自动布点报价",
+          "description": "规划项；不新增第二套采购计算或导出来源",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "规划项；不新增第二套采购计算或导出来源",
+          "tooltip": "规划项；不新增第二套采购计算或导出来源",
+          "geometry": {
+            "x": "1924",
+            "y": "1714",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">可信版本清单、备份多实例与恢复授权</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">发布渠道与授权环节未实现，当前靠人工确认</div>",
+          "id": "PLAN-RELEASE",
+          "moduleId": "PLAN-RELEASE",
+          "title": "可信版本清单、备份多实例与恢复授权",
+          "description": "发布渠道与授权环节未实现，当前靠人工确认",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "发布渠道与授权环节未实现，当前靠人工确认",
+          "tooltip": "发布渠道与授权环节未实现，当前靠人工确认",
+          "geometry": {
+            "x": "1924",
+            "y": "1792",
+            "width": "706",
+            "height": "68",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">E 建议开发顺序</div><div style=\"font-size:17px;line-height:1.45;margin-top:6px\">可拖动重排 顺序只是建议</div>",
+          "id": "stage-E",
+          "geometry": {
+            "x": "70",
+            "y": "1990",
+            "width": "300",
+            "height": "160",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">1 交付可信度</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">020 剩余产品资料与价格逐条核验</div>",
+          "id": "STEP-1",
+          "moduleId": "STEP-1",
+          "title": "1 交付可信度",
+          "description": "020 剩余产品资料与价格逐条核验",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "020 剩余产品资料与价格逐条核验",
+          "tooltip": "020 剩余产品资料与价格逐条核验",
+          "geometry": {
+            "x": "430",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">2 开放前置</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">028 线上托管企业隔离 + 文件存储越权验收</div>",
+          "id": "STEP-2",
+          "moduleId": "STEP-2",
+          "title": "2 开放前置",
+          "description": "028 线上托管企业隔离 + 文件存储越权验收",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "028 线上托管企业隔离 + 文件存储越权验收",
+          "tooltip": "028 线上托管企业隔离 + 文件存储越权验收",
+          "geometry": {
+            "x": "800",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">3 商业化接口</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">官方产品资料同步（028 / 033.3）</div>",
+          "id": "STEP-3",
+          "moduleId": "STEP-3",
+          "title": "3 商业化接口",
+          "description": "官方产品资料同步（028 / 033.3）",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "官方产品资料同步（028 / 033.3）",
+          "tooltip": "官方产品资料同步（028 / 033.3）",
+          "geometry": {
+            "x": "1170",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">4 交付观感</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">034 图标 v2（44 个，可与上面并行）</div>",
+          "id": "STEP-4",
+          "moduleId": "STEP-4",
+          "title": "4 交付观感",
+          "description": "034 图标 v2（44 个，可与上面并行）",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "034 图标 v2（44 个，可与上面并行）",
+          "tooltip": "034 图标 v2（44 个，可与上面并行）",
+          "geometry": {
+            "x": "1540",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">5 保存收口</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">030.3 / 030.4（P2，单人单机可缓）</div>",
+          "id": "STEP-5",
+          "moduleId": "STEP-5",
+          "title": "5 保存收口",
+          "description": "030.3 / 030.4（P2，单人单机可缓）",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "030.3 / 030.4（P2，单人单机可缓）",
+          "tooltip": "030.3 / 030.4（P2，单人单机可缓）",
+          "geometry": {
+            "x": "1910",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        },
+        {
+          "label": "<div style=\"line-height:1.4;font-weight:600\">6 运营成熟</div><div style=\"font-size:14px;line-height:1.45;margin-top:6px\">可信版本清单、备份多实例与恢复授权</div>",
+          "id": "STEP-6",
+          "moduleId": "STEP-6",
+          "title": "6 运营成熟",
+          "description": "可信版本清单、备份多实例与恢复授权",
+          "status": "planned",
+          "code": "",
+          "rules": "",
+          "evidenceAsOf": "2026-10-21",
+          "notes": "可信版本清单、备份多实例与恢复授权",
+          "tooltip": "可信版本清单、备份多实例与恢复授权",
+          "geometry": {
+            "x": "2280",
+            "y": "2015",
+            "width": "346",
+            "height": "110",
+            "as": "geometry"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-0",
+          "source": "BIZ-REQ",
+          "target": "BIZ-DRAWING",
+          "value": ""
+        },
+        {
+          "id": "edge-1",
+          "source": "BIZ-DRAWING",
+          "target": "BIZ-POINT",
+          "value": ""
+        },
+        {
+          "id": "edge-2",
+          "source": "BIZ-POINT",
+          "target": "BIZ-QUOTE",
+          "value": ""
+        },
+        {
+          "id": "edge-3",
+          "source": "BIZ-QUOTE",
+          "target": "BIZ-DRAFT",
+          "value": ""
+        },
+        {
+          "id": "edge-4",
+          "source": "BIZ-DRAFT",
+          "target": "BIZ-DELIVERY",
+          "value": ""
+        },
+        {
+          "id": "edge-5",
+          "source": "BIZ-DELIVERY",
+          "target": "BIZ-EXPORT",
+          "value": ""
+        },
+        {
+          "id": "edge-6",
+          "source": "BIZ-EXPORT",
+          "target": "BIZ-BACKUP",
+          "value": ""
+        },
+        {
+          "id": "edge-7",
+          "source": "STEP-1",
+          "target": "STEP-2",
+          "value": ""
+        },
+        {
+          "id": "edge-8",
+          "source": "STEP-2",
+          "target": "STEP-3",
+          "value": ""
+        },
+        {
+          "id": "edge-9",
+          "source": "STEP-3",
+          "target": "STEP-4",
+          "value": ""
+        },
+        {
+          "id": "edge-10",
+          "source": "STEP-4",
+          "target": "STEP-5",
+          "value": ""
+        },
+        {
+          "id": "edge-11",
+          "source": "STEP-5",
+          "target": "STEP-6",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

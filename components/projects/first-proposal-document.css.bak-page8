@@ -1,0 +1,644 @@
+/* A proposal owns its A4 sheet, including margins. The named print page keeps
+   these dimensions separate from the quotation / customer PDF document. */
+.first-proposal-document {
+  --fp-paper: #fbf7ef;
+  --fp-ink: #342d27;
+  --fp-muted: #746050;
+  --fp-accent: #925133;
+  --fp-rule: #d9c9b5;
+  --fp-soft: #f0e6d8;
+  --fp-display: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
+  display: none;
+  width: 210mm;
+  margin: 0 auto;
+  color: var(--fp-ink);
+  background: var(--fp-paper);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 400;
+  counter-reset: fp-page;
+  page: first-proposal;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+body[data-proposal-preview] .first-proposal-document { display: block; }
+.first-proposal-document.fp-theme-atelier {
+  --fp-paper: #f5f3ed;
+  --fp-ink: #292b28;
+  --fp-muted: #696154;
+  --fp-accent: #865a36;
+  --fp-rule: #cdc4b5;
+  --fp-soft: #e8e3d9;
+}
+.first-proposal-document.fp-theme-nature {
+  --fp-paper: #f4f5ed;
+  --fp-ink: #354330;
+  --fp-muted: #616f59;
+  --fp-accent: #526946;
+  --fp-rule: #c9d1bc;
+  --fp-soft: #e5eadc;
+}
+.first-proposal-document.fp-theme-gallery {
+  --fp-paper: #f1f4f5;
+  --fp-ink: #233542;
+  --fp-muted: #536775;
+  --fp-accent: #895824;
+  --fp-rule: #c5d1d7;
+  --fp-soft: #e1e9ed;
+}
+.first-proposal-document *,
+.first-proposal-document *::before,
+.first-proposal-document *::after { box-sizing: border-box; }
+.first-proposal-document :is(h1, h2, h3, p, figure, ol, ul) { margin: 0; }
+.first-proposal-document :is(h1, h2, h3) { color: inherit; font-weight: 500; }
+.first-proposal-document :is(p, li, td, strong, span, h1, h2, h3) { overflow-wrap: anywhere; }
+.first-proposal-document img { display: block; max-width: 100%; }
+.first-proposal-document strong { font-weight: 600; }
+.first-proposal-document ::selection { color: var(--fp-paper); background: var(--fp-accent); }
+
+/* Fixed sheets remain visible when content is too tall: the print guard can
+   measure overflow and stop the export. Never crop a quotation to fit a sheet. */
+.first-proposal-document .fp-page {
+  width: 210mm;
+  height: 297mm;
+  min-height: 297mm;
+  padding: 10mm 12mm 8mm;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: visible;
+  background: var(--fp-paper);
+  counter-increment: fp-page;
+  page: first-proposal;
+  break-inside: avoid;
+  break-after: page;
+  page-break-after: always;
+}
+.first-proposal-document .fp-page:last-child { break-after: auto; page-break-after: auto; }
+.first-proposal-document .fp-page-body { flex: 1 1 auto; min-width: 0; min-height: 0; }
+.first-proposal-document .fp-running {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6mm;
+  color: var(--fp-muted);
+  font-size: 9px;
+  line-height: 1.4;
+  padding-bottom: 2mm;
+  border-bottom: 1px solid var(--fp-rule);
+  margin-bottom: 5mm;
+}
+.first-proposal-document .fp-running span:last-child { max-width: 65%; text-align: right; }
+.first-proposal-document .fp-footer {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4mm;
+  border-top: 1px solid var(--fp-rule);
+  color: var(--fp-muted);
+  font-size: 8.5px;
+  line-height: 1.4;
+  margin-top: 4mm;
+  padding-top: 2mm;
+  break-inside: avoid;
+}
+.first-proposal-document .fp-footer span:first-child { flex: 1; }
+.first-proposal-document .fp-footer span:last-child { max-width: 60%; text-align: right; }
+.first-proposal-document .fp-footer::after {
+  content: counter(fp-page, decimal-leading-zero) " / " attr(data-total-pages);
+  min-width: 13mm;
+  text-align: right;
+  color: var(--fp-accent);
+  font-variant-numeric: tabular-nums;
+}
+/* A custom property makes the total available to the footer's page counter. */
+.first-proposal-document .fp-footer::after { content: counter(fp-page, decimal-leading-zero) " / " var(--fp-page-total, "—"); }
+.first-proposal-document[data-proposal-page-count="1"] { --fp-page-total: "01"; }
+.first-proposal-document[data-proposal-page-count="2"] { --fp-page-total: "02"; }
+.first-proposal-document[data-proposal-page-count="3"] { --fp-page-total: "03"; }
+.first-proposal-document[data-proposal-page-count="4"] { --fp-page-total: "04"; }
+.first-proposal-document[data-proposal-page-count="5"] { --fp-page-total: "05"; }
+.first-proposal-document[data-proposal-page-count="6"] { --fp-page-total: "06"; }
+.first-proposal-document[data-proposal-page-count="7"] { --fp-page-total: "07"; }
+.first-proposal-document[data-proposal-page-count="8"] { --fp-page-total: "08"; }
+.first-proposal-document[data-proposal-page-count="9"] { --fp-page-total: "09"; }
+.first-proposal-document[data-proposal-page-count="10"] { --fp-page-total: "10"; }
+.first-proposal-document .fp-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 5mm;
+  margin-bottom: 5mm;
+  break-after: avoid;
+}
+.first-proposal-document .fp-heading > div { min-width: 0; }
+.first-proposal-document .fp-heading h2 {
+  font-family: var(--fp-display);
+  font-size: 25px;
+  line-height: 1.3;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+.first-proposal-document .fp-heading p { margin-top: 2mm; color: var(--fp-muted); font-size: 10px; line-height: 1.5; max-width: 141mm; }
+.first-proposal-document .fp-heading > span { flex: 0 0 auto; max-width: 38mm; padding-top: 1mm; font-size: 9px; line-height: 1.5; color: var(--fp-muted); text-align: right; }
+.first-proposal-document .fp-brand { display: flex; gap: 2.5mm; align-items: center; min-width: 0; }
+.first-proposal-document .fp-brand-logo { width: 8mm; height: 8mm; object-fit: contain; }
+.first-proposal-document .fp-brand strong { font-size: 12px; letter-spacing: .035em; }
+.first-proposal-document .fp-brand p { margin-top: .75mm; font-size: 9px; color: var(--fp-muted); }
+
+/* Cover compositions establish four distinct material / editorial directions. */
+.first-proposal-document .fp-cover { padding-top: 11mm; }
+.first-proposal-document .fp-cover-brand { display: flex; justify-content: space-between; align-items: center; gap: 6mm; }
+.first-proposal-document .fp-cover-brand > span { font-size: 9px; letter-spacing: .16em; color: var(--fp-muted); }
+.first-proposal-document .fp-cover-title { margin-top: 13mm; margin-bottom: 8mm; }
+.first-proposal-document .fp-cover-title h1 { font-family: var(--fp-display); font-size: 42px; line-height: 1.32; font-weight: 400; letter-spacing: .015em; }
+.first-proposal-document .fp-cover-title > p { color: var(--fp-accent); font-size: 10px; letter-spacing: .13em; margin-top: 3mm; }
+.first-proposal-document .fp-cover-image { position: relative; }
+.first-proposal-document .fp-cover-image > img { width: 100%; height: 129mm; object-fit: cover; }
+.first-proposal-document .fp-cover-image figcaption { position: absolute; bottom: 3mm; right: 3mm; background: var(--fp-paper); color: var(--fp-muted); padding: 1mm 2mm; font-size: 8px; line-height: 1.5; }
+.first-proposal-document .fp-cover-project { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7mm; margin-top: 7mm; align-items: start; }
+.first-proposal-document .fp-cover-project h2 { font-family: var(--fp-display); font-size: 24px; line-height: 1.3; }
+.first-proposal-document .fp-cover-project p { color: var(--fp-muted); font-size: 10px; margin-top: 2mm; }
+.first-proposal-document .fp-cover-project > div:last-child { display: flex; flex-direction: column; align-items: flex-end; gap: 1.5mm; color: var(--fp-muted); font-size: 9px; text-align: right; }
+.first-proposal-document .fp-cover-customer { font-size: 10px; margin-top: 5mm; color: var(--fp-muted); }
+.first-proposal-document .fp-cover > .fp-footer { margin-top: auto; }
+.first-proposal-document .fp-cover-atelier {
+  color: #f1e8db;
+  background: #282b28;
+  --fp-paper: #282b28;
+  --fp-rule: #68614f;
+  --fp-muted: #d0c1ac;
+  --fp-accent: #d8b186;
+}
+.first-proposal-document .fp-cover-atelier .fp-cover-title h1 { font-size: 46px; letter-spacing: .035em; }
+.first-proposal-document .fp-cover-atelier .fp-cover-composition,
+.first-proposal-document .fp-cover-gallery .fp-cover-composition { display: grid; grid-template-columns: 43mm minmax(0, 1fr); gap: 8mm; }
+.first-proposal-document .fp-cover-sidebar { display: flex; flex-direction: column; min-width: 0; padding-top: 3mm; }
+.first-proposal-document .fp-cover-sidebar > span { font-size: 21px; line-height: 1.8; font-family: var(--fp-display); color: var(--fp-accent); }
+.first-proposal-document .fp-cover-sidebar > p { margin-top: 5mm; color: var(--fp-muted); line-height: 1.9; font-size: 10px; }
+.first-proposal-document .fp-cover-sidebar > div { margin-top: auto; padding-bottom: 2mm; }
+.first-proposal-document .fp-cover-sidebar strong { font-size: 14px; line-height: 1.5; }
+.first-proposal-document .fp-cover-sidebar > div p { margin-top: 2mm; color: var(--fp-muted); font-size: 10px; }
+.first-proposal-document .fp-cover-atelier .fp-cover-image > img { height: 125mm; object-position: 58% center; }
+.first-proposal-document :is(.fp-cover-atelier, .fp-cover-gallery) .fp-cover-project h2 { display: none; }
+.first-proposal-document :is(.fp-cover-atelier, .fp-cover-gallery) .fp-cover-project p { margin-top: 0; }
+.first-proposal-document .fp-cover-nature { background: #eef0e5; --fp-paper: #eef0e5; }
+.first-proposal-document .fp-cover-nature .fp-cover-title { margin-top: 12mm; margin-bottom: 7mm; }
+.first-proposal-document .fp-cover-nature .fp-cover-title h1 { color: #405338; font-size: 43px; line-height: 1.4; }
+.first-proposal-document .fp-cover-nature .fp-cover-image { padding: 3mm; background: #e2d9c7; }
+.first-proposal-document .fp-cover-nature .fp-cover-image > img { height: 120mm; object-position: center; }
+.first-proposal-document .fp-cover-nature .fp-cover-image figcaption { bottom: 5mm; right: 5mm; }
+.first-proposal-document .fp-cover-gallery {
+  color: #edf1ef;
+  background: #1c2e3a;
+  --fp-paper: #1c2e3a;
+  --fp-rule: #617380;
+  --fp-muted: #c1cdd3;
+  --fp-accent: #dfb071;
+}
+.first-proposal-document .fp-cover-gallery .fp-cover-title { margin-top: 12mm; margin-bottom: 8mm; }
+.first-proposal-document .fp-cover-gallery .fp-cover-title h1 { font-size: 45px; letter-spacing: .025em; }
+.first-proposal-document .fp-cover-gallery .fp-cover-composition { grid-template-columns: minmax(0, 1fr) 42mm; }
+.first-proposal-document .fp-cover-gallery .fp-cover-sidebar { order: 2; }
+.first-proposal-document .fp-cover-gallery .fp-cover-image { border: 1px solid #8f7755; padding: 2mm; }
+.first-proposal-document .fp-cover-gallery .fp-cover-image > img { height: 121mm; object-position: center; }
+.first-proposal-document .fp-cover-gallery .fp-cover-image figcaption { bottom: 4mm; right: 4mm; }
+
+/* One compact overview holds the scope, saved budget and conversation record. */
+.first-proposal-document .fp-facts { display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; gap: 4mm; padding: 3mm 0; border-block: 1px solid var(--fp-rule); margin-bottom: 4mm; }
+.first-proposal-document .fp-facts span { display: block; color: var(--fp-muted); font-size: 9px; margin-bottom: 1mm; }
+.first-proposal-document .fp-facts strong { font-size: 11px; line-height: 1.4; }
+.first-proposal-document .fp-budget-total { display: flex; justify-content: space-between; gap: 5mm; align-items: flex-end; padding: 3mm 0; border-bottom: 1px solid var(--fp-rule); }
+.first-proposal-document .fp-budget-total span { font-size: 10px; color: var(--fp-muted); }
+.first-proposal-document .fp-budget-total strong { display: block; font-family: Georgia, var(--fp-display); font-size: 32px; color: var(--fp-accent); line-height: 1.2; font-weight: 400; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-budget-total p { color: var(--fp-muted); font-size: 9px; line-height: 1.5; margin-top: 1.5mm; }
+.first-proposal-document .fp-fees { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4mm; margin-block: 3mm 5mm; }
+.first-proposal-document .fp-fees > div { min-width: 0; }
+.first-proposal-document .fp-fees span { display: block; color: var(--fp-muted); font-size: 9px; margin-bottom: 1mm; }
+.first-proposal-document .fp-fees strong { font-size: 12px; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-room-index h3,
+.first-proposal-document .fp-confirm-grid h3 { font-size: 12px; margin-bottom: 2mm; font-weight: 600; }
+.first-proposal-document table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.first-proposal-document thead { display: table-header-group; }
+.first-proposal-document th { background: var(--fp-soft); font-size: 9px; line-height: 1.4; text-align: left; font-weight: 500; padding: 1.5mm 2mm; }
+.first-proposal-document td { border-bottom: 1px solid var(--fp-rule); padding: 1.5mm 2mm; font-size: 10px; vertical-align: top; line-height: 1.5; }
+.first-proposal-document tr { break-inside: avoid; }
+.first-proposal-document .fp-budget-table th:first-child { width: 49%; }
+.first-proposal-document .fp-budget-table :is(th, td):not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-budget-table td:first-child > span { color: var(--fp-muted); font-size: 8px; }
+.first-proposal-document .fp-scope-note { color: var(--fp-muted); font-size: 9px; line-height: 1.5; margin-top: 3mm; }
+.first-proposal-document .fp-empty { grid-column: 1 / -1; background: var(--fp-soft); padding: 5mm; color: var(--fp-muted); line-height: 1.7; }
+.first-proposal-document .fp-empty h3 { color: var(--fp-ink); font-family: var(--fp-display); font-size: 20px; margin-bottom: 2mm; }
+.first-proposal-document .fp-confirm-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 6mm; border-top: 1px solid var(--fp-rule); margin-top: 4mm; padding-top: 3mm; }
+.first-proposal-document .fp-confirm-grid ul { padding-left: 3.5mm; color: var(--fp-muted); font-size: 9px; line-height: 1.5; }
+.first-proposal-document .fp-confirm-grid li + li { margin-top: 1mm; }
+.first-proposal-document .fp-confirm-grid p { color: var(--fp-muted); font-size: 9px; }
+.first-proposal-document .fp-note-lines { display: flex; flex-direction: column; margin-top: 1mm; }
+.first-proposal-document .fp-note-lines span { height: 5mm; border-bottom: 1px solid var(--fp-rule); }
+.first-proposal-document .fp-confirmation-sign { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, .7fr); align-items: end; gap: 2mm; margin-top: 2mm; break-inside: avoid; }
+.first-proposal-document .fp-confirmation-sign span { font-size: 9px; white-space: nowrap; }
+.first-proposal-document .fp-confirmation-sign i { display: block; height: 5mm; border-bottom: 1px solid var(--fp-ink); }
+.first-proposal-document .fp-confirmation-note { margin-top: 1.5mm; font-size: 8px; color: var(--fp-muted); }
+.first-proposal-document .fp-closing { display: flex; justify-content: space-between; align-items: center; gap: 5mm; margin-top: 3mm; padding-top: 2.5mm; border-top: 1px solid var(--fp-rule); break-inside: avoid; }
+.first-proposal-document .fp-closing .fp-brand-logo { width: 7mm; height: 7mm; }
+.first-proposal-document .fp-closing .fp-brand strong { font-size: 10px; }
+.first-proposal-document .fp-closing .fp-brand p { font-size: 8px; margin-top: .25mm; }
+.first-proposal-document .fp-closing figure { flex: 0 0 13mm; }
+.first-proposal-document .fp-closing figure img { width: 13mm; height: 13mm; object-fit: contain; }
+.first-proposal-document .fp-closing figcaption { text-align: center; color: var(--fp-muted); font-size: 8px; margin-top: .5mm; }
+
+/* Scene photographs act as a short opening strip, leaving room for real scenes. */
+.first-proposal-document .fp-scene-mood { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5mm; align-items: center; margin-bottom: 5mm; padding-bottom: 3mm; border-bottom: 1px solid var(--fp-rule); }
+.first-proposal-document .fp-scene-mood figure { position: relative; }
+.first-proposal-document .fp-scene-mood img { height: 24mm; width: 100%; object-fit: cover; }
+.first-proposal-document .fp-scene-mood figcaption { position: absolute; bottom: 1mm; right: 1mm; background: var(--fp-paper); color: var(--fp-muted); padding: .5mm 1mm; font-size: 7.5px; }
+.first-proposal-document .fp-scene-mood > p { font-family: var(--fp-display); color: var(--fp-accent); font-size: 18px; line-height: 1.7; text-wrap: balance; }
+.first-proposal-document .fp-scene-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 6mm; row-gap: 4mm; align-items: start; }
+.first-proposal-document .fp-scene { min-width: 0; padding: 3mm 0 0; border-top: 1px solid var(--fp-rule); break-inside: avoid; }
+.first-proposal-document .fp-scene-title { display: flex; align-items: baseline; gap: 2mm; margin-bottom: 2mm; }
+.first-proposal-document .fp-scene-index { font-family: Georgia, serif; font-size: 15px; color: var(--fp-accent); flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-scene-title h3 { min-width: 0; flex: 1; font-family: var(--fp-display); font-size: 16px; line-height: 1.35; }
+.first-proposal-document .fp-status { display: inline-block; padding: .4mm 1.25mm; color: #80502e; background: #f1e4d2; font-size: 8px; line-height: 1.5; flex: 0 0 auto; }
+.first-proposal-document .fp-status-confirmed { background: #e1e8d9; color: #3e573b; }
+.first-proposal-document .fp-scene-story { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5mm; }
+.first-proposal-document .fp-scene-story span { color: var(--fp-muted); font-size: 8px; }
+.first-proposal-document .fp-scene-story p { font-size: 10.5px; white-space: pre-line; margin-top: .5mm; line-height: 1.5; }
+.first-proposal-document .fp-scene-links { color: var(--fp-muted); font-size: 8.5px; margin-top: 2mm; line-height: 1.5; }
+
+/* A curated visual index replaces repeated product pages; the quote is complete. */
+.first-proposal-document .fp-product-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 6mm; row-gap: 5mm; align-items: start; }
+.first-proposal-document .fp-product { min-width: 0; padding-bottom: 3mm; border-bottom: 1px solid var(--fp-rule); break-inside: avoid; }
+.first-proposal-document .fp-product-photo { background: #fffdf8; height: 32mm; display: flex; justify-content: center; align-items: center; margin-bottom: 2mm; }
+.first-proposal-document .fp-product-photo img { width: 100%; height: 100%; object-fit: contain; padding: 2mm; }
+.first-proposal-document .fp-product-photo > span { color: var(--fp-muted); font-size: 9px; }
+.first-proposal-document .fp-product-room { color: var(--fp-accent); font-size: 8px; line-height: 1.4; }
+.first-proposal-document .fp-product h3 { font-size: 13px; line-height: 1.4; margin-top: 1mm; font-weight: 600; }
+.first-proposal-document .fp-product-brand { font-size: 9px; color: var(--fp-muted); margin-top: 1mm; line-height: 1.5; }
+.first-proposal-document .fp-product-bottom { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; margin-top: 2mm; }
+.first-proposal-document .fp-product-bottom strong { white-space: nowrap; font-size: 12px; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-product-bottom > span { font-size: 9px; color: var(--fp-accent); }
+.first-proposal-document .fp-product-reason { color: var(--fp-muted); font-size: 8px; line-height: 1.5; margin-top: 1mm; }
+
+/* All six amount columns remain legible; product text gets half the width. */
+.first-proposal-document .fp-quote-context { display: flex; justify-content: space-between; gap: 5mm; font-size: 9px; color: var(--fp-muted); margin-bottom: 2mm; }
+.first-proposal-document .fp-col-product { width: 50%; }
+.first-proposal-document .fp-col-room { width: 11%; }
+.first-proposal-document .fp-col-quantity { width: 6%; }
+.first-proposal-document .fp-col-money { width: 11%; }
+.first-proposal-document .fp-quote-table th { padding: 1.75mm 1.25mm; font-size: 9px; line-height: 1.4; }
+.first-proposal-document .fp-quote-table td { padding: 2mm 1.25mm; font-size: 10px; line-height: 1.5; }
+.first-proposal-document .fp-quote-table td:first-child > strong { font-size: 10px; line-height: 1.5; display: block; }
+.first-proposal-document .fp-quote-table td:first-child > span { display: block; color: var(--fp-muted); font-size: 10px; line-height: 1.5; white-space: pre-line; }
+.first-proposal-document .fp-quote-table td:first-child .fp-verification { color: var(--fp-accent); }
+.first-proposal-document .fp-quote-table td:first-child .fp-verification-reason { font-size: 9px; line-height: 1.5; }
+.first-proposal-document .fp-quote-table :is(th, td):nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-quote-table :is(th, td):last-child { padding-right: 1mm; }
+.first-proposal-document .fp-quote-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4mm; margin-top: 4mm; padding-top: 2mm; border-top: 1px solid var(--fp-accent); break-inside: avoid; }
+.first-proposal-document .fp-quote-summary > div { min-width: 0; font-size: 9px; color: var(--fp-muted); }
+.first-proposal-document .fp-quote-summary strong { display: block; margin-top: 1mm; font-size: 12px; color: var(--fp-ink); font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-quote-summary > div:last-child strong { color: var(--fp-accent); }
+.first-proposal-document .fp-quote-continued { text-align: right; font-size: 9px; color: var(--fp-muted); margin-top: 3mm; }
+.first-proposal-document .fp-quote-page .fp-scope-note + .fp-scope-note { margin-top: 1mm; }
+
+/* Every floor keeps its complete aspect ratio. Two (or three compact) per page. */
+.first-proposal-document .fp-floor-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4mm; }
+.first-proposal-document .fp-floor-figure { min-width: 0; break-inside: avoid; }
+.first-proposal-document .fp-floor-figure > figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; font-size: 10px; margin-bottom: 1.5mm; }
+.first-proposal-document .fp-floor-figure > figcaption span { color: var(--fp-muted); font-size: 8px; }
+.first-proposal-document .fp-floor-image { width: 100%; height: 99mm; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--fp-rule); }
+.first-proposal-document .fp-floor-image img { width: 100%; height: 100%; object-fit: contain; }
+.first-proposal-document .fp-floor-grid[data-floor-count="1"] .fp-floor-image { height: 211mm; }
+.first-proposal-document .fp-floor-grid[data-floor-count="3"] { gap: 3mm; }
+.first-proposal-document .fp-floor-grid[data-floor-count="3"] .fp-floor-image { height: 65mm; }
+
+/* Interior themes carry the cover's material character into the real content. */
+.first-proposal-document.fp-theme-warm .fp-heading h2 { font-weight: 400; }
+.first-proposal-document.fp-theme-warm .fp-scene { padding-top: 3.5mm; }
+.first-proposal-document.fp-theme-atelier .fp-heading { padding-bottom: 3mm; border-bottom: 1px solid var(--fp-accent); }
+.first-proposal-document.fp-theme-atelier .fp-heading h2 { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; font-size: 23px; font-weight: 500; letter-spacing: .03em; }
+.first-proposal-document.fp-theme-atelier .fp-running { letter-spacing: .04em; }
+.first-proposal-document.fp-theme-atelier .fp-budget-total { background: #282b28; padding: 3mm 4mm; border: 0; }
+.first-proposal-document.fp-theme-atelier .fp-budget-total :is(span, p) { color: #d0c1ac; }
+.first-proposal-document.fp-theme-atelier .fp-budget-total strong { color: #d8b186; }
+.first-proposal-document.fp-theme-atelier .fp-scene-mood { grid-template-columns: 1.5fr 1fr; }
+.first-proposal-document.fp-theme-atelier .fp-scene-mood figure { order: 2; }
+.first-proposal-document.fp-theme-atelier .fp-scene-mood > p { font-size: 17px; }
+.first-proposal-document.fp-theme-atelier .fp-scene-title h3 { font-family: inherit; font-size: 14px; font-weight: 600; }
+.first-proposal-document.fp-theme-atelier .fp-product { display: grid; grid-template-columns: 29mm minmax(0, 1fr); gap: 3mm; padding-block: 3mm; }
+.first-proposal-document.fp-theme-atelier .fp-product-photo { height: 39mm; margin-bottom: 0; background: #ebe6dc; }
+.first-proposal-document.fp-theme-atelier .fp-product h3 { font-size: 12px; }
+.first-proposal-document.fp-theme-nature .fp-heading h2 { color: #405a36; }
+.first-proposal-document.fp-theme-nature .fp-budget-total { background: #e5eadc; border: 0; padding: 3mm 4mm; }
+.first-proposal-document.fp-theme-nature .fp-product-photo { background: #e9e2d4; }
+.first-proposal-document.fp-theme-nature .fp-scene-index { color: #6a7c58; }
+.first-proposal-document.fp-theme-gallery .fp-running { padding: 2mm 3mm; color: #dce5e9; background: #233744; border: 0; margin-top: -1mm; }
+.first-proposal-document.fp-theme-gallery .fp-heading h2 { color: #243e50; letter-spacing: .035em; }
+.first-proposal-document.fp-theme-gallery .fp-budget-total { background: #233744; border: 0; padding: 3mm 4mm; }
+.first-proposal-document.fp-theme-gallery .fp-budget-total :is(span, p) { color: #d0dbe0; }
+.first-proposal-document.fp-theme-gallery .fp-budget-total strong { color: #dfb071; }
+.first-proposal-document.fp-theme-gallery .fp-scene-mood { grid-template-columns: 1fr 1.6fr; }
+.first-proposal-document.fp-theme-gallery .fp-scene-mood > p { color: #365467; font-size: 17px; }
+.first-proposal-document.fp-theme-gallery .fp-product-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6mm 4mm; }
+.first-proposal-document.fp-theme-gallery .fp-product-photo { height: 48mm; padding: 2mm; background: #e1e8ec; }
+.first-proposal-document.fp-theme-gallery .fp-product h3 { font-size: 12px; }
+.first-proposal-document.fp-theme-gallery .fp-product-bottom { gap: 2mm; }
+.first-proposal-document.fp-theme-gallery .fp-product-bottom > span { font-size: 8px; }
+.first-proposal-document.fp-theme-gallery .fp-footer { border-color: #b58b54; }
+
+
+/* Overview needs strip + mapped floor pins for the room-centric narrative. */
+.first-proposal-document .fp-needs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3mm;
+  padding: 3mm 3.5mm;
+  margin-bottom: 4mm;
+  background: var(--fp-soft);
+  border: 1px solid var(--fp-rule);
+}
+.first-proposal-document .fp-needs span { display: block; color: var(--fp-muted); font-size: 8.5px; margin-bottom: 1mm; letter-spacing: .04em; }
+.first-proposal-document .fp-needs strong { font-size: 11px; line-height: 1.45; font-weight: 500; }
+.first-proposal-document .fp-overview-floors { margin: 4mm 0; }
+.first-proposal-document .fp-overview-floors > h3,
+.first-proposal-document .fp-room-points > h3,
+.first-proposal-document .fp-room-quote > h3,
+.first-proposal-document .fp-room-side > h3,
+.first-proposal-document .fp-quote-by-room > h3 { font-size: 12px; margin-bottom: 2mm; font-weight: 600; }
+.first-proposal-document .fp-point-codes { display: block; color: var(--fp-muted); font-size: 8px; margin-top: .5mm; }
+.first-proposal-document .fp-floor-image-mapped { position: relative; }
+.first-proposal-document .fp-point-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 5mm;
+  height: 5mm;
+  padding: 0 1mm;
+  border-radius: 999px;
+  background: var(--fp-accent);
+  color: #fff;
+  font-size: 7.5px;
+  line-height: 5mm;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.85);
+  z-index: 2;
+}
+
+/* Room pages: atmosphere + points/quote + linked scenes on one sheet. */
+.first-proposal-document .fp-room-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(48mm, 0.75fr);
+  gap: 3mm;
+  align-items: start;
+  min-height: 0;
+}
+.first-proposal-document .fp-room-main { min-width: 0; display: flex; flex-direction: column; gap: 2mm; }
+.first-proposal-document .fp-room-mood {
+  position: relative;
+  background: var(--fp-soft);
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.first-proposal-document .fp-room-mood > img { width: 100%; height: 58mm; object-fit: cover; }
+.first-proposal-document .fp-room-mood > figcaption {
+  position: absolute; left: 2mm; top: 2mm;
+  background: var(--fp-paper); color: var(--fp-muted);
+  padding: .6mm 1.5mm; font-size: 7.5px; line-height: 1.4;
+}
+.first-proposal-document .fp-mood-pin {
+  position: absolute;
+  left: 2mm;
+  bottom: 2mm;
+  background: rgba(255,255,255,.92);
+  color: var(--fp-ink);
+  border-left: 2px solid var(--fp-accent);
+  padding: .6mm 1.5mm;
+  font-size: 8px;
+  line-height: 1.35;
+  max-width: 46%;
+}
+.first-proposal-document .fp-mood-pin + .fp-mood-pin { display: none; }
+.first-proposal-document .fp-mood-pin[data-pin-index="0"] { bottom: 2mm; }
+.first-proposal-document .fp-mood-pin[data-pin-index="1"] { display: block; bottom: 9mm; }
+.first-proposal-document .fp-mood-pin[data-pin-index="2"] { display: block; bottom: 16mm; }
+.first-proposal-document .fp-room-plan { margin: 0; }
+.first-proposal-document .fp-room-plan > figcaption {
+  display: flex; justify-content: space-between; gap: 2mm;
+  font-size: 9px; margin-bottom: 1mm;
+}
+.first-proposal-document .fp-room-plan > figcaption span { color: var(--fp-muted); }
+.first-proposal-document .fp-room-plan .fp-floor-image { height: 42mm; }
+.first-proposal-document .fp-room-points ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8mm 2.5mm; }
+.first-proposal-document .fp-room-points li {
+  display: grid;
+  grid-template-columns: 6.5mm minmax(0, 1fr);
+  gap: 1.2mm;
+  align-items: baseline;
+  font-size: 8px;
+  line-height: 1.3;
+  padding-bottom: 0.6mm;
+  border-bottom: 1px solid var(--fp-rule);
+}
+.first-proposal-document .fp-room-points li em { display: none; }
+.first-proposal-document .fp-room-points li strong { color: var(--fp-accent); font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-room-points li em { color: var(--fp-muted); font-style: normal; }
+.first-proposal-document .fp-room-quote-block + .fp-room-quote-block { margin-top: 1.5mm; }
+.first-proposal-document .fp-room-quote-head {
+  display: flex; justify-content: space-between; gap: 2mm;
+  font-size: 8px; margin-bottom: 0.6mm; color: var(--fp-muted);
+}
+.first-proposal-document .fp-room-quote-head strong { color: var(--fp-ink); font-size: 9px; }
+.first-proposal-document .fp-room-quote-table td { padding: 0.7mm 1mm; font-size: 8px; }
+.first-proposal-document .fp-room-quote-table td:first-child > strong { display: block; font-size: 8.5px; line-height: 1.3; }
+.first-proposal-document .fp-room-quote-table td:first-child > span { display: block; color: var(--fp-muted); font-size: 7.5px; line-height: 1.3; }
+.first-proposal-document .fp-room-quote-table td:nth-child(n+2) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.first-proposal-document .fp-room-quote-table td:first-child { display: flex; gap: 1.5mm; align-items: flex-start; }
+.first-proposal-document .fp-room-item-thumb { width: 6mm; height: 6mm; object-fit: contain; background: #fff; flex: 0 0 auto; }
+.first-proposal-document .fp-room-quote-table td:first-child > div { min-width: 0; }
+
+.first-proposal-document .fp-room-side { min-width: 0; }
+.first-proposal-document .fp-scene-list-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  grid-template-columns: none;
+}
+.first-proposal-document .fp-scene-list-stack .fp-scene { padding-top: 1.5mm; }
+.first-proposal-document .fp-scene-list-stack .fp-scene-title h3 { font-size: 12px; }
+.first-proposal-document .fp-scene-list-stack .fp-scene-story p { font-size: 9px; line-height: 1.4; }
+.first-proposal-document .fp-scene-list-stack .fp-scene-links { font-size: 7.5px; margin-top: 1mm; }
+.first-proposal-document .fp-callout {
+  margin-top: 2mm;
+  padding: 1.8mm 2.2mm;
+  background: var(--fp-soft);
+  border-left: 2px solid var(--fp-accent);
+  color: var(--fp-ink);
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+/* Quote page keeps a summary rail for room-centric totals. */
+.first-proposal-document .fp-quote-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42mm;
+  gap: 4mm;
+  align-items: start;
+}
+.first-proposal-document .fp-quote-page:has(.fp-quote-continued) .fp-quote-layout,
+.first-proposal-document .fp-quote-layout:not(:has(.fp-quote-aside)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.first-proposal-document .fp-quote-aside { min-width: 0; }
+.first-proposal-document .fp-quote-summary-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  padding: 3mm;
+  background: var(--fp-soft);
+  border: 1px solid var(--fp-rule);
+}
+.first-proposal-document .fp-quote-summary-stack span { display: block; color: var(--fp-muted); font-size: 8.5px; }
+.first-proposal-document .fp-quote-summary-stack strong { display: block; margin-top: .5mm; font-size: 12px; font-variant-numeric: tabular-nums; }
+.first-proposal-document .fp-quote-summary-stack .fp-quote-total strong { color: var(--fp-accent); font-size: 16px; }
+.first-proposal-document .fp-quote-by-room { margin-top: 3mm; }
+.first-proposal-document .fp-quote-by-room ul { list-style: none; padding: 0; margin: 0; }
+.first-proposal-document .fp-quote-by-room li {
+  display: flex; justify-content: space-between; gap: 2mm;
+  font-size: 9px; padding: 1mm 0; border-bottom: 1px solid var(--fp-rule);
+}
+.first-proposal-document .fp-quote-by-room strong { font-variant-numeric: tabular-nums; }
+/* Overview must fit needs + floors + room index inside one A4 body. */
+.first-proposal-document .fp-overview-page .fp-heading { margin-bottom: 3mm; }
+.first-proposal-document .fp-overview-page .fp-heading h2 { font-size: 20px; line-height: 1.25; }
+.first-proposal-document .fp-overview-page .fp-heading p { margin-top: 1mm; font-size: 9px; }
+.first-proposal-document .fp-overview-page .fp-needs {
+  gap: 2mm;
+  padding: 2mm 2.5mm;
+  margin-bottom: 2mm;
+}
+.first-proposal-document .fp-overview-page .fp-needs strong { font-size: 9.5px; line-height: 1.35; }
+.first-proposal-document .fp-overview-page .fp-facts {
+  gap: 2mm;
+  padding: 1.5mm 0;
+  margin-bottom: 0;
+  border-block: 0;
+  border-top: 1px solid var(--fp-rule);
+}
+.first-proposal-document .fp-overview-page .fp-facts strong { font-size: 10px; }
+.first-proposal-document .fp-overview-page .fp-budget-total {
+  align-items: center;
+  padding: 1.5mm 0 0;
+  border-bottom: 0;
+  gap: 3mm;
+}
+.first-proposal-document .fp-overview-page .fp-budget-total strong { font-size: 22px; }
+.first-proposal-document .fp-overview-top { margin-bottom: 2.5mm; }
+.first-proposal-document .fp-overview-meta { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 3mm; align-items: end; }
+.first-proposal-document .fp-overview-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+  gap: 3mm;
+  align-items: start;
+  min-height: 0;
+}
+.first-proposal-document .fp-overview-shell-index-only { grid-template-columns: minmax(0, 1fr); }
+.first-proposal-document .fp-overview-floors { margin: 0; }
+.first-proposal-document .fp-overview-floors > h3 { font-size: 11px; margin-bottom: 1.5mm; }
+.first-proposal-document .fp-overview-page .fp-room-index h3 { font-size: 11px; margin-bottom: 1.5mm; }
+.first-proposal-document .fp-overview-page .fp-budget-table :is(th, td) { padding: 1mm 1.25mm; font-size: 9px; }
+.first-proposal-document .fp-overview-page .fp-scope-note { margin-top: 2mm; font-size: 8px; line-height: 1.4; }
+.first-proposal-document .fp-empty-inline {
+  grid-column: 1 / -1;
+  padding: 2mm 2.5mm;
+  font-size: 9px;
+  line-height: 1.45;
+  margin: 2mm 0 0;
+}
+.first-proposal-document .fp-empty-inline h3 { display: none; }
+.first-proposal-document .fp-overview-page .fp-floor-grid { gap: 2mm; }
+.first-proposal-document .fp-overview-page .fp-floor-figure > figcaption { font-size: 8.5px; margin-bottom: 1mm; }
+.first-proposal-document .fp-overview-page .fp-floor-grid[data-floor-count="1"] .fp-floor-image { height: 52mm; }
+.first-proposal-document .fp-overview-page .fp-floor-grid[data-floor-count="2"] .fp-floor-image { height: 38mm; }
+.first-proposal-document .fp-overview-page .fp-floor-grid[data-floor-count="3"] .fp-floor-image { height: 28mm; }
+.first-proposal-document .fp-overview-page .fp-floor-grid[data-floor-count="4"] .fp-floor-image { height: 24mm; }
+
+/* Room pages: keep narrative but stay under A4 with denser media. */
+.first-proposal-document .fp-room-page .fp-heading { margin-bottom: 2mm; }
+.first-proposal-document .fp-room-page .fp-heading h2 { font-size: 17px; line-height: 1.2; }
+.first-proposal-document .fp-room-page .fp-heading p { margin-top: 0.6mm; font-size: 8px; }
+.first-proposal-document .fp-room-page .fp-running { margin-bottom: 3mm; }
+.first-proposal-document .fp-room-points > h3,
+.first-proposal-document .fp-room-quote > h3,
+.first-proposal-document .fp-room-side > h3 { font-size: 10px; margin-bottom: 1.2mm; }
+.first-proposal-document .fp-room-mood > img { height: 32mm; }
+.first-proposal-document .fp-room-plan .fp-floor-image { height: 26mm; }
+.first-proposal-document .fp-room-main { gap: 1.5mm; }
+.first-proposal-document .fp-room-layout { gap: 2.5mm; }
+.first-proposal-document .fp-callout { margin-top: 1.5mm; padding: 1.5mm 2mm; font-size: 7.5px; }
+.first-proposal-document .fp-room-page .fp-scope-note { margin-top: 1.5mm; font-size: 7.5px; line-height: 1.35; }
+
+.first-proposal-document.fp-theme-atelier .fp-needs { background: #ebe6dc; }
+.first-proposal-document.fp-theme-nature .fp-needs { background: #e5eadc; }
+.first-proposal-document.fp-theme-gallery .fp-needs { background: #e1e8ec; }
+.first-proposal-document.fp-theme-gallery .fp-room-mood { border: 1px solid #b58b54; padding: 1.5mm; }
+.first-proposal-document.fp-theme-atelier .fp-callout { background: #ebe6dc; }
+
+/* Compact mode is chosen for the entire proposal before printing. */
+.first-proposal-document[data-proposal-density="compact"] .fp-running { margin-bottom: 4mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-heading { margin-bottom: 4mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-heading h2 { font-size: 22px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-heading p { font-size: 9px; margin-top: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-facts { padding-block: 2mm; margin-bottom: 3mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-budget-total { padding-block: 2.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-budget-total strong { font-size: 28px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-fees { margin-block: 2mm 4mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-budget-table td { padding-block: 1.1mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-confirm-grid { margin-top: 3mm; padding-top: 2mm; gap: 5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-list { row-gap: 3mm; column-gap: 5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-mood { margin-bottom: 3mm; padding-bottom: 2mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene { padding-top: 2mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-title { margin-bottom: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-title h3 { font-size: 14px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-story { gap: 1mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-story p { font-size: 10px; line-height: 1.45; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-links { font-size: 8px; margin-top: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-product-photo { height: 28mm; }
+.first-proposal-document[data-proposal-density="compact"].fp-theme-gallery .fp-product-photo { height: 43mm; }
+.first-proposal-document[data-proposal-density="compact"].fp-theme-atelier .fp-product-photo { height: 35mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-quote-table td { padding-block: 1.5mm; font-size: 9.5px; line-height: 1.4; }
+.first-proposal-document[data-proposal-density="compact"] .fp-quote-table td:first-child > :is(strong, span) { font-size: 9.5px; line-height: 1.4; }
+.first-proposal-document[data-proposal-density="compact"] .fp-quote-table td:first-child .fp-verification-reason { font-size: 8.5px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-quote-summary { margin-top: 3mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scope-note { font-size: 8.5px; margin-top: 2mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-needs { padding: 2mm 2.5mm; margin-bottom: 3mm; gap: 2mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-mood > img { height: 24mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-plan .fp-floor-image { height: 22mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-overview-page .fp-floor-grid[data-floor-count="1"] .fp-floor-image { height: 44mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-overview-page .fp-floor-grid[data-floor-count="2"] .fp-floor-image { height: 32mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-overview-meta { grid-template-columns: minmax(0, 1fr); gap: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-overview-page .fp-budget-total strong { font-size: 18px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-layout { gap: 2mm; grid-template-columns: minmax(0, 1.45fr) minmax(44mm, 0.7fr); }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-page .fp-heading { margin-bottom: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-page .fp-heading h2 { font-size: 15px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-item-thumb { width: 5mm; height: 5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-quote-table td { padding: 0.5mm 0.8mm; font-size: 7.5px; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-points ol { gap: 0.5mm 2mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-points li { font-size: 7.5px; padding-bottom: 0.4mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-quote-layout { gap: 3mm; grid-template-columns: minmax(0, 1fr) 38mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-scene-list-stack { gap: 1.5mm; }
+.first-proposal-document[data-proposal-density="compact"] .fp-room-page .fp-footer { margin-top: 2mm; }
+
+
+@media print {
+  @page first-proposal { size: A4 portrait; margin: 0; }
+  .project-presentation[data-proposal-print] > :not(.first-proposal-document) { display: none !important; }
+  .project-presentation[data-proposal-print] { width: 210mm !important; max-width: none !important; padding: 0 !important; margin: 0 !important; }
+  .project-presentation[data-proposal-print] > .first-proposal-document,
+  body[data-proposal-preview] .first-proposal-document { display: block !important; }
+  .project-presentation .first-proposal-document { width: 210mm !important; padding: 0 !important; margin: 0 !important; break-inside: auto !important; box-shadow: none; }
+  .project-presentation .first-proposal-document .fp-page { width: 210mm; height: 297mm; min-height: 297mm; margin: 0; break-inside: avoid !important; }
+  .project-presentation .first-proposal-document :is(.fp-scene, .fp-product, .fp-room-quote-block) { break-inside: avoid !important; }
+}

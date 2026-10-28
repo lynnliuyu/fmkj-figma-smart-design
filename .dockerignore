@@ -1,0 +1,36 @@
+.git
+.next
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.*
+!.env.local.example
+!.env.production.example
+.vercel
+.understand-anything
+coverage
+dist
+build
+Dockerfile*
+docker-compose*.yml
+README*.bak
+
+# Dockerfile 在构建阶段执行 `COPY . .`，所以这里必须和 .gitignore 保持一致：
+# 漏掉一项就会把客户图纸、数据库备份或凭据烤进镜像层，之后 push/交付镜像即泄露。
+# 原业务工作区是业务资料环境，不能直接用它构建发行镜像（见 docs/deployment-and-catalog-architecture.md）。
+/.local
+/backups
+/tmp
+/output
+/docs/architecture-data
+/docker/architecture-editor/.env
+/docker/architecture-editor/vendor
+/docker/cad-export/.env
+/.workbuddy
+/config/mcporter.json
+*.tsbuildinfo
+.DS_Store
+*.dump

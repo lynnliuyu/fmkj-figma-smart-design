@@ -1,0 +1,38 @@
+﻿批次,SKU,名称,ID,版本,类型,父系列
+20261014-network-camera,RUIJIE-EAP172-MG,锐捷 Wi-Fi 7 面板 AP RG-EAP172(MG),3a84d9e0-4d57-4568-933a-4cc303910413,1,wireless-ap,-
+20261014-network-camera,RUIJIE-EAP272-MG,锐捷 Wi-Fi 7 吸顶 AP RG-EAP272(MG),1c5f2f9b-768b-4bd1-a8a5-8edb9b4b22d5,1,wireless-ap,-
+20261014-network-camera,RUIJIE-AP820-A-V3,锐捷 Wi-Fi 6 吸顶 AP RG-AP820-A(V3),47cc9319-36b7-47b5-8bee-664d24227e46,1,wireless-ap,-
+20261014-network-camera,RUIJIE-NBC,锐捷 无线 AC 控制器 RG-NBC,3a762f9d-e624-4c7b-b197-473064dedb7e,1,wlan-controller,-
+20261014-network-camera,RUIJIE-NBS3000-26GT2SFP-P,锐捷 24口千兆 PoE 交换机 RG-NBS3000-26GT2SFP-P,7dd8ecc5-e57e-4713-97c6-aa54d510a7f2,1,network-switch,-
+20261014-network-camera,XIAOMI-CAMERA-4PRO-3LENS-ZOOM,小米智能室外摄像机 4 Pro 三摄变焦版,de9f705d-2f22-4bea-86c9-feabd9d31431,1,camera,-
+20261014-network-camera,XIAOMI-CAMERA-4PRO,小米智能摄像机 4 Pro（室内云台）,74915fb9-9a1f-42e7-9e0c-d30180011456,1,camera,-
+20261014-network-camera,XIAOMI-GATEWAY-ZHONGSHU,小米中枢网关,64b99023-bd05-42c8-b77e-b0e26a95685d,1,smart-home-gateway,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-6,Xiaomi 智能家庭屏 6,1f737cea-ef4c-44ac-96cc-d85ca9afe8e1,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-MINI,Xiaomi 智能家庭屏 Mini,450c4955-4f1d-4c32-a896-d34d0c333f32,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-8-PTZ,Xiaomi 智能家庭屏 8 云台版,1336b8cd-a518-43d9-bf74-c93388511280,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-PRO-8,Xiaomi 智能家庭屏 Pro 8,3fa64127-0bb9-43d6-b866-c88d11742e16,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-10,Xiaomi 智能家庭屏 10,8c9538f0-c6d0-4c7f-a933-e832a8d2c570,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-11,Xiaomi 智能家庭屏 11,ba325e0a-31d7-436b-b28b-83592e4c1483,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-SCREEN-MAX-27,Xiaomi 智能家庭屏 Max 27,07d73d75-6dd2-4b1b-b639-5cc99caa1964,1,smart-speaker,-
+20261014-xiaomi-screen,XIAOMI-CONTROL-PANEL,Xiaomi 智能中控屏,37454d4e-e08d-4562-8700-22aefc6c67e1,1,touch-control-panel,-
+20261014-xiaomi-screen,XIAOMI-CONTROL-PANEL-MAX,Xiaomi 智能中控屏 Max,0cc30bb4-5f5a-454b-9992-85d236aa9556,1,touch-control-panel,-
+20261014-sumi-switch-skus,SUMI-H2U-1K,苏米智能开关 H2 Ultra 1键,a6a6f1ac-1af6-4f62-a51d-ac82e0ceeb00,1,wall-switch,4812a958-ee21-434b-9885-d25142919b5e
+20261014-sumi-switch-skus,SUMI-H2U-2K,苏米智能开关 H2 Ultra 2键,f6f2efc4-d523-48b5-8d48-a6c516618725,1,wall-switch,4812a958-ee21-434b-9885-d25142919b5e
+20261014-sumi-switch-skus,SUMI-H2U-3K,苏米智能开关 H2 Ultra 3键,a71c2560-222d-4288-acc0-aa3bb43d8e3a,1,wall-switch,4812a958-ee21-434b-9885-d25142919b5e
+20261014-sumi-switch-skus,SUMI-H2U-4K,苏米智能开关 H2 Ultra 4键,c941771e-8b98-46e4-91c1-9cb4efe3ee4e,1,wall-switch,4812a958-ee21-434b-9885-d25142919b5e
+20261014-sumi-switch-skus,SUMI-H2PLUS-1K,苏米智能开关 H2 Plus 1键,d04dfcc5-d462-4eb9-b9ac-84975ac57023,1,wall-switch,2b846be8-8a4b-45b8-90b6-412cb59acd32
+20261014-sumi-switch-skus,SUMI-H2PLUS-2K,苏米智能开关 H2 Plus 2键,f5c04254-6832-457b-b90b-7582ebb62753,1,wall-switch,2b846be8-8a4b-45b8-90b6-412cb59acd32
+20261014-sumi-switch-skus,SUMI-H2PLUS-3K,苏米智能开关 H2 Plus 3键,9cde7fca-d89b-4fa7-bd23-4b17d3e27aab,1,wall-switch,2b846be8-8a4b-45b8-90b6-412cb59acd32
+20261014-sumi-switch-skus,SUMI-H2PLUS-4K,苏米智能开关 H2 Plus 4键,731bf5e9-6c3e-4c48-9dc1-d58b716dcee6,1,wall-switch,2b846be8-8a4b-45b8-90b6-412cb59acd32
+20261014-sumi-switch-skus,SUMI-H2P2-N-1K,苏米智能开关 H2 Pro+（零火版） 1键,d4b509c7-cfb2-4223-8a15-1612c029ff10,1,wall-switch,4686efee-5a51-4ae3-af49-a06b7a0f56dd
+20261014-sumi-switch-skus,SUMI-H2P2-N-2K,苏米智能开关 H2 Pro+（零火版） 2键,f88b4db5-654c-412f-b019-dd658607f37f,1,wall-switch,4686efee-5a51-4ae3-af49-a06b7a0f56dd
+20261014-sumi-switch-skus,SUMI-H2P2-N-3K,苏米智能开关 H2 Pro+（零火版） 3键,ad0b164f-cb7d-4800-9118-343674f76d3a,1,wall-switch,4686efee-5a51-4ae3-af49-a06b7a0f56dd
+20261014-sumi-switch-skus,SUMI-H2P2-N-4K,苏米智能开关 H2 Pro+（零火版） 4键,5e9a1857-8aea-4011-b407-4299d93d6d1c,1,wall-switch,4686efee-5a51-4ae3-af49-a06b7a0f56dd
+20261014-sumi-switch-skus,SUMI-H2P2-U-1K,苏米智能开关 H2 Pro+（单零火版） 1键,c4b5a51d-8c46-4e13-a61f-ce78bef04e5d,1,wall-switch,38bba1d8-a486-4b84-8173-94f13526c59c
+20261014-sumi-switch-skus,SUMI-H2P2-U-2K,苏米智能开关 H2 Pro+（单零火版） 2键,e2ae430c-e4d2-4b55-8d5c-4ba55de4c658,1,wall-switch,38bba1d8-a486-4b84-8173-94f13526c59c
+20261014-sumi-switch-skus,SUMI-H2P2-U-3K,苏米智能开关 H2 Pro+（单零火版） 3键,24a19dbc-9138-47c9-8594-18a690c79fc3,1,wall-switch,38bba1d8-a486-4b84-8173-94f13526c59c
+20261014-sumi-switch-skus,SUMI-H2P2-U-4K,苏米智能开关 H2 Pro+（单零火版） 4键,3bee53d5-b1e7-4aaf-8cfa-065de370af1e,1,wall-switch,38bba1d8-a486-4b84-8173-94f13526c59c
+20261014-sumi-switch-skus,SUMI-H2-N-1K,苏米智能开关 H2（零火版） 1键,e07568a9-864d-4976-ad53-941ab174273d,1,wall-switch,6a1f9980-da4c-482d-b260-8701e77655da
+20261014-sumi-switch-skus,SUMI-H2-N-2K,苏米智能开关 H2（零火版） 2键,52bf031f-54fa-4218-a2a2-9cc42985c6fc,1,wall-switch,6a1f9980-da4c-482d-b260-8701e77655da
+20261014-sumi-switch-skus,SUMI-H2-N-3K,苏米智能开关 H2（零火版） 3键,d121c707-26e4-41a2-bb48-446572539372,1,wall-switch,6a1f9980-da4c-482d-b260-8701e77655da
+20261014-sumi-switch-skus,SUMI-H2-N-4K,苏米智能开关 H2（零火版） 4键,73c44107-4ddf-42ca-93c8-8a72ffe21c11,1,wall-switch,6a1f9980-da4c-482d-b260-8701e77655da

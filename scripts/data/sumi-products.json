@@ -1,0 +1,1351 @@
+[
+  {
+    "sku": "SUMI-H2U",
+    "name": "苏米 SLC-H2UP 智能开关H2 Ultra",
+    "rawName": "苏米智能开关H2 Ultra",
+    "unit": "个",
+    "price": 239.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2u.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766803621_WNk1Gedaiy.png",
+    "description": "型号：SLC-H2UP；尺寸：86×86×40mm；工作电压：110V~/250V~ 50/60Hz；单路电流：Max 10A；通信协议：BLE Mesh 2.0；负载：LED负载800W，阻性负载2000W；高清屏显、AG玻璃面板、APP自定义按键名称、SuperMesh本地互控、常供电/互锁/睡眠模式",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "SLC-H2UP",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2PLUS",
+    "name": "苏米智能开关H2 Plus",
+    "rawName": "苏米智能开关H2 Plus",
+    "unit": "个",
+    "price": 129.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2plus.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766805379_gKpPZZJhOG.png",
+    "description": "尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；单路电流：Max 10A；通信协议：BLE Mesh；负载：LED负载300W/路；超薄亚克力面板、免刻字屏显，已接入米家APP",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2P2-N",
+    "name": "苏米 SLC-H2P2N2 智能开关H2 Pro+（零火版）",
+    "rawName": "苏米智能开关H2 Pro+（零火版）",
+    "unit": "个",
+    "price": 179.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2p2-n.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766812737_Fujjr3Nmos.png",
+    "description": "型号：SLC-H2P2N2；尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；单路电流：Max 10A；通信协议：BLE Mesh 2.0；负载：白炽灯≤2000W/路 合计<2000W，LED<800W/路；零火版，接零线安装",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "零火版",
+      "SLC-H2P2N2",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2P2-U",
+    "name": "苏米智能开关H2 Pro+ (单零火版）",
+    "rawName": "苏米智能开关H2 Pro+ (单零火版）",
+    "unit": "个",
+    "price": 179.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2p2-u.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766813122_2hyUZCx9nV.png",
+    "description": "尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；单路电流：Max 10A；通信协议：BLE Mesh 2.0；负载：白炽灯≤2000W/路 合计<2000W，LED<800W/路；单零火通用，免零线安装",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "零火版",
+      "单零火通用",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2-N",
+    "name": "苏米智能开关H2 (零火版）",
+    "rawName": "苏米智能开关H2 (零火版）",
+    "unit": "个",
+    "price": 159.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2-n.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766813387_ypKS6WzV4D.png",
+    "description": "尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；单路电流：Max 10A；通信协议：BLE Mesh；负载：LED负载300W/路；标准86底盒，可接双控",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "零火版",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2C-KNOB",
+    "name": "苏米 SLC-HCNX 智能开关H2 Cielo（旋钮款）",
+    "rawName": "苏米智能开关H2 Cielo（旋钮款）",
+    "unit": "个",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2c-knob.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766813854_1wRZbGHCxq.png",
+    "description": "型号：SLC-HCNX；尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；通信协议：BLE Mesh；负载：白炽灯<2000W/路 合计<2000W，LED<800W/路 合计<2000W；旋钮式调光，星空灰/奶油白",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "SLC-HCNX",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-H2C-SCR",
+    "name": "苏米智能开关H2 Cielo（圆屏款）",
+    "rawName": "苏米智能开关H2 Cielo（圆屏款）",
+    "unit": "个",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h2c-scr.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766813978_afzHy9vM13.png",
+    "description": "尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；通信协议：BLE Mesh；负载：白炽灯≤2000W/路 合计≤2000W，LED≤800W/路 合计≤2000W；6.9mm超薄AG玻璃+AF防指纹涂层，圆形屏，按键振动反馈，支持开关/米家场景/本地场景/窗帘/调光五种界面",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-PNL1",
+    "name": "苏米缤纷面板（金属）",
+    "rawName": "苏米缤纷面板（金属）",
+    "unit": "个",
+    "price": 599.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pnl1.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766815783_LYmgzSh4hS.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PNL1-2",
+    "name": "苏米缤纷面板(PC)",
+    "rawName": "苏米缤纷面板(PC)",
+    "unit": "个",
+    "price": 399.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pnl1-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766816048_fEEEsZPYyo.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PNL2",
+    "name": "苏米缤纷面板2（玻璃）",
+    "rawName": "苏米缤纷面板2（玻璃）",
+    "unit": "个",
+    "price": 499.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pnl2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766816357_ECaGjYokAI.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PNL2-2",
+    "name": "苏米缤纷面板2（金属）",
+    "rawName": "苏米缤纷面板2（金属）",
+    "unit": "个",
+    "price": 599.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pnl2-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766817084_n4qk3J7v80.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PNL2-3",
+    "name": "苏米缤纷面板2（PC）",
+    "rawName": "苏米缤纷面板2（PC）",
+    "unit": "个",
+    "price": 399.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pnl2-3.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766817979_OEHczChzWN.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-SOCKET-TRK",
+    "name": "苏米安全轨道插座Mesh2.0",
+    "rawName": "苏米安全轨道插座Mesh2.0",
+    "unit": "个",
+    "price": 369.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "插座",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-socket-trk.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766818488_ple7xyhSC3.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "插座",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-C2",
+    "name": "苏米全面屏开关C2",
+    "rawName": "苏米全面屏开关C2",
+    "unit": "个",
+    "price": 399.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-c2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766818783_lHm3DT1OdI.png",
+    "description": "尺寸：86×86×40mm；工作电压：250V~ 50/60Hz；通信协议：BLE Mesh 2.0；负载：200W/路；7mm薄型全面屏，蓝牙Mesh 2.0+SuperMesh本地协议，断网可本地控制灯光/窗帘/空调",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh",
+      "86底盒"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-BGM-3-5",
+    "name": "苏米BGM悠享系列吸顶音箱3.5寸",
+    "rawName": "苏米BGM悠享系列吸顶音箱3.5寸",
+    "unit": "台",
+    "price": 499.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "其他",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-bgm-3-5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766823999_mO6XrIwEO0.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "其他",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-SAT-3-5",
+    "name": "苏米SAT畅享系列吸顶音箱3.5寸",
+    "rawName": "苏米SAT畅享系列吸顶音箱3.5寸",
+    "unit": "台",
+    "price": 999.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "其他",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-sat-3-5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766824215_P6gE5gjTDH.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "其他",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-UHD-3-5",
+    "name": "苏米UHD尊享系列吸顶音箱3.5寸",
+    "rawName": "苏米UHD尊享系列吸顶音箱3.5寸",
+    "unit": "台",
+    "price": 1699.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "其他",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-uhd-3-5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766824808_UlfBmaqVhn.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "其他",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-KNOB-X2",
+    "name": "苏米调光旋钮X2",
+    "rawName": "苏米调光旋钮X2",
+    "unit": "个",
+    "price": 399.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "开关",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-knob-x2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/30/1767089242_1nTndp0tU8.png",
+    "description": "通信协议：本地通讯协议（无需网关）；阻尼旋钮+实体按键反馈，可控灯光与窗帘，支持灯光情景模式一键切换",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "开关",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": true
+  },
+  {
+    "sku": "SUMI-THOR",
+    "name": "苏米隐藏式窗帘电机Thor",
+    "rawName": "苏米隐藏式窗帘电机Thor",
+    "unit": "套",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-thor.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766800697_1ad0yuoj3T.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-L3-MINI",
+    "name": "苏米智能开合帘电机L3 Mini",
+    "rawName": "苏米智能开合帘电机L3 Mini",
+    "unit": "套",
+    "price": 399.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-l3-mini.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766800888_KmRPtguxua.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-THOR-2",
+    "name": "苏米隐藏式窗帘电机Thor（探索版）",
+    "rawName": "苏米隐藏式窗帘电机Thor（探索版）",
+    "unit": "套",
+    "price": 599.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-thor-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766801000_EIillnZAHo.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-THOR-3",
+    "name": "苏米隐藏式窗帘电机Thor(透明版)",
+    "rawName": "苏米隐藏式窗帘电机Thor(透明版)",
+    "unit": "套",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-thor-3.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766801156_OEfGzuTGsj.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MINI-82",
+    "name": "苏米智能开合帘电机Mini 82",
+    "rawName": "苏米智能开合帘电机Mini 82",
+    "unit": "套",
+    "price": 499.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mini-82.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766801226_ZLgzYxuxfV.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-",
+    "name": "苏米星轨伸缩套装",
+    "rawName": "苏米星轨伸缩套装",
+    "unit": "套",
+    "price": 599.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766801979_kVYgIRZjH7.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-L5",
+    "name": "苏米全隐藏电机L5",
+    "rawName": "苏米全隐藏电机L5",
+    "unit": "套",
+    "price": 419.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "窗帘",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-l5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202606/11/1781140217_PiLnlWEdZD.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "窗帘",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PRO",
+    "name": "苏米智能射灯隐界Pro（礼盒版）",
+    "rawName": "苏米智能射灯隐界Pro（礼盒版）",
+    "unit": "盏",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pro.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766819487_azpuvEBjWM.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-PRO-2",
+    "name": "苏米智能筒灯隐界 Pro",
+    "rawName": "苏米智能筒灯隐界 Pro",
+    "unit": "盏",
+    "price": 239.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-pro-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766819644_MchTuEfx0f.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI--2",
+    "name": "苏米自然光射灯光澈",
+    "rawName": "苏米自然光射灯光澈",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi--2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766819922_CRSNkW7DKX.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI--3",
+    "name": "苏米自然光筒灯光澈",
+    "rawName": "苏米自然光筒灯光澈",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi--3.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766820015_eClwHa1zer.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI--4",
+    "name": "苏米微孔出光射灯星芒",
+    "rawName": "苏米微孔出光射灯星芒",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi--4.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766820185_HAZpKhnprp.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI--5",
+    "name": "苏米智能射灯无界",
+    "rawName": "苏米智能射灯无界",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi--5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766820623_iIbsZPGEbI.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-G1-MESH2-0",
+    "name": "苏米智能格栅灯G1 Mesh2.0",
+    "rawName": "苏米智能格栅灯G1 Mesh2.0",
+    "unit": "盏",
+    "price": 499.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-g1-mesh2-0.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766820958_ekvZEPdK6y.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH2-0",
+    "name": "苏米线性灯一体电源Mesh2.0",
+    "rawName": "苏米线性灯一体电源Mesh2.0",
+    "unit": "盏",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh2-0.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766821212_BJfqoDiQ04.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH-2-0",
+    "name": "苏米全光谱磁吸格栅灯(Mesh 2.0)",
+    "rawName": "苏米全光谱磁吸格栅灯(Mesh 2.0)",
+    "unit": "盏",
+    "price": 319.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh-2-0.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766825708_Po35Neqibu.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH-2-0-2",
+    "name": "苏米全光谱磁吸射灯(Mesh 2.0)",
+    "rawName": "苏米全光谱磁吸射灯(Mesh 2.0)",
+    "unit": "盏",
+    "price": 319.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh-2-0-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766825896_t3FBcu1dLW.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH-2-0-3",
+    "name": "苏米全光谱磁吸折叠格栅灯(Mesh 2.0)",
+    "rawName": "苏米全光谱磁吸折叠格栅灯(Mesh 2.0)",
+    "unit": "盏",
+    "price": 319.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh-2-0-3.jpg",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766826105_6PPgJlMMX1.jpg",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH2-0-2",
+    "name": "苏米全光谱磁吸泛光灯(Mesh2.0)",
+    "rawName": "苏米全光谱磁吸泛光灯(Mesh2.0)",
+    "unit": "盏",
+    "price": 319.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh2-0-2.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766826291_MkjGq7J3K3.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH-2-0-4",
+    "name": "苏米人存平板灯 Mesh 2.0",
+    "rawName": "苏米人存平板灯 Mesh 2.0",
+    "unit": "盏",
+    "price": 169.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh-2-0-4.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202601/28/1769576828_sNwJDjD2H5.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-H3",
+    "name": "苏米巨省电筒灯H3",
+    "rawName": "苏米巨省电筒灯H3",
+    "unit": "盏",
+    "price": 239.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-h3.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202602/03/1770085756_VqNdBSphVl.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI--6",
+    "name": "苏米智能筒灯无界",
+    "rawName": "苏米智能筒灯无界",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi--6.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202602/03/1770085831_15E78Fnglz.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-L6",
+    "name": "苏米深度调光超薄射灯 L6",
+    "rawName": "苏米深度调光超薄射灯 L6",
+    "unit": "盏",
+    "price": 289.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-l6.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202602/03/1770085885_zRZ1C3Jizb.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH2-0-3",
+    "name": "苏米空气循环扇灯Mesh2.0",
+    "rawName": "苏米空气循环扇灯Mesh2.0",
+    "unit": "盏",
+    "price": 899.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh2-0-3.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202606/16/1781594477_Fg5hpSGTJF.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-ULTRA",
+    "name": "苏米深度调光筒射灯Ultra",
+    "rawName": "苏米深度调光筒射灯Ultra",
+    "unit": "盏",
+    "price": 199.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "智能灯具",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-ultra.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202608/03/1785722249_BSaQNcixqv.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "智能灯具",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-AI",
+    "name": "苏米智能门锁 Ai指纹版",
+    "rawName": "苏米智能门锁 Ai指纹版",
+    "unit": "个",
+    "price": 699.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "门锁",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-ai.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202601/28/1769572205_yKHor3hifn.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "门锁",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-Y1",
+    "name": "苏米隐形智能晾衣机Y1",
+    "rawName": "苏米隐形智能晾衣机Y1",
+    "unit": "个",
+    "price": 1499.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "其他",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-y1.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202609/20/1789888912_fEQx6KQqMr.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "其他",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-11",
+    "name": "苏米智能屏11",
+    "rawName": "苏米智能屏11",
+    "unit": "个",
+    "price": 3999.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "网关中控",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-11.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766818683_1GvDDKZV9J.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "网关中控",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH2-0-4",
+    "name": "苏米中央空调控制器Mesh2.0",
+    "rawName": "苏米中央空调控制器Mesh2.0",
+    "unit": "台",
+    "price": 1799.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "暖通控制",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh2-0-4.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766822813_PwMjF9B4WK.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "暖通控制",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-MESH2-0-5",
+    "name": "苏米温控器Mesh2.0(三合一)",
+    "rawName": "苏米温控器Mesh2.0(三合一)",
+    "unit": "个",
+    "price": 299.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "暖通控制",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-mesh2-0-5.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766823018_8xy4zJw7hZ.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "暖通控制",
+      "米家",
+      "BLE Mesh",
+      "Mesh 2.0"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  },
+  {
+    "sku": "SUMI-VRF-PRO",
+    "name": "苏米VRF空调网关Pro",
+    "rawName": "苏米VRF空调网关Pro",
+    "unit": "台",
+    "price": 1999.0,
+    "brand": "苏米/SUMI",
+    "platform": "米家",
+    "category": "暖通控制",
+    "cost": 0,
+    "stock": 0,
+    "image": "/assets/products/sumi/sumi-vrf-pro.png",
+    "sourceImageUrl": "https://sumi-images.oss-cn-hangzhou.aliyuncs.com/files/202512/27/1766823471_eVMyZRTPYD.png",
+    "description": "",
+    "tags": [
+      "官网导入",
+      "苏米/SUMI",
+      "暖通控制",
+      "米家",
+      "BLE Mesh"
+    ],
+    "channels": [
+      "苏米官网",
+      "sumi-technology.com"
+    ],
+    "specVerified": false
+  }
+]

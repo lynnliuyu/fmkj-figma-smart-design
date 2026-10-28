@@ -1,0 +1,66 @@
+{
+	# 客户子域名的证书按需签发（第一次访问时自动申请）。
+	# ask 端点只放行 *.fmkj.top，别人把域名指向本机也签不出来。
+	on_demand_tls {
+		ask http://127.0.0.1:18321/tls-ask
+	}
+}
+
+xgj.fmkj.top {
+	# 显式按需：本机同时有 *.fmkj.top 的按需策略时，普通站点自有的证书不会被加载，
+	# 加上 on_demand 后握手时会先从存储里取已有证书（取不到才申请）。
+	tls {
+		on_demand
+	}
+
+	# ── 闲管家「虚拟货源」回调入口 ──
+	# Reversed: reaches the local gateway through an SSH reverse tunnel
+	# on 127.0.0.1:8787 (established from the dev machine).
+	# ⚠️ Must use `handle` (NOT `handle_path`): handle_path strips the
+	#    /goofish prefix, and the gateway needs the full path.
+	handle /goofish/* {
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	# ── 微信公众号「关键词自动回复」──
+	# 微信被动回复：GET 校验签名（原样返回 echostr）/ POST 收消息回文本。
+	# ⚠️ 用 `handle /wechat*` 而非 `/wechat/*`：后者要求带尾斜杠，
+	#    而测试号页面里填的是 https://xgj.fmkj.top/wechat（无尾斜杠）。
+	# 目标 127.0.0.1:8899 由本机另一条**独立** SSH 反向隧道提供，
+	# 与 8787 那条完全隔离，互不影响。
+	handle /wechat* {
+		reverse_proxy 127.0.0.1:8899
+	}
+
+	# ── 商品图床（原有配置，保持不变）──
+	handle_path /goods/* {
+		root * /srv/goods-img
+		file_server
+		header Cache-Control "public, max-age=31536000"
+	}
+
+	handle {
+		respond "media host" 200
+	}
+}
+
+# ── FMKJ 设备版：客户子域名外网访问 ──
+# 泛解析 *.fmkj.top 已指向本机；客户设备通过 frpc 连到 frps（127.0.0.1:18080）。
+# tls on_demand：客户子域名第一次访问时自动签发证书，加客户不用改这个文件。
+*.fmkj.top {
+	encode zstd gzip
+	tls {
+		on_demand
+	}
+	reverse_proxy 127.0.0.1:18080 {
+		header_up Host {host}
+		header_up X-Forwarded-Proto https
+		header_up X-Real-IP {remote_host}
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
+}

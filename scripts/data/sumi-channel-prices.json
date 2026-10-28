@@ -1,0 +1,663 @@
+{
+  "_meta": {
+    "generatedAt": "2026-10-13",
+    "note": "苏米(SUMI)产品渠道价/工程价/批发价参考库。价格为人民币元，含税与否未标注，按渠道惯例多为含税批发价。",
+    "sources": [
+      {
+        "name": "京家供应链",
+        "type": "工程/批发渠道商（福建，装修公司集采价）",
+        "url": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods&cate=551",
+        "note": "价格最低，含完整按键数/零火版阶梯价与库存数，为本库主要成本基准"
+      },
+      {
+        "name": "万嘉智能（吉林省）物联科技有限公司",
+        "type": "区域经销商/服务商（长春绿米服务商）",
+        "url": "https://www.wanjiaiot.com/mall/Commodity.asp?sortid2=259",
+        "note": "价格普遍高于京家，含'家装定制版'规格，适合作为零售下线的对照上限"
+      }
+    ],
+    "priceHierarchy": "政府/工程采购价 < 批发价(京家供应链) < 渠道经销价(万嘉智能) < 电商零售价(京东) < 官网零售价",
+    "excluded": "闲鱼/1688 因阿里风控拦截未采集；政府采购网(ccgp.gov.cn) 多轮检索未命中苏米单品（单价低，工程采购通常整包招标），故无政府成交价数据"
+  },
+
+  "苏米智能开关H2 Ultra": {
+    "officialPrice": 239,
+    "officialSpecNote": "官网￥239对应3键（需核实，官网未标注键数）",
+    "channelPrices": [
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11106", "spec": "零火 1键 白色/灰色", "date": "2026-10-13", "stock": "有货"},
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11106", "spec": "零火 1键 白色/灰色", "date": "2026-10-13"},
+      {"price": 219, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11106", "spec": "零火 2键 白色/灰色", "date": "2026-10-13"},
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11106", "spec": "零火 3键 白色/灰色", "date": "2026-10-13"},
+      {"price": 259, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11106", "spec": "零火 4键 白色/灰色", "date": "2026-10-13"},
+      {"price": 239, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2749", "spec": "零火 1键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 239, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2745", "spec": "零火 1键 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 259, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2750", "spec": "零火 2键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 259, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2746", "spec": "零火 2键 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 279, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2751", "spec": "零火 3键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 279, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2747", "spec": "零火 3键 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2752", "spec": "零火 4键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2748", "spec": "零火 4键 星空灰 家装定制版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 219,
+    "note": "阶梯完整：1键199/2键219/3键239/4键259（京家）。官网￥239对应3键，与京家3键价一致，官网无溢价。万嘉比京家每档高约￥40（含家装定制版溢价）。取2键价￥219作为基准成本，覆盖最常见规格且略保守于最低档。"
+  },
+
+  "苏米智能开关H2 Plus": {
+    "officialPrice": 129,
+    "officialSpecNote": "官网未标注键数",
+    "channelPrices": [
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11078", "spec": "PC面板 零火 1键 白色/灰色", "date": "2026-10-13"},
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11078", "spec": "PC面板 零火 2键 白色/灰色", "date": "2026-10-13"},
+      {"price": 219, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11078", "spec": "PC面板 零火 3键 白色/灰色", "date": "2026-10-13"},
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11078", "spec": "PC面板 零火 4键 白色/灰色", "date": "2026-10-13"},
+      {"price": 116.9, "source": "京东（苏米全屋智能家居店）", "sourceUrl": "https://item.jd.com/", "spec": "零火二开 白色 电商促销价", "date": "2026-10-13", "note": "常卖价￥116.90，历史最低￥92.00，618价￥107.93；来源为ZOL商品库聚合的京东页面信息，链接为店铺聚合入口非单品固定URL"}
+    ],
+    "suggestedCost": 116.9,
+    "note": "⚠️重要异常：京家PC面板款H2 Plus（179-239）明显高于官网￥129，而京东电商零火二开仅￥116.9（历史低￥92）。推断官网￥129对应的是促销/基础款，京家渠道在售为'MESH2.0零火PC自定义字'高配版本，两者非同一配置。若按官网￥129定价，京东渠道已击穿成本线。建议cost取￥116.9（京东实际成交），并核实官网￥129的键数与面板材质。"
+  },
+
+  "苏米智能开关H2 Pro+（零火版）": {
+    "officialPrice": 179,
+    "channelPrices": [
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 零火 1键 白色/灰色", "date": "2026-10-13", "stock": "89-94"},
+      {"price": 189, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 零火 2键 白色/灰色", "date": "2026-10-13", "stock": "94-96"},
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 零火 3键 白色/灰色", "date": "2026-10-13", "stock": "91-98"},
+      {"price": 209, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 零火 4键 白色/灰色", "date": "2026-10-13", "stock": "99"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3218", "spec": "零火 1键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3222", "spec": "零火 1键 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 189, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3219", "spec": "零火 2键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3220", "spec": "零火 3键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 209, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3221", "spec": "零火 4键 奶油白 家装定制版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 179,
+    "note": "阶梯：1键179/2键189/3键199/4键209。两渠道价完全一致，无渠道折扣空间。官网￥179=1键价，官网实际按1键定价，3键需加价￥20。取1键价￥179作基准。"
+  },
+
+  "苏米智能开关H2 Pro+（单零火版）": {
+    "officialPrice": 179,
+    "channelPrices": [
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 单火 1键 白色/灰色", "date": "2026-10-13", "stock": "96-100"},
+      {"price": 189, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 单火 2键 白色/灰色", "date": "2026-10-13", "stock": "100"},
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 单火 3键 白色/灰色", "date": "2026-10-13", "stock": "100"},
+      {"price": 209, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9042", "spec": "玻璃面板 单火 4键 白色/灰色", "date": "2026-10-13", "stock": "100"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3226", "spec": "单/零火 1键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 189, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3227", "spec": "单/零火 2键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3228", "spec": "单/零火 3键 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 209, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3229", "spec": "单/零火 4键 奶油白 家装定制版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 179,
+    "note": "与零火版同价（179-209），单火零火通用版无额外成本。两渠道一致，官网￥179=1键价。"
+  },
+
+  "苏米智能开关H2（零火版）": {
+    "officialPrice": 159,
+    "channelPrices": [
+      {"price": 119, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 零火 1键 白色/灰色", "date": "2026-10-13", "stock": "23-42"},
+      {"price": 129, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 零火 2键 白色/灰色", "date": "2026-10-13", "stock": "2-7"},
+      {"price": 139, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 零火 3键 白色/灰色", "date": "2026-10-13", "stock": "0-9"},
+      {"price": 149, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 零火 4键 白色/灰色", "date": "2026-10-13", "stock": "9-10"},
+      {"price": 159, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3962", "spec": "零火 1键 白色", "date": "2026-10-13"},
+      {"price": 159, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3958", "spec": "零火 1键 灰色", "date": "2026-10-13"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3963", "spec": "零火 2键 白色", "date": "2026-10-13"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3959", "spec": "零火 2键 灰色", "date": "2026-10-13"},
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3964", "spec": "零火 3键 白色", "date": "2026-10-13"},
+      {"price": 219, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3965", "spec": "零火 4键 白色", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 129,
+    "note": "⚠️官网价虚高：官网￥159 = 京家1键价（￥119），渠道折扣率75%；但万嘉1键价正好￥159，官网等于经销商价。京家2/3/4键库存极低（2-10件），大面积工程需提前备货。取2键价￥129作基准（覆盖多数户型主力规格）。"
+  },
+
+  "苏米智能开关H2（单零火版）": {
+    "officialPrice": 219,
+    "channelPrices": [
+      {"price": 149, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 单火 1键 白色/灰色", "date": "2026-10-13", "stock": "99-100"},
+      {"price": 159, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 单火 2键 白色/灰色", "date": "2026-10-13", "stock": "95-98"},
+      {"price": 169, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 单火 3键 白色/灰色", "date": "2026-10-13", "stock": "98-100"},
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8970", "spec": "超薄亚克力面板 单火 4键 白色/灰色", "date": "2026-10-13", "stock": "100"},
+      {"price": 179, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3970", "spec": "单/零火 1键 白色", "date": "2026-10-13"},
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3971", "spec": "单/零火 2键 白色", "date": "2026-10-13"},
+      {"price": 219, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3972", "spec": "单/零火 3键 白色", "date": "2026-10-13"},
+      {"price": 239, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3973", "spec": "单/零火 4键 白色", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 159,
+    "note": "⚠️单火版比零火版贵约￥30（京家）。官网￥219 = 万嘉3键价，比京家同规格（3键￥169）高30%。京家单火库存充足（95-100），零火版反而缺货。取2键价￥159。"
+  },
+
+  "苏米智能开关H2 Cielo（旋钮款）": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3117", "spec": "旋钮款 奶油白", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3116", "spec": "旋钮款 星空灰", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "京家供应链无此款（仅有Cielo圆屏款）。万嘉价￥299与官网完全一致，无折扣空间。若需更低成本建议向苏米官方渠道直接询价。颜色不同价同（星空灰/奶油白），不按官网描述的'星空灰/奶油白'再分价。"
+  },
+
+  "苏米智能开关H2 Cielo（圆屏款）": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8976", "spec": "灰色", "date": "2026-10-13", "stock": "76"},
+      {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8976", "spec": "白色", "date": "2026-10-13", "stock": "71"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3118", "spec": "圆屏款 奶油白", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3119", "spec": "圆屏款 星夜灰", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "两渠道价均￥299，与官网一致，零毛利空间。该款京家库存充足（71-76件）。注：万嘉配色名为'星夜灰/奶油白'，京家为'灰色/白色'，实为同款不同叫法。"
+  },
+
+  "苏米全面屏开关C2": {
+    "officialPrice": 399,
+    "officialSpecNote": "⚠️官网产品中心当前页已无C2，仅有C3（￥399）；C2仅见于官网第2页历史列表",
+    "channelPrices": [
+      {"price": 699, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2644", "spec": "全面屏C2 灰色", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 399,
+    "note": "⚠️已换代：C2→C3。京家供应链在售款已全部为C3（￥399，库存41件），C2无货。万嘉仍有C2存量但报价￥699（比官网￥399高75%），疑为清库存价或含服务费，不宜作成本参考。C3渠道价￥399与官网完全一致。"
+  },
+
+  "苏米全面屏开关C3": {
+    "officialPrice": 399,
+    "officialSpecNote": "C2的换代款，官网首页与产品中心第3页均在售",
+    "channelPrices": [
+      {"price": 399, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8972", "spec": "全面屏智能开关C3 标准规格", "date": "2026-10-13", "stock": "41"},
+      {"price": 399, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12133", "spec": "全面屏C3 屏幕智能开关", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 399,
+    "note": "C2的正式替代款，建议产品库将SUMI-C2替换为SUMI-C3。京家两条链接均为￥399，与官网零折扣，京家库存41件。"
+  },
+
+  "苏米调光旋钮X2": {
+    "officialPrice": 399,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两个已采集渠道（京家供应链、万嘉智能）均无此款。万嘉仅有旧款'智能旋钮X1'（￥859）和'T1调光面板'（￥249），均非X2。X2为较新本地协议产品，渠道尚未铺货。"
+  },
+
+  "苏米趣动屏开关S1": {
+    "officialPrice": 279,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两个渠道均无。万嘉在售同系列为'T2 AG'（￥299）与'S2窗帘电机'，名称不符不可直接引用。需向苏米官方或新经销商询价。"
+  },
+
+  "苏米缤纷面板（金属）": {
+    "officialPrice": 599,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价（面板类）。万嘉在售的是'缤纷2'系列（详见缤纷面板2条目），未标注材质为金属，无法区分金属/PC/玻璃款。"
+  },
+
+  "苏米缤纷面板（PC）": {
+    "officialPrice": 399,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。万嘉'缤纷2 PC'全规格￥299（2/3/4/8键同价），但那是缤纷面板2的PC款，与缤纷面板1代不同代，谨慎参考。"
+  },
+
+  "苏米缤纷面板2（玻璃）": {
+    "officialPrice": 499,
+    "officialSpecNote": "官网列有'缤纷面板2（玻璃）'；万嘉渠道称对应版本为'缤纷2 AG'（AG玻璃）",
+    "channelPrices": [
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2654", "spec": "零火 2键 AG玻璃 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2662", "spec": "零火 3键 AG玻璃 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2663", "spec": "零火 4键 AG玻璃 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2667", "spec": "零火 8键 AG玻璃 奶油白 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2664", "spec": "零火 2键 AG玻璃 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2665", "spec": "零火 3键 AG玻璃 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2666", "spec": "零火 4键 AG玻璃 星空灰 家装定制版", "date": "2026-10-13"},
+      {"price": 349, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2668", "spec": "零火 8键 AG玻璃 星空灰 家装定制版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 349,
+    "note": "阶梯平坦：2/3/4/8键均￥349，不按键数加价（与开关类差异明显）。官网￥499比渠道价高43%，折扣率70%。配色仅奶油白/星空灰两色可选，无金属面板的多色。"
+  },
+
+  "苏米缤纷面板2（金属）": {
+    "officialPrice": 599,
+    "officialSpecNote": "万嘉称'缤纷2金属'",
+    "channelPrices": [
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2693", "spec": "零火 4键 金属 星空灰", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2692", "spec": "零火 8键 金属 星空灰", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2659", "spec": "零火 4键 金属 深渊黑", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2676", "spec": "零火 2键 金属 奶油金", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2673", "spec": "零火 2键 金属 薄荷绿", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2680", "spec": "零火 8键 金属 太空银", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2656", "spec": "零火 8键 金属 熔岩橙", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2657", "spec": "零火 8键 金属 薄荷绿", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2658", "spec": "零火 8键 金属 奶油金", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 399,
+    "note": "官网￥599，渠道￥399，折扣率67%（本次采集中折扣力度最大项）。全色系（星空灰/深渊黑/奶油金/薄荷绿/熔岩橙/橄榄绿/星辰蓝/太空银）2/3/4/8键统一￥399，无键数差价。8色可选是金属款相对PC/玻璃款的核心卖点。"
+  },
+
+  "苏米缤纷面板2（PC）": {
+    "officialPrice": 399,
+    "officialSpecNote": "万嘉称'缤纷2 PC'",
+    "channelPrices": [
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2698", "spec": "零火 2键 PC 无相白 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2697", "spec": "零火 3键 PC 无相白 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2701", "spec": "零火 2键 PC 魅影灰 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2700", "spec": "零火 3键 PC 魅影灰 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2702", "spec": "零火 8键 PC 魅影灰 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2699", "spec": "零火 8键 PC 无相白 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2660", "spec": "零火 4键 PC 魅影灰 家装定制版", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2661", "spec": "零火 4键 PC 无相白 家装定制版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "官网￥399，渠道￥299，折扣率75%。2/3/4/8键统一￥299。三材质梯度清晰：PC￥299 < AG玻璃￥349 < 金属￥399，官网对应￥399/￥499/￥599，材质溢价梯度一致。"
+  },
+
+  "苏米智能筒灯隐界Pro": {
+    "officialPrice": 239,
+    "channelPrices": [
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9601", "spec": "云弧无边框 枪黑 12W 60° MESH2.0", "date": "2026-10-13", "stock": "100"},
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9601", "spec": "云弧无边框 哑白 12W 60° MESH2.0", "date": "2026-10-13", "stock": "100"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3102", "spec": "mesh隐界Pro 筒灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 239,
+    "note": "京家价=官网价（￥239），零折扣，颜色不区分价（枪黑/哑白同价），库存100件充足。万嘉标￥299（筒射灯同名但为'隐界Pro'，比官网高25%，疑含服务费，不建议作成本基准）。⚠️注意：京家在售款名为'云弧无边框高端筒灯隐界PRO'，比官网'智能筒灯隐界 Pro'多'云弧无边框'描述，需确认是否同代。"
+  },
+
+  "苏米智能射灯隐界Pro（礼盒版）": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9603", "spec": "云弧无边框 枪黑 15°/24°/36° MESH2.0 万分级调光", "date": "2026-10-13"},
+      {"price": 239, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9603", "spec": "云弧无边框 哑白 15°/24°/36° MESH2.0 万分级调光", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3103", "spec": "mesh隐界Pro 射灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 239,
+    "note": "⚠️官网礼盒版￥299，京家散装￥239（角度15°/24°/36°同价），差￥60即礼盒溢价。万嘉￥299与官网一致。做工程单建议用散装版（￥239），礼盒版仅适合零售/送礼场景。角度不影响价格。"
+  },
+
+  "苏米智能筒灯无界": {
+    "officialPrice": 199,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3109", "spec": "mesh L5 筒灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 199,
+    "note": "⚠️匹配存疑：万嘉'mesh L5 筒灯'￥199与官网'无界'￥199价格一致，但名称为L5而非无界，无法确证同款（万嘉L系列另有'mesh H2筒灯'￥189、'mesh光澈筒灯'￥199、'mesh星芒'￥199等多个￥199灯具，可能是不同系列同价）。京家无此款。需实物或型号确认后再采信。"
+  },
+
+  "苏米智能射灯无界": {
+    "officialPrice": 199,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3110", "spec": "mesh L5 射灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 199,
+    "note": "⚠️匹配存疑，同上：万嘉'mesh L5 射灯'￥199，名称与'无界'不符，仅价格巧合。京家无此款。"
+  },
+
+  "苏米巨省电筒灯H3": {
+    "officialPrice": 239,
+    "channelPrices": [
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8989", "spec": "巨省电射灯H3 哑黑 24°/36°/15° 待机0.26W", "date": "2026-10-13", "stock": "178-179"},
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8989", "spec": "巨省电射灯H3 哑白 24°/36°/15° 待机0.26W", "date": "2026-10-13", "stock": "0-179"}
+    ],
+    "suggestedCost": 179,
+    "note": "⚠️官网￥239 vs 京家￥179，折扣率75%。京家在售名为'巨省电射灯H3'，库中为'巨省电筒灯H3'，射灯/筒灯是否同款需核实——若是同款则这是本次灯具类最大折扣项；若非同款则筒灯版无渠道价。角度（15°/24°/36°）与颜色均不区分价。库存极充足（179件）。"
+  },
+
+  "苏米自然光射灯光澈": {
+    "officialPrice": 199,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3104", "spec": "mesh光澈 射灯", "date": "2026-10-13"},
+      {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9047", "spec": "窄边框全光谱射灯光澈系列 12W 枪黑/哑白 15°/24°/36°", "date": "2026-10-13", "stock": "99-100"}
+    ],
+    "suggestedCost": 199,
+    "note": "两渠道均￥199，与官网一致，零折扣。京家款名为'窄边框全光谱射灯光澈系列'，规格详尽（12W全光谱，MESH2.0），角度15°/24°/36°同价、颜色枪黑/哑白同价，库存约100件。属渠道直供无加价产品。"
+  },
+
+  "苏米自然光筒灯光澈": {
+    "officialPrice": 199,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3105", "spec": "mesh光澈 筒灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 199,
+    "note": "万嘉￥199=官网价。京家在售的光澈系列只有射灯（id=9047），无筒灯，故筒灯版仅万嘉一个数据点。角度/颜色不区分价。"
+  },
+
+  "苏米微孔出光射灯星芒": {
+    "officialPrice": 199,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3106", "spec": "mesh星芒 射灯", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 199,
+    "note": "万嘉￥199=官网价，无折扣。京家无此款。星芒属苏米低价走量款，渠道无溢价空间。"
+  },
+
+  "苏米智能格栅灯G1 Mesh2.0": {
+    "officialPrice": 499,
+    "channelPrices": [
+      {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9044", "spec": "格栅灯 5头 灰色/白色", "date": "2026-10-13", "stock": "100"},
+      {"price": 499, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9044", "spec": "格栅灯 10头 灰色/白色", "date": "2026-10-13", "stock": "100"},
+      {"price": 159, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8996", "spec": "集控磁吸格栅灯lite（不同产品线）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "⚠️关键阶梯：按'头数'计价而非按键数——5头￥299 / 10头￥499。官网￥499对应10头款，5头款实际￥299（折扣60%）。颜色不区分价，库存100件。第三条为'集控磁吸格栅灯lite'（￥159），属需配24V集控电源的磁吸灯产品线，与G1非同一产品，仅作参考不作成本基准。"
+  },
+
+  "苏米人存平板灯 Mesh 2.0": {
+    "officialPrice": 169,
+    "channelPrices": [
+      {"price": 239, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=4506", "spec": "人存平板灯 18W", "date": "2026-10-13"},
+      {"price": 329, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=4507", "spec": "人存平板灯 24W", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 239,
+    "note": "⚠️官网￥169为最低功率档，渠道价按功率阶梯：18W￥239 / 24W￥329。官网与渠道相差￥70-160，说明官网价对应更小功率版本（如12W/15W，未在两渠道出现）。功率阶梯差￥90。⚠️万嘉价高于官网，属反常（经销商价高于零售价），可能是万嘉未拿到直供或含服务费，不宜作成本基准；建议向苏米官方询18W款真渠道价。"
+  },
+
+  "苏米全光谱磁吸射灯(Mesh 2.0)": {
+    "officialPrice": 319,
+    "channelPrices": [
+      {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8997", "spec": "集控磁吸射灯lite（需搭配24V集控磁吸灯电源）", "date": "2026-10-13", "stock": "85"}
+    ],
+    "suggestedCost": 179,
+    "note": "⚠️仅匹配到'集控磁吸射灯lite'（￥179，需另配24V集控磁吸灯电源￥199），属磁吸灯'集控'系列而非'全光谱磁吸'Mesh2.0直供款。名称不完全一致，作为参考成本：整套=￥179(灯体)+￥199(电源)=￥378，接近官网￥319。京家全光谱磁吸系列未单独在售，无法取到确切渠道价。建议按￥319官网价或另询价处理。"
+  },
+
+  "苏米全光谱磁吸格栅灯(Mesh 2.0)": {
+    "officialPrice": 319,
+    "channelPrices": [
+      {"price": 159, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8996", "spec": "集控磁吸格栅灯lite（需搭配24V集控磁吸灯电源）", "date": "2026-10-13", "stock": "59"}
+    ],
+    "suggestedCost": 159,
+    "note": "同全光谱磁吸射灯：京家'集控磁吸格栅灯lite'￥159 + 24V集控电源￥199 = ￥358整套，略高于官网￥319。名称不完全一致，仅作参考。产品线差异需与苏米确认。"
+  },
+
+  "苏米全光谱磁吸折叠格栅灯(Mesh 2.0)": {
+    "officialPrice": 319,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。京家与万嘉均无'折叠格栅灯'（折叠角度款）产品线。京家有'集控磁吸格栅灯lite'￥159但无折叠功能，不可替代。"
+  },
+
+  "苏米全光谱磁吸泛光灯(Mesh2.0)": {
+    "officialPrice": 319,
+    "channelPrices": [
+      {"price": 149, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8995", "spec": "集控磁吸泛光灯lite（需搭配24V集控磁吸灯电源）", "date": "2026-10-13", "stock": "59"}
+    ],
+    "suggestedCost": 149,
+    "note": "同磁吸系列：'集控磁吸泛光灯lite'￥149 + 电源￥199 = ￥348整套，高于官网￥319。名称不完全一致，仅作参考。"
+  },
+
+  "苏米深度调光超薄射灯 L6": {
+    "officialPrice": 289,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两渠道均无L6。万嘉射灯在售序列为S1mini(￥299)/S2(￥299)/隐界Pro(￥299)/星芒(￥199)/光澈(￥199)/L5(￥199)，无深度调光超薄系列。"
+  },
+
+  "苏米深度调光筒射灯Ultra": {
+    "officialPrice": 199,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两渠道均无'筒射灯Ultra'。万嘉有'筒射灯SUMI PLC'￥399（PLC协议非Mesh2.0）与'筒射灯调光电源PLC 200W'￥599，产品线不同不可引用。"
+  },
+
+  "苏米线性灯一体电源Mesh2.0": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 189, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11108", "spec": "100W", "date": "2026-10-13"},
+      {"price": 259, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11108", "spec": "300W", "date": "2026-10-13"},
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3114", "spec": "mesh 100W", "date": "2026-10-13"},
+      {"price": 459, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3113", "spec": "mesh 300W", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 189,
+    "note": "⚠️功率阶梯：京家100W￥189 / 300W￥259（官网￥299对应300W，折扣87%）。万嘉100W￥299 / 300W￥459（比京家贵￥110-200，疑含服务费，不宜作成本基准）。京家为真批发价。取100W档￥189作基准，300W款按￥259计。"
+  },
+
+  "苏米隐藏式窗帘电机Thor": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 499, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3976", "spec": "Thor 电机", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️唯一渠道价￥499远高于官网￥299（经销商价高出67%），不构成有效成本参考。京家在售的是'Thor透明版'（详见下条）而非标准版。suggestedCost留空——不建议把￥499当成本（那是零售加价），也不应直接用官网价（那是零售价）。建议向苏米官方或另找工程渠道询价。"
+  },
+
+  "苏米隐藏式窗帘电机Thor(透明版)": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12088", "spec": "电机（MESH2.0，2扭矩，需搭配特有传动头）", "date": "2026-10-13"},
+      {"price": 39, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12088", "spec": "配套传动头（选配）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "京家电机￥299=官网价（零折扣）。⚠️必配件提醒：需另购'特有传动头'￥39，整套实际￥338，官网￥299未含此项——报价时须计入，否则会漏￥39成本。传动头为强制配套项（详情页注明'需要搭配特有传动头使用，2扭矩，MESH2.0'）。"
+  },
+
+  "苏米隐藏式窗帘电机Thor（探索版）": {
+    "officialPrice": 599,
+    "channelPrices": [
+      {"price": 599, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3977", "spec": "Thor 探索版", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 599,
+    "note": "万嘉￥599=官网价，零折扣。京家无探索版。探索版为Thor的高配款（官网￥599 vs 标准版￥299），两渠道均无折扣空间。"
+  },
+
+  "苏米智能开合帘电机L3 Mini": {
+    "officialPrice": 399,
+    "channelPrices": [
+      {"price": 359, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11881", "spec": "苏米窗帘小电机 L3 Mini", "date": "2026-10-13"},
+      {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8984", "spec": "L3窗帘电机 mesh2.0（标准L3，非Mini）", "date": "2026-10-13", "stock": "42"},
+      {"price": 499, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3975", "spec": "Thor L3 Mini", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 359,
+    "note": "⚠️三档价需区分：京家L3 Mini￥359（对应官网￥399，折扣90%）；京家标准L3 mesh2.0￥299（库存42）；万嘉L3 Mini￥499（高于官网，零售加价）。⚠️重要：京家L3(￥299)比L3 Mini(￥359)便宜￥60，即'Mini'并非低配而是不同产品——可能Mini指电机体积/适用窗帘重量不同。库中'L3 Mini'官网￥399与'标准L3'需分别建SKU。取京家L3 Mini￥359。"
+  },
+
+  "苏米智能开合帘电机Mini 82": {
+    "officialPrice": 499,
+    "channelPrices": [
+      {"price": 499, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3120", "spec": "MINI82", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 499,
+    "note": "万嘉￥499=官网价，零折扣。京家无此款。Mini 82对应DT82轨道系统（行业主流规格，兼容性好），L5亦采用此规格。"
+  },
+
+  "苏米全隐藏电机L5": {
+    "officialPrice": 419,
+    "channelPrices": [
+      {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3109", "spec": "mesh L5（筒灯，万嘉命名）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️严重匹配存疑，唯一数据点是万嘉'mesh L5 筒灯'￥199，但万嘉的'L5'属于灯具（筒灯/射灯）序列，与'全隐藏窗帘电机L5'完全不同品类，不可作成本参考。京家无窗帘电机L5。suggestedCost留空，建议另询价。"
+  },
+
+  "苏米星轨伸缩套装": {
+    "officialPrice": 599,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两渠道均无'星轨'伸缩轨道套装。京家最接近的是'氛围窗帘SUMI轨道1米'（万嘉￥239/米）与'PLC窗帘SUMI轨道1米'（万嘉￥159/米），但为按米销售的普通轨道，非伸缩套装，不可替代。伸缩套装是差异化产品，渠道未铺货。"
+  },
+
+  "苏米智能门锁 Ai指纹版": {
+    "officialPrice": 699,
+    "channelPrices": [
+      {"price": 2999, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12139", "spec": "云米鲲鹏AI智能门锁PRO（更高配，非Ai指纹版）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️未找到同款渠道价。京家在售门锁为'云米鲲鹏AI智能门锁PRO'￥2999（人脸+掌静脉+哨兵猫眼，规格远高于Ai指纹版），价格不可类比。京家另有'云米智能锁CROSS 3标准锁体'￥1299，亦非同款。门锁类渠道价缺失，建议直接向苏米区域代理询价（门锁通常安装服务成本占比高，纯硬件成本难从公开渠道获取）。"
+  },
+
+  "苏米智能屏11": {
+    "officialPrice": 3999,
+    "channelPrices": [
+      {"price": 3999, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3978", "spec": "智能屏11", "date": "2026-10-13"},
+      {"price": 599, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3979", "spec": "智能屏11 桌面底座（选配）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 3999,
+    "note": "万嘉价￥3999=官网价，零折扣（高端旗舰品渠道无加价也无折扣，属正常）。⚠️选配提醒：桌面底座￥599需另购。官网另有套装页'苏米智能屏11轻影院(一拖四)'￥6499 / '进阶版'￥8699，为4拖套装价。"
+  },
+
+  "苏米中央空调控制器Mesh2.0": {
+    "officialPrice": 1799,
+    "channelPrices": [
+      {"price": 2299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3123", "spec": "VRF mesh2.0 1拖4", "date": "2026-10-13"},
+      {"price": 2599, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3124", "spec": "VRF mesh2.0 1拖8", "date": "2026-10-13"},
+      {"price": 1999, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3974", "spec": "VRF WIFI", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️关键发现：暖通类为'按外机台数'阶梯计价——1拖4￥2299 / 1拖8￥2599，差价￥300。而官网统一标￥1799（低于1拖4的渠道价！）。另万嘉VRF WIFI款￥1999。⚠️官网￥1799可能对应更小规格（如1拖1/1拖2），或是旧价。若按官网￥1799接单1拖8工程单，将亏约￥800/台。suggestedCost留空，必须先确认官网￥1799对应的外机台数规格再定价。"
+  },
+
+  "苏米温控器Mesh2.0(三合一)": {
+    "officialPrice": 299,
+    "channelPrices": [
+      {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=2753", "spec": "温控器三合一 Mesh2.0（常规版）", "date": "2026-10-13"},
+      {"price": 399, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3125", "spec": "温控器三合一旋钮版 Mesh2.0（旋钮版）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 299,
+    "note": "⚠️版本阶梯：常规版￥299（=官网价，零折扣）/ 旋钮版￥399。库中'三合一'应对应常规版。旋钮版价高￥100，若客户指定旋钮需按￥399计成本。"
+  },
+
+  "苏米VRF空调网关Pro": {
+    "officialPrice": 1999,
+    "channelPrices": [
+      {"price": 1499, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8987", "spec": "VRF中央空调网关（WiFi连接）", "date": "2026-10-13", "stock": "45"},
+      {"price": 1999, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=1871", "spec": "空调控制器 VRF Pro", "date": "2026-10-13"}
+    ],
+    "suggestedCost": 1499,
+    "note": "京家￥1499 vs 官网￥1999，折扣75%。京家在售名为'VRF中央空调网关'（WiFi），万嘉名为'VRF Pro'￥1999。两个渠道命名不同但型号对应同一产品线（库中'苏米VRF空调网关Pro'官网￥1999 = 万嘉'VRF Pro'￥1999）。⚠️京家￥1499款需确认是否Pro版——若为标准版则Pro版成本仍为￥1999。建议向京家确认版本。京家库存45件。"
+  },
+
+  "苏米安全轨道插座Mesh2.0": {
+    "officialPrice": 369,
+    "channelPrices": [
+      {"price": 549, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3998", "spec": "轨道安全插座 星空灰", "date": "2026-10-13"},
+      {"price": 549, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3999", "spec": "轨道安全插座 奶油白", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️唯一渠道价￥549高于官网￥369（+49%），不构成有效成本参考。京家无此款。suggestedCost留空——￥549是零售加价不可当成本，但官网￥369是零售价也不可直接当成本。建议另询工程渠道价。"
+  },
+
+  "苏米BGM悠享系列吸顶音箱3.5寸": {
+    "officialPrice": 499,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两渠道均无吸顶音箱（背景音乐音箱）产品线。万嘉在售音频类为'智能屏11'与'梦幻帘电机'，无苏米吸顶音箱。建议向苏米询价或从智能屏11轻影院套装页（￥6499起）反推。"
+  },
+
+  "苏米SAT畅享系列吸顶音箱3.5寸": {
+    "officialPrice": 999,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。同BGM款，两渠道均无苏米吸顶音箱产品线。价格梯度推断（BGM￥499 < SAT￥999 < UHD￥1699）仅来自官网自身，不可作成本参考。"
+  },
+
+  "苏米UHD尊享系列吸顶音箱3.5寸": {
+    "officialPrice": 1699,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。同上，两渠道无苏米吸顶音箱。"
+  },
+
+  "苏米隐形智能晾衣机Y1": {
+    "officialPrice": 1499,
+    "channelPrices": [],
+    "suggestedCost": null,
+    "note": "❌未找到渠道价。两渠道均无晾衣机产品线（京家仅有飞利浦智能晾衣机SDR502￥1299，非苏米）。隐形晾衣机属安装属性强、渠道私域报价的产品，公开B2B站难获取成本。"
+  },
+
+  "苏米智能门锁 大屏猫眼版": {
+    "officialPrice": 2699,
+    "officialSpecNote": "官网在售（首页精选），产品库sumi-products.json尚未录入此款",
+    "channelPrices": [
+      {"price": 2999, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12139", "spec": "云米鲲鹏AI智能门锁PRO（哨兵猫眼大屏，人脸+掌静脉，规格更高）", "date": "2026-10-13"}
+    ],
+    "suggestedCost": null,
+    "note": "⚠️未找到同款渠道价。京家在售'云米鲲鹏AI智能门锁PRO'￥2999规格高于本款（大屏猫眼版￥2699），不可直接类比。京家另有'云米智能锁CROSS 3标准锁体'￥1299。门锁类均无同款渠道价。注意：大屏猫眼版官网在售但未录入产品库，建议补录。"
+  },
+
+  "_补充渠道价_非产品库重点但可用于配套报价": {
+    "_note": "以下为采集中发现、但不在产品库49款内的配套件价格，工程报价常需一并计算",
+    "苏米H2智能开关配套插座（亚克力面板）": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 13, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12161", "spec": "H2配套亚克力白色+正五孔", "date": "2026-10-13"},
+        {"price": 45, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12161", "spec": "H2配套亚克力灰色+正五孔", "date": "2026-10-13"},
+        {"price": 22, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12161", "spec": "H2配套亚克力白色+正四孔", "date": "2026-10-13"},
+        {"price": 47, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12161", "spec": "H2配套亚克力灰色+16A插座", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 13,
+      "note": "⚠️面板颜色差价极大：白色￥13 vs 灰色￥45（3.5倍）！工程报价若按白色开关配灰色插座会严重亏损。务必按实际颜色核对。"
+    },
+    "苏米玻璃H2PRO+配套插座": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 45, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12162", "spec": "玻璃配套 正五孔（白/灰同价）", "date": "2026-10-13"},
+        {"price": 66, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12162", "spec": "玻璃配套 正四孔（白/灰同价）", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 45,
+      "note": "玻璃面板款插座白/灰同价，无颜色差价。按孔型阶梯：正五孔￥45 < 正四孔￥66。"
+    },
+    "苏米Thor窗帘电机配套传动头": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 39, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=12088", "spec": "Thor电机专用传动头（强制配套）", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 39,
+      "note": "Thor电机必配件，报价时须计入。"
+    },
+    "苏米磁吸轨道": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 398, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9000", "spec": "2米", "date": "2026-10-13"},
+        {"price": 597, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9000", "spec": "3米", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 398,
+      "note": "⚠️⚠️按米计价且单价高：2米￥398（￥199/米）、3米￥597（￥199/米），按米线性计价无折扣。磁吸灯工程必配件，成本占比常被低估。京家销量12件。需另配24V集控磁吸灯电源￥199。"
+    },
+    "苏米24V低压灯带电源": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8983", "spec": "100W", "date": "2026-10-13"},
+        {"price": 259, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8983", "spec": "150W", "date": "2026-10-13"},
+        {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8983", "spec": "200W", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 199,
+      "note": "功率阶梯100W/150W/200W = ￥199/259/299。京家销量45件。"
+    },
+    "苏米低压灯带": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 1180, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8979", "spec": "20米/盘（24V二线SMD全光谱RA>80）", "date": "2026-10-13"},
+        {"price": 990, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8978", "spec": "10米/盘（24V双线COB）", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 990,
+      "note": "⚠️单盘价格极高：10米￥990、20米￥1180（20米更划算，￥59/米 vs ￥99/米）。灯带为按米计价，报价须防漏。需搭配H2控制器￥199 + 24V电源。"
+    },
+    "苏米集控磁吸灯电源（24V集控）": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 199, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=8999", "spec": "24V集控磁吸灯电源", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 199,
+      "note": "集控磁吸射灯/格栅灯/泛光灯/夕阳灯lite 均需此电源（单独￥149-189），整套成本=灯体+￥199电源。京家销量47件。"
+    },
+    "苏米米家全屋智能套餐": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 6999, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=11126", "spec": "全屋套餐（含施工服务）", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 6999,
+      "note": "⚠️最高价值参考：全屋套餐￥6999含施工服务，是苏米工程项目单的真实客单价基准，可用于整体方案报价锚定。"
+    },
+    "苏米人体存在感应器": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 299, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9071", "spec": "人体存在感应器（米家APP）", "date": "2026-10-13"},
+        {"price": 179, "source": "京家供应链", "sourceUrl": "https://www.jingjiasc.com/index.php?i=1&c=entry&r=pc.goods.detail&id=9072", "spec": "领普顶装人体存在传感器", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 299,
+      "note": "苏米原厂￥299=官网'苏米存在传感器'￥299（零折扣）；领普顶装款￥179更便宜（第三方品牌），可作降本替代方案。京家销量0件（苏米款无销量，领普款销量41件）。"
+    },
+    "苏米PLC隔离器": {
+      "officialPrice": null,
+      "channelPrices": [
+        {"price": 199, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3099", "spec": "隔离器 2A PLC", "date": "2026-10-13"},
+        {"price": 299, "source": "万嘉智能", "sourceUrl": "https://www.wanjiaiot.com/mall/CommodityDetails.asp?id=3098", "spec": "隔离器 16A PLC", "date": "2026-10-13"}
+      ],
+      "suggestedCost": 199,
+      "note": "官网价'苏米PLC隔离器2A￥199 / 16A￥299'与万嘉完全一致（零折扣）。"
+    }
+  }
+}
