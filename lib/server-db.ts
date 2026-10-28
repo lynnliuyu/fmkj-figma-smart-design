@@ -17,6 +17,9 @@ export function getPool() {
       ...(connectionString
         ? { connectionString }
         : databaseConnectionConfig()),
+      // The preview health check must not hang while a remote database is
+      // sleeping or unreachable; first-run callers already fail closed.
+      connectionTimeoutMillis: process.env.FIGMA ? 3_000 : undefined,
       ssl: shouldUseSsl() ? { rejectUnauthorized: false } : false,
     })
   }
@@ -57,4 +60,3 @@ function envValue(key: string) {
   }
   return value.replace(/^["']|["']$/g, "")
 }
-
