@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { CACHE_TAGS, expireOnChange, expireOnDelete } from '@/lib/cache-tags'
+
 import { cmsAdminOrActiveStaff, cmsAdminOrManager } from '@/lib/access'
 
 export const Brands: CollectionConfig = {
@@ -11,6 +13,10 @@ export const Brands: CollectionConfig = {
     create: cmsAdminOrManager,
     update: cmsAdminOrManager,
     delete: cmsAdminOrManager,
+  },
+  hooks: {
+    afterChange: [expireOnChange(CACHE_TAGS.catalog)],
+    afterDelete: [expireOnDelete(CACHE_TAGS.catalog)],
   },
   fields: [
     { name: 'name', label: '品牌名称', type: 'text', required: true },

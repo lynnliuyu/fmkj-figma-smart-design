@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import type { Brand, Category, Product } from '@/payload-types'
+import { getCatalog } from '@/lib/cached-data'
 
 import { canEditProjects } from '../../data'
 import { PointMapEditor, type PointProduct } from './point-map-editor'
@@ -18,30 +18,18 @@ export default async function PointMapPage({ params }: { params: Promise<{ id: s
     .catch(() => null)
   if (!project) notFound()
 
-  const result = await payload.find({
-    collection: 'products',
-    where: { status: { equals: 'active' } },
-    depth: 1,
-    limit: 500,
-    sort: 'name',
-    user,
-    overrideAccess: false,
-    select: { name: true, sku: true, price: true, unit: true, brand: true, category: true },
-  })
-  const products: PointProduct[] = (result.docs as Product[]).map((p) => {
-    const c = typeof p.category === 'object' ? (p.category as Category) : null
-    const b = typeof p.brand === 'object' ? (p.brand as Brand) : null
-    return {
-      id: String(p.id),
+  const products: PointProduct[] = (await getCatalog())
+    .filter((p) => p.status === 'active')
+    .map((p) => ({
+      id: p.id,
       name: p.name,
       sku: p.sku,
       price: p.price,
       unit: p.unit,
-      brand: b?.name ?? '',
-      categorySlug: c?.slug ?? 'other',
-      categoryName: c?.name ?? '其他',
-    }
-  })
+      brand: p.brand?.name ?? '',
+      categorySlug: p.category?.slug ?? 'other',
+      categoryName: p.category?.name ?? '其他',
+    }))
 
   return (
     <PointMapEditor

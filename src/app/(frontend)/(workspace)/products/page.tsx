@@ -10,9 +10,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
 import { appAuth } from '@/lib/app-auth'
-import { getPayloadClient } from '@/lib/payload'
-import type { Brand, Category, Media, Product } from '@/payload-types'
-import type { Where } from 'payload'
+import { getBrands, getCatalog, getCategories } from '@/lib/cached-data'
 
 export const metadata = { title: '产品库 · FMKJ 项目管理' }
 
@@ -26,27 +24,15 @@ export default async function ProductsPage({
 }) {
   const user = await appAuth.getCurrentUser()
   const { q = '', category = '', brand = '' } = await searchParams
-  const payload = await getPayloadClient()
-
-  const where: Where = { and: [{ status: { equals: 'active' } }] }
-  if (q.trim()) where.and!.push({ or: [{ name: { like: q.trim() } }, { sku: { like: q.trim() } }] })
-  if (category) where.and!.push({ 'category.slug': { equals: category } })
-  if (brand) where.and!.push({ 'brand.slug': { equals: brand } })
-
-  const [products, categories, brands] = await Promise.all([
-    payload.find({
-      collection: 'products',
-      where,
-      depth: 1,
-      limit: 200,
-      user,
-      overrideAccess: false,
-      select: { name: true, sku: true, brand: true, category: true, platforms: true, image: true, description: true, price: true, cost: true, unit: true, stock: true },
-      populate: { brands: { name: true }, categories: { name: true }, media: { url: true, alt: true } },
-    }),
-    payload.find({ collection: 'categories', limit: 100, depth: 0, user, overrideAccess: false, select: { name: true, slug: true } }),
-    payload.find({ collection: 'brands', limit: 100, sort: 'name', depth: 0, user, overrideAccess: false, select: { name: true, slug: true } }),
-  ])
+  const [catalog, categories, brands] = await Promise.all([getCatalog(), getCategories(), getBrands()])
+  const keyword = q.trim().toLowerCase()
+  const products = catalog.filter(
+    (p) =>
+      p.status === 'active' &&
+      (!keyword || p.name.toLowerCase().includes(keyword) || p.sku.toLowerCase().includes(keyword)) &&
+      (!category || p.category?.slug === category) &&
+      (!brand || p.brand?.slug === brand),
+  )
   const showCost = user?.role === 'admin' || user?.role === 'manager'
 
   const filterHref = (patch: Record<string, string>) => {
@@ -85,7 +71,7 @@ export default async function ProductsPage({
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">产品库</h1>
         <p className="text-sm text-muted-foreground">
-          共 <span className="font-medium text-foreground tabular-nums">{products.totalDocs}</span> 个在售产品
+          共 <span className="font-medium text-foreground tabular-nums">{products.length}</span> 个在售产品
           {showCost ? '，成本仅管理员与经理可见' : ''}
         </p>
       </header>
@@ -101,12 +87,12 @@ export default async function ProductsPage({
           <SearchSubmit variant="default" />
         </Form>
         <div className="flex flex-col gap-4 rounded-xl bg-muted/60 p-4">
-          {facet('分类', category, 'category', categories.docs as Category[])}
-          {facet('品牌', brand, 'brand', brands.docs as Brand[])}
+          {facet('分类', category, 'category', categories)}
+          {facet('品牌', brand, 'brand', brands)}
         </div>
       </div>
 
-      {products.docs.length === 0 ? (
+      {products.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-16 text-center">
           <PackageSearch className="size-8 text-muted-foreground" />
           <p className="font-medium">没有找到符合条件的产品</p>
@@ -117,11 +103,11 @@ export default async function ProductsPage({
         </div>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {(products.docs as Product[]).map((p) => {
-            const image = typeof p.image === 'object' ? (p.image as Media | null) : null
-            const b = typeof p.brand === 'object' ? (p.brand as Brand) : null
-            const c = typeof p.category === 'object' ? (p.category as Category) : null
-            const stock = typeof p.stock === 'number' ? p.stock : null
+          {products.map((p) => {
+            const image = p.image
+            const b = p.brand
+            const c = p.category
+            const stock = p.stock
             return (
               <li key={p.id}>
                 <Card className="h-full gap-0 overflow-hidden p-0 transition-colors hover:border-primary/50">

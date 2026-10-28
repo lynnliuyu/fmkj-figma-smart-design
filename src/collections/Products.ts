@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { CACHE_TAGS, expireOnChange, expireOnDelete } from '@/lib/cache-tags'
+
 import { cmsAdminOrActiveStaff, cmsAdminOrManager, fieldCmsAdminOrManager } from '@/lib/access'
 
 export const PRODUCT_PLATFORMS = ['Apple Home', '米家', '涂鸦', 'Matter', '通用'] as const
@@ -18,6 +20,10 @@ export const Products: CollectionConfig = {
     create: cmsAdminOrManager,
     update: cmsAdminOrManager,
     delete: cmsAdminOrManager,
+  },
+  hooks: {
+    afterChange: [expireOnChange(CACHE_TAGS.catalog)],
+    afterDelete: [expireOnDelete(CACHE_TAGS.catalog)],
   },
   fields: [
     { name: 'name', label: '产品名称', type: 'text', required: true },

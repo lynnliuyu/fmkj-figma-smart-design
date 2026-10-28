@@ -5,7 +5,8 @@ import { getPayloadClient } from '@/lib/payload'
 import { yuan } from '@/lib/quotes'
 import Image from 'next/image'
 
-import type { Media, Project, User } from '@/payload-types'
+import { getCompanyInfo } from '@/lib/cached-data'
+import type { Project, User } from '@/payload-types'
 
 import { PrintButton } from './print-button'
 
@@ -20,9 +21,9 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
   const quote = await payload.findByID({ collection: 'quotes', id, depth: 2, user, overrideAccess: false, populate: { projects: { pointMap: false } } }).catch(() => null)
   if (!quote) notFound()
   const project = typeof quote.project === 'object' ? (quote.project as Project) : null
-  const company = await payload.findGlobal({ slug: 'company-settings', depth: 1, user, overrideAccess: false })
-  const logo = company.logo && typeof company.logo === 'object' ? (company.logo as Media) : null
-  const qr = company.qrCode && typeof company.qrCode === 'object' ? (company.qrCode as Media) : null
+  const company = await getCompanyInfo()
+  const logo = company.logo
+  const qr = company.qrCode
   const contact = [company.phone && `电话：${company.phone}`, company.email && `邮箱：${company.email}`, company.address && `地址：${company.address}`].filter(Boolean) as string[]
   const owner = project && typeof project.owner === 'object' ? (project.owner as User | null) : null
   const date = new Date(quote.updatedAt).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
@@ -35,7 +36,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
       <article className="mx-auto max-w-[210mm] bg-white px-[14mm] py-[16mm] text-[13px] leading-relaxed text-neutral-900 shadow-sm print:max-w-none print:p-0 print:shadow-none">
         <header className="flex items-start justify-between border-b border-neutral-300 pb-5">
           <div className="flex items-center gap-3">
-            {logo?.url ? (
+            {logo ? (
               <Image src={logo.url} alt={logo.alt || company.name} width={logo.width ?? 96} height={logo.height ?? 96} className="h-12 w-auto object-contain" unoptimized />
             ) : null}
             <div>
@@ -112,7 +113,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
               <div className="mb-1 font-medium">联系我们</div>
               {contact.map((line) => <p key={line} className="text-neutral-600">{line}</p>)}
             </div>
-            {qr?.url ? (
+            {qr ? (
               <figure className="flex flex-col items-center gap-1">
                 <Image src={qr.url} alt={qr.alt || '二维码'} width={88} height={88} className="size-[88px] object-contain" unoptimized />
                 {company.qrCaption ? <figcaption className="text-[10px] text-neutral-500">{company.qrCaption}</figcaption> : null}

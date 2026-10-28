@@ -1,5 +1,6 @@
 import type { Access, CollectionConfig } from 'payload'
 
+import { CACHE_TAGS, expireOnChange, expireOnDelete } from '@/lib/cache-tags'
 import { fieldCmsAdminOrStaffAdmin, hasStaffRole, isActiveStaff, isCmsAdmin, STAFF_ROLES } from '@/lib/access'
 
 /** CMS 管理员与员工管理员可看全部账号；其他员工只能看自己。 */
@@ -36,6 +37,10 @@ export const Users: CollectionConfig = {
     read: readUsers,
     update: updateUsers,
     delete: ({ req }) => isCmsAdmin(req),
+  },
+  hooks: {
+    afterChange: [expireOnChange(CACHE_TAGS.staff)],
+    afterDelete: [expireOnDelete(CACHE_TAGS.staff)],
   },
   fields: [
     { name: 'name', label: '姓名', type: 'text', required: true },

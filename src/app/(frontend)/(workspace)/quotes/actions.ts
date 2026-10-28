@@ -7,7 +7,8 @@ import { ValidationError } from 'payload'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { QUOTE_STATUSES } from '@/lib/quotes'
-import type { Product, User } from '@/payload-types'
+import { getCatalog, getCompanyInfo } from '@/lib/cached-data'
+import type { User } from '@/payload-types'
 
 const EDIT_ROLES = ['admin', 'manager', 'designer', 'sales']
 
@@ -37,28 +38,13 @@ export async function createQuoteFromProject(form: FormData) {
     if (!el?.isDeleted && typeof id === 'string') counts.set(id, (counts.get(id) ?? 0) + 1)
   }
 
-  let items: { product: string; name: string; sku: string; unit: string; price: number; quantity: number }[] = []
-  if (counts.size) {
-    const products = await payload.find({
-      collection: 'products',
-      where: { id: { in: [...counts.keys()] } },
-      limit: counts.size,
-      depth: 0,
-      user,
-      overrideAccess: false,
-      select: { name: true, sku: true, unit: true, price: true },
-    })
-    items = (products.docs as Product[]).map((p) => ({
-      product: String(p.id),
-      name: p.name,
-      sku: p.sku,
-      unit: p.unit,
-      price: p.price,
-      quantity: counts.get(String(p.id)) ?? 0,
-    }))
-  }
+  const catalog = new Map((await getCatalog()).map((p) => [p.id, p]))
+  const items = [...counts.entries()]
+    .map(([id, quantity]) => ({ p: catalog.get(id), quantity }))
+    .filter((x): x is { p: NonNullable<typeof x.p>; quantity: number } => Boolean(x.p))
+    .map(({ p, quantity }) => ({ product: p.id, name: p.name, sku: p.sku, unit: p.unit, price: p.price, quantity }))
 
-  const company = await payload.findGlobal({ slug: 'company-settings', depth: 0, user, overrideAccess: false })
+  const company = await getCompanyInfo()
   const existing = await payload.count({ collection: 'quotes', where: { project: { equals: project.id } }, user, overrideAccess: false })
   const quote = await payload.create({
     collection: 'quotes',

@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation'
 
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import type { Product, Project } from '@/payload-types'
+import { getCatalog } from '@/lib/cached-data'
+import type { Project } from '@/payload-types'
 
 import { canEditProjects } from '../../projects/data'
 import { QuoteEditor, type ProductOption } from './quote-editor'
@@ -17,29 +18,16 @@ export default async function QuotePage({ params }: { params: Promise<{ id: stri
   if (!quote) notFound()
   const project = typeof quote.project === 'object' ? (quote.project as Project) : null
 
-  const products = await payload.find({
-    collection: 'products',
-    where: { status: { equals: 'active' } },
-    limit: 500,
-    sort: 'name',
-    depth: 0,
-    user,
-    overrideAccess: false,
-    select: { name: true, sku: true, unit: true, price: true, cost: true },
-  })
-  const options: ProductOption[] = (products.docs as Product[]).map((p) => ({ id: String(p.id), name: p.name, sku: p.sku, unit: p.unit, price: p.price }))
+  const catalog = await getCatalog()
+  const options: ProductOption[] = catalog
+    .filter((p) => p.status === 'active')
+    .map((p) => ({ id: p.id, name: p.name, sku: p.sku, unit: p.unit, price: p.price }))
 
-  // 成本只给管理员和经理；产品库字段权限也会对其他角色隐藏 cost。
+  // 成本只下发给管理员和经理。
   let costs: Record<string, number> | null = null
   if (user?.role === 'admin' || user?.role === 'manager') {
     costs = {}
-    const ids = [...new Set((quote.items ?? []).map((i) => (typeof i.product === 'object' ? i.product?.id : i.product)).filter(Boolean) as string[])]
-    const linked = ids.length
-      ? await payload.find({ collection: 'products', where: { id: { in: ids } }, limit: ids.length, depth: 0, user, overrideAccess: false, select: { cost: true } })
-      : { docs: [] as Product[] }
-    for (const p of [...(products.docs as Product[]), ...(linked.docs as Product[])]) {
-      if (typeof p.cost === 'number') costs[String(p.id)] = p.cost
-    }
+    for (const p of catalog) if (p.cost !== null) costs[p.id] = p.cost
   }
 
   return (

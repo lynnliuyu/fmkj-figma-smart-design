@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { CACHE_TAGS, expireGlobalOnChange } from '@/lib/cache-tags'
 import { hasStaffRole, isActiveStaff, isCmsAdmin } from '@/lib/access'
 
 /** 公司信息：报价单抬头、联系方式、Logo、二维码，以及新报价的默认备注。 */
@@ -11,6 +12,7 @@ export const CompanySettings: GlobalConfig = {
     read: ({ req }) => isCmsAdmin(req) || isActiveStaff(req),
     update: ({ req }) => isCmsAdmin(req) || hasStaffRole(req, ['admin']),
   },
+  hooks: { afterChange: [expireGlobalOnChange(CACHE_TAGS.company)] },
   fields: [
     { name: 'name', label: '公司名称', type: 'text', required: true, defaultValue: 'FMKJ 智能家居', maxLength: 60 },
     { name: 'slogan', label: '副标题', type: 'text', defaultValue: '全屋智能方案 · 设计 · 安装 · 售后', maxLength: 80 },
