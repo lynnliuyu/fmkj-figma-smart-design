@@ -6,7 +6,7 @@ import { yuan } from '@/lib/quotes'
 import Image from 'next/image'
 
 import { getCompanyInfo } from '@/lib/cached-data'
-import type { Project, User } from '@/payload-types'
+import type { Media, Project, User } from '@/payload-types'
 
 import { PrintButton } from './print-button'
 
@@ -26,6 +26,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
   const qr = company.qrCode
   const contact = [company.phone && `电话：${company.phone}`, company.email && `邮箱：${company.email}`, company.address && `地址：${company.address}`].filter(Boolean) as string[]
   const owner = project && typeof project.owner === 'object' ? (project.owner as User | null) : null
+  const showImages = company.printProductImages && (quote.items ?? []).some((i) => i.image && typeof i.image === 'object' && (i.image as Media).url)
   const date = new Date(quote.updatedAt).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
@@ -62,6 +63,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
           <thead>
             <tr className="border-y border-neutral-300 bg-neutral-50 text-left">
               <th className="w-10 py-2 pl-2 font-medium">序号</th>
+              {showImages ? <th className="w-14 py-2 font-medium">图片</th> : null}
               <th className="py-2 font-medium">产品</th>
               <th className="py-2 font-medium">型号</th>
               <th className="py-2 text-right font-medium">单价</th>
@@ -73,6 +75,14 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
             {(quote.items ?? []).map((item, i) => (
               <tr key={item.id ?? i} className="border-b border-neutral-200 break-inside-avoid">
                 <td className="py-2 pl-2 tabular-nums">{i + 1}</td>
+                {showImages ? (
+                  <td className="py-1.5">
+                    {item.image && typeof item.image === 'object' && (item.image as Media).url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={(item.image as Media).url!} alt="" className="size-10 rounded object-cover" />
+                    ) : null}
+                  </td>
+                ) : null}
                 <td className="py-2">{item.name}</td>
                 <td className="py-2 text-neutral-500">{item.sku}</td>
                 <td className="py-2 text-right tabular-nums">{yuan(item.price)}</td>
@@ -83,7 +93,7 @@ export default async function PrintQuotePage({ params }: { params: Promise<{ id:
             {(quote.fees ?? []).map((fee, i) => (
               <tr key={fee.id ?? `fee-${i}`} className="border-b border-neutral-200 break-inside-avoid">
                 <td className="py-2 pl-2 tabular-nums">{(quote.items?.length ?? 0) + i + 1}</td>
-                <td className="py-2" colSpan={4}>{fee.name}</td>
+                <td className="py-2" colSpan={showImages ? 5 : 4}>{fee.name}</td>
                 <td className="py-2 pr-2 text-right tabular-nums">{yuan(fee.amount)}</td>
               </tr>
             ))}

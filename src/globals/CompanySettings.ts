@@ -33,5 +33,6 @@ export const CompanySettings: GlobalConfig = {
     },
     { name: 'qrCaption', label: '二维码说明', type: 'text', defaultValue: '扫码添加微信', maxLength: 40 },
     { name: 'quoteNotes', label: '新报价默认备注', type: 'textarea', maxLength: 2000 },
+    { name: 'printProductImages', label: '打印报价单时显示产品图片', type: 'checkbox', defaultValue: true },
   ],
 }

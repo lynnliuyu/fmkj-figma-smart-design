@@ -23,29 +23,33 @@ export type CatalogProduct = {
   description: string | null
   platforms: string[]
   status: string
-  brand: { id: string; name: string; slug: string } | null
+  deviceType: string | null
+  tags: string[]
+  updatedAt: string
+  brand: { id: string; name: string; slug: string; logo: string | null } | null
   category: { id: string; name: string; slug: string } | null
-  image: { url: string; alt: string } | null
+  image: { id: string; url: string; alt: string } | null
 }
 
 export const getCatalog = memoize(
-  'catalog-products-v1',
+  'catalog-products-v2',
   [CACHE_TAGS.catalog],
   TTL,
   async (): Promise<CatalogProduct[]> => {
     const payload = await getPayloadClient()
     const result = await payload.find({
       collection: 'products',
-      depth: 1,
+      depth: 2,
       limit: 1000,
       sort: 'name',
       overrideAccess: true,
-      populate: { brands: { name: true, slug: true }, categories: { name: true, slug: true }, media: { url: true, alt: true } },
+      populate: { brands: { name: true, slug: true, logo: true }, categories: { name: true, slug: true }, media: { url: true, alt: true } },
     })
     return (result.docs as Product[]).map((p) => {
       const b = typeof p.brand === 'object' ? (p.brand as Brand | null) : null
       const c = typeof p.category === 'object' ? (p.category as Category | null) : null
       const m = typeof p.image === 'object' ? (p.image as Media | null) : null
+      const logo = b && typeof b.logo === 'object' ? (b.logo as Media | null) : null
       return {
         id: String(p.id),
         name: p.name,
@@ -57,9 +61,12 @@ export const getCatalog = memoize(
         description: p.description ?? null,
         platforms: (p.platforms ?? []) as string[],
         status: p.status ?? 'active',
-        brand: b ? { id: String(b.id), name: b.name, slug: b.slug } : null,
+        deviceType: p.deviceType ?? null,
+        tags: (p.tags ?? []) as string[],
+        updatedAt: p.updatedAt,
+        brand: b ? { id: String(b.id), name: b.name, slug: b.slug, logo: logo?.url ?? null } : null,
         category: c ? { id: String(c.id), name: c.name, slug: c.slug } : null,
-        image: m?.url ? { url: m.url, alt: m.alt ?? p.name } : null,
+        image: m?.url ? { id: String(m.id), url: m.url, alt: m.alt ?? p.name } : null,
       }
     })
   },
@@ -77,13 +84,16 @@ export const getCategories = memoize(
 )
 
 export const getBrands = memoize(
-  'catalog-brands-v1',
+  'catalog-brands-v2',
   [CACHE_TAGS.catalog],
   TTL,
   async () => {
     const payload = await getPayloadClient()
-    const r = await payload.find({ collection: 'brands', limit: 200, sort: 'name', depth: 0, overrideAccess: true, select: { name: true, slug: true } })
-    return (r.docs as Brand[]).map((b) => ({ id: String(b.id), name: b.name, slug: b.slug }))
+    const r = await payload.find({ collection: 'brands', limit: 200, sort: 'name', depth: 1, overrideAccess: true, select: { name: true, slug: true, logo: true }, populate: { media: { url: true } } })
+    return (r.docs as Brand[]).map((b) => {
+      const logo = typeof b.logo === 'object' ? (b.logo as Media | null) : null
+      return { id: String(b.id), name: b.name, slug: b.slug, logo: logo?.url ?? null }
+    })
   },
 )
 
@@ -115,12 +125,13 @@ export type CompanyInfo = {
   address: string | null
   qrCaption: string | null
   quoteNotes: string | null
+  printProductImages: boolean
   logo: { url: string; alt: string; width: number | null; height: number | null } | null
   qrCode: { url: string; alt: string } | null
 }
 
 export const getCompanyInfo = memoize(
-  'company-settings-v1',
+  'company-settings-v2',
   [CACHE_TAGS.company],
   TTL,
   async (): Promise<CompanyInfo> => {
@@ -136,6 +147,7 @@ export const getCompanyInfo = memoize(
       address: s.address ?? null,
       qrCaption: s.qrCaption ?? null,
       quoteNotes: s.quoteNotes ?? null,
+      printProductImages: s.printProductImages !== false,
       logo: logo?.url ? { url: logo.url, alt: logo.alt || s.name, width: logo.width ?? null, height: logo.height ?? null } : null,
       qrCode: qr?.url ? { url: qr.url, alt: qr.alt || '二维码' } : null,
     }

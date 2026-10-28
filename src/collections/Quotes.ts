@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { cmsAdminOrActiveStaff, cmsAdminOrManager, hasStaffRole, isCmsAdmin } from '@/lib/access'
+import { DEVICE_TYPE_OPTIONS } from '@/lib/device-types'
 import { QUOTE_STATUSES, quoteTotals } from '@/lib/quotes'
 
 const canEdit = ({ req }: { req: Parameters<typeof isCmsAdmin>[0] }) =>
@@ -60,6 +61,15 @@ export const Quotes: CollectionConfig = {
       fields: [
         // 产品关联用于追溯；名称、型号、单位、单价在生成时快照，产品库后续调价不影响已出的报价。
         { name: 'product', label: '产品', type: 'relationship', relationTo: 'products' },
+        {
+          type: 'row',
+          fields: [
+            // 设备类型用于「更换型号」时只列出同类产品
+            { name: 'deviceType', label: '设备类型', type: 'select', options: DEVICE_TYPE_OPTIONS },
+            // 生成时的产品图片快照；产品库换图不影响已出的报价
+            { name: 'image', label: '产品图片', type: 'upload', relationTo: 'media' },
+          ],
+        },
         {
           type: 'row',
           fields: [

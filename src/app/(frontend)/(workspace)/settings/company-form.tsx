@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
 type Values = {
@@ -19,6 +20,7 @@ type Values = {
   address: string
   qrCaption: string
   quoteNotes: string
+  printProductImages: boolean
   logoUrl: string | null
   qrCodeUrl: string | null
 }
@@ -87,7 +89,7 @@ export function CompanyForm({ initial }: { initial: Values }) {
     }
   }
 
-  const field = (name: keyof Values, label: string, props: React.ComponentProps<typeof Input> = {}) => (
+  const field = (name: Exclude<keyof Values, 'printProductImages'>, label: string, props: React.ComponentProps<typeof Input> = {}) => (
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
       <Input id={name} name={name} defaultValue={initial[name] ?? ''} aria-invalid={error?.field === name ? true : undefined} {...props} />
@@ -137,6 +139,13 @@ export function CompanyForm({ initial }: { initial: Values }) {
         </CardHeader>
         <CardContent>
           <Textarea id="quoteNotes" name="quoteNotes" rows={4} maxLength={2000} defaultValue={initial.quoteNotes} placeholder="例如：报价有效期 30 天；设备质保一年，含一年免费上门维护" />
+          <div className="mt-4 flex items-center justify-between gap-4 rounded-lg border p-3">
+            <div className="space-y-0.5">
+              <Label htmlFor="printProductImages">打印报价单时显示产品图片</Label>
+              <p className="text-xs text-muted-foreground">每行产品前加一列缩略图；没有图片的产品留空</p>
+            </div>
+            <Switch id="printProductImages" name="printProductImages" defaultChecked={initial.printProductImages} />
+          </div>
         </CardContent>
       </Card>
       <div className="flex justify-end">

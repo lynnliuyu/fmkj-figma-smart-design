@@ -51,7 +51,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    await payload.updateGlobal({ slug: 'company-settings', data: { ...data, ...images } as never, user, overrideAccess: false })
+    const printProductImages = form.get('printProductImages') === 'on'
+    await payload.updateGlobal({ slug: 'company-settings', data: { ...data, ...images, printProductImages } as never, user, overrideAccess: false })
     return Response.json({ ok: true })
   } catch (error) {
     const status = (error as { status?: number })?.status

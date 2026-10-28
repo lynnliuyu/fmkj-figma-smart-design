@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { CACHE_TAGS, expireOnChange, expireOnDelete } from '@/lib/cache-tags'
+import { categoryOfType, DEVICE_TYPE_OPTIONS, isDeviceType } from '@/lib/device-types'
 
 import { cmsAdminOrActiveStaff, cmsAdminOrManager, fieldCmsAdminOrManager } from '@/lib/access'
 
@@ -11,7 +12,7 @@ export const Products: CollectionConfig = {
   labels: { singular: '产品', plural: '产品' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'sku', 'brand', 'category', 'price', 'status'],
+    defaultColumns: ['name', 'sku', 'brand', 'deviceType', 'price', 'status'],
     group: '产品库',
   },
   defaultSort: 'name',
@@ -22,6 +23,26 @@ export const Products: CollectionConfig = {
     delete: cmsAdminOrManager,
   },
   hooks: {
+    beforeValidate: [
+      // 分类由设备类型自动带出，保证产品库只有字典里的 11 个类别。
+      async ({ data, originalDoc, req }) => {
+        if (!data) return data
+        const type = data.deviceType ?? originalDoc?.deviceType
+        const slug = categoryOfType(type)?.slug
+        if (!slug) return data
+        const found = await req.payload.find({
+          collection: 'categories',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 0,
+          overrideAccess: true,
+          req,
+          select: { slug: true },
+        })
+        if (found.docs[0]) data.category = found.docs[0].id
+        return data
+      },
+    ],
     afterChange: [expireOnChange(CACHE_TAGS.catalog)],
     afterDelete: [expireOnDelete(CACHE_TAGS.catalog)],
   },
@@ -29,10 +50,26 @@ export const Products: CollectionConfig = {
     { name: 'name', label: '产品名称', type: 'text', required: true },
     { name: 'sku', label: '型号 / SKU', type: 'text', required: true, unique: true, index: true },
     {
+      name: 'deviceType',
+      label: '设备类型 *',
+      type: 'select',
+      index: true,
+      options: DEVICE_TYPE_OPTIONS,
+      // 必填由校验保证（数据库列保持可空，兼容整理前的存量数据）
+      validate: (value: unknown) => (isDeviceType(value) ? true : '请选择设备类型'),
+      admin: { description: '点位图和报价按设备类型匹配产品；分类会根据设备类型自动设置。' },
+    },
+    {
       type: 'row',
       fields: [
         { name: 'brand', label: '品牌', type: 'relationship', relationTo: 'brands', required: true },
-        { name: 'category', label: '分类', type: 'relationship', relationTo: 'categories', required: true },
+        {
+          name: 'category',
+          label: '分类（自动）',
+          type: 'relationship',
+          relationTo: 'categories',
+          admin: { readOnly: true },
+        },
       ],
     },
     {

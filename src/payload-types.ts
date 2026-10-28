@@ -286,6 +286,15 @@ export interface Project {
     | number
     | boolean
     | null;
+  defaultProducts?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -319,6 +328,40 @@ export interface Quote {
   items?:
     | {
         product?: (string | null) | Product;
+        deviceType?:
+          | (
+              | 'switch-1'
+              | 'switch-2'
+              | 'switch-3'
+              | 'switch-4'
+              | 'socket-usb'
+              | 'socket-double'
+              | 'socket'
+              | 'spotlight'
+              | 'track-light'
+              | 'downlight'
+              | 'ceiling-light'
+              | 'pendant-light'
+              | 'wall-light'
+              | 'panel-light'
+              | 'motion-sensor'
+              | 'smoke-sensor'
+              | 'water-sensor'
+              | 'temp-sensor'
+              | 'smart-lock'
+              | 'doorbell'
+              | 'camera'
+              | 'curtain-track'
+              | 'speaker'
+              | 'gateway'
+              | 'ac-router'
+              | 'ap-node'
+              | 'network-panel'
+              | 'vrf-controller'
+              | 'other'
+            )
+          | null;
+        image?: (string | null) | Media;
         name: string;
         sku?: string | null;
         unit?: string | null;
@@ -368,8 +411,44 @@ export interface Product {
   id: string;
   name: string;
   sku: string;
+  /**
+   * 点位图和报价按设备类型匹配产品；分类会根据设备类型自动设置。
+   */
+  deviceType?:
+    | (
+        | 'switch-1'
+        | 'switch-2'
+        | 'switch-3'
+        | 'switch-4'
+        | 'socket-usb'
+        | 'socket-double'
+        | 'socket'
+        | 'spotlight'
+        | 'track-light'
+        | 'downlight'
+        | 'ceiling-light'
+        | 'pendant-light'
+        | 'wall-light'
+        | 'panel-light'
+        | 'motion-sensor'
+        | 'smoke-sensor'
+        | 'water-sensor'
+        | 'temp-sensor'
+        | 'smart-lock'
+        | 'doorbell'
+        | 'camera'
+        | 'curtain-track'
+        | 'speaker'
+        | 'gateway'
+        | 'ac-router'
+        | 'ap-node'
+        | 'network-panel'
+        | 'vrf-controller'
+        | 'other'
+      )
+    | null;
   brand: string | Brand;
-  category: string | Category;
+  category?: (string | null) | Category;
   platforms?: ('Apple Home' | '米家' | '涂鸦' | 'Matter' | '通用')[] | null;
   image?: (string | null) | Media;
   description?: string | null;
@@ -544,6 +623,8 @@ export interface Tag {
   _h_titlePath?: string | null;
 }
 /**
+ * 类别固定为设备类型字典中的 11 个，由系统维护，不能在后台增删改。
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
@@ -787,6 +868,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   nextActionDueAt?: T;
   notes?: T;
   pointMap?: T;
+  defaultProducts?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -804,6 +886,8 @@ export interface QuotesSelect<T extends boolean = true> {
     | T
     | {
         product?: T;
+        deviceType?: T;
+        image?: T;
         name?: T;
         sku?: T;
         unit?: T;
@@ -835,6 +919,7 @@ export interface QuotesSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   name?: T;
   sku?: T;
+  deviceType?: T;
   brand?: T;
   category?: T;
   platforms?: T;
@@ -1012,6 +1097,7 @@ export interface CompanySetting {
   qrCode?: (string | null) | Media;
   qrCaption?: string | null;
   quoteNotes?: string | null;
+  printProductImages?: boolean | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -1047,6 +1133,7 @@ export interface CompanySettingsSelect<T extends boolean = true> {
   qrCode?: T;
   qrCaption?: T;
   quoteNotes?: T;
+  printProductImages?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;

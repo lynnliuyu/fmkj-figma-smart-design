@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, Loader2, Plus, Printer, Save, Trash2 } from 'lucide-react'
+import { AlertTriangle, ArrowLeftRight, ChevronLeft, ImageIcon, Loader2, Plus, Printer, Save, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { DeviceSymbol } from '@/components/device-symbol'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,12 +17,38 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { DEVICE_TYPE_ORDER, deviceTypeLabel } from '@/lib/device-types'
 import { QUOTE_STATUSES, quoteTotals, yuan } from '@/lib/quotes'
 
-import { saveQuote } from '../actions'
+import { saveQuote, setQuoteProjectDefault } from '../actions'
+import { SwapProductDialog, type SwapScope } from './swap-product-dialog'
 
-export type ProductOption = { id: string; name: string; sku: string; unit: string; price: number }
-type Line = { key: string; rev?: number; product: string | null; name: string; sku: string; unit: string; price: number; quantity: number }
+export type ProductOption = {
+  id: string
+  name: string
+  sku: string
+  unit: string
+  price: number
+  status: string
+  deviceType: string | null
+  brand: { slug: string; name: string; logo: string | null } | null
+  platforms: string[]
+  image: string | null
+}
+type Line = {
+  key: string
+  rev?: number
+  /** 数据库中的明细行 ID，保存时回传以便服务端识别换型号 */
+  id: string | null
+  product: string | null
+  deviceType: string | null
+  image: string | null
+  name: string
+  sku: string
+  unit: string
+  price: number
+  quantity: number
+}
 type Fee = { key: string; name: string; amount: number }
 type QuoteState = { id: string; title: string; status: string; discount: number; notes: string; items: Line[]; fees: Fee[] }
 
@@ -33,6 +60,7 @@ export function QuoteEditor({
   products,
   costs,
   readOnly,
+  pendingPoints = 0,
 }: {
   quote: QuoteState
   project: { id: string; name: string; customerName: string } | null
@@ -40,11 +68,14 @@ export function QuoteEditor({
   /** 仅管理员 / 经理会收到成本；为 null 时不显示成本与毛利。 */
   costs: Record<string, number> | null
   readOnly: boolean
+  /** 从点位图生成时未能确定型号的点位数 */
+  pendingPoints?: number
 }) {
   const router = useRouter()
   const [quote, setQuote] = useState(initial)
   const [dirty, setDirty] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [swapKey, setSwapKey] = useState<string | null>(null)
   const [saving, startSaving] = useTransition()
 
   const update = (patch: Partial<QuoteState>) => {
@@ -57,8 +88,36 @@ export function QuoteEditor({
   const addProduct = (p: ProductOption) => {
     const existing = quote.items.find((l) => l.product === p.id)
     if (existing) updateLine(existing.key, { quantity: existing.quantity + 1, rev: (existing.rev ?? 0) + 1 })
-    else update({ items: [...quote.items, { key: crypto.randomUUID(), product: p.id, name: p.name, sku: p.sku, unit: p.unit, price: p.price, quantity: 1 }] })
+    else update({ items: [...quote.items, { key: crypto.randomUUID(), id: null, product: p.id, deviceType: p.deviceType, image: p.image, name: p.name, sku: p.sku, unit: p.unit, price: p.price, quantity: 1 }] })
     setPickerOpen(false)
+  }
+
+  const activeProducts = useMemo(() => products.filter((p) => p.status === 'active'), [products])
+  const pickerGroups = useMemo(
+    () =>
+      DEVICE_TYPE_ORDER.map((t) => ({ type: t, items: activeProducts.filter((p) => p.deviceType === t) }))
+        .concat([{ type: '', items: activeProducts.filter((p) => !p.deviceType) }])
+        .filter((g) => g.items.length),
+    [activeProducts],
+  )
+
+  const swapLine = swapKey ? quote.items.find((l) => l.key === swapKey) ?? null : null
+  const applySwap = (p: ProductOption, scope: SwapScope, setDefault: boolean) => {
+    if (!swapLine) return
+    const targets = scope === 'type' ? quote.items.filter((l) => l.deviceType && l.deviceType === swapLine.deviceType) : [swapLine]
+    const keys = new Set(targets.map((l) => l.key))
+    // 数量保持不变；单价改为新产品售价
+    update({
+      items: quote.items.map((l) =>
+        keys.has(l.key) ? { ...l, product: p.id, deviceType: p.deviceType, image: p.image, name: p.name, sku: p.sku, unit: p.unit, price: p.price, rev: (l.rev ?? 0) + 1 } : l,
+      ),
+    })
+    toast.success(`已更换 ${targets.length} 行为「${p.name}」，记得保存`)
+    if (setDefault && project && p.deviceType) {
+      void setQuoteProjectDefault(project.id, p.deviceType, p.id).then((r) =>
+        r.ok ? toast.success('已同时设为项目默认型号') : toast.error(r.error),
+      )
+    }
   }
 
   const totals = useMemo(() => quoteTotals(quote.items, quote.fees, quote.discount), [quote])
@@ -90,7 +149,7 @@ export function QuoteEditor({
         status: quote.status,
         discount: quote.discount,
         notes: quote.notes,
-        items: quote.items.map(({ key: _k, rev: _r, ...l }) => l),
+        items: quote.items.map((l) => ({ id: l.id, product: l.product, name: l.name, sku: l.sku, unit: l.unit, price: l.price, quantity: l.quantity })),
         fees: quote.fees.map(({ key: _k, ...f }) => f),
       })
       if (!result.ok) return void toast.error(result.error)
@@ -125,6 +184,15 @@ export function QuoteEditor({
 
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-5">
+      <SwapProductDialog
+        open={Boolean(swapLine)}
+        onOpenChange={(o) => !o && setSwapKey(null)}
+        line={swapLine}
+        products={products}
+        sameTypeLines={swapLine ? quote.items.filter((l) => l.deviceType && l.deviceType === swapLine.deviceType).length : 0}
+        canSetDefault={Boolean(project)}
+        onConfirm={applySwap}
+      />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
           <Link href={project ? `/projects/${project.id}` : '/quotes'}><ChevronLeft className="size-4" />{project ? '返回项目' : '报价列表'}</Link>
@@ -157,6 +225,19 @@ export function QuoteEditor({
         </div>
       </header>
 
+      {pendingPoints ? (
+        <div className="flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/10 px-4 py-3 text-sm">
+          <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
+          <div>
+            <div className="font-medium">点位图中有 {pendingPoints} 个点位待选型，未计入本报价</div>
+            <div className="text-muted-foreground">
+              可回到点位图给这些点位指定产品，或在「统计与默认型号」里设置项目默认型号后重新生成；也可以直接在下方「添加产品」。
+              {project ? <Link className="ml-1 underline underline-offset-2" href={`/projects/${project.id}/point-map`}>打开点位图</Link> : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <Card className="gap-0 py-0">
         <CardHeader className="flex flex-row items-center justify-between border-b py-4">
           <CardTitle className="text-base">产品明细</CardTitle>
@@ -165,22 +246,32 @@ export function QuoteEditor({
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm"><Plus className="size-4" />添加产品</Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 p-0">
+              <PopoverContent align="end" className="w-96 p-0">
                 <Command>
-                  <CommandInput placeholder="搜索产品名称或型号" />
-                  <CommandList>
+                  <CommandInput placeholder="搜索产品名称、型号、品牌或设备类型" />
+                  <CommandList className="max-h-96">
                     <CommandEmpty>没有匹配的产品</CommandEmpty>
-                    <CommandGroup>
-                      {products.map((p) => (
-                        <CommandItem key={p.id} value={`${p.name} ${p.sku}`} onSelect={() => addProduct(p)}>
-                          <div className="min-w-0 flex-1">
-                            <div className="truncate">{p.name}</div>
-                            <div className="truncate text-xs text-muted-foreground">{p.sku}</div>
-                          </div>
-                          <span className="text-xs tabular-nums">{yuan(p.price)}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    {pickerGroups.map((g) => (
+                      <CommandGroup key={g.type || 'none'} heading={g.type ? deviceTypeLabel(g.type) : '未分类'}>
+                        {g.items.map((p) => (
+                          <CommandItem key={p.id} value={`${p.name} ${p.sku} ${p.brand?.name ?? ''} ${deviceTypeLabel(p.deviceType)}`} onSelect={() => addProduct(p)}>
+                            <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
+                              {p.image ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={p.image} alt="" className="size-full object-cover" />
+                              ) : (
+                                <span className="size-5"><DeviceSymbol type={p.deviceType} /></span>
+                              )}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate">{p.name}</div>
+                              <div className="truncate text-xs text-muted-foreground">{p.brand?.name} · {p.sku}</div>
+                            </div>
+                            <span className="text-xs tabular-nums">{yuan(p.price)}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    ))}
                   </CommandList>
                 </Command>
               </PopoverContent>
@@ -206,15 +297,36 @@ export function QuoteEditor({
                 {quote.items.map((l) => (
                   <TableRow key={l.key}>
                     <TableCell className="pl-6">
-                      <div className="font-medium">{l.name}</div>
-                      <div className="text-xs text-muted-foreground">{[l.sku, l.unit && `单位：${l.unit}`].filter(Boolean).join(' · ')}</div>
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted">
+                          {l.image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={l.image} alt="" className="size-full object-cover" />
+                          ) : l.deviceType ? (
+                            <span className="size-6"><DeviceSymbol type={l.deviceType} /></span>
+                          ) : (
+                            <ImageIcon className="size-4 text-muted-foreground/50" />
+                          )}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="font-medium">{l.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {[l.deviceType ? deviceTypeLabel(l.deviceType) : null, l.sku, l.unit && `单位：${l.unit}`].filter(Boolean).join(' · ')}
+                          </div>
+                          {!readOnly && l.deviceType ? (
+                            <Button variant="link" size="sm" className="h-auto p-0 text-xs" onClick={() => setSwapKey(l.key)}>
+                              <ArrowLeftRight className="size-3" />更换型号
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
                     </TableCell>
                     {costs ? (
                       <TableCell className="text-right text-sm text-muted-foreground tabular-nums">
                         {unitCost(l) === undefined ? '—' : yuan(unitCost(l))}
                       </TableCell>
                     ) : null}
-                    <TableCell className="text-right">{numInput(l.price, (n) => updateLine(l.key, { price: n }), `${l.name} 单价`, 'ml-auto w-28')}</TableCell>
+                    <TableCell key={`p-${l.rev ?? 0}`} className="text-right">{numInput(l.price, (n) => updateLine(l.key, { price: n }), `${l.name} 单价`, 'ml-auto w-28')}</TableCell>
                     <TableCell key={`q-${l.rev ?? 0}`} className="text-right">{numInput(l.quantity, (n) => updateLine(l.key, { quantity: n }), `${l.name} 数量`, 'ml-auto w-20')}</TableCell>
                     <TableCell className="text-right font-medium tabular-nums">{yuan(l.price * l.quantity)}</TableCell>
                     {readOnly ? null : (

@@ -30,6 +30,7 @@ export default async function SettingsPage() {
           address: settings.address ?? '',
           qrCaption: settings.qrCaption ?? '',
           quoteNotes: settings.quoteNotes ?? '',
+          printProductImages: settings.printProductImages !== false,
           logoUrl: img(settings.logo),
           qrCodeUrl: img(settings.qrCode),
         }}

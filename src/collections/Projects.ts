@@ -95,5 +95,12 @@ export const Projects: CollectionConfig = {
       type: 'json',
       admin: { hidden: true },
     },
+    {
+      // 项目默认型号：{ [设备类型]: 产品 ID }。点位未指定产品时，报价按这里取型号。
+      name: 'defaultProducts',
+      label: '项目默认型号',
+      type: 'json',
+      admin: { hidden: true },
+    },
   ],
 }
