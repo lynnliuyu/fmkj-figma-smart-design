@@ -18,6 +18,10 @@ export type SymbolKey =
   | 'pendant-light'
   | 'wall-light'
   | 'panel-light'
+  | 'light-strip'
+  | 'other-light'
+  | 'touch-panel'
+  | 'contact-sensor'
   | 'motion-sensor'
   | 'smoke-sensor'
   | 'water-sensor'
@@ -85,15 +89,19 @@ export const DEVICE_TYPES = [
   { value: 'pendant-light', name: '吊灯', category: 'lighting', symbol: 'pendant-light', keywords: /吊灯/ },
   { value: 'wall-light', name: '壁灯', category: 'lighting', symbol: 'wall-light', keywords: /壁灯/ },
   { value: 'panel-light', name: '面板灯', category: 'lighting', symbol: 'panel-light', keywords: /面板灯|平板灯/ },
+  { value: 'light-strip', name: '灯带', category: 'lighting', symbol: 'light-strip', keywords: /灯带|灯条|线性灯/ },
+  { value: 'other-light', name: '其他灯具', category: 'lighting', symbol: 'other-light', keywords: /青空灯|灯泡|灯管|tube/i },
   { value: 'motion-sensor', name: '人体', category: 'sensor', symbol: 'motion-sensor', keywords: /人体|人在|存在|移动/ },
   { value: 'smoke-sensor', name: '烟雾', category: 'sensor', symbol: 'smoke-sensor', keywords: /烟雾|烟感/ },
   { value: 'water-sensor', name: '水浸', category: 'sensor', symbol: 'water-sensor', keywords: /水浸|漏水/ },
   { value: 'temp-sensor', name: '温湿度', category: 'sensor', symbol: 'temp-sensor', keywords: /温湿度|温度/ },
+  { value: 'contact-sensor', name: '门磁', category: 'sensor', symbol: 'contact-sensor', keywords: /门窗传感|门磁|窗磁/ },
   { value: 'smart-lock', name: '智能门锁', category: 'lock', symbol: 'lock', keywords: /门锁|指纹锁|智能锁/ },
   { value: 'doorbell', name: '门铃', category: 'lock', symbol: 'doorbell', keywords: /门铃|猫眼/ },
   { value: 'camera', name: '摄像头', category: 'security', symbol: 'camera', keywords: /摄像|监控|云台/ },
   { value: 'curtain-track', name: '窗帘电轨', category: 'curtain', symbol: 'curtain', keywords: /窗帘|电轨|开合帘/ },
   { value: 'speaker', name: '智能音箱', category: 'gateway', symbol: 'speaker', keywords: /音箱|音响/ },
+  { value: 'touch-panel', name: '中控屏', category: 'gateway', symbol: 'touch-panel', keywords: /中控屏|妙控屏|智能面板|缤纷面板|触控屏|智能屏/ },
   { value: 'gateway', name: '智能网关', category: 'gateway', symbol: 'hub', keywords: /网关|中控/ },
   { value: 'ac-router', name: 'AC 路由', category: 'network', symbol: 'router', keywords: /路由|AC控制器|ac 路由/i },
   { value: 'ap-node', name: 'AP 节点', category: 'network', symbol: 'mesh', keywords: /\bAP\b|mesh|面板 ?AP/i },

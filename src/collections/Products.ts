@@ -5,7 +5,7 @@ import { categoryOfType, DEVICE_TYPE_OPTIONS, isDeviceType } from '@/lib/device-
 
 import { cmsAdminOrActiveStaff, cmsAdminOrManager, fieldCmsAdminOrManager } from '@/lib/access'
 
-export const PRODUCT_PLATFORMS = ['Apple Home', '米家', '涂鸦', 'Matter', '通用'] as const
+export const PRODUCT_PLATFORMS = ['Apple Home', '米家', '华为', '涂鸦', 'Matter', 'KNX', '通用'] as const
 
 export const Products: CollectionConfig = {
   slug: 'products',

@@ -344,15 +344,19 @@ export interface Quote {
               | 'pendant-light'
               | 'wall-light'
               | 'panel-light'
+              | 'light-strip'
+              | 'other-light'
               | 'motion-sensor'
               | 'smoke-sensor'
               | 'water-sensor'
               | 'temp-sensor'
+              | 'contact-sensor'
               | 'smart-lock'
               | 'doorbell'
               | 'camera'
               | 'curtain-track'
               | 'speaker'
+              | 'touch-panel'
               | 'gateway'
               | 'ac-router'
               | 'ap-node'
@@ -430,15 +434,19 @@ export interface Product {
         | 'pendant-light'
         | 'wall-light'
         | 'panel-light'
+        | 'light-strip'
+        | 'other-light'
         | 'motion-sensor'
         | 'smoke-sensor'
         | 'water-sensor'
         | 'temp-sensor'
+        | 'contact-sensor'
         | 'smart-lock'
         | 'doorbell'
         | 'camera'
         | 'curtain-track'
         | 'speaker'
+        | 'touch-panel'
         | 'gateway'
         | 'ac-router'
         | 'ap-node'
@@ -449,7 +457,7 @@ export interface Product {
     | null;
   brand: string | Brand;
   category?: (string | null) | Category;
-  platforms?: ('Apple Home' | '米家' | '涂鸦' | 'Matter' | '通用')[] | null;
+  platforms?: ('Apple Home' | '米家' | '华为' | '涂鸦' | 'Matter' | 'KNX' | '通用')[] | null;
   image?: (string | null) | Media;
   description?: string | null;
   price: number;
