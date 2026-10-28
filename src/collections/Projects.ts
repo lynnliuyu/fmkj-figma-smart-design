@@ -14,7 +14,7 @@ export const Projects: CollectionConfig = {
   labels: { singular: '项目', plural: '项目' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'customerName', 'stage', 'riskLevel', 'owner', 'nextActionDueAt'],
+    defaultColumns: ['name', 'customerName', 'stage', 'owner', 'updatedAt'],
     group: '项目',
   },
   defaultSort: '-updatedAt',
@@ -67,12 +67,14 @@ export const Projects: CollectionConfig = {
     {
       type: 'collapsible',
       label: '风险与下一步',
+      // 页面流程已简化，不再使用这些字段；保留已有数据，仅在后台隐藏。
+      admin: { condition: () => false },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'riskLevel', label: '风险', type: 'select', required: true, defaultValue: 'normal', options: opts(PROJECT_RISKS) },
-            { name: 'waitingOn', label: '等待对象', type: 'select', required: true, defaultValue: 'none', options: opts(PROJECT_WAITING_ON) },
+            { name: 'riskLevel', label: '风险', type: 'select', defaultValue: 'normal', options: opts(PROJECT_RISKS) },
+            { name: 'waitingOn', label: '等待对象', type: 'select', defaultValue: 'none', options: opts(PROJECT_WAITING_ON) },
           ],
         },
         { name: 'riskNote', label: '风险说明', type: 'textarea', maxLength: 500 },

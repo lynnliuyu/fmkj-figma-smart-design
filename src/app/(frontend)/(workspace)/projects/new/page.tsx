@@ -18,7 +18,7 @@ export default async function NewProjectPage() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/projects"><ChevronLeft className="size-4" />项目工作台</Link>
+        <Link href="/projects"><ChevronLeft className="size-4" />项目列表</Link>
       </Button>
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">新建项目</h1>

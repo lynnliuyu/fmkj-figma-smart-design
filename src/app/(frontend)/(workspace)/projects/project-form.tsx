@@ -6,12 +6,12 @@ import { AlertCircle, Loader2, Save } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { PROJECT_PLATFORMS, PROJECT_RISKS, PROJECT_STAGES, PROJECT_STATUSES, PROJECT_WAITING_ON } from '@/lib/projects'
+import { PROJECT_PLATFORMS, PROJECT_STAGES, PROJECT_STATUSES } from '@/lib/projects'
 
 import { saveProject, type ProjectFormState } from './actions'
 
@@ -27,21 +27,10 @@ export type ProjectFormValues = {
   owner?: string | null
   platform?: string | null
   budget?: number | null
-  riskLevel?: string
-  waitingOn?: string
-  riskNote?: string | null
-  nextAction?: string | null
-  nextActionDueAt?: string | null
   notes?: string | null
 }
 
 type Option = { value: string; label: string }
-
-const toDateInput = (iso?: string | null) => {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return new Date(d.getTime() + 8 * 3600_000).toISOString().slice(0, 10)
-}
 
 export function ProjectForm({
   initial = {},
@@ -112,15 +101,14 @@ export function ProjectForm({
       <Card>
         <CardHeader>
           <CardTitle>基本信息</CardTitle>
-          <CardDescription>客户、地址与项目归属</CardDescription>
-        </CardHeader>
+                  </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2">{text('name', '项目名称', { placeholder: '例如：万科城 3-1201 全屋智能', required: true })}</div>
           {text('customerName', '客户姓名', { required: true })}
           {text('customerPhone', '客户电话', { inputMode: 'tel' })}
           {text('community', '小区 / 楼盘')}
           {text('address', '详细地址')}
-          {select('owner', '负责人', owners, isNew ? '__none' : '__none', true)}
+          {select('owner', '负责人', owners, '__none', true)}
           {select('platform', '主平台', PROJECT_PLATFORMS.map((p) => ({ value: p, label: p })), '__none', true)}
           {text('budget', '预算（元）', { type: 'number', min: 0, step: 100, inputMode: 'numeric' })}
         </CardContent>
@@ -128,20 +116,11 @@ export function ProjectForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>进度与风险</CardTitle>
-          <CardDescription>决定项目出现在工作台的哪个分组</CardDescription>
+          <CardTitle>进度</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {select('stage', '阶段', PROJECT_STAGES, 'new')}
           {select('status', '状态', PROJECT_STATUSES, 'active')}
-          {select('riskLevel', '风险', PROJECT_RISKS, 'normal')}
-          {select('waitingOn', '等待对象', PROJECT_WAITING_ON, 'none')}
-          {text('nextAction', '下一步', { placeholder: '例如：周五上门复尺' })}
-          {text('nextActionDueAt', '下一步截止', { type: 'date', defaultValue: toDateInput(initial.nextActionDueAt) })}
-          <div className="grid gap-2 md:col-span-2">
-            <Label htmlFor="riskNote">风险说明</Label>
-            <Textarea id="riskNote" name="riskNote" rows={2} defaultValue={initial.riskNote ?? ''} disabled={readOnly} />
-          </div>
           <div className="grid gap-2 md:col-span-2">
             <Label htmlFor="notes">备注</Label>
             <Textarea id="notes" name="notes" rows={3} defaultValue={initial.notes ?? ''} disabled={readOnly} />

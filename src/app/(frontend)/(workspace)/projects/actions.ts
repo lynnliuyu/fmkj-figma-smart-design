@@ -5,7 +5,7 @@ import { ValidationError } from 'payload'
 
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import { PROJECT_PLATFORMS, PROJECT_RISKS, PROJECT_STAGES, PROJECT_STATUSES, PROJECT_WAITING_ON } from '@/lib/projects'
+import { PROJECT_PLATFORMS, PROJECT_STAGES, PROJECT_STATUSES } from '@/lib/projects'
 import type { Project } from '@/payload-types'
 
 export type ProjectFormState =
@@ -38,9 +38,6 @@ function parse(form: FormData) {
   const budget = budgetRaw ? Number(budgetRaw) : null
   if (budget !== null && (!Number.isFinite(budget) || budget < 0)) fieldErrors.budget = '预算需为非负数字'
 
-  const due = str(form, 'nextActionDueAt')
-  if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) fieldErrors.nextActionDueAt = '日期格式无效'
-
   const platform = str(form, 'platform')
   if (platform && !(PROJECT_PLATFORMS as readonly string[]).includes(platform)) fieldErrors.platform = '取值无效'
 
@@ -52,11 +49,6 @@ function parse(form: FormData) {
     address: str(form, 'address') || null,
     stage: pick('stage', values(PROJECT_STAGES), 'new') as Project['stage'],
     status: pick('status', values(PROJECT_STATUSES), 'active') as Project['status'],
-    riskLevel: pick('riskLevel', values(PROJECT_RISKS), 'normal') as Project['riskLevel'],
-    waitingOn: pick('waitingOn', values(PROJECT_WAITING_ON), 'none') as Project['waitingOn'],
-    riskNote: str(form, 'riskNote') || null,
-    nextAction: str(form, 'nextAction') || null,
-    nextActionDueAt: due ? new Date(`${due}T00:00:00+08:00`).toISOString() : null,
     platform: (platform || null) as Project['platform'],
     budget,
     owner: str(form, 'owner') || null,

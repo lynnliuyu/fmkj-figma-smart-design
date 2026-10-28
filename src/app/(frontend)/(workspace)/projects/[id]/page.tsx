@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import { PROJECT_STAGES, riskLabel, stageIndex, statusLabel } from '@/lib/projects'
+import { PROJECT_STAGES, stageIndex, statusLabel } from '@/lib/projects'
 import { cn } from '@/lib/utils'
 import type { User } from '@/payload-types'
 
@@ -32,15 +32,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/projects"><ChevronLeft className="size-4" />项目工作台</Link>
+        <Link href="/projects"><ChevronLeft className="size-4" />项目列表</Link>
       </Button>
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">{project.name}</h1>
           {project.status !== 'active' ? <Badge variant="outline">{statusLabel(project.status)}</Badge> : null}
-          {project.riskLevel !== 'normal' ? (
-            <Badge variant={project.riskLevel === 'blocked' ? 'destructive' : 'secondary'}>{riskLabel(project.riskLevel)}</Badge>
-          ) : null}
         </div>
         <p className="text-sm text-muted-foreground">
           {project.customerName}

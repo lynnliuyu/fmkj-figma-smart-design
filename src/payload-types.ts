@@ -265,8 +265,8 @@ export interface Project {
   owner?: (string | null) | User;
   platform?: ('米家' | 'Aqara Home' | 'Apple Home' | '华为鸿蒙智家' | 'KNX' | 'Control4' | '网络/弱电' | '待定') | null;
   budget?: number | null;
-  riskLevel: 'normal' | 'watch' | 'blocked';
-  waitingOn: 'none' | 'customer' | 'internal' | 'vendor';
+  riskLevel?: ('normal' | 'watch' | 'blocked') | null;
+  waitingOn?: ('none' | 'customer' | 'internal' | 'vendor') | null;
   riskNote?: string | null;
   nextAction?: string | null;
   nextActionDueAt?: string | null;
