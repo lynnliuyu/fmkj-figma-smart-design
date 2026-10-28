@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { getCurrentAccountContext } from "@/lib/account-context"
-import { ProjectWorkflowError } from "@/lib/project-workflow"
+import { demoProjects, isDemoMode } from "@/lib/demo-data"
+import { normalizeProject, ProjectWorkflowError } from "@/lib/project-workflow"
 import { createProjectWorkflow } from "@/lib/project-workflow-postgres"
 
 const projectWorkflow = createProjectWorkflow()
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) {
+    return NextResponse.json({ data: demoProjects.map(normalizeProject), source: "demo", total: demoProjects.length })
+  }
   try {
     return NextResponse.json(await projectWorkflow.listProjects(await getCurrentAccountContext(request)))
   } catch (error) {
