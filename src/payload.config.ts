@@ -10,6 +10,7 @@ import { Media } from './collections/Media'
 import { Folders } from './collections/Folders'
 import { Products } from './collections/Products'
 import { Projects } from './collections/Projects'
+import { Quotes } from './collections/Quotes'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
 
@@ -35,7 +36,7 @@ export default buildFigmaConfig({
     fallbackLanguage: 'en',
     supportedLanguages: { 'en': adminLanguage },
   },
-  collections: [Admins, Users, Projects, Products, Brands, Categories, Media, Folders, Tags],
+  collections: [Admins, Users, Projects, Quotes, Products, Brands, Categories, Media, Folders, Tags],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

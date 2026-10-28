@@ -34,7 +34,7 @@ export type SidebarUser = { name: string; email: string; roleLabel: string }
 const nav: { icon: typeof PackageSearch; label: string; url: string; soon?: boolean }[] = [
   { icon: FolderKanban, label: "项目", url: "/projects" },
   { icon: PackageSearch, label: "产品库", url: "/products" },
-  { icon: FileText, label: "报价", url: "/quotes", soon: true },
+  { icon: FileText, label: "报价", url: "/quotes" },
 ]
 
 const initials = (name: string) => name.trim().slice(0, 1).toUpperCase() || "用"

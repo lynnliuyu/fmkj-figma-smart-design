@@ -1,14 +1,18 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ChevronLeft, MapPinned } from 'lucide-react'
+import { ChevronLeft, FilePlus2, MapPinned } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { PROJECT_STAGES, stageIndex, statusLabel } from '@/lib/projects'
 import { cn } from '@/lib/utils'
-import type { User } from '@/payload-types'
+import { quoteStatusLabel, yuan } from '@/lib/quotes'
+import type { Quote, User } from '@/payload-types'
+
+import { createQuoteFromProject } from '../../quotes/actions'
 
 import { canEditProjects, listOwnerOptions } from '../data'
 import { ProjectForm } from '../project-form'
@@ -24,7 +28,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     .catch(() => null)
   if (!project) notFound()
 
-  const owners = await listOwnerOptions()
+  const [owners, quotes] = await Promise.all([
+    listOwnerOptions(),
+    payload.find({ collection: 'quotes', where: { project: { equals: project.id } }, depth: 0, limit: 50, sort: '-updatedAt', user, overrideAccess: false, select: { title: true, status: true, total: true, updatedAt: true } }),
+  ])
   const owner = typeof project.owner === 'object' ? (project.owner as User | null) : null
   const current = stageIndex(project.stage)
   const editable = canEditProjects(user?.role)
@@ -59,6 +66,35 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </li>
         ))}
       </ol>
+
+      <Card className="gap-0 py-0">
+        <CardHeader className="flex flex-row items-center justify-between border-b py-4">
+          <CardTitle className="text-base">报价</CardTitle>
+          {editable ? (
+            <form action={createQuoteFromProject}>
+              <input type="hidden" name="projectId" value={String(project.id)} />
+              <Button type="submit" size="sm"><FilePlus2 className="size-4" />从点位图生成报价</Button>
+            </form>
+          ) : null}
+        </CardHeader>
+        <CardContent className="p-0">
+          {quotes.docs.length === 0 ? (
+            <p className="px-6 py-6 text-sm text-muted-foreground">还没有报价。先在点位图里放置设备，再生成报价；没有点位图也可以生成空报价后手动添加产品。</p>
+          ) : (
+            <ul className="divide-y">
+              {(quotes.docs as Quote[]).map((q) => (
+                <li key={q.id}>
+                  <Link href={`/quotes/${q.id}`} className="flex items-center gap-3 px-6 py-3 hover:bg-muted/50">
+                    <span className="flex-1 truncate text-sm font-medium">{q.title}</span>
+                    <Badge variant={q.status === 'accepted' ? 'default' : q.status === 'sent' ? 'secondary' : 'outline'}>{quoteStatusLabel(q.status)}</Badge>
+                    <span className="w-28 text-right text-sm font-semibold tabular-nums">{yuan(q.total)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
 
       <ProjectForm
         owners={owners}

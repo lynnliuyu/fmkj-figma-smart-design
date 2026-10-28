@@ -83,6 +83,7 @@ export interface Config {
     admins: Admin;
     users: User;
     projects: Project;
+    quotes: Quote;
     products: Product;
     brands: Brand;
     categories: Category;
@@ -100,6 +101,7 @@ export interface Config {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    quotes: QuotesSelect<false> | QuotesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
@@ -280,6 +282,59 @@ export interface Project {
     | number
     | boolean
     | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotes".
+ */
+export interface Quote {
+  id: string;
+  title: string;
+  project: string | Project;
+  status: 'draft' | 'sent' | 'accepted';
+  items?:
+    | {
+        product?: (string | null) | Product;
+        name: string;
+        sku?: string | null;
+        unit?: string | null;
+        price: number;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  fees?:
+    | {
+        name: string;
+        amount: number;
+        id?: string | null;
+      }[]
+    | null;
+  discount?: number | null;
+  notes?: string | null;
+  productTotal?: number | null;
+  feeTotal?: number | null;
+  total?: number | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -551,6 +606,10 @@ export interface PayloadLockedDocument {
         value: string | Project;
       } | null)
     | ({
+        relationTo: 'quotes';
+        value: string | Quote;
+      } | null)
+    | ({
         relationTo: 'products';
         value: string | Product;
       } | null)
@@ -724,6 +783,42 @@ export interface ProjectsSelect<T extends boolean = true> {
   nextActionDueAt?: T;
   notes?: T;
   pointMap?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotes_select".
+ */
+export interface QuotesSelect<T extends boolean = true> {
+  title?: T;
+  project?: T;
+  status?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        name?: T;
+        sku?: T;
+        unit?: T;
+        price?: T;
+        quantity?: T;
+        id?: T;
+      };
+  fees?:
+    | T
+    | {
+        name?: T;
+        amount?: T;
+        id?: T;
+      };
+  discount?: T;
+  notes?: T;
+  productTotal?: T;
+  feeTotal?: T;
+  total?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -926,7 +1021,7 @@ export interface CollectionQueryWidget {
   data?: {
     title?: string | null;
     relatedCollection:
-      'admins' | 'users' | 'projects' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags';
+      'admins' | 'users' | 'projects' | 'quotes' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags';
     where?:
       | {
           [k: string]: unknown;
@@ -949,7 +1044,19 @@ export interface CollectionQueryWidget {
 export interface ActivityWidget {
   data?: {
     excludedCollections?:
-      ('admins' | 'users' | 'projects' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags')[] | null;
+      | (
+          | 'admins'
+          | 'users'
+          | 'projects'
+          | 'quotes'
+          | 'products'
+          | 'brands'
+          | 'categories'
+          | 'media'
+          | 'folders'
+          | 'tags'
+        )[]
+      | null;
   };
   width: 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }

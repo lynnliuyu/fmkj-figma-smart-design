@@ -193,3 +193,10 @@
 .figma-bypass-link:focus {
   transform: translateY(0);
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+}
