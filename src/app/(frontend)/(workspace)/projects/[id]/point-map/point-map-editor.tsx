@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { POINT_SYMBOLS, symbolUrl, type PointSymbolKey } from '@/lib/point-symbols'
 import { cn } from '@/lib/utils'
 
 const Excalidraw = dynamic(async () => (await import('@excalidraw/excalidraw')).Excalidraw, {
@@ -36,6 +37,7 @@ export type PointProduct = {
   brand: string
   categorySlug: string
   categoryName: string
+  symbol: PointSymbolKey | null
 }
 
 /** 每个分类一个点位代号和颜色，例如开关 K1、K2。 */
@@ -60,6 +62,43 @@ type SceneElement = {
 type StoredScene = { elements?: unknown[]; appState?: Record<string, unknown>; files?: Record<string, unknown> }
 
 const yuan = (n: number) => `¥${n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}`
+
+/** 读取符号 SVG 并按分类颜色着色，转成 Excalidraw 可用的 dataURL；同一符号同一颜色只取一次。 */
+const symbolCache = new Map<string, Promise<string>>()
+function symbolDataURL(key: PointSymbolKey, color: string) {
+  const id = `${key}-${color}`
+  let hit = symbolCache.get(id)
+  if (!hit) {
+    hit = fetch(symbolUrl(key))
+      .then((r) => {
+        if (!r.ok) throw new Error('symbol')
+        return r.text()
+      })
+      .then((svg) => `data:image/svg+xml;base64,${btoa(svg.replace('fill="currentColor"', `fill="${color}"`))}`)
+    hit.catch(() => symbolCache.delete(id))
+    symbolCache.set(id, hit)
+  }
+  return hit
+}
+
+function SymbolMark({ symbol, code, color }: { symbol: PointSymbolKey | null; code: string; color: string }) {
+  if (!symbol) {
+    return (
+      <span
+        className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-semibold"
+        style={{ borderColor: color, color, backgroundColor: `${color}14` }}
+      >
+        {code}
+      </span>
+    )
+  }
+  const mask = `url(${symbolUrl(symbol)}) center / contain no-repeat`
+  return (
+    <span className="flex size-8 shrink-0 items-center justify-center rounded-md border" style={{ backgroundColor: `${color}0d` }} title={POINT_SYMBOLS[symbol]}>
+      <span aria-hidden className="size-6" style={{ backgroundColor: color, mask, WebkitMask: mask }} />
+    </span>
+  )
+}
 
 /** 户型图压缩到最长边 2400px，避免点位图数据过大。 */
 async function readFloorPlan(file: File) {
@@ -166,7 +205,7 @@ export function PointMapEditor({
     return q ? products.filter((p) => `${p.name} ${p.sku} ${p.brand} ${p.categoryName}`.toLowerCase().includes(q)) : products
   }, [products, query])
 
-  /** 在当前视野中心放一个点位：圆形 + 代号文字，customData 记录关联的产品。 */
+  /** 在当前视野中心放一个点位：设备符号 + 代号文字（无符号时用圆形），customData 记录关联的产品。 */
   const addPoint = useCallback(
     async (product: PointProduct) => {
       if (!api || readOnly) return
@@ -182,6 +221,31 @@ export function PointMapEditor({
       const offset = (insertOffset.current++ % 6) * 14
       const x = s.width / 2 / zoom - s.scrollX - size / 2 + offset
       const y = s.height / 2 / zoom - s.scrollY - size / 2 + offset
+      const customData = { productId: product.id, pointCode: code, categorySlug: product.categorySlug }
+
+      if (product.symbol) {
+        try {
+          const dataURL = await symbolDataURL(product.symbol, style.color)
+          const fileId = `sym-${product.symbol}-${style.color.slice(1)}`
+          if (!api.getFiles()[fileId]) {
+            api.addFiles([{ id: fileId as never, dataURL: dataURL as never, mimeType: 'image/svg+xml', created: Date.now() }])
+          }
+          const groupId = `pt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`
+          const box = 40
+          // 只有符号图片带 productId，代号文字不参与统计，避免重复计数。
+          const created = convertToExcalidrawElements([
+            { type: 'image', fileId, x, y, width: box, height: box, customData },
+            { type: 'text', x: x - 10, y: y + box + 2, width: box + 20, text: code, fontSize: 12, fontFamily: 2, textAlign: 'center', strokeColor: style.color, customData: { pointCode: code } },
+          ] as never).map((el) => ({ ...el, groupIds: [groupId] }))
+          api.updateScene({
+            elements: [...api.getSceneElementsIncludingDeleted(), ...created] as never,
+            appState: { selectedElementIds: { [created[0].id]: true } } as never,
+          })
+          return
+        } catch {
+          // 符号加载失败时退回圆形点位
+        }
+      }
 
       const [shape, ...rest] = convertToExcalidrawElements([
         {
@@ -195,7 +259,7 @@ export function PointMapEditor({
           fillStyle: 'solid',
           strokeWidth: 2,
           roughness: 0,
-          customData: { productId: product.id, pointCode: code, categorySlug: product.categorySlug },
+          customData,
           label: { text: code, fontSize: 12, strokeColor: style.color, fontFamily: 2 },
         },
       ] as never)
@@ -368,12 +432,7 @@ export function PointMapEditor({
                           selectedProductId === p.id && 'bg-accent',
                         )}
                       >
-                        <span
-                          className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-semibold"
-                          style={{ borderColor: style.color, color: style.color, backgroundColor: `${style.color}14` }}
-                        >
-                          {style.code}
-                        </span>
+                        <SymbolMark symbol={p.symbol} code={style.code} color={style.color} />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm">{p.name}</span>
                           <span className="block truncate text-xs text-muted-foreground">{p.brand} · {p.sku}</span>

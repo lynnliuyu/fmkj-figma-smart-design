@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { getCatalog } from '@/lib/cached-data'
+import { symbolForProduct } from '@/lib/point-symbols'
 
 import { canEditProjects } from '../../data'
 import { PointMapEditor, type PointProduct } from './point-map-editor'
@@ -29,6 +30,7 @@ export default async function PointMapPage({ params }: { params: Promise<{ id: s
       brand: p.brand?.name ?? '',
       categorySlug: p.category?.slug ?? 'other',
       categoryName: p.category?.name ?? '其他',
+      symbol: symbolForProduct(p.name, p.category?.slug ?? 'other'),
     }))
 
   return (
