@@ -82,6 +82,7 @@ export interface Config {
   collections: {
     admins: Admin;
     users: User;
+    projects: Project;
     products: Product;
     brands: Brand;
     categories: Category;
@@ -98,6 +99,7 @@ export interface Config {
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
@@ -246,6 +248,49 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: string;
+  name: string;
+  customerName: string;
+  customerPhone?: string | null;
+  community?: string | null;
+  address?: string | null;
+  stage: 'new' | 'measure' | 'proposal' | 'contract' | 'install' | 'acceptance' | 'aftercare';
+  status: 'active' | 'paused' | 'canceled' | 'archived';
+  owner?: (string | null) | User;
+  platform?: ('米家' | 'Aqara Home' | 'Apple Home' | '华为鸿蒙智家' | 'KNX' | 'Control4' | '网络/弱电' | '待定') | null;
+  budget?: number | null;
+  riskLevel: 'normal' | 'watch' | 'blocked';
+  waitingOn: 'none' | 'customer' | 'internal' | 'vendor';
+  riskNote?: string | null;
+  nextAction?: string | null;
+  nextActionDueAt?: string | null;
+  notes?: string | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -493,6 +538,10 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
+        relationTo: 'projects';
+        value: string | Project;
+      } | null)
+    | ({
         relationTo: 'products';
         value: string | Product;
       } | null)
@@ -643,6 +692,32 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  name?: T;
+  customerName?: T;
+  customerPhone?: T;
+  community?: T;
+  address?: T;
+  stage?: T;
+  status?: T;
+  owner?: T;
+  platform?: T;
+  budget?: T;
+  riskLevel?: T;
+  waitingOn?: T;
+  riskNote?: T;
+  nextAction?: T;
+  nextActionDueAt?: T;
+  notes?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -840,7 +915,8 @@ export interface CollectionsWidget {
 export interface CollectionQueryWidget {
   data?: {
     title?: string | null;
-    relatedCollection: 'admins' | 'users' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags';
+    relatedCollection:
+      'admins' | 'users' | 'projects' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags';
     where?:
       | {
           [k: string]: unknown;
@@ -863,7 +939,7 @@ export interface CollectionQueryWidget {
 export interface ActivityWidget {
   data?: {
     excludedCollections?:
-      ('admins' | 'users' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags')[] | null;
+      ('admins' | 'users' | 'projects' | 'products' | 'brands' | 'categories' | 'media' | 'folders' | 'tags')[] | null;
   };
   width: 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }

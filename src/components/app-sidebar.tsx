@@ -31,9 +31,9 @@ import {
 
 export type SidebarUser = { name: string; email: string; roleLabel: string }
 
-const nav = [
+const nav: { icon: typeof PackageSearch; label: string; url: string; soon?: boolean }[] = [
+  { icon: FolderKanban, label: "项目", url: "/projects" },
   { icon: PackageSearch, label: "产品库", url: "/products" },
-  { icon: FolderKanban, label: "项目", url: "/projects", soon: true },
   { icon: FileText, label: "报价", url: "/quotes", soon: true },
 ]
 
@@ -59,7 +59,7 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="group-data-[collapsible=icon]:px-1.5">
-              <Link href="/products">
+              <Link href="/projects">
                 <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Command className="size-4" />
                 </div>

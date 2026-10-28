@@ -8,9 +8,9 @@ import { LoginForm } from './login-form'
 export const metadata = { title: '登录 · FMKJ 项目管理' }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
-  if (await appAuth.getCurrentUser()) redirect('/products')
+  if (await appAuth.getCurrentUser()) redirect('/projects')
   const { from } = await searchParams
-  const redirectTo = from?.startsWith('/') && !from.startsWith('//') ? from : '/products'
+  const redirectTo = from?.startsWith('/') && !from.startsWith('//') ? from : '/projects'
 
   return (
     <main className="grid min-h-screen bg-background lg:grid-cols-2">
