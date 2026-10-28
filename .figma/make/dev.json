@@ -1,3 +1,9 @@
 {
-  "installOn": ["package.json", "pnpm-lock.yaml"]
+  "installOn": [
+    "package.json",
+    "pnpm-workspace.yaml"
+  ],
+  "restartOn": [
+    "next.config.ts"
+  ]
 }

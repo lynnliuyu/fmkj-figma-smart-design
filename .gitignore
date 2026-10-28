@@ -1,82 +1,23 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-dev-server.*.log
-dev-server*.out.log
-dev-server*.err.log
-dev.log
-
-# env files
-.env*
-!.env.local.example
-!.env.appliance.example
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# MCP / AI tool configs (not part of the business app)
-/config/mcporter.json
-
-# macOS and local tool state
-.DS_Store
-/.workbuddy/
-/backups/
-
-# local database maintenance outputs
-.sync-token.tmp
-.sync-batches/
-.sync-bodies/
-.sync-export/
-*-backup-*.json
-*-results.json
-missing-image-*.json
-product-image-collection.json
-product-missing-image-backup.json
-products-clean-import-results.json
-products-scraped-import-results.json
-products-tags-normalize-results.json
-ruijie-rebuild-results.json
-
-# Local customer drawings, generated previews and test credentials are not source.
-/.local/
-/output/
-/tmp/
-
-# CAD export server secrets
-/docker/cad-export/.env
-
-# 流程图编辑器数据目录（docker/architecture-editor），备份可能含客户信息
-/docs/architecture-data/
-/docker/architecture-editor/.env
-/docker/architecture-editor/vendor/
-
-# Python 字节码缓存（CADCraft 脚本产物，不进版本库）
-__pycache__/
-*.pyc
-
-# DSH 运行时的临时目录（预览图等），不进版本库
-.dsh/
-
-# 打包产物（装机包、镜像 tar）
+node_modules/
+.next/
+out/
 dist/
+build/
+.cache/
+.env*
+next-env.d.ts
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.figma/runtime/
+.tmp-*
+/.figma/design-context/
 
-# 构建用的临时工作树（vitest 会把里面的测试也扫一遍）
-.agents/worktrees/
+# Platform-managed agentplat state, not project source. In the
+# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
+# repo root IS the workspace root, so these land inside this repo rather than
+# beside it.
+/.plugins/
+/.opencode-skills/

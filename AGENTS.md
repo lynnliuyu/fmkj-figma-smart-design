@@ -1,57 +1,486 @@
-# Agent 使用说明
+# next-app
 
-## 说话方式（优先级最高，每次会话都适用）
+React + Next.js + Payload + Tailwind CSS project running inside Figma Make.
 
-**用户不是开发人员，看不懂代码和技术名词。默认用大白话回答。**
+This file is supplied as project instructions at the start of each task. Do not
+reread it before opening source. Always load the `payload-framework` skill.
+Load `nextjs-docs` when the task involves routing, pages,
+components, caching, images, or metadata, not for schema-only, data-only, or style-only changes.
+Load `payload-content` before changing data.
 
-- 开头先给结论：**做了什么、结果怎样、对用户有什么影响**。技术细节放到最后单独一小段，标明"想深入再看"。
-- 不要罗列文件路径、函数名、命令、参数。必须提到某个东西时，用"哪个页面的哪个按钮""哪张图上的哪一格"来说；实在要说文件名，后面补一句它是干什么的。
-- 每个技术名词（接口、门禁、缓存、提交、镜像、registry 之类）第一次出现必须用一句人话解释，或者直接换个说法。宁可说"检查有没有把客户名字带出去"，也不要说"deny 门禁"。
-- 需要用户拿主意时，只给 2—3 个选项，每个后面跟一句"选了会怎样"；不要给一长串可能性让用户自己挑。
-- 能用表格、清单、图说清就别写大段文字；一次改了很多东西，先给一张总览表。
-- 不吓唬用户，也不夸大：没做到的说没做到，不确定的直接说"需要你确认"。
-- 篇幅尽量短。用户问一句小事，就不要回一篇报告；需要展开时先问一句"要不要看详细版"。
+For frontend work, keep a **Verify production delivery** todo pending until all
+of these are done:
 
-## 本机端口约定（起静态服务前必看）
+- Preview every requested route and fix every runtime or build error. Server
+  Components cannot contain event handlers; use CSS interaction or a Client
+  Component boundary.
+- When a Client Component calls a Server Action inside `useTransition`, keep
+  `revalidatePath` out of the action. Return a serializable result and call
+  `router.refresh()` in the client after success.
+- Run `figma make verify-deploy`, inspect its production route table, and visit
+  every generated public route. `verify-bootstrap` and source inspection are
+  not substitutes.
+- Keep fixed pages static. Choose one content lifecycle before implementing
+  dynamic routes; do not combine these contracts:
+  - For an intentional build-time snapshot, use build-time reads without
+    on-write revalidation and warn that Admin edits require another **Publish**.
+  - For content that must stay fresh after Publish, add cached list/detail reads
+    and collection hooks immediately after the schema, before building UI.
+    Invalidate the list plus both the previous and current route keys on every
+    write (for example, `previousDoc.slug` and `doc.slug` after a slug change),
+    and invalidate affected pages when related media changes. Then prove a
+    unique published edit appears in a fresh production request. A revalidation
+    interval is not a substitute for these hooks.
 
-- **8080 归 Misty**：用户机器上的代理客户端自带一个本地面板（页面标题 `MISTY CLOUD`），默认就用 8080。任何会话、任何项目都不要再占用 8080——一旦占用，用户打开 Misty 看到的就是别人的 404 页。
-- 文档/静态页预览统一走 **8090**：`npm run handbook:preview` → `http://127.0.0.1:8090/appliance-handbook.html`
-- 临时验证用的服务沿用 **879x**（8791/8798/8799 等），别用 80xx。
-- 起服务前先确认端口空闲：`lsof -nP -iTCP:<端口> -sTCP:LISTEN`；用完记得关掉。
+For page-level static generation or ISR, do not complete the final delivery
+todo while `verify-deploy` marks a requested public route as `ƒ (Dynamic)`.
+Repair the caching setup and rerun verification; a successful build or HTTP 200
+does not override the route table.
 
-## 本机服务器（常开那台 PVE）
+For CMS-managed images, pass the Payload upload `url` (`media.url`) to
+`next/image`. Keep this template's custom loader (`figma-image-loader.ts`).
+Do not add a same-origin `/media/[id]` proxy; those routes 404 after
+Publish. The loader adds sizing parameters to relative Payload
+`/api/<collection>/file/...` URLs and passes other `src` values through, so
+`images.remotePatterns` is not needed. Verify nonzero image dimensions in
+every requested view, including after replacing an upload. When publishing
+is requested, verify images on the published site as well as in preview.
 
-家里所有常驻服务都跑在那台 Proxmox 上（设计站、架构图编辑器、镜像仓库、文件管理器、
-容器面板、官方主站、工作台库、设备升级源……）。
+## Payload Data Integrity
 
-- **地址、登录方式、东西放在哪、已知的坑**：见 `docs/agents/local-server.md`——碰服务器之前先读它。
-- 免密登录：`ssh -i .local/ssh/pve_ed25519 root@10.0.0.123`（PVE 主机）；容器里的服务在 `10.0.0.202`。
-- 改了服务/端口/地址，**回来更新那一页**，别让台账和现实对不上。
+For user-facing mutations, validate and allowlist every submitted field on the
+server and return structured errors the UI can display. Grant anonymous create
+only through narrow collection access, and protect server-owned workflow fields
+with field-level `create` and `update` access. Enforce relationship eligibility
+and other durable invariants at the collection boundary, not only in a Server
+Action.
 
-## Agent skills
+Preserve the document ID type generated in `payload-types.ts`; do not assume IDs
+are numeric. User-facing Local API calls must set `overrideAccess: false` and
+pass the authenticated `user` when one exists.
 
-### Issue tracker
+When an installed official plugin owns a requested capability, configure it and
+consume its canonical fields instead of recreating them. For SEO social images,
+use the plugin's upload-collection option and read its generated image field.
 
-本仓库使用 GitHub Issues 跟踪需求、缺陷和 PRD，仓库为 `lynnliuyu1995-hub/fmkj_v3`；外部 PR 不作为 triage 请求入口。详见 `docs/agents/issue-tracker.md`。
+Model content images as upload relationships to the existing Media collection.
+Seed remote starter files through `externalURL` so later uploads use the same
+relationship; do not add parallel URL fields or hardcoded frontend image data.
 
-### Triage labels
+## Development Server
 
-本仓库使用默认 triage 标签：`needs-triage`、`needs-info`、`ready-for-agent`、`ready-for-human`、`wontfix`。详见 `docs/agents/triage-labels.md`。
+A Next.js development server is **always running** on `$PORT` (default 3000).
+You don't need to start it manually.
 
-### Domain docs
+- Preview URL: The user can access the running app through the preview panel
+- Hot reload: Changes to source files are reflected immediately
 
-本仓库使用 single-context 领域文档结构：根目录 `CONTEXT.md` 加 `docs/adr/` 下的 ADR。详见 `docs/agents/domain.md`。
+## Project Structure
 
-### 产品采集与入库
+This project uses Next.js route groups to separate the frontend app from the
+Payload admin/API routes:
 
-收集产品、整理旧产品或新增具体 SKU 时，先读 `docs/product-catalog-agent-guide.md`，按现有字段、证据和业务写入入口操作。
+- `src/app/(frontend)/` - Your application pages
+- `src/app/(payload)/` - Payload CMS admin panel and API routes (do not modify)
+- `src/collections/` - Payload data collection definitions
+- `src/globals/` - Payload CMS globals, if needed
+- `src/payload.config.ts` - Payload configuration
+- `src/payload-types.ts` - Auto-generated TypeScript types
 
-### 一机一密正式验证
+## Key Files
 
-改官方产品库凭据、目录发布接口或设备同步落库时，先读并遵循 `.agents/skills/verify-catalog-one-device-auth/SKILL.md`，复跑 `formal/catalog-one-device-auth/check.sh`。
+- `src/app/(frontend)/layout.tsx` - Root layout component
+- `src/app/(frontend)/page.tsx` - Home page component
+- `src/app/(frontend)/not-found.tsx` - Custom not-found page for missing routes/records
+- `src/app/(frontend)/styles.css` - Global styles and Tailwind CSS import
+- `src/lib/payload.ts` - Shared Payload utilities (findBySlug, findByField)
+- `src/payload.config.ts` - Payload config (collections, plugins, etc.)
+- `next.config.ts` - Next.js configuration (includes Payload wrapper)
+- `package.json` - Dependencies and scripts
+- `.mise.toml` - Toolchain versions (Node.js, pnpm)
+- `.figma/make/*` - Lifecycle scripts (install, dev, deploy, deploy-preview, verify)
 
-### 点位、报价与客户交付
+## Styling
 
-变更这条工作流前，读 `CONTEXT.md`、相关 ADR（尤其 0005—0007）和 `plans/021-workbench-workflow-consolidation.md`。默认型号允许作明确标识的未核验客户报价；项目换型不改全局；删除来源报价行联动删点位与场景引用。不要根据旧测试或初始架构建议反转这些用户决定。
+This project uses **Tailwind CSS v4** for frontend styling. Tailwind and its
+PostCSS plugin are already installed and configured, and Tailwind is loaded by
+the `@import "tailwindcss"` directive in `src/app/(frontend)/styles.css`.
 
-操作说明分别维护在 `docs/point-map-design-workflow.md` 与 `docs/point-map-visual-presentation-workflow.md`。客户出口使用固定交付版本，草稿检查图不作为历史整套方案。复用现有预览与交付 module，不重新添加客户端采购计算或另一套导出来源。交接必须区分本机预览、数据库已保存、固定版本与实际导出验证；不能以测试通过声称客户项目已完成。
+Use Tailwind utility classes directly in JSX for application UI. Keep
+`styles.css` for the Tailwind import, shared theme tokens, and truly global base
+styles; do not default to inline style objects, CSS-in-JS, or hand-written
+component classes when Tailwind utilities express the same design. If a Make Kit
+or design-system package is installed, its components, tokens, and Tailwind
+setup take precedence over generic utilities.
+
+## Data/Backend Decision
+
+Use the lightest stack that satisfies the request:
+
+- Static UI, local browser state, games, or offline tools: no backend.
+- Server-side compute, secrets, OAuth, email, webhooks, or third-party API calls
+  without durable local data: Next.js server components, server actions, or route
+  handlers.
+- Durable records, admin-managed content/data, uploads, users, bookings,
+  inventory, saved preferences, or data that persists across devices/sessions:
+  Payload.
+- Explicit Supabase request: use the Supabase flow instead of Payload.
+- Durable data plus integrations: Payload for records; Next.js server runtime and
+  environment variables for the integration.
+
+Payload is this template's durable data, admin, auth, and content layer. Use it
+for structured app data, not only editorial CMS content.
+
+## Figma-Managed Payload Rules
+
+This is not a vanilla self-hosted Payload project. Figma Cloud provides the
+database, auth integration, file storage, deployment runtime, and platform
+secrets through `@payloadcms/figma`.
+
+Package-level `@payloadcms/figma` internals are platform-owned and may not be
+present in this generated app workspace. Do not inspect, duplicate, or
+reinterpret bootstrap/env/OAuth behavior in app code. Keep those internals intact
+and follow the Make-specific rules below.
+
+Use `buildFigmaConfig()` in `src/payload.config.ts`. Do not replace it with
+Payload's raw `buildConfig()`.
+
+Do not add or configure:
+
+- `db`
+- `secret`
+- default `editor`
+- Mongo/Postgres/SQLite/database adapter packages
+- OAuth/auth plugins for Payload Admin Panel auth
+- cloud-storage plugins for normal uploads
+- migration files, DDL, local database setup, or connection-string instructions
+
+If a shell command complains about missing Payload/Figma backend env vars, first
+check whether you are running outside the Make lifecycle/dev-server environment.
+Do not hard-code dummy secrets, run `@payloadcms/figma init`, or ask the user to
+provide platform-owned values.
+
+## Secrets And Environment Variables
+
+Payload/Figma backend env vars and secrets are platform-owned. In generated Make
+apps, do not ask the user to provide these values, hard-code placeholders, add
+dummy values, or expose them in client code.
+
+For third-party integrations, collect API keys, client secrets, and tokens with
+the Make environment-variable card flow, then reference them from server-only
+code as `process.env.*`. Secret-backed integrations should live in server
+components, server actions, or route handlers.
+
+Do not ask users to paste secret values into ordinary chat, code, comments, or
+docs. Do not print, log, summarize, or expose secret values. Treat saved
+environment variable values as write-only: you can reference variable names in
+code, but you should not try to reveal existing values. Add, replace, or delete
+user-provided environment variables only when the user explicitly asks for
+secret or integration setup.
+
+Do not put private values in Payload documents, static data, rendered props,
+browser components, or public client environment variables. In Next.js,
+`NEXT_PUBLIC_*` values can be bundled into browser code; in Vite, `VITE_*`
+values can be bundled into browser code. Use public prefixes only for
+configuration that is intentionally public, and warn the user if a sensitive key
+appears to use a public prefix.
+
+## Payload Data Intent
+
+This template already includes Payload, but do not create placeholder
+collections just because Payload is present. Add collections or globals only when
+the user needs durable application data, admin-managed records, auth-backed
+accounts, uploads, or editable content.
+
+Server routes are for stateless compute/proxying. If a route creates, updates,
+lists, or stores user/domain records, model those records in Payload.
+
+## Auth Modeling
+
+Keep three authorization concerns distinct:
+
+- Figma/Make access controls who can view or edit the Make file.
+- Payload Admin auth controls who can manage CMS/admin content.
+- Generated app auth controls who can log into the published app.
+
+This template starts with only the `admins` auth collection. It is configured as
+`admin.user` and is exclusively for CMS editors using Figma SSO. Public visitors
+remain unauthenticated unless the user asks for app login.
+
+When the user requests public signup, login, profiles, or user-owned data, create
+an auth-enabled `Users` collection with slug `users`, register it in
+`src/payload.config.ts`, and use it for app accounts and ownership relationships.
+Never use `Admins` for public signup or grant app users Payload Admin access.
+
+Do not use generated app auth to grant Payload Admin access, and do not use
+Payload Admin users for public app signup. Payload Admin auth is
+platform/control-plane behavior and may use Figma SSO and/or Payload-native auth.
+Do not build or modify Payload Admin login unless the user explicitly asks for
+CMS/admin access behavior.
+If the request is about `/admin`, CMS editors, or who can manage content, work
+with the existing Payload Admin / `@payloadcms/figma` / platform-owned admin
+auth setup instead of adding generated app login.
+
+When implementing app login, signup, account management, roles, protected pages,
+email/password auth, OAuth, Google sign-in, magic links, or custom app auth, use
+the `payload-auth` skill before editing auth code.
+
+Do not create custom password/session handling from scratch. Do not use Payload
+Enterprise auth plugin code, and do not copy or recreate it. For generated app
+OAuth or custom providers, prefer the public `payload-auth` framework when it is
+compatible with the project. Do not hand-roll Google/OAuth as the default
+implementation. Do not use `@payloadcms/figma` CLI OAuth, Figma/Payload
+control-plane OAuth, or Payload Admin OAuth as public app login. If
+`payload-auth` is unavailable and the user explicitly requires OAuth, use a
+vetted server-side auth/OIDC framework and bridge the result to Payload app-user
+records. Keep provider secrets server-side.
+
+For Payload-backed apps, create collections/globals, connect frontend pages to
+Payload queries, and seed real Payload documents when starter data is needed. Use
+the Payload CLI. Static arrays are acceptable only for pure UI mock data with no
+persistence/admin requirement.
+
+Add explicit `access` rules for collections that contain private, user-submitted,
+staff-only, or operational records. Public forms may create records when the app
+requires submissions, but public users should not be able to list, read, update,
+or delete private submissions by default. Do not rely on implicit Payload access
+defaults for contact details, internal notes, user-owned records, orders,
+bookings, messages, or similar app data.
+
+## Payload Implementation Workflow
+
+When adding Payload-backed functionality:
+
+1. Inspect the existing `src/payload.config.ts`, `src/collections/`, and
+   frontend routes before changing code.
+2. Use the `payload-data-modeling` skill before adding or changing collections,
+   globals, fields, relationships, constraints, ownership, access rules, seeds,
+   or starter data.
+3. Add or update collection/global definitions under `src/collections/` or
+   `src/globals/`.
+4. Register them in the existing `collections` or `globals` arrays in
+   `src/payload.config.ts`. Keep the config shape intact. Keep the built-in
+   Admins and Media collections. Add Users only when the app needs public
+   accounts, as described under Auth Modeling.
+5. Payload regenerates `src/payload-types.ts` automatically from the configured
+   `typescript.outputFile`; do not manually regenerate types during Make work.
+6. Do not run `generate:importmap` after routine changes. In Payload 4.0,
+   development HMR regenerates the import map automatically, and `payload build`
+   regenerates it before running `next build`. Run the command manually only to
+   recover from a missing or stale import map, an import map generation error,
+   or an environment where HMR and `payload build` are unavailable.
+7. Query Payload from server components/routes with `getPayload({ config })`.
+8. Keep user-facing pages in `src/app/(frontend)/`.
+9. Do not directly edit `src/app/(payload)/`; it is managed by Payload.
+
+Once the backend is connected, use the Payload data tooling this environment
+provides for data/content CRUD and seeding instead of writing raw database
+access, REST helpers, or one-off seed scripts. The `payload-content` skill is
+authoritative for which mechanism to use; invoke it and follow it rather than
+assuming a mechanism. Confirm that tooling can reach the current schema before
+planning or promising seeding work. If it cannot yet, keep frontend queries
+wired to Payload, explain the limitation, and do not replace durable data with
+static arrays.
+
+When the user asks to inspect, create, seed, migrate, normalize, bulk-update,
+update, or delete Payload documents/globals in a follow-up request, use the
+`payload-content` skill before taking action. Do not try Payload REST endpoints,
+app API routes, temporary migration endpoints, temporary scripts, or Local API
+code first. If the data tooling that skill documents is unavailable after
+listing/refreshing tools, report that limitation instead of inventing a second
+mutation path.
+For data-only follow-up requests, do not modify app source code unless the user
+also asks for schema, UI, or behavior changes.
+
+Before finishing Payload work, verify:
+
+- schema is registered in `src/payload.config.ts`;
+- `src/payload-types.ts` is left to Payload's automatic regeneration, and import
+  maps were regenerated when needed;
+- frontend routes query Payload instead of durable static arrays;
+- starter documents were seeded through the Payload data tooling when it was
+  available, or unavailable tooling was reported without adding static fallback
+  data;
+- user-facing pages stayed under `src/app/(frontend)/`;
+- `src/app/(payload)/` was not directly edited; and
+- the fastest relevant typecheck/build was attempted.
+
+If checks fail because platform backend env vars are unavailable in an ordinary
+shell, do not remove Payload, add dummy env vars, or rewrite config. Report the
+command/context limitation and keep the app wired to Payload.
+
+## Data Modeling Quality
+
+- Model the user's actual domain, not generic `items`.
+- When changing an existing model, especially converting primitive fields or
+  static data into relationships, use `payload-data-modeling` to plan what
+  happens to existing records before editing schema or mutating documents.
+- Public detail records usually need a unique indexed `slug` and slug routes
+  such as `/blog/[slug]`, `/products/[slug]`, or `/menu/[slug]`. Use
+  `findBySlug()` from `src/lib/payload.ts` for all slug lookups and call
+  `notFound()` when no document exists. Do not duplicate lookup queries inline
+  in each route file.
+- Prefer relationships for domain concepts that users manage independently, such
+  as events to speakers, products to categories, or bookings to services.
+- For appointment or booking products, model services, staff/resources,
+  availability/slots, bookings, users, and waitlists separately when the request
+  calls for that detail.
+- CMS-managed images usually use upload fields related to `media`, such as hero
+  images and author portraits.
+- For versions, drafts, `_status`, and domain status fields, follow
+  `payload-framework`'s lifecycle decision and use `payload-data-modeling`; do
+  not apply editorial CMS defaults to all durable application data.
+- Render useful empty states when Payload returns no documents, avoid crashing on
+  missing optional media/relationships, and handle missing slug records with
+  `notFound()`.
+- Organize the admin sidebar cleanly and avoid noisy or arbitrary sidebar fields.
+- Add page/block structure management only when the user asks for CMS-managed
+  pages or blocks.
+
+## Schema Safety
+
+Before changing existing Payload schema, classify the change:
+
+- Greenfield: additive schema creation and starter seeds may proceed.
+- Existing/follow-up: optional fields, new collections, and new relationships
+  can usually proceed with a concise preview.
+- Pause for confirmation: deletes, renames, type changes, `required` or `unique`
+  constraints, relationship cardinality changes, bulk document updates, and
+  content deletes.
+
+Treat follow-up requests after an app/schema has been created as existing-app
+edits, even when they arrive in the same chat session. Do not edit files or run
+Payload document mutations for destructive or ambiguous changes until the user
+confirms.
+
+Route that confirmation through `ask_user_question` before any potentially
+destructive schema edit or document mutation. Use an operation-specific question,
+put the affected fields/documents, data-loss or invalidation risk, and
+preservation or migration plan in the explanation, and pass exactly
+`options: ["Yes", "No"]` with `multiSelect: false`. The UI automatically adds
+"Add a custom response" as the third option. End the turn after the tool call and
+wait for the user's answer before proceeding.
+
+- Schema evolution should preserve existing data meaning or explicitly handle
+  ambiguity. Use `payload-data-modeling` for the transition plan before changing
+  fields, relationships, constraints, ownership, or starter data.
+- Adding `required`, `unique`, validation ranges, changing relationship
+  cardinality, or changing field types should check existing documents when
+  possible and require confirmation if existing data may fail validation or be
+  orphaned.
+- Direct wording like "delete this field" or "make this required" does not
+  override schema safety. For example, deleting a `slug` field must warn about
+  affected `[slug]` routes, links, queries, and existing document values before
+  proceeding.
+- Do not make a destructive request appear safe by silently changing routes,
+  queries, or seed data to avoid the risk. Pause first, explain the impact, and
+  wait for confirmation.
+
+Make code/version history and Payload document data are separate. Rolling back
+code does not roll back Payload data.
+
+## Routing
+
+Frontend pages live in `src/app/(frontend)/`. Pages are defined by creating
+`page.tsx` files:
+
+- `src/app/(frontend)/page.tsx` - `/`
+- `src/app/(frontend)/about/page.tsx` - `/about`
+- `src/app/(frontend)/blog/[slug]/page.tsx` - `/blog/:slug`
+
+The Payload admin panel is available at `/admin`.
+
+### Slug Routes and Not-Found Handling
+
+When creating dynamic routes for Payload content (articles, products, etc.),
+use the shared `findBySlug()` utility from `src/lib/payload.ts` instead of
+writing the Payload query inline:
+
+```tsx
+import { findBySlug } from '@/lib/payload'
+import { notFound } from 'next/navigation'
+
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const article = await findBySlug('articles', slug)
+  if (!article) notFound()
+  return <Article data={article} />
+}
+```
+
+This pattern:
+
+- Defines slug lookup logic once in `src/lib/payload.ts`, reusable by all routes
+- Handles published vs draft visibility through the `draft` option
+- Calls `notFound()` to render `src/app/(frontend)/not-found.tsx` when missing
+- Avoids duplicating query logic across route files
+
+When adding a new collection with a slug field, reuse `findBySlug()` in the new
+route instead of copying the query. When the routing field changes (e.g. from
+`slug` to `title` or `handle`), use `findByField()` and update all affected
+routes to use the new field name—do not leave stale queries referencing the old
+field.
+
+## Preview/Proxy Configuration
+
+Keep the Make preview origin configuration in `next.config.ts` intact. The
+template uses the exact platform-provisioned preview host from
+`FIGMA_PUBLIC_URL` for both `allowedDevOrigins` and
+`experimental.serverActions.allowedOrigins`.
+
+If Payload Admin logs `Invalid Server Actions request` with an
+`x-forwarded-host`/`origin` mismatch, treat it as preview proxy configuration
+first. Do not rewrite Payload Admin routes, disable Server Actions, or replace
+Payload internals to work around it.
+
+## Figma Make Scripts
+
+These scripts are called by sboxd to manage the project lifecycle:
+
+- `.figma/make/install` - Install project dependencies (`pnpm install`)
+- `.figma/make/dev` - Start the dev server (`next dev --port $PORT --hostname 0.0.0.0`)
+- `.figma/make/deploy` - Build, upload, finalize, and report completion through `figma make deploy`
+- `.figma/make/deploy-preview` - Build the platform-provided cached preview;
+  keep its `.next`/`nextjs` contract intact and delegate packaging/upload
+  through `figma make deploy-preview`
+
+Do **not** remove or rename these scripts. They must remain executable.
+
+## Environment Variables
+
+These are injected by sboxd at runtime:
+
+- `FIGMA` - Set to `"1"` when running inside sboxd
+- `PORT` - The port to listen on (passed to `next dev` via the dev script)
+- `FIGMA_PUBLIC_URL` - The public URL of the site
+- `FIGMA_SITE_NAME` - The human-readable site name
+- `FIGMA_SITE_DESCRIPTION` - Short site description
+- `FIGMA_ASSETS_PATH` - Directory where exported Figma assets are written
+- `FIGMA_FAVICON_PATH` - Path to the exported favicon
+- `FIGMA_PREVIEW_IMAGE_PATH` - Path to the OG/social preview image
+- `FIGMA_PREVIEW_OAUTH_REDIRECT_URI` - Register verbatim with the provider; see `payload-auth`
+- `FIGMA_PREVIEW_OAUTH_STATE_PREFIX` - Prefix the app's OAuth `state`; see `payload-auth`
+
+Payload/Figma Cloud backend env vars are injected into the Make lifecycle
+environment for connected Payload projects. They are platform-owned; do not ask
+the user to provide them manually. If they are absent in an interactive shell,
+treat that as an execution-context limitation before changing app code.
+
+## File Writing
+
+When writing multiple files, parallelize independent Write calls in a single
+response. Files are independent when none depends on another's output at write
+time. Batch by dependency layer — don't write files one at a time.
+
+## Important
+
+- The dev server must listen on `$PORT` - do not hardcode a port
+- Use `pnpm install` to add new dependencies
+- Do not modify files under `src/app/(payload)/` - they are managed by Payload
+- Toolchain versions are managed by `.mise.toml`, not installed manually
+- This template is Next.js App Router + React 19 + Payload + Tailwind CSS v4;
+  check `package.json` before adding or using other dependencies.
+- This template already sets `images.loader: 'custom'` via
+  `figma-image-loader.ts`. Pass Payload `media.url` to `next/image`. Do not
+  add `images.remotePatterns` or a same-origin `/media/[id]` proxy, and do
+  not replace the Figma loader.
