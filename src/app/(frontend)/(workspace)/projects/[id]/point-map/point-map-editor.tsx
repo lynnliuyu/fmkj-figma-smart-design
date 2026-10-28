@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import { ChevronLeft, Download, ImagePlus, Loader2, MousePointerClick, Plus, Save, Search } from 'lucide-react'
+import { ChevronLeft, Download, FileUp, ImagePlus, Loader2, MousePointerClick, Plus, Save, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
 
@@ -122,12 +122,14 @@ export function PointMapEditor({
   initialScene,
   products,
   readOnly,
+  dwgEnabled = false,
 }: {
   projectId: string
   projectName: string
   initialScene: StoredScene | null
   products: PointProduct[]
   readOnly: boolean
+  dwgEnabled?: boolean
 }) {
   const { resolvedTheme } = useTheme()
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null)
@@ -139,6 +141,8 @@ export function PointMapEditor({
   const savedVersion = useRef<number | null>(null)
   const pointsKey = useRef('')
   const fileInput = useRef<HTMLInputElement>(null)
+  const dwgInput = useRef<HTMLInputElement>(null)
+  const [converting, setConverting] = useState(false)
   const insertOffset = useRef(0)
 
   const productById = useMemo(() => new Map(products.map((p) => [p.id, p])), [products])
@@ -295,6 +299,33 @@ export function PointMapEditor({
     [api],
   )
 
+  const importDwg = useCallback(
+    async (file: File) => {
+      if (!api || converting) return
+      if (!/\.dwg$/i.test(file.name)) return toast.error('请选择 .dwg 文件')
+      setConverting(true)
+      const pending = toast.loading('正在转换 DWG，可能需要几十秒…')
+      try {
+        const body = new FormData()
+        body.append('file', file)
+        const res = await fetch(`/projects/${projectId}/point-map/dwg`, { method: 'POST', body })
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; url?: string; name?: string }
+        if (!res.ok || !data.ok || !data.url) throw new Error(data.error ?? '转换失败，请稍后重试')
+        const img = await fetch(data.url)
+        if (!img.ok) throw new Error('户型图已生成，但读取失败')
+        const blob = await img.blob()
+        toast.dismiss(pending)
+        await uploadFloorPlan(new File([blob], data.name ?? 'floor.png', { type: blob.type || 'image/png' }))
+      } catch (error) {
+        toast.dismiss(pending)
+        toast.error(error instanceof Error ? error.message : '转换失败，请稍后重试')
+      } finally {
+        setConverting(false)
+      }
+    },
+    [api, converting, projectId, uploadFloorPlan],
+  )
+
   const save = useCallback(async () => {
     if (!api || saving) return
     setSaving(true)
@@ -373,6 +404,24 @@ export function PointMapEditor({
               <Button variant="outline" size="sm" disabled={!api} onClick={() => fileInput.current?.click()}>
                 <ImagePlus className="size-4" />上传户型图
               </Button>
+              {dwgEnabled ? (
+                <>
+                  <input
+                    ref={dwgInput}
+                    type="file"
+                    accept=".dwg"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0]
+                      if (f) void importDwg(f)
+                      e.target.value = ''
+                    }}
+                  />
+                  <Button variant="outline" size="sm" disabled={!api || converting} onClick={() => dwgInput.current?.click()}>
+                    {converting ? <Loader2 className="size-4 animate-spin" /> : <FileUp className="size-4" />}导入 DWG
+                  </Button>
+                </>
+              ) : null}
             </>
           )}
           <Button variant="outline" size="sm" disabled={!api} onClick={() => void exportPng()}>

@@ -4,6 +4,7 @@ import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { getCatalog } from '@/lib/cached-data'
 import { symbolForProduct } from '@/lib/point-symbols'
+import { getDwgSettings } from '@/plugins/dwg-converter'
 
 import { canEditProjects } from '../../data'
 import { PointMapEditor, type PointProduct } from './point-map-editor'
@@ -40,6 +41,7 @@ export default async function PointMapPage({ params }: { params: Promise<{ id: s
       initialScene={(project.pointMap as object | null) ?? null}
       products={products}
       readOnly={!canEditProjects(user?.role)}
+      dwgEnabled={Boolean(getDwgSettings(payload.config))}
     />
   )
 }

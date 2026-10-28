@@ -14,6 +14,7 @@ import { Quotes } from './collections/Quotes'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
 import { CompanySettings } from './globals/CompanySettings'
+import { dwgConverterPlugin } from './plugins/dwg-converter'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -47,6 +48,10 @@ export default buildFigmaConfig({
     fallback: true,
     defaultLocale: 'en',
   },
-  plugins: [mcpPlugin({})],
+  plugins: [
+    mcpPlugin({}),
+    // DWG 转户型图：配置 DWG_CONVERTER_URL 后启用，删掉这一行即卸载
+    dwgConverterPlugin({ endpoint: process.env.DWG_CONVERTER_URL, token: process.env.DWG_CONVERTER_TOKEN }),
+  ],
   figma: {},
 })
