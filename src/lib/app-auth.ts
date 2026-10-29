@@ -36,8 +36,11 @@ export function createAppAuth(appUserCollection: 'users') {
 
       ;(await cookies()).set(APP_SESSION_COOKIE, result.token, {
         httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        // 预览运行在 Figma Make 的跨站 iframe 中，lax Cookie 不会被发送，
+        // 需 SameSite=None + Secure；Partitioned 让 Chrome 在禁用第三方 Cookie 时仍保留登录。
+        sameSite: 'none',
+        secure: true,
+        partitioned: true,
         path: '/',
         expires: result.exp ? new Date(result.exp * 1000) : undefined,
       })
@@ -48,7 +51,7 @@ export function createAppAuth(appUserCollection: 'users') {
   }
 
   async function logout() {
-    ;(await cookies()).delete(APP_SESSION_COOKIE)
+    ;(await cookies()).set(APP_SESSION_COOKIE, '', { httpOnly: true, sameSite: 'none', secure: true, partitioned: true, path: '/', maxAge: 0 })
   }
 
   return { getCurrentUser, login, logout }
