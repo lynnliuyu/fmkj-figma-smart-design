@@ -351,7 +351,7 @@ export function QuoteEditor({
         </CardContent>
       </Card>
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid items-start gap-5 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">附加费用</CardTitle>

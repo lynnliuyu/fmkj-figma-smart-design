@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, ImageIcon, Loader2, Save, X } from 'lucide-react'
+import { AlertCircle, ImageIcon, Loader2, Save, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,7 @@ type Values = {
 function ImageField({ name, label, url, hint }: { name: 'logo' | 'qrCode'; label: string; url: string | null; hint: string }) {
   const [preview, setPreview] = useState(url)
   const [removed, setRemoved] = useState(false)
+  const [fileName, setFileName] = useState<string | null>(null)
   return (
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
@@ -41,23 +42,36 @@ function ImageField({ name, label, url, hint }: { name: 'logo' | 'qrCode'; label
           )}
         </div>
         <div className="grid flex-1 gap-1.5">
-          <Input
+          {/* 原生文件框的按钮文字由浏览器决定（常显示英文），这里隐藏原生控件、用中文按钮代替 */}
+          <input
             id={name}
             name={name}
             type="file"
+            className="peer sr-only"
             accept="image/png,image/jpeg,image/webp,image/svg+xml"
             onChange={(e) => {
               const f = e.target.files?.[0]
               if (f) {
                 setPreview(URL.createObjectURL(f))
+                setFileName(f.name)
                 setRemoved(false)
               }
             }}
           />
+          <div className="flex min-w-0 items-center gap-2">
+            <label
+              htmlFor={name}
+              className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border bg-background px-3 text-sm font-medium transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring hover:bg-accent"
+            >
+              <Upload className="size-3.5" />
+              {preview ? '更换图片' : '选择图片'}
+            </label>
+            <span className="truncate text-sm text-muted-foreground">{fileName ?? (preview ? '已上传' : '未选择文件')}</span>
+          </div>
           <p className="text-xs text-muted-foreground">{hint}</p>
         </div>
         {preview ? (
-          <Button type="button" variant="ghost" size="icon-sm" aria-label={`移除${label}`} onClick={() => { setPreview(null); setRemoved(true) }}>
+          <Button type="button" variant="ghost" size="icon-sm" aria-label={`移除${label}`} onClick={() => { setPreview(null); setFileName(null); setRemoved(true) }}>
             <X className="size-4" />
           </Button>
         ) : null}

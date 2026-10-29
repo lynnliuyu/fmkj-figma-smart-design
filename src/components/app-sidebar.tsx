@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, ChevronsUpDown, Command, FileText, FolderKanban, LogOut, PackageSearch } from "lucide-react"
+import { Building2, ChevronsUpDown, FileText, FolderKanban, LogOut, PackageSearch } from "lucide-react"
 
 import { LinkPending } from "@/components/link-pending"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -61,8 +61,9 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="group-data-[collapsible=icon]:px-1.5">
               <Link href="/projects">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+                {/* 品牌字标：用公司缩写代替模板自带的 ⌘ 占位图标 */}
+                <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-[11px] font-bold tracking-tight text-sidebar-primary-foreground">
+                  FM
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">FMKJ</span>

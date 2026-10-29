@@ -9,7 +9,7 @@ import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
 import { PROJECT_STAGES, stageIndex, statusLabel } from '@/lib/projects'
 import { cn } from '@/lib/utils'
-import { quoteStatusLabel, yuan } from '@/lib/quotes'
+import { quoteStatusLabel, quoteStatusVariant, yuan } from '@/lib/quotes'
 import type { Quote, User } from '@/payload-types'
 
 import { createQuoteFromProject } from '../../quotes/actions'
@@ -86,7 +86,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <li key={q.id}>
                   <Link href={`/quotes/${q.id}`} className="flex items-center gap-3 px-6 py-3 hover:bg-muted/50">
                     <span className="flex-1 truncate text-sm font-medium">{q.title}</span>
-                    <Badge variant={q.status === 'accepted' ? 'default' : q.status === 'sent' ? 'secondary' : 'outline'}>{quoteStatusLabel(q.status)}</Badge>
+                    <Badge variant={quoteStatusVariant(q.status)}>{quoteStatusLabel(q.status)}</Badge>
                     <span className="w-28 text-right text-sm font-semibold tabular-nums">{yuan(q.total)}</span>
                   </Link>
                 </li>

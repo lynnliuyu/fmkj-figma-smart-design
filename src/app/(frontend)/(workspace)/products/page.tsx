@@ -1,10 +1,11 @@
 import Form from 'next/form'
 import Link from 'next/link'
-import { Check, ChevronLeft, ChevronRight, ImageIcon, PackageSearch, Search, X } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, ChevronRight, ImageIcon, PackageSearch, Search, SlidersHorizontal, X } from 'lucide-react'
 
 import { BrandLogo } from '@/components/brand-logo'
 import { DeviceSymbol } from '@/components/device-symbol'
 import { LinkPending } from '@/components/link-pending'
+import { FilterTabs } from '@/components/filter-tabs'
 import { SearchSubmit } from '@/components/search-submit'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -124,19 +125,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       {extra}
     </Link>
   )
-  const seg = (items: readonly { value: string; label: string }[], current: string, key: 'status' | 'img' | 'sort') => (
-    <div className="inline-flex h-8 items-center rounded-md border bg-background p-0.5 text-xs">
-      {items.map((it) => (
-        <Link
-          key={it.label}
-          href={href({ [key]: it.value })}
-          scroll={false}
-          className={cn('rounded px-2.5 py-1 transition-colors', current === it.value ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}
-        >
-          {it.label}
-        </Link>
-      ))}
-    </div>
+  const seg = (items: readonly { value: string; label: string }[], current: string, key: 'status' | 'img' | 'sort', label: string) => (
+    <FilterTabs label={label} items={items.map((it) => ({ key: it.label, label: it.label, href: href({ [key]: it.value }), active: current === it.value }))} />
   )
   const section = (title: string, children: React.ReactNode) => (
     <div className="flex flex-col gap-0.5">
@@ -189,7 +179,16 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[15rem_1fr]">
-        <aside className="flex flex-col gap-5 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto lg:pr-1">
+        {/* 窄屏下筛选栏默认收起（纯 CSS 开关，无需客户端脚本），避免类别和品牌列表占满首屏 */}
+        <input type="checkbox" id="product-filters" className="peer sr-only" />
+        <label
+          htmlFor="product-filters"
+          className="flex h-9 cursor-pointer items-center justify-between rounded-lg border bg-background px-3 text-sm font-medium peer-focus-visible:ring-2 peer-focus-visible:ring-ring lg:hidden"
+        >
+          <span className="flex items-center gap-2"><SlidersHorizontal className="size-4" />筛选{activeCount ? <span className="rounded-full bg-primary px-1.5 text-[11px] text-primary-foreground tabular-nums">{activeCount}</span> : null}</span>
+          <ChevronDown className="size-4 text-muted-foreground" />
+        </label>
+        <aside className="hidden flex-col gap-5 peer-checked:flex lg:sticky lg:flex lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto lg:pr-1">
           {section(
             '类别',
             <>
@@ -263,15 +262,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
 
         <div className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            {seg(STATUSES, f.status, 'status')}
-            {seg([{ value: '', label: '全部图片' }, { value: 'yes', label: '有图' }, { value: 'no', label: '缺图' }], f.img, 'img')}
-            <div className="ml-auto flex items-center gap-2">
+            {seg(STATUSES, f.status, 'status', '销售状态')}
+            {seg([{ value: '', label: '全部图片' }, { value: 'yes', label: '有图' }, { value: 'no', label: '缺图' }], f.img, 'img', '图片')}
+            <div className="ml-auto flex shrink-0 items-center gap-2">
               {activeCount ? (
                 <Button asChild variant="ghost" size="sm">
                   <Link href={f.sort ? `/products?sort=${f.sort}` : '/products'}><X className="size-4" />清除 {activeCount} 个筛选</Link>
                 </Button>
               ) : null}
-              {seg(SORTS, f.sort, 'sort')}
+              {seg(SORTS, f.sort, 'sort', '排序')}
             </div>
           </div>
 
@@ -285,7 +284,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
               </Button>
             </div>
           ) : (
-            <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {shown.map((p) => {
                 const t = deviceTypeOf(p.deviceType)
                 const color = categoryOf(t?.category)?.color ?? '#525252'
@@ -319,7 +318,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                           <span className="ml-0.5 text-xs text-muted-foreground">/{p.unit}</span>
                           {showCost ? <p className="text-[11px] text-muted-foreground tabular-nums">成本 {yuan(p.cost)}</p> : null}
                         </div>
-                        {p.stock !== null && p.stock <= 0 ? <Badge variant="destructive">缺货</Badge> : p.stock !== null ? <span className="text-[11px] text-muted-foreground tabular-nums">库存 {p.stock}</span> : null}
+                        {p.stock !== null ? <span className="text-[11px] text-muted-foreground tabular-nums">{p.stock > 0 ? `库存 ${p.stock}` : '无库存'}</span> : null}
                       </div>
                     </div>
                   </li>

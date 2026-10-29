@@ -23,7 +23,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
       <AppSidebar user={{ name: user.name, email: user.email, roleLabel: ROLE_LABELS[user.role] ?? user.role, isAdmin: user.role === 'admin' }} />
       <SidebarInset>
         <SiteHeader />
-        <main className="flex flex-1 flex-col gap-6 p-4 md:p-8">{children}</main>
+        <main className="flex flex-1 flex-col gap-6 px-4 py-5 md:px-8 md:py-7">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )

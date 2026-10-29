@@ -1,10 +1,10 @@
 import Form from 'next/form'
 import Link from 'next/link'
-import { Check, FolderKanban, Plus, Search } from 'lucide-react'
+import { FolderKanban, Plus, Search } from 'lucide-react'
 import type { Where } from 'payload'
 
 import { Badge } from '@/components/ui/badge'
-import { LinkPending } from '@/components/link-pending'
+import { FilterTabs } from '@/components/filter-tabs'
 import { SearchSubmit } from '@/components/search-submit'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import { PROJECT_STAGES, stageLabel, statusLabel } from '@/lib/projects'
+import { PROJECT_STAGES, stageIndex, stageLabel, statusLabel } from '@/lib/projects'
 import type { Project, User } from '@/payload-types'
 
 import { canEditProjects } from './data'
@@ -82,19 +82,10 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
           </div>
           <SearchSubmit />
         </Form>
-        <div className="flex flex-wrap gap-1.5">
-          {[{ value: '', label: '全部' }, ...PROJECT_STAGES].map((s) => {
-            const active = stage === s.value
-            return (
-              <Button key={s.value || 'all'} asChild size="sm" variant={active ? 'default' : 'outline'}>
-                <Link href={href({ stage: s.value })} aria-current={active ? 'true' : undefined}>
-                  {active && <Check className="size-3.5" />}<LinkPending />
-                  {s.label}
-                </Link>
-              </Button>
-            )
-          })}
-        </div>
+        <FilterTabs
+          label="按阶段筛选"
+          items={[{ value: '', label: '全部' }, ...PROJECT_STAGES].map((s) => ({ key: s.value || 'all', label: s.label, href: href({ stage: s.value }), active: stage === s.value }))}
+        />
       </div>
 
       {projects.length === 0 ? (
@@ -108,10 +99,10 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-6">项目</TableHead>
+                <TableHead className="pl-4 sm:pl-6">项目</TableHead>
                 <TableHead>阶段</TableHead>
                 <TableHead className="hidden md:table-cell">负责人</TableHead>
-                <TableHead className="pr-6 text-right">更新时间</TableHead>
+                <TableHead className="hidden pr-6 text-right sm:table-cell">更新时间</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,7 +110,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                 const owner = typeof p.owner === 'object' ? (p.owner as User | null) : null
                 return (
                   <TableRow key={p.id} className="relative">
-                    <TableCell className="pl-6">
+                    <TableCell className="pl-4 sm:pl-6">
                       <Link href={`/projects/${p.id}`} className="font-medium after:absolute after:inset-0 hover:underline">
                         {p.name}
                       </Link>
@@ -129,13 +120,21 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        <Badge variant="outline">{stageLabel(p.stage)}</Badge>
-                        {p.status !== 'active' ? <Badge variant="secondary">{statusLabel(p.status)}</Badge> : null}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5 text-sm">
+                          {stageLabel(p.stage)}
+                          {p.status !== 'active' ? <Badge variant="secondary">{statusLabel(p.status)}</Badge> : null}
+                        </div>
+                        {/* 7 个阶段的迷你进度：一眼看出项目推进到哪一步 */}
+                        <div className="flex w-28 gap-0.5" aria-hidden="true">
+                          {PROJECT_STAGES.map((st, i) => (
+                            <span key={st.value} className={i <= stageIndex(p.stage) ? 'h-1 flex-1 rounded-full bg-foreground/70' : 'h-1 flex-1 rounded-full bg-muted'} />
+                          ))}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="hidden text-sm md:table-cell">{owner?.name ?? <span className="text-muted-foreground">未分配</span>}</TableCell>
-                    <TableCell className="pr-6 text-right text-sm text-muted-foreground tabular-nums">{fmtDate(p.updatedAt)}</TableCell>
+                    <TableCell className="hidden pr-6 text-right text-sm text-muted-foreground tabular-nums sm:table-cell">{fmtDate(p.updatedAt)}</TableCell>
                   </TableRow>
                 )
               })}

@@ -7,6 +7,10 @@ export const QUOTE_STATUSES = [
 ] as const
 export type QuoteStatus = (typeof QUOTE_STATUSES)[number]['value']
 
+/** 报价状态的徽章样式：草稿中性、已发送待客户回复（琥珀）、已确认（绿）。全站统一用这一份。 */
+export const quoteStatusVariant = (v?: string | null): 'outline' | 'warning' | 'success' =>
+  v === 'accepted' ? 'success' : v === 'sent' ? 'warning' : 'outline'
+
 export const quoteStatusLabel = (v?: string | null) => QUOTE_STATUSES.find((s) => s.value === v)?.label ?? '草稿'
 
 export type QuoteLine = { price?: number | null; quantity?: number | null }

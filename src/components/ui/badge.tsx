@@ -17,6 +17,9 @@ const badgeVariants = cva(
           "bg-destructive/10 text-destructive-strong focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        // 业务状态用的语义色：成功（已确认）、待处理（已发送 / 需关注）。浅底配同色深字。
+        success: "bg-success/12 text-success dark:bg-success/20",
+        warning: "bg-warning/12 text-warning dark:bg-warning/20",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",

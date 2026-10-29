@@ -1,10 +1,10 @@
 import Form from 'next/form'
 import Link from 'next/link'
-import { Check, FileText, Search } from 'lucide-react'
+import { FileText, Search } from 'lucide-react'
 import type { Where } from 'payload'
 
 import { Badge } from '@/components/ui/badge'
-import { LinkPending } from '@/components/link-pending'
+import { FilterTabs } from '@/components/filter-tabs'
 import { SearchSubmit } from '@/components/search-submit'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import { QUOTE_STATUSES, quoteStatusLabel, yuan } from '@/lib/quotes'
+import { QUOTE_STATUSES, quoteStatusLabel, quoteStatusVariant, yuan } from '@/lib/quotes'
 import type { Project, Quote } from '@/payload-types'
 
 export const metadata = { title: '报价 · FMKJ 项目管理' }
@@ -63,16 +63,10 @@ export default async function QuotesPage({ searchParams }: { searchParams: Promi
           </div>
           <SearchSubmit />
         </Form>
-        <div className="flex flex-wrap gap-1.5">
-          {[{ value: '', label: '全部' }, ...QUOTE_STATUSES].map((s) => {
-            const active = status === s.value
-            return (
-              <Button key={s.value || 'all'} asChild size="sm" variant={active ? 'default' : 'outline'}>
-                <Link href={href({ status: s.value })}>{active && <Check className="size-3.5" />}<LinkPending />{s.label}</Link>
-              </Button>
-            )
-          })}
-        </div>
+        <FilterTabs
+          label="按状态筛选"
+          items={[{ value: '', label: '全部' }, ...QUOTE_STATUSES].map((s) => ({ key: s.value || 'all', label: s.label, href: href({ status: s.value }), active: status === s.value }))}
+        />
       </div>
 
       {quotes.length === 0 ? (
@@ -87,9 +81,9 @@ export default async function QuotesPage({ searchParams }: { searchParams: Promi
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-6">报价</TableHead>
+                <TableHead className="pl-4 sm:pl-6">报价</TableHead>
                 <TableHead>状态</TableHead>
-                <TableHead className="text-right">总额</TableHead>
+                <TableHead className="pr-4 text-right md:pr-2">总额</TableHead>
                 <TableHead className="hidden pr-6 text-right md:table-cell">更新时间</TableHead>
               </TableRow>
             </TableHeader>
@@ -98,12 +92,12 @@ export default async function QuotesPage({ searchParams }: { searchParams: Promi
                 const project = typeof quote.project === 'object' ? (quote.project as Project) : null
                 return (
                   <TableRow key={quote.id} className="relative">
-                    <TableCell className="pl-6">
+                    <TableCell className="pl-4 sm:pl-6">
                       <Link href={`/quotes/${quote.id}`} className="font-medium after:absolute after:inset-0 hover:underline">{quote.title}</Link>
                       <div className="mt-0.5 text-xs text-muted-foreground">{project ? `${project.name} · ${project.customerName}` : '项目已删除'}</div>
                     </TableCell>
-                    <TableCell><Badge variant={quote.status === 'accepted' ? 'default' : quote.status === 'sent' ? 'secondary' : 'outline'}>{quoteStatusLabel(quote.status)}</Badge></TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{yuan(quote.total)}</TableCell>
+                    <TableCell><Badge variant={quoteStatusVariant(quote.status)}>{quoteStatusLabel(quote.status)}</Badge></TableCell>
+                    <TableCell className="pr-4 text-right font-semibold tabular-nums md:pr-2">{yuan(quote.total)}</TableCell>
                     <TableCell className="hidden pr-6 text-right text-sm text-muted-foreground tabular-nums md:table-cell">
                       {new Date(quote.updatedAt).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })}
                     </TableCell>
