@@ -1,8 +1,9 @@
 name: CI & Domain Knowledge Check
 
 on:
+  # 每个分支推送都跑门禁：自动化开发时，分支一推就有反馈，不必等开 PR。
   push:
-    branches: ['main']
+    branches: ['**']
   pull_request:
     branches: ['main']
   workflow_dispatch:
