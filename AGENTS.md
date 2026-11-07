@@ -484,3 +484,70 @@ time. Batch by dependency layer — don't write files one at a time.
   `figma-image-loader.ts`. Pass Payload `media.url` to `next/image`. Do not
   add `images.remotePatterns` or a same-origin `/media/[id]` proxy, and do
   not replace the Figma loader.
+
+---
+
+## 团队协作与自动化（Alma / 多 Agent 交接）
+
+本仓库允许人类开发者 + 多个 AI Agent 共同开发。所有接手方**先把下面几份文档读完**再动代码：
+
+- `PROJECT-ARCHITECTURE.md` — 架构与产品规划基线。**架构变更必须先写提案、经 noone 批准，才能改代码。**
+- `AUTOMATION-TEAM.md` — 自动化维护团队规划（角色、分级、红线）。
+- `AGENTS.md`（本文件）— 构建、测试、约定。
+
+### 仓库优先，不绑定工具
+
+所有上下文放仓库，不依赖任何聊天记录：
+
+```text
+AGENTS.md                  构建、测试、约定、红线
+PROJECT-ARCHITECTURE.md    架构与审批规则
+AUTOMATION-TEAM.md         自动化团队规则
+HEARTBEAT.md               巡检清单（心跳任务读它）
+GitHub Issues              任务队列
+Pull Requests              代码交接
+memory/learnings.jsonl     经验记忆（append-only）
+```
+
+换任何 Agent（GrokBot、codex、Claude Code……）都能接手。
+
+### 红线
+
+```text
+不直接推 main —— 一律走分支 + PR
+不跳过 CI
+不改架构而不写提案
+不碰生产密钥 / .env / 客户数据 / 数据库导出
+不同时多人改同一文件
+```
+
+### 本地校验（提交前必须全过，与 CI 一致）
+
+```bash
+pnpm exec tsc --noEmit        # 类型检查
+pnpm run knowledge:check      # 领域知识库回归
+# 生产构建（复刻 Dockerfile，用占位环境变量，不连库）：
+PAYLOAD_CONFIG_PATH=src/payload.selfhost.config.ts \
+PAYLOAD_SECRET=ci-build-placeholder-not-for-runtime \
+DATABASE_URI=postgres://fmkj:build-only@127.0.0.1:5432/fmkj \
+PUBLIC_URL=http://localhost:3000 \
+  sh -c 'printf "export { default } from '"'"'./payload.selfhost.config'"'"'\n" > src/payload.config.ts && pnpm exec payload generate:importmap && pnpm build'
+```
+
+> 注意：`generate:importmap` / `payload build` 默认读 `src/payload.config.ts`（Figma Make 版，需 `FIGMA_EID`）。
+> 本地或 CI 构建要走自托管配置。Dockerfile 的做法是**构建期把 `src/payload.config.ts` 覆盖成**
+> `export { default } from './payload.selfhost.config'`，跑完记得 `git checkout -- src/payload.config.ts` 还原。
+
+### 交接协议（Agent 之间）
+
+在 Issue 里写清楚，别依赖聊天记录：
+
+```text
+已完成
+当前分支
+下一步
+卡在哪里
+标记 needs-local   （单积分用完 / 要让本地 Agent 接手时）
+```
+
+接手方：读 Issue → 切到同一分支 → 继续做 → 开 PR。**不重做一遍。**
