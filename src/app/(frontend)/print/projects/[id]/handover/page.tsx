@@ -11,8 +11,6 @@ import { getMembershipContext } from '@/lib/membership-policy'
 import { acceptanceChecks, loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { cn } from '@/lib/utils'
-import { PLUGINS } from '@/plugins'
-import { getPluginFlags } from '@/plugins/state'
 import { roomScenes } from '@/plugins/proposal/deck/model'
 
 export const metadata = { title: '场景与账号交付移交单', robots: { index: false, follow: false } }
@@ -32,11 +30,10 @@ export default async function SceneHandoverPage({
   const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
-  const [setup, flags] = await Promise.all([resolveDocSetup('checklist', sp, ownerId), getPluginFlags(ownerId)])
-  if (!flags['scene-handover']) notFound()
+  const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  const pluginDef = PLUGINS.find((p) => p.id === 'scene-handover')
-  const tierOk = featureAccess(access.membership, pluginDef?.tier ?? 'pro', access.strict)
+  // 「场景与账号移交」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Pro
+  const tierOk = featureAccess(access.membership, 'pro', access.strict)
   const { style, company } = setup
   const t = docTable(style)
   const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
@@ -56,8 +53,8 @@ export default async function SceneHandoverPage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-场景与账号交付移交单`}
-        locked={tierOk.allowed ? undefined : { message: `「场景与账号移交」是${tierBadge(pluginDef?.tier ?? 'pro')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge(pluginDef?.tier ?? 'pro')}功能`}
+        locked={tierOk.allowed ? undefined : { message: `「场景与账号移交」是${tierBadge('pro')}功能，升级后可导出`, href: '/membership' }}
+        note={tierOk.meets ? undefined : `${tierBadge('pro')}功能`}
         groups={
           setup.styles.length > 1
             ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: `${base}?style=${s.id}` })) }]

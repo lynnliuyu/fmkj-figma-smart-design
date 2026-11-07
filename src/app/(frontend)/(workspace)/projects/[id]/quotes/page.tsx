@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { AlertCircle, FileText, MapPinned } from 'lucide-react'
 
+import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { relId } from '@/lib/access'
@@ -41,7 +42,11 @@ export default async function ProjectQuotesPage({ params, searchParams }: { para
             {points ? `已关联点位图 ${points} 个点位` : '未布置点位，可新建空白报价'}
           </p>
         </div>
-        {readOnly ? null : <GenerateQuoteForm projectId={pid} hasPoints={points > 0} />}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* 采购备货：按定稿报价汇总采购清单（Beta 单据），放在报价主操作旁边 */}
+          <BetaDocLink label="采购备货" href={`/print/projects/${pid}/procurement`} />
+          {readOnly ? null : <GenerateQuoteForm projectId={pid} hasPoints={points > 0} />}
+        </div>
       </header>
 
       {error ? (

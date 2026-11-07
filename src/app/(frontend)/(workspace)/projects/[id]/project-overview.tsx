@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { Check, ChevronRight, Pencil } from 'lucide-react'
 
+import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { yuan } from '@/lib/quotes'
@@ -95,7 +96,11 @@ export function ProjectOverview({
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-2">
           <section aria-labelledby="overview-customer" className="rounded-xl border bg-card shadow-xs">
-            <h3 id="overview-customer" className="border-b px-5 py-3 text-sm font-semibold">客户与房屋</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3">
+              <h3 id="overview-customer" className="text-sm font-semibold">客户与房屋</h3>
+              {/* 现场勘测：目前只有一份勘测确认单（Beta），入口放在基础资料区 */}
+              <BetaDocLink label="现场勘测" href={`/print/projects/${data.id}/survey`} />
+            </div>
             <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 px-5 pt-5 pb-4">
               <div className="min-w-0">
                 <p className="text-xs text-muted-foreground">客户</p>

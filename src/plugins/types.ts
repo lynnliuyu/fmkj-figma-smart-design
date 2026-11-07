@@ -46,10 +46,6 @@ export type PluginId =
   | 'smart-select'
   | 'ai-import'
   | 'dwg-import'
-  | 'site-survey'
-  | 'wiring-schedule'
-  | 'procurement'
-  | 'scene-handover'
   | 'after-sales'
 
 /** 项目阶段：插件市场的流程图与分组、项目里的插件入口共用 */

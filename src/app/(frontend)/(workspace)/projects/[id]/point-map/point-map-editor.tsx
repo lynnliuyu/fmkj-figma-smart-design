@@ -39,6 +39,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -1282,6 +1283,8 @@ export function PointMapEditor({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+          {/* 强弱电布线：和「导出 / 导入」同属图纸输出，是给施工队交底的单据（Beta） */}
+          <BetaDocLink label="强弱电布线" href={`/print/projects/${projectId}/wiring`} />
           <span aria-hidden className="mx-1 h-5 w-px bg-border" />
           {readOnly ? (
             activeQuote ? (

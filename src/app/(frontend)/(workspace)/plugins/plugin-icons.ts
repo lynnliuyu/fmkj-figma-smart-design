@@ -1,4 +1,4 @@
-import { Bot, Cable, ClipboardList, FileUp, KeyRound, PackageCheck, Palette, Presentation, ScanSearch, Sparkles, Wand2, Wrench, type LucideIcon } from 'lucide-react'
+import { Bot, FileUp, Palette, Presentation, ScanSearch, Sparkles, Wand2, Wrench, type LucideIcon } from 'lucide-react'
 
 import type { PluginId } from '@/plugins/types'
 
@@ -11,9 +11,5 @@ export const PLUGIN_ICONS: Record<PluginId, LucideIcon> = {
   'smart-select': Wand2,
   'ai-import': ScanSearch,
   'dwg-import': FileUp,
-  'site-survey': ClipboardList,
-  'wiring-schedule': Cable,
-  procurement: PackageCheck,
-  'scene-handover': KeyRound,
   'after-sales': Wrench,
 }

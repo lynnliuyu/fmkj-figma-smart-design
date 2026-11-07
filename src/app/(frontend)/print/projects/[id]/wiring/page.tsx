@@ -11,8 +11,6 @@ import { getMembershipContext } from '@/lib/membership-policy'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { cn } from '@/lib/utils'
-import { PLUGINS } from '@/plugins'
-import { getPluginFlags } from '@/plugins/state'
 
 export const metadata = { title: '强弱电布线与水电交底单', robots: { index: false, follow: false } }
 
@@ -161,11 +159,10 @@ export default async function WiringSchedulePage({
   const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
-  const [setup, flags] = await Promise.all([resolveDocSetup('checklist', sp, ownerId), getPluginFlags(ownerId)])
-  if (!flags['wiring-schedule']) notFound()
+  const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  const pluginDef = PLUGINS.find((p) => p.id === 'wiring-schedule')
-  const tierOk = featureAccess(access.membership, pluginDef?.tier ?? 'pro', access.strict)
+  // 「强弱电布线表」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Pro
+  const tierOk = featureAccess(access.membership, 'pro', access.strict)
   const { style, company } = setup
   const layout = sp.layout === 'summary' ? 'summary' : 'room'
   const t = docTable(style)
@@ -189,8 +186,8 @@ export default async function WiringSchedulePage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-强弱电水电交底单`}
-        locked={tierOk.allowed ? undefined : { message: `「强弱电布线表」是${tierBadge(pluginDef?.tier ?? 'pro')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge(pluginDef?.tier ?? 'pro')}功能`}
+        locked={tierOk.allowed ? undefined : { message: `「强弱电布线表」是${tierBadge('pro')}功能，升级后可导出`, href: '/membership' }}
+        note={tierOk.meets ? undefined : `${tierBadge('pro')}功能`}
         groups={[
           { label: '版式', value: layout, options: LAYOUTS.map((l) => ({ value: l.value, label: l.label, href: href({ layout: l.value }) })) },
           ...(setup.styles.length > 1
