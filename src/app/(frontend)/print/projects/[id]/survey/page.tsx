@@ -7,7 +7,6 @@ import { appAuth } from '@/lib/app-auth'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { cn } from '@/lib/utils'
-import { getPluginFlags } from '@/plugins/state'
 
 export const metadata = { title: '现场勘测确认单', robots: { index: false, follow: false } }
 
@@ -35,8 +34,7 @@ export default async function SiteSurveyPage({
   const d = await loadProjectDocs(id, user)
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
-  const [setup, flags] = await Promise.all([resolveDocSetup('checklist', sp, ownerId), getPluginFlags(ownerId)])
-  if (!flags['site-survey']) notFound()
+  const setup = await resolveDocSetup('checklist', sp, ownerId)
 
   const { style, company } = setup
   const t = docTable(style)

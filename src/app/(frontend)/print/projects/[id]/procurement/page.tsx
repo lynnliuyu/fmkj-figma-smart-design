@@ -14,8 +14,6 @@ import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { yuan } from '@/lib/quotes'
 import { cn } from '@/lib/utils'
-import { PLUGINS } from '@/plugins'
-import { getPluginFlags } from '@/plugins/state'
 
 export const metadata = { title: '采购与备货核验单', robots: { index: false, follow: false } }
 
@@ -34,11 +32,10 @@ export default async function ProcurementPage({
   const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
-  const [setup, flags] = await Promise.all([resolveDocSetup('checklist', sp, ownerId), getPluginFlags(ownerId)])
-  if (!flags.procurement) notFound()
+  const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  const pluginDef = PLUGINS.find((p) => p.id === 'procurement')
-  const tierOk = featureAccess(access.membership, pluginDef?.tier ?? 'team', access.strict)
+  // 「采购与备货单」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Team
+  const tierOk = featureAccess(access.membership, 'team', access.strict)
   const { style, company } = setup
   const showCost = sp.cost !== '0'
   const t = docTable(style)
@@ -70,8 +67,8 @@ export default async function ProcurementPage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-采购与备货核验单`}
-        locked={tierOk.allowed ? undefined : { message: `「采购与备货单」是${tierBadge(pluginDef?.tier ?? 'team')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge(pluginDef?.tier ?? 'team')}功能`}
+        locked={tierOk.allowed ? undefined : { message: `「采购与备货单」是${tierBadge('team')}功能，升级后可导出`, href: '/membership' }}
+        note={tierOk.meets ? undefined : `${tierBadge('team')}功能`}
         groups={[
           {
             label: '成本列',

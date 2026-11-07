@@ -72,6 +72,7 @@ export function DeliveryPackage({
   quotes,
   finalQuote,
   proposalPicker,
+  betaDoc,
   cover,
   access,
 }: {
@@ -84,6 +85,8 @@ export function DeliveryPackage({
   finalQuote: { id: string | null; sourceLabel: string | null; locked: boolean }
   /** 方案行里的模板选择器（带缩略图，见 template-picker-field.tsx） */
   proposalPicker?: React.ReactNode
+  /** 还不进资料包的 Beta 单据（场景移交），单独打开打印页 */
+  betaDoc?: React.ReactNode
   cover: { company: string; customer: string; address: string; date: string }
   /** 资料包所需会员：meets 是否满足；allowed 是否可用（提示模式下不满足也可用） */
   access: { meets: boolean; allowed: boolean; badge: string; hint: string }
@@ -245,6 +248,14 @@ export function DeliveryPackage({
           </li>
         ))}
       </ul>
+
+      {/* 交付资料区里的 Beta 单据：单独打开打印页，不打勾进资料包 */}
+      {betaDoc ? (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-dashed px-5 py-3">
+          <span className="text-sm font-medium text-muted-foreground">其他交付单据</span>
+          {betaDoc}
+        </div>
+      ) : null}
 
       {/* 封面与目录（导出时才渲染，放在屏幕外，只用于生成 PDF） */}
       {toc ? (

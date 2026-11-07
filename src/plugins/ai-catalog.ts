@@ -18,10 +18,6 @@ export const PLUGIN_AI_SPECS: Record<PluginId, PluginAiSpec> = {
   'ai-import': aiImportSpec,
   'doc-styles': EXTRA_PLUGIN_AI_SPECS['doc-styles']!,
   'dwg-import': EXTRA_PLUGIN_AI_SPECS['dwg-import']!,
-  'site-survey': EXTRA_PLUGIN_AI_SPECS['site-survey']!,
-  'wiring-schedule': EXTRA_PLUGIN_AI_SPECS['wiring-schedule']!,
-  procurement: EXTRA_PLUGIN_AI_SPECS.procurement!,
-  'scene-handover': EXTRA_PLUGIN_AI_SPECS['scene-handover']!,
   'after-sales': EXTRA_PLUGIN_AI_SPECS['after-sales']!,
 }
 

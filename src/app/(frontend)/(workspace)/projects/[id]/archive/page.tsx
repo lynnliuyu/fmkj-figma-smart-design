@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Check, ChevronRight, Circle, History } from 'lucide-react'
 
+import { BetaDocLink } from '@/components/beta-doc-link'
 import { relId } from '@/lib/access'
 import { getCompanyInfo } from '@/lib/cached-data'
 import { contractStatusLabel, fmtLongDate, paymentAmounts } from '@/lib/contracts'
@@ -184,53 +185,6 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
           },
         ]
       : []),
-    ...(flags['wiring-schedule']
-      ? [
-          {
-            key: 'wiring' as const,
-            title: '强弱电布线表',
-            note: points ? '' : '未布置点位',
-            url: points ? `/print/projects/${pid}/wiring` : null,
-            defaultOn: false,
-            tierBadge: 'Plus' as const,
-          },
-        ]
-      : []),
-    ...(flags.procurement
-      ? [
-          {
-            key: 'procurement' as const,
-            title: '采购与备货单',
-            note: points ? '' : '未布置点位',
-            url: points ? `/print/projects/${pid}/procurement?cost=0` : null,
-            defaultOn: false,
-            tierBadge: 'Pro' as const,
-          },
-        ]
-      : []),
-    ...(flags['scene-handover']
-      ? [
-          {
-            key: 'handover' as const,
-            title: '场景与账号移交单',
-            note: points ? '' : '未布置点位',
-            url: points ? `/print/projects/${pid}/handover` : null,
-            defaultOn: true,
-            tierBadge: 'Plus' as const,
-          },
-        ]
-      : []),
-    ...(flags['site-survey']
-      ? [
-          {
-            key: 'survey' as const,
-            title: '现场勘测确认单',
-            note: '',
-            url: `/print/projects/${pid}/survey`,
-            defaultOn: false,
-          },
-        ]
-      : []),
     ...(flags['after-sales']
       ? [
           {
@@ -276,6 +230,7 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
         docs={docs}
         quotes={quotes.map((q) => ({ value: String(q.id), label: `${qTitle(q)} · ${yuan(q.total)}` }))}
         finalQuote={{ id: finalQuote ? String(finalQuote.id) : null, sourceLabel: final.source ? FINAL_QUOTE_SOURCE_LABEL[final.source] : null, locked: final.source === 'contract' }}
+        betaDoc={<BetaDocLink label="场景移交" href={`/print/projects/${pid}/handover`} />}
         proposalPicker={
           gallery && deckTemplates.length ? (
             <ArchiveTemplatePicker
