@@ -58,7 +58,7 @@ if (found.docs.length) {
   const name = email.split('@')[0] || '成员'
   await payload.create({
     collection: 'users',
-    data: { name, email, password, status: 'active', membershipTier: 'enterprise' } as never,
+    data: { name, email, password, status: 'active' } as never,
     overrideAccess: true,
   })
   console.log(`已创建并启用员工账号：${email}`)
