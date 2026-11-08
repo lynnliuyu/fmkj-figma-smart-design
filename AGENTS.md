@@ -551,3 +551,25 @@ PUBLIC_URL=http://localhost:3000 \
 ```
 
 接手方：读 Issue → 切到同一分支 → 继续做 → 开 PR。**不重做一遍。**
+
+### 团队与协作（Alma 编排）
+
+本项目由一支 managed agent 团队推进，Alma 是编排者：
+
+```text
+Alma(主控) ──> fmkj-builder     改代码，跑本地验证(tsc/knowledge:check/build)，交回
+           ──> fmkj-reviewer    独立复跑证据，核对交付是否真成立、有无越界（只读）
+           ──> developer        通用编码活（无项目特化时用）
+           ──> researcher       查证现状 / 方案对比
+           ──> designer         交互与视觉方向
+           ──> product-manager  需求拆解 / 验收标准
+           ──> operator         Alma 运行时配置 / provider
+```
+
+铁律：
+
+- **开发与验收分离**：谁写的代码，就不能由谁来宣布「通过」。改动完成后交 `fmkj-reviewer` 独立跑证据。
+- **agent 的汇报是「声明」，不是「结论」**：tsc / build / grep 必须有人真跑过才算数（主控或 reviewer）。
+- **架构变更不派给 agent 直接做**：碰模块边界 / 数据模型 / 权限 / 插件归属 / 模板体系的，
+  先按 §0.1 写提案等 owner 批准；agent 遇到这类改动应停下来报告，不许擅自改。
+- 重活拆成**文件组互不重叠**的并行 agent，各自只对自己文件负责。
