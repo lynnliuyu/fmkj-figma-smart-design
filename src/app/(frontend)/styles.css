@@ -17,6 +17,12 @@
 @import '@astryxdesign/core/astryx.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 @import '@astryxdesign/theme-stone/theme.css';
+@import '@astryxdesign/theme-butter/theme.css';
+@import '@astryxdesign/theme-matcha/theme.css';
+@import '@astryxdesign/theme-chocolate/theme.css';
+/* 本地品牌主题（繁梦紫）：源码 src/themes/fanmeng/，由 `astryx theme build` 生成，
+   随其余主题一起按上面的层序声明之后加载。 */
+@import '../../themes/fanmeng/fanmeng.css';
 
 /* Astryx 的 neutral 主题用 Figtree（其 fonts.css 会拉 Google Fonts 外链，本仓不走第三方 CDN）。
    这里把 Astryx 的字体 token 指到本仓自托管字体，保证中文也有正确回退。 */
