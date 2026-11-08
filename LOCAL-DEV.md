@@ -86,12 +86,30 @@ NEW_PASSWORD='demo12345' pnpm exec payload run \
 
 ## 四、起服务
 
+**推荐用一键脚本**（自动改配置 + 起服务 + 退出时还原）：
+
+```bash
+bash scripts/dev-local.sh        # 默认 3000 端口
+bash scripts/dev-local.sh 3001   # 指定端口
+```
+
+手动起也可以，但要记住两个坑：
+
 ```bash
 # 关键：把 payload.config.ts 临时指向自托管配置（等价于 Dockerfile 的做法）
 printf "export { default } from './payload.selfhost.config'\n" > src/payload.config.ts
 
+export PAYLOAD_CONFIG_PATH=src/payload.selfhost.config.ts
+export DATABASE_URI="postgres://fmkj@127.0.0.1:55432/fmkj"
+export PUBLIC_URL=http://localhost:3000
+
 pnpm exec next dev --port 3000
 ```
+
+⚠️ **坑**：如果你 `git checkout -- src/payload.config.ts` 还原了配置但
+**没有重启 dev server**，服务下次加载就会报
+`Environment ID could not be resolved`，整个 React 树水合失败、页面停在骨架屏。
+改动配置后必须重启。
 
 打开 http://localhost:3000/login ，用上面的邮箱密码登录。
 
