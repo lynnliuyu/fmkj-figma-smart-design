@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/empty-state'
 import Link from 'next/link'
 import { FileSignature, Lock, ReceiptText } from 'lucide-react'
 
@@ -50,19 +51,19 @@ export default async function ProjectContractPage({ params }: { params: Promise<
         ) : defaultQuote ? (
           <CreateContractPanel projectId={pid} quotes={options} defaultQuoteId={defaultQuote.id} />
         ) : (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-14 text-center">
-            <FileSignature className="size-8 text-muted-foreground" />
-            <p className="font-medium">先生成一份报价</p>
-            <p className="max-w-md text-sm text-muted-foreground">
-              合同按报价生成，金额和设备清单都来自报价。
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={`/projects/${pid}/quotes`}>
-                <ReceiptText className="size-4" />
-                去报价
-              </Link>
-            </Button>
-          </div>
+          <EmptyState
+            icon={<FileSignature className="size-5" />}
+            title="先生成一份报价"
+            description="合同按报价生成，金额和设备清单都来自报价。"
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/projects/${pid}/quotes`}>
+                  <ReceiptText className="size-4" />
+                  去报价
+                </Link>
+              </Button>
+            }
+          />
         )}
       </div>
     )

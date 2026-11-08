@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/empty-state'
 import Form from 'next/form'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -355,16 +356,16 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         </div>
 
         {products.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-16 text-center">
-            <PackageSearch className="size-8 text-muted-foreground" />
-            <p className="font-medium">没有找到符合条件的产品</p>
-            <p className="text-sm text-muted-foreground">
-              换个关键词或筛选条件试试；新产品在后台（/admin）添加。
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href="/products">清除筛选</Link>
-            </Button>
-          </div>
+          <EmptyState
+            icon={<PackageSearch className="size-5" />}
+            title="没有找到符合条件的产品"
+            description="换个关键词或筛选条件试试；新产品在后台（/admin）添加。"
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link href="/products">清除筛选</Link>
+              </Button>
+            }
+          />
         ) : (
           <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {shown.map((p) => {
