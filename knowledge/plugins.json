@@ -1,39 +1,9 @@
 {
-  "membershipTiers": [
-    {
-      "value": "free",
-      "label": "Go 基础版",
-      "badge": "Go",
-      "activeProjectLimit": 10,
-      "collaboratorLimit": 2,
-      "monthlyCredits": 0,
-      "description": "个人设计师入门：标准 AI 模型 + 点位、报价、合同核心流程"
-    },
-    {
-      "value": "pro",
-      "label": "Plus 专业版",
-      "badge": "Plus",
-      "activeProjectLimit": 50,
-      "collaboratorLimit": 5,
-      "monthlyCredits": 300,
-      "description": "独立设计师与工作室主力：高阶视觉大模型 + 高定模板与施工插件 + 一键交付包"
-    },
-    {
-      "value": "team",
-      "label": "Pro 旗舰版",
-      "badge": "Pro",
-      "activeProjectLimit": null,
-      "collaboratorLimit": null,
-      "monthlyCredits": 1000,
-      "description": "集成商与工程团队尊享：满血深度推理旗舰大模型 + 不限项目与成员 + 全套顶奢工程能力"
-    }
-  ],
   "plugins": [
     {
       "id": "ai-copilot",
       "name": "AI 对话侧栏（高级）",
       "stage": "global",
-      "tier": "pro",
       "status": "ready",
       "tagline": "在任何页面直接问 AI，让它帮你识图、选型、写说明",
       "description": "侧边栏常驻 AI 助手，支持户型图识别、技能模板与跨插件自动执行。",
@@ -56,11 +26,14 @@
           "quotes:write",
           "contracts:read",
           "contracts:write",
-          "documents:read"
+          "documents:read",
+          "images:generate"
         ],
         "guidance": [
           "当用户提出创建或修改请求时，主动调用对应工具直接完成操作（可分多步连续调用，例如：新建项目 → 布置房间和点位 → 智能选型 → 生成报价单），不要只给口头步骤。",
           "当用户上传了真实户型图图片时，严禁调用 setup_rooms_and_points 生成网格默认点位！只有图像真实识别出点位（add_floor_sheet 的 detectedPoints）或用户提供了点位 JSON（import_points_json）时才生成点位图标；若未识别出点位，保持点位图为空（0 点位）。",
+          "当用户要求生成图片、画效果图、方案配图、场景图时，必须调用 generate_image 工具；不要声称已生成图片但没有调用。用户上传了参考图时设置 useAttachedImage=true。生成后把视觉质检结论告诉用户，质检分低于 7 时主动提出重新生成。",
+          "项目已有户型图纸、用户要求规划或补齐 AP、窗帘、传感器、摄像头、中控屏、音箱、网关、VRF 等智能设备时，调用 plan_points_with_vision（视觉模型看图按规范布点），不要调用 setup_rooms_and_points。",
           "当用户上传或粘贴别家的报价单 / 设备清单要求比价时：先逐行识别品名、品牌、型号、数量与单价（安装调试、布线辅材等服务项放入 fees），再调用 create_quote_from_competitor 生成对比报价单，最后按行总结匹配型号与差价，不要把外店的服务项当成设备。"
         ],
         "knowledge": [
@@ -97,7 +70,9 @@
           "create_or_update_quote",
           "create_quote_from_competitor",
           "create_or_update_contract",
-          "get_document_links"
+          "get_document_links",
+          "plan_points_with_vision",
+          "generate_image"
         ],
         "skills": [
           "tpl-competitor-quote"
@@ -108,7 +83,6 @@
       "id": "doc-styles",
       "name": "文档风格包",
       "stage": "quote",
-      "tier": "pro",
       "status": "ready",
       "tagline": "报价单、合同换上更多高级排版风格",
       "description": "为报价单、点位图、合同和交底清单解锁 6 套扩展视觉风格（与方案模板配套）。",
@@ -151,7 +125,6 @@
       "id": "proposal",
       "name": "方案演示",
       "stage": "quote",
-      "tier": "free",
       "status": "ready",
       "tagline": "点位和预算一键变成给业主看的横版方案",
       "description": "将点位图、房间分析与预算一键生成 A4 横版提案并导出 PDF。",
@@ -188,6 +161,9 @@
               "素白极简(mono, 业主方案)：纯白纸面与黑色粗体，纯文字大字封面，克制高级；适合【设计师工作室、极简风业主与商务客户】，使用时机【与设计公司合作提案、需要打印装订的正式文本】。",
               "晨曦暖调(dawn, 业主方案)：奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户；适合【有老人和孩子的家庭、偏爱温馨风格的业主】，使用时机【首次方案沟通、全家一起看方案】。",
               "东方雅韵(jade, 业主方案)：宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅；适合【新中式、东方风别墅与高端住宅业主】，使用时机【顶奢项目正式提案、需要文化调性的汇报】。",
+              "赤陶中古(terra, 业主方案)：羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感；适合【中古、复古与胡桃木风格住宅的业主】，使用时机【设计深化汇报、软装与全屋智能联合提案】。",
+              "海盐柔雅(linen, 业主方案)：海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案；适合【法式、轻复古与浅色自然风住宅的家庭】，使用时机【家庭方案沟通、与室内设计师联合汇报】。",
+              "岩灰建筑(slate, 业主方案)：冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面；适合【现代建筑、清水混凝土与工业风住宅的业主】，使用时机【建筑师联合提案、需要清楚核对点位与预算的正式汇报】。",
               "施工交底(construction, 施工交底)：点位代号、安装位置、房间配置与逐点核对表，不含任何价格；适合【安装团队、水电工与项目经理】，使用时机【进场施工前交底、现场安装与验收核对】。"
             ]
           }
@@ -205,7 +181,6 @@
       "id": "room-insights",
       "name": "房间智能分析",
       "stage": "design",
-      "tier": "free",
       "status": "ready",
       "tagline": "逐个房间检查漏配，顺手推荐联动场景",
       "description": "按房间类型评估点位完整度，提供缺失提醒与联动场景建议。",
@@ -251,7 +226,6 @@
       "id": "smart-select",
       "name": "智能选型",
       "stage": "design",
-      "tier": "free",
       "status": "ready",
       "tagline": "按平台和预算档位，一键给全屋选好型号",
       "description": "按生态平台与预算档位，一键匹配全屋各设备类型的默认型号。",
@@ -292,7 +266,6 @@
       "id": "ai-import",
       "name": "AI 识别导入",
       "stage": "design",
-      "tier": "free",
       "status": "ready",
       "tagline": "让 AI 读图纸，自动生成点位",
       "description": "识别标准图纸中的开关插座与点位符号，支持导入导出点位 JSON。",
@@ -312,6 +285,16 @@
         ],
         "knowledge": [
           {
+            "id": "switch-plan-vision-first",
+            "title": "开关布置图视觉直读策略",
+            "summary": "彩色铭牌开关图以视觉模型直读点位为主，本地几何识别只做吸附校验；插座只统计不落点",
+            "rules": [
+              "彩色底白字开关铭牌图优先让视觉模型直读点位，本地几何识别仅负责坐标吸附、去重与按图纸标注数量补缺。",
+              "插座（四孔/五孔/16A/网插）只统计 socketCount，不生成点位。",
+              "图纸文字统计与实际点位数不一致时，在确认文案中提示差异，由人工核对。"
+            ]
+          },
+          {
             "id": "fmkj-points-protocol",
             "title": "fmkj-points 户型图点位识别 JSON 协议",
             "summary": "基于 3:2 标准图纸的 0~1 比例坐标记录房间区域与设备点位",
@@ -325,6 +308,7 @@
         ],
         "tools": [],
         "skills": [
+          "tpl-switch-plan-recognition",
           "tpl-blueprint-vision"
         ]
       }
@@ -333,7 +317,6 @@
       "id": "dwg-import",
       "name": "DWG 导入",
       "stage": "design",
-      "tier": "pro",
       "status": "ready",
       "tagline": "CAD 图纸直接导入成户型底图",
       "description": "上传 CAD DWG 图纸并自动转换为标准户型底图。",
@@ -363,159 +346,9 @@
       }
     },
     {
-      "id": "site-survey",
-      "name": "现场勘测表",
-      "stage": "design",
-      "tier": "free",
-      "status": "ready",
-      "tagline": "现场条件一次记全，出勘测确认单",
-      "description": "记录配电箱、弱电箱、零火线与窗帘盒尺寸，导出勘测确认单。",
-      "where": "项目 → 信息 / 勘测记录",
-      "provides": [
-        "勘测清单",
-        "现场条件记录",
-        "勘测单打印"
-      ],
-      "ai": {
-        "permissions": [
-          "projects:read",
-          "documents:read"
-        ],
-        "guidance": [
-          "用户准备去工地现场勘测时，可生成现场勘测单打印链接（/print/projects/[id]/survey）并提醒核对配电箱、弱电箱、零火线与窗帘盒尺寸。"
-        ],
-        "knowledge": [
-          {
-            "id": "site-survey-checklist",
-            "title": "现场勘测核心核对项",
-            "summary": "进场前必查的强弱电、网络、窗帘盒与安装环境条件",
-            "rules": [
-              "强电条件：每个开关底盒是否预留零线（零火供电）、底盒深度是否 ≥ 50mm。",
-              "窗帘条件：窗帘盒宽度（单轨 ≥ 10cm，双轨 ≥ 18cm）、侧墙左/右上角是否预留五孔电源插座。",
-              "弱电与网络：弱电箱尺寸及散热、各房间超六类网线是否汇聚至弱电箱、主路由与 PoE 交换机安装空间。"
-            ]
-          }
-        ],
-        "tools": [],
-        "skills": []
-      }
-    },
-    {
-      "id": "wiring-schedule",
-      "name": "强弱电布线表",
-      "stage": "build",
-      "tier": "pro",
-      "status": "ready",
-      "tagline": "自动汇总回路与预留线缆，出水电交底单",
-      "description": "按点位图自动汇总开关回路、零火线与网线预留，生成水电交底单。",
-      "where": "项目 → 点位 / 施工交底",
-      "provides": [
-        "回路汇总",
-        "预留线缆清单",
-        "水电交底单"
-      ],
-      "ai": {
-        "permissions": [
-          "point-map:read",
-          "documents:read"
-        ],
-        "guidance": [
-          "用户需要给水电工交底时，可提供强弱电布线表打印链接（/print/projects/[id]/wiring）并按房间汇总零火线与网线需求。"
-        ],
-        "knowledge": [
-          {
-            "id": "wiring-schedule-rules",
-            "title": "强弱电布线与回路交底规范",
-            "summary": "按设备类型自动映射供电方式、预留线缆与底盒要求",
-            "rules": [
-              "智能开关/中控屏：86 型深底盒（≥50mm），必须预留零火线（L+N），中控屏位置建议额外预留六类网线。",
-              "吸顶 AP / 面板 AP：超六类网线直通弱电箱 PoE 交换机（PoE 供电，无需强电插座）。",
-              "电动窗帘：窗帘盒内距顶 20–30cm 预留 10A 五孔插座（常电，不受墙壁开关控制）。"
-            ]
-          }
-        ],
-        "tools": [],
-        "skills": []
-      }
-    },
-    {
-      "id": "procurement",
-      "name": "采购与备货单",
-      "stage": "build",
-      "tier": "team",
-      "status": "ready",
-      "tagline": "按确认报价出采购单，到货逐项核验",
-      "description": "按确认报价汇总采购清单，核对库存并生成到场核验单。",
-      "where": "项目 → 合同 / 备货核验",
-      "provides": [
-        "采购汇总",
-        "库存比对",
-        "到货核验单"
-      ],
-      "ai": {
-        "permissions": [
-          "quotes:read",
-          "catalog:read",
-          "documents:read"
-        ],
-        "guidance": [
-          "项目签约备货阶段，可提供采购与备货核验单链接（/print/projects/[id]/procurement），支持切换是否显示内部成本价。"
-        ],
-        "knowledge": [
-          {
-            "id": "procurement-workflow",
-            "title": "采购与到货核验流程",
-            "summary": "基于定稿报价汇总 SKU 数量、比对库存并生成到场签收表",
-            "rules": [
-              "采购单自动合并同一 SKU 在不同房间的数量，支持导出含成本内部采购单或不含成本的仓库备货核验单。"
-            ]
-          }
-        ],
-        "tools": [],
-        "skills": []
-      }
-    },
-    {
-      "id": "scene-handover",
-      "name": "场景与账号移交",
-      "stage": "after",
-      "tier": "pro",
-      "status": "ready",
-      "tagline": "交付时把场景、账号和设备绑定交给业主",
-      "description": "生成全屋联动场景卡、网关设备绑定表与业主账号交接单。",
-      "where": "项目 → 归档 / 交付资料",
-      "provides": [
-        "场景说明卡",
-        "账号交接单",
-        "维护指南"
-      ],
-      "ai": {
-        "permissions": [
-          "point-map:read",
-          "documents:read"
-        ],
-        "guidance": [
-          "项目完工交付业主时，可生成场景与账号移交单（/print/projects/[id]/handover），包含全屋联动场景说明卡与主平台账号交接表。"
-        ],
-        "knowledge": [
-          {
-            "id": "scene-handover-spec",
-            "title": "场景与账号移交规范",
-            "summary": "将项目匹配的智能联动场景、网关绑定关系与 App 账号密码整理成业主留存手册",
-            "rules": [
-              "移交单包含：1. 业主家庭成员账号权限表；2. 各房间已配置的智能场景触发词与按键说明；3. 断网/断电重启恢复指引。"
-            ]
-          }
-        ],
-        "tools": [],
-        "skills": []
-      }
-    },
-    {
       "id": "after-sales",
       "name": "售后维保记录",
       "stage": "after",
-      "tier": "team",
       "status": "ready",
       "tagline": "质保、检修与配置备份都有记录",
       "description": "按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。",

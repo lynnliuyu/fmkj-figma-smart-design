@@ -232,27 +232,27 @@
     },
     {
       "id": "terra",
-      "label": "陶土暖阳",
-      "description": "米杏纸色、陶土橙、圆角卡片，适合温暖的家庭住宅",
-      "coverLayout": "split",
-      "chapterStyle": "numeral",
+      "label": "赤陶中古",
+      "description": "羊皮纸色、赤陶棕、画廊式横幅照片，适合中古与复古住宅",
+      "coverLayout": "gallery",
+      "chapterStyle": "eyebrow",
       "tableStyle": "soft",
       "mood": "light",
-      "headline": "温暖的光，留给回家的人。",
-      "tagline": "WARM HOME",
-      "coverTagline": "A WARM PLACE TO COME HOME",
+      "headline": "把时光的温度，留在家里。",
+      "tagline": "TIMELESS LIVING",
+      "coverTagline": "A HOME WITH CHARACTER",
       "coverPhoto": "/proposal/photos/dining.jpg",
       "colors": {
-        "paper": "#fbf5ee",
-        "ink": "#3a2a22",
-        "muted": "#7c6658",
-        "accent": "#b5603a",
-        "soft": "#f4e3d7",
-        "softTo": "#f8ece1",
-        "rule": "#ead8c8",
-        "headBg": "#f1dccd",
-        "headFg": "#6e3a22",
-        "stripe": "#f7eee5"
+        "paper": "#f5eee4",
+        "ink": "#3e2d25",
+        "muted": "#766257",
+        "accent": "#994b32",
+        "soft": "#ead9c9",
+        "softTo": "#f3e8dc",
+        "rule": "#d6c3b2",
+        "headBg": "#583d30",
+        "headFg": "#fff7eb",
+        "stripe": "#eee3d5"
       }
     },
     {
@@ -293,16 +293,16 @@
       "coverTagline": "GOOD MORNING, HOME",
       "coverPhoto": "/proposal/photos/cover-dawn.jpg",
       "colors": {
-        "paper": "#fbf5ee",
-        "ink": "#3a2a22",
-        "muted": "#7c6658",
-        "accent": "#b5603a",
-        "soft": "#f4e3d7",
-        "softTo": "#f8ece1",
-        "rule": "#ead8c8",
-        "headBg": "#f1dccd",
-        "headFg": "#6e3a22",
-        "stripe": "#f7eee5"
+        "paper": "#f5eee4",
+        "ink": "#3e2d25",
+        "muted": "#766257",
+        "accent": "#994b32",
+        "soft": "#ead9c9",
+        "softTo": "#f3e8dc",
+        "rule": "#d6c3b2",
+        "headBg": "#583d30",
+        "headFg": "#fff7eb",
+        "stripe": "#eee3d5"
       }
     },
     {
@@ -329,6 +329,56 @@
         "headFg": "#2c5a55",
         "stripe": "#efe9dd"
       }
+    },
+    {
+      "id": "linen",
+      "label": "海盐柔雅",
+      "description": "海盐蓝灰、拱窗照片与柔和衬线，适合法式与浅色住宅",
+      "coverLayout": "arch",
+      "chapterStyle": "badge",
+      "tableStyle": "soft",
+      "mood": "light",
+      "headline": "让日常，轻柔而从容。",
+      "tagline": "QUIET EVERYDAY",
+      "coverTagline": "LIGHT, SPACE AND EVERYDAY LIFE",
+      "coverPhoto": "/proposal/photos/cover-qixu.jpg",
+      "colors": {
+        "paper": "#f3f7f6",
+        "ink": "#293f45",
+        "muted": "#5c747a",
+        "accent": "#526f78",
+        "soft": "#e0e9e8",
+        "softTo": "#edf2ef",
+        "rule": "#cbd8d7",
+        "headBg": "#dfe9e9",
+        "headFg": "#29464f",
+        "stripe": "#eaf0ee"
+      }
+    },
+    {
+      "id": "slate",
+      "label": "岩灰建筑",
+      "description": "冷灰纸色、直角线框与建筑目录封面，适合现代建筑住宅",
+      "coverLayout": "architectural",
+      "chapterStyle": "eyebrow",
+      "tableStyle": "dark",
+      "mood": "light",
+      "headline": "空间有序，生活自如。",
+      "tagline": "SPACES IN ORDER",
+      "coverTagline": "RESIDENTIAL DESIGN STUDY",
+      "coverPhoto": "/proposal/photos/study.jpg",
+      "colors": {
+        "paper": "#eff0ed",
+        "ink": "#252c30",
+        "muted": "#626e73",
+        "accent": "#46545b",
+        "soft": "#dde2df",
+        "softTo": "#e8ebe7",
+        "rule": "#bec7c4",
+        "headBg": "#303b40",
+        "headFg": "#f4f5ef",
+        "stripe": "#e5e9e5"
+      }
     }
   ],
   "templates": [
@@ -336,7 +386,6 @@
       "slug": "qixu",
       "name": "栖序雅致",
       "kind": "owner",
-      "tier": "free",
       "framework": "full",
       "theme": "qixu",
       "description": "暖白纸色、灰紫强调、细体大编号，忠于设计稿的 8 章完整提案",
@@ -362,7 +411,6 @@
       "slug": "noir",
       "name": "墨金臻选",
       "kind": "owner",
-      "tier": "pro",
       "framework": "full",
       "theme": "noir",
       "description": "深色画面、香槟金与衬线标题，屏幕演示质感最强",
@@ -388,7 +436,6 @@
       "slug": "grove",
       "name": "原木自然",
       "kind": "owner",
-      "tier": "free",
       "framework": "full",
       "theme": "grove",
       "description": "燕麦纸色、橄榄绿、左文右图封面与圆角卡片",
@@ -414,7 +461,6 @@
       "slug": "quick",
       "name": "预算速览",
       "kind": "owner",
-      "tier": "free",
       "framework": "budget",
       "theme": "qixu",
       "description": "封面、系统、投资与交付 4 章，几页讲清预算",
@@ -436,7 +482,6 @@
       "slug": "azure",
       "name": "智域科技",
       "kind": "owner",
-      "tier": "pro",
       "framework": "story",
       "theme": "azure",
       "description": "冷白纸面、深海蓝强调与细线卡片，先讲生活场景再落到预算",
@@ -461,7 +506,6 @@
       "slug": "mono",
       "name": "素白极简",
       "kind": "owner",
-      "tier": "pro",
       "framework": "full",
       "theme": "mono",
       "description": "纯白纸面与黑色粗体，纯文字大字封面，克制高级",
@@ -487,7 +531,6 @@
       "slug": "dawn",
       "name": "晨曦暖调",
       "kind": "owner",
-      "tier": "pro",
       "framework": "story",
       "theme": "dawn",
       "description": "奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户",
@@ -512,7 +555,6 @@
       "slug": "jade",
       "name": "东方雅韵",
       "kind": "owner",
-      "tier": "team",
       "framework": "full",
       "theme": "jade",
       "description": "宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅",
@@ -535,10 +577,84 @@
       ]
     },
     {
+      "slug": "terra",
+      "name": "赤陶中古",
+      "kind": "owner",
+      "framework": "full",
+      "theme": "terra",
+      "description": "羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感",
+      "audience": "中古、复古与胡桃木风格住宅的业主",
+      "occasion": "设计深化汇报、软装与全屋智能联合提案",
+      "highlights": [
+        "画廊式封面",
+        "羊皮纸赤陶棕",
+        "8 章完整"
+      ],
+      "sections": [
+        "cover",
+        "plans",
+        "system",
+        "zones",
+        "scenes",
+        "rooms",
+        "investment",
+        "service"
+      ]
+    },
+    {
+      "slug": "linen",
+      "name": "海盐柔雅",
+      "kind": "owner",
+      "framework": "full",
+      "theme": "linen",
+      "description": "海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案",
+      "audience": "法式、轻复古与浅色自然风住宅的家庭",
+      "occasion": "家庭方案沟通、与室内设计师联合汇报",
+      "highlights": [
+        "拱窗照片封面",
+        "海盐蓝灰",
+        "8 章完整"
+      ],
+      "sections": [
+        "cover",
+        "plans",
+        "system",
+        "zones",
+        "scenes",
+        "rooms",
+        "investment",
+        "service"
+      ]
+    },
+    {
+      "slug": "slate",
+      "name": "岩灰建筑",
+      "kind": "owner",
+      "framework": "full",
+      "theme": "slate",
+      "description": "冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面",
+      "audience": "现代建筑、清水混凝土与工业风住宅的业主",
+      "occasion": "建筑师联合提案、需要清楚核对点位与预算的正式汇报",
+      "highlights": [
+        "建筑目录封面",
+        "石墨直角线框",
+        "8 章完整"
+      ],
+      "sections": [
+        "cover",
+        "plans",
+        "system",
+        "zones",
+        "scenes",
+        "rooms",
+        "investment",
+        "service"
+      ]
+    },
+    {
       "slug": "construction",
       "name": "施工交底",
       "kind": "construction",
-      "tier": "free",
       "framework": "construction",
       "theme": "qixu",
       "description": "点位代号、安装位置、房间配置与逐点核对表，不含任何价格",
@@ -684,8 +800,8 @@
         "主灯关闭，灯带 30% 暖光",
         "窗帘闭合"
       ],
-      "photo": "/proposal/photos/scenes/movie.jpg",
-      "credit": "Christian Lambert / Unsplash"
+      "photo": "/proposal/scenes/11-movie-night.jpg",
+      "credit": "AI 夜间场景意向图 / image_gen"
     },
     {
       "slug": "night-up",
@@ -715,8 +831,8 @@
         "夜灯 / 灯带 10% 亮起，不刺眼",
         "无人后自动关闭"
       ],
-      "photo": "/proposal/photos/scenes/night-up.jpg",
-      "credit": "Fabio Sasso / Unsplash"
+      "photo": "/proposal/scenes/13-corridor-night.jpg",
+      "credit": "AI 夜间场景意向图 / image_gen"
     },
     {
       "slug": "sleep",
@@ -744,8 +860,8 @@
         "灯光渐暗后关闭",
         "窗帘闭合"
       ],
-      "photo": "/proposal/photos/scenes/sleep.jpg",
-      "credit": "Jp Valery / Unsplash"
+      "photo": "/proposal/scenes/12-bedroom-night.jpg",
+      "credit": "AI 夜间场景意向图 / image_gen"
     },
     {
       "slug": "kitchen-safety",

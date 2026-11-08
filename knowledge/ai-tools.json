@@ -19,6 +19,8 @@
       "create_quote_from_competitor": 2,
       "create_or_update_contract": 1,
       "get_document_links": 0.2,
+      "plan_points_with_vision": 2,
+      "generate_image": 0,
       "room_insights": 0.5,
       "smart_select": 2,
       "recommend_proposal_template": 0.2
@@ -84,6 +86,11 @@
       "value": "templates:read",
       "label": "读取方案模板、适用客户与推荐匹配",
       "mutates": false
+    },
+    {
+      "value": "images:generate",
+      "label": "调用 AI 生成图片",
+      "mutates": true
     }
   ],
   "tools": [
@@ -261,25 +268,42 @@
       "permissions": [
         "point-map:write"
       ],
-      "description": "将用户在对话框中拖入或上传的户型图图片（带有 url 和 mediaId）添加到当前关联项目的点位图中作为标准楼层图纸。如果上传附件中带有真实识别出的点位（detectedPoints），会一并在图纸对应坐标上生成点位图标；若没有识别出点位，则只添加干净的户型图纸，不生成任何默认点位。",
+      "description": "将户型图纸添加或更新到当前关联项目的点位图中。当用户说「重新生成点位 / 重新识别刚才的图纸 / 改成导入全部点位」时，绝不要让用户重新上传图片！直接调用本工具（可省略 url 和 mediaId，服务端会自动复用当前项目已有的图纸或历史上传图纸），并设置 replaceExisting=true（及按需设置 redetect=true）即可原地重新识别并替换点位。",
       "parameters": {
         "type": "object",
         "properties": {
           "url": {
             "type": "string",
-            "description": "上传后返回的图片 URL（如 /api/media/file/...）"
+            "description": "图片 URL（如 /api/media/file/...；若是对当前项目已有图纸重新生成/切换导入模式，可省略不传）"
           },
           "mediaId": {
             "type": "string",
-            "description": "上传后返回的 mediaId"
+            "description": "上传后返回的 mediaId（可选，省略时自动匹配当前项目已有图纸）"
           },
           "sheetName": {
             "type": "string",
             "description": "图纸名称（如 一层平面图、二层开关布置图）"
           },
+          "importMode": {
+            "type": "string",
+            "enum": [
+              "switches",
+              "all",
+              "none"
+            ],
+            "description": "点位导入范围：switches 仅导入开关（默认，避免将灯具圆圈混入开关图）；all 导入开关+筒灯/射灯全部识别点位；none 仅添加干净图纸不生成点位"
+          },
+          "replaceExisting": {
+            "type": "boolean",
+            "description": "是否清空该图纸上的旧点位与旧区域后重新生成（当用户要求「重新生成 / 重新识别 / 切换为全部导入」时设为 true，默认对同一张图纸自动原地替换）"
+          },
+          "redetect": {
+            "type": "boolean",
+            "description": "是否强制重新读取图纸文件并调用 CAD 识别器与视觉大模型重新识别点位（当用户觉得识别不准或要求「重新识别」时设为 true）"
+          },
           "detectedPoints": {
             "type": "array",
-            "description": "上传户型图时自动识别出的真实点位坐标列表（若无识别点位则不传，不要编造坐标）",
+            "description": "可选：通常无需传递（传入 mediaId 后服务端会自动读取已识别点位；禁止编造坐标）",
             "items": {
               "type": "object",
               "properties": {
@@ -303,10 +327,7 @@
               ]
             }
           }
-        },
-        "required": [
-          "url"
-        ]
+        }
       }
     },
     {
@@ -766,6 +787,86 @@
       }
     },
     {
+      "name": "plan_points_with_vision",
+      "title": "视觉智能布点",
+      "pluginId": null,
+      "cost": 2,
+      "scope": "project",
+      "mutates": true,
+      "permissions": [
+        "point-map:write"
+      ],
+      "description": "对当前项目已上传的户型图，调用视觉大模型看图，并按平台设计规范规划智能设备点位：全屋 WiFi（ap-node / ceiling-ap / network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、中控屏 touch-panel、摄像头 camera，以及门磁 contact-sensor、水浸 water-sensor、烟感 smoke-sensor。开关、插座、灯具只照图识别，本工具不会生成。用户说「帮我规划/补齐/布置 AP、窗帘、传感器、摄像头」「按户型把智能设备点位布好」时调用；重复调用会先替换上次规划的点位。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "deviceTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "要规划的设备类型代号（留空 = 按规范规划全部默认智能设备），如 [\"ap-node\",\"curtain-track\",\"motion-sensor\"]"
+          },
+          "rooms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "只规划这些房间（留空 = 全屋），如 [\"主卧\",\"客厅\"]"
+          },
+          "sheetName": {
+            "type": "string",
+            "description": "多张图纸时指定图纸名称（留空 = 全部已上传图纸，最多 3 张）"
+          },
+          "requirements": {
+            "type": "string",
+            "description": "客户的额外要求，如「老人房加人体传感器」「全屋 AP 用吸顶款」"
+          },
+          "replacePlanned": {
+            "type": "boolean",
+            "description": "是否先移除本工具之前规划的点位再重新规划（默认 true）"
+          }
+        }
+      }
+    },
+    {
+      "name": "generate_image",
+      "title": "AI 生图",
+      "pluginId": null,
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": [
+        "images:generate"
+      ],
+      "description": "根据文字描述生成智能家居场景图、方案配图、效果图或材质意向图。用户说“画一张”“生成图片”“出个效果图”时调用。用户上传了参考图并希望据此出图时设 useAttachedImage=true：平台会先由视觉模型理解参考图再写提示词生成，生成后再由视觉模型质检。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "图片描述，包含空间、风格、材质、光线、镜头"
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "1024*1024",
+              "1536*1024",
+              "1024*1536"
+            ],
+            "description": "输出尺寸，默认 1024*1024；横版效果图用 1536*1024"
+          },
+          "useAttachedImage": {
+            "type": "boolean",
+            "description": "是否参考本轮对话里用户上传的图片（户型图 / 实景照片 / 效果图）"
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      }
+    },
+    {
       "name": "room_insights",
       "title": "房间智能分析",
       "pluginId": "room-insights",
@@ -1048,6 +1149,29 @@
         }
       ],
       "promptTemplate": "当前客户属于【{clientProfile}】，处于【{meetingStage}】阶段。请调用 recommend_proposal_template 工具推荐最合适的方案模板，并给出 3 条针对该客户的提案讲解建议。"
+    },
+    {
+      "id": "tpl-switch-plan-recognition",
+      "name": "开关布置图识别（插座不落点）",
+      "category": "图纸识图",
+      "description": "按视觉直读模式识别开关面板与智能屏，读取图例和插座数量，但不生成插座点位",
+      "modelHint": "vision",
+      "recommendedModelId": "qwen3.7-plus",
+      "requiredPlugins": [
+        "ai-import"
+      ],
+      "variables": [
+        {
+          "key": "scope",
+          "label": "识别范围",
+          "defaultValue": "仅开关面板与智能屏",
+          "options": [
+            "仅开关面板与智能屏",
+            "开关面板 + 灯具"
+          ]
+        }
+      ],
+      "promptTemplate": "请按【{scope}】重新识别当前图纸：先读图例和房间文字统计，再让视觉模型直读开关面板/智能屏点位；本地几何识别只做坐标吸附与补缺。插座只统计数量，不生成点位。"
     },
     {
       "id": "tpl-blueprint-vision",

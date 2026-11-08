@@ -1750,27 +1750,27 @@
       },
       {
         "id": "terra",
-        "label": "陶土暖阳",
-        "description": "米杏纸色、陶土橙、圆角卡片，适合温暖的家庭住宅",
-        "coverLayout": "split",
-        "chapterStyle": "numeral",
+        "label": "赤陶中古",
+        "description": "羊皮纸色、赤陶棕、画廊式横幅照片，适合中古与复古住宅",
+        "coverLayout": "gallery",
+        "chapterStyle": "eyebrow",
         "tableStyle": "soft",
         "mood": "light",
-        "headline": "温暖的光，留给回家的人。",
-        "tagline": "WARM HOME",
-        "coverTagline": "A WARM PLACE TO COME HOME",
+        "headline": "把时光的温度，留在家里。",
+        "tagline": "TIMELESS LIVING",
+        "coverTagline": "A HOME WITH CHARACTER",
         "coverPhoto": "/proposal/photos/dining.jpg",
         "colors": {
-          "paper": "#fbf5ee",
-          "ink": "#3a2a22",
-          "muted": "#7c6658",
-          "accent": "#b5603a",
-          "soft": "#f4e3d7",
-          "softTo": "#f8ece1",
-          "rule": "#ead8c8",
-          "headBg": "#f1dccd",
-          "headFg": "#6e3a22",
-          "stripe": "#f7eee5"
+          "paper": "#f5eee4",
+          "ink": "#3e2d25",
+          "muted": "#766257",
+          "accent": "#994b32",
+          "soft": "#ead9c9",
+          "softTo": "#f3e8dc",
+          "rule": "#d6c3b2",
+          "headBg": "#583d30",
+          "headFg": "#fff7eb",
+          "stripe": "#eee3d5"
         }
       },
       {
@@ -1811,16 +1811,16 @@
         "coverTagline": "GOOD MORNING, HOME",
         "coverPhoto": "/proposal/photos/cover-dawn.jpg",
         "colors": {
-          "paper": "#fbf5ee",
-          "ink": "#3a2a22",
-          "muted": "#7c6658",
-          "accent": "#b5603a",
-          "soft": "#f4e3d7",
-          "softTo": "#f8ece1",
-          "rule": "#ead8c8",
-          "headBg": "#f1dccd",
-          "headFg": "#6e3a22",
-          "stripe": "#f7eee5"
+          "paper": "#f5eee4",
+          "ink": "#3e2d25",
+          "muted": "#766257",
+          "accent": "#994b32",
+          "soft": "#ead9c9",
+          "softTo": "#f3e8dc",
+          "rule": "#d6c3b2",
+          "headBg": "#583d30",
+          "headFg": "#fff7eb",
+          "stripe": "#eee3d5"
         }
       },
       {
@@ -1847,6 +1847,56 @@
           "headFg": "#2c5a55",
           "stripe": "#efe9dd"
         }
+      },
+      {
+        "id": "linen",
+        "label": "海盐柔雅",
+        "description": "海盐蓝灰、拱窗照片与柔和衬线，适合法式与浅色住宅",
+        "coverLayout": "arch",
+        "chapterStyle": "badge",
+        "tableStyle": "soft",
+        "mood": "light",
+        "headline": "让日常，轻柔而从容。",
+        "tagline": "QUIET EVERYDAY",
+        "coverTagline": "LIGHT, SPACE AND EVERYDAY LIFE",
+        "coverPhoto": "/proposal/photos/cover-qixu.jpg",
+        "colors": {
+          "paper": "#f3f7f6",
+          "ink": "#293f45",
+          "muted": "#5c747a",
+          "accent": "#526f78",
+          "soft": "#e0e9e8",
+          "softTo": "#edf2ef",
+          "rule": "#cbd8d7",
+          "headBg": "#dfe9e9",
+          "headFg": "#29464f",
+          "stripe": "#eaf0ee"
+        }
+      },
+      {
+        "id": "slate",
+        "label": "岩灰建筑",
+        "description": "冷灰纸色、直角线框与建筑目录封面，适合现代建筑住宅",
+        "coverLayout": "architectural",
+        "chapterStyle": "eyebrow",
+        "tableStyle": "dark",
+        "mood": "light",
+        "headline": "空间有序，生活自如。",
+        "tagline": "SPACES IN ORDER",
+        "coverTagline": "RESIDENTIAL DESIGN STUDY",
+        "coverPhoto": "/proposal/photos/study.jpg",
+        "colors": {
+          "paper": "#eff0ed",
+          "ink": "#252c30",
+          "muted": "#626e73",
+          "accent": "#46545b",
+          "soft": "#dde2df",
+          "softTo": "#e8ebe7",
+          "rule": "#bec7c4",
+          "headBg": "#303b40",
+          "headFg": "#f4f5ef",
+          "stripe": "#e5e9e5"
+        }
       }
     ],
     "templates": [
@@ -1854,7 +1904,6 @@
         "slug": "qixu",
         "name": "栖序雅致",
         "kind": "owner",
-        "tier": "free",
         "framework": "full",
         "theme": "qixu",
         "description": "暖白纸色、灰紫强调、细体大编号，忠于设计稿的 8 章完整提案",
@@ -1880,7 +1929,6 @@
         "slug": "noir",
         "name": "墨金臻选",
         "kind": "owner",
-        "tier": "pro",
         "framework": "full",
         "theme": "noir",
         "description": "深色画面、香槟金与衬线标题，屏幕演示质感最强",
@@ -1906,7 +1954,6 @@
         "slug": "grove",
         "name": "原木自然",
         "kind": "owner",
-        "tier": "free",
         "framework": "full",
         "theme": "grove",
         "description": "燕麦纸色、橄榄绿、左文右图封面与圆角卡片",
@@ -1932,7 +1979,6 @@
         "slug": "quick",
         "name": "预算速览",
         "kind": "owner",
-        "tier": "free",
         "framework": "budget",
         "theme": "qixu",
         "description": "封面、系统、投资与交付 4 章，几页讲清预算",
@@ -1954,7 +2000,6 @@
         "slug": "azure",
         "name": "智域科技",
         "kind": "owner",
-        "tier": "pro",
         "framework": "story",
         "theme": "azure",
         "description": "冷白纸面、深海蓝强调与细线卡片，先讲生活场景再落到预算",
@@ -1979,7 +2024,6 @@
         "slug": "mono",
         "name": "素白极简",
         "kind": "owner",
-        "tier": "pro",
         "framework": "full",
         "theme": "mono",
         "description": "纯白纸面与黑色粗体，纯文字大字封面，克制高级",
@@ -2005,7 +2049,6 @@
         "slug": "dawn",
         "name": "晨曦暖调",
         "kind": "owner",
-        "tier": "pro",
         "framework": "story",
         "theme": "dawn",
         "description": "奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户",
@@ -2030,7 +2073,6 @@
         "slug": "jade",
         "name": "东方雅韵",
         "kind": "owner",
-        "tier": "team",
         "framework": "full",
         "theme": "jade",
         "description": "宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅",
@@ -2053,10 +2095,84 @@
         ]
       },
       {
+        "slug": "terra",
+        "name": "赤陶中古",
+        "kind": "owner",
+        "framework": "full",
+        "theme": "terra",
+        "description": "羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感",
+        "audience": "中古、复古与胡桃木风格住宅的业主",
+        "occasion": "设计深化汇报、软装与全屋智能联合提案",
+        "highlights": [
+          "画廊式封面",
+          "羊皮纸赤陶棕",
+          "8 章完整"
+        ],
+        "sections": [
+          "cover",
+          "plans",
+          "system",
+          "zones",
+          "scenes",
+          "rooms",
+          "investment",
+          "service"
+        ]
+      },
+      {
+        "slug": "linen",
+        "name": "海盐柔雅",
+        "kind": "owner",
+        "framework": "full",
+        "theme": "linen",
+        "description": "海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案",
+        "audience": "法式、轻复古与浅色自然风住宅的家庭",
+        "occasion": "家庭方案沟通、与室内设计师联合汇报",
+        "highlights": [
+          "拱窗照片封面",
+          "海盐蓝灰",
+          "8 章完整"
+        ],
+        "sections": [
+          "cover",
+          "plans",
+          "system",
+          "zones",
+          "scenes",
+          "rooms",
+          "investment",
+          "service"
+        ]
+      },
+      {
+        "slug": "slate",
+        "name": "岩灰建筑",
+        "kind": "owner",
+        "framework": "full",
+        "theme": "slate",
+        "description": "冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面",
+        "audience": "现代建筑、清水混凝土与工业风住宅的业主",
+        "occasion": "建筑师联合提案、需要清楚核对点位与预算的正式汇报",
+        "highlights": [
+          "建筑目录封面",
+          "石墨直角线框",
+          "8 章完整"
+        ],
+        "sections": [
+          "cover",
+          "plans",
+          "system",
+          "zones",
+          "scenes",
+          "rooms",
+          "investment",
+          "service"
+        ]
+      },
+      {
         "slug": "construction",
         "name": "施工交底",
         "kind": "construction",
-        "tier": "free",
         "framework": "construction",
         "theme": "qixu",
         "description": "点位代号、安装位置、房间配置与逐点核对表，不含任何价格",
@@ -2202,8 +2318,8 @@
           "主灯关闭，灯带 30% 暖光",
           "窗帘闭合"
         ],
-        "photo": "/proposal/photos/scenes/movie.jpg",
-        "credit": "Christian Lambert / Unsplash"
+        "photo": "/proposal/scenes/11-movie-night.jpg",
+        "credit": "AI 夜间场景意向图 / image_gen"
       },
       {
         "slug": "night-up",
@@ -2233,8 +2349,8 @@
           "夜灯 / 灯带 10% 亮起，不刺眼",
           "无人后自动关闭"
         ],
-        "photo": "/proposal/photos/scenes/night-up.jpg",
-        "credit": "Fabio Sasso / Unsplash"
+        "photo": "/proposal/scenes/13-corridor-night.jpg",
+        "credit": "AI 夜间场景意向图 / image_gen"
       },
       {
         "slug": "sleep",
@@ -2262,8 +2378,8 @@
           "灯光渐暗后关闭",
           "窗帘闭合"
         ],
-        "photo": "/proposal/photos/scenes/sleep.jpg",
-        "credit": "Jp Valery / Unsplash"
+        "photo": "/proposal/scenes/12-bedroom-night.jpg",
+        "credit": "AI 夜间场景意向图 / image_gen"
       },
       {
         "slug": "kitchen-safety",
@@ -2463,41 +2579,11 @@
     ]
   },
   "plugins": {
-    "membershipTiers": [
-      {
-        "value": "free",
-        "label": "Go 基础版",
-        "badge": "Go",
-        "activeProjectLimit": 10,
-        "collaboratorLimit": 2,
-        "monthlyCredits": 0,
-        "description": "个人设计师入门：标准 AI 模型 + 点位、报价、合同核心流程"
-      },
-      {
-        "value": "pro",
-        "label": "Plus 专业版",
-        "badge": "Plus",
-        "activeProjectLimit": 50,
-        "collaboratorLimit": 5,
-        "monthlyCredits": 300,
-        "description": "独立设计师与工作室主力：高阶视觉大模型 + 高定模板与施工插件 + 一键交付包"
-      },
-      {
-        "value": "team",
-        "label": "Pro 旗舰版",
-        "badge": "Pro",
-        "activeProjectLimit": null,
-        "collaboratorLimit": null,
-        "monthlyCredits": 1000,
-        "description": "集成商与工程团队尊享：满血深度推理旗舰大模型 + 不限项目与成员 + 全套顶奢工程能力"
-      }
-    ],
     "plugins": [
       {
         "id": "ai-copilot",
         "name": "AI 对话侧栏（高级）",
         "stage": "global",
-        "tier": "pro",
         "status": "ready",
         "tagline": "在任何页面直接问 AI，让它帮你识图、选型、写说明",
         "description": "侧边栏常驻 AI 助手，支持户型图识别、技能模板与跨插件自动执行。",
@@ -2520,11 +2606,14 @@
             "quotes:write",
             "contracts:read",
             "contracts:write",
-            "documents:read"
+            "documents:read",
+            "images:generate"
           ],
           "guidance": [
             "当用户提出创建或修改请求时，主动调用对应工具直接完成操作（可分多步连续调用，例如：新建项目 → 布置房间和点位 → 智能选型 → 生成报价单），不要只给口头步骤。",
             "当用户上传了真实户型图图片时，严禁调用 setup_rooms_and_points 生成网格默认点位！只有图像真实识别出点位（add_floor_sheet 的 detectedPoints）或用户提供了点位 JSON（import_points_json）时才生成点位图标；若未识别出点位，保持点位图为空（0 点位）。",
+            "当用户要求生成图片、画效果图、方案配图、场景图时，必须调用 generate_image 工具；不要声称已生成图片但没有调用。用户上传了参考图时设置 useAttachedImage=true。生成后把视觉质检结论告诉用户，质检分低于 7 时主动提出重新生成。",
+            "项目已有户型图纸、用户要求规划或补齐 AP、窗帘、传感器、摄像头、中控屏、音箱、网关、VRF 等智能设备时，调用 plan_points_with_vision（视觉模型看图按规范布点），不要调用 setup_rooms_and_points。",
             "当用户上传或粘贴别家的报价单 / 设备清单要求比价时：先逐行识别品名、品牌、型号、数量与单价（安装调试、布线辅材等服务项放入 fees），再调用 create_quote_from_competitor 生成对比报价单，最后按行总结匹配型号与差价，不要把外店的服务项当成设备。"
           ],
           "knowledge": [
@@ -2561,7 +2650,9 @@
             "create_or_update_quote",
             "create_quote_from_competitor",
             "create_or_update_contract",
-            "get_document_links"
+            "get_document_links",
+            "plan_points_with_vision",
+            "generate_image"
           ],
           "skills": [
             "tpl-competitor-quote"
@@ -2572,7 +2663,6 @@
         "id": "doc-styles",
         "name": "文档风格包",
         "stage": "quote",
-        "tier": "pro",
         "status": "ready",
         "tagline": "报价单、合同换上更多高级排版风格",
         "description": "为报价单、点位图、合同和交底清单解锁 6 套扩展视觉风格（与方案模板配套）。",
@@ -2615,7 +2705,6 @@
         "id": "proposal",
         "name": "方案演示",
         "stage": "quote",
-        "tier": "free",
         "status": "ready",
         "tagline": "点位和预算一键变成给业主看的横版方案",
         "description": "将点位图、房间分析与预算一键生成 A4 横版提案并导出 PDF。",
@@ -2652,6 +2741,9 @@
                 "素白极简(mono, 业主方案)：纯白纸面与黑色粗体，纯文字大字封面，克制高级；适合【设计师工作室、极简风业主与商务客户】，使用时机【与设计公司合作提案、需要打印装订的正式文本】。",
                 "晨曦暖调(dawn, 业主方案)：奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户；适合【有老人和孩子的家庭、偏爱温馨风格的业主】，使用时机【首次方案沟通、全家一起看方案】。",
                 "东方雅韵(jade, 业主方案)：宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅；适合【新中式、东方风别墅与高端住宅业主】，使用时机【顶奢项目正式提案、需要文化调性的汇报】。",
+                "赤陶中古(terra, 业主方案)：羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感；适合【中古、复古与胡桃木风格住宅的业主】，使用时机【设计深化汇报、软装与全屋智能联合提案】。",
+                "海盐柔雅(linen, 业主方案)：海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案；适合【法式、轻复古与浅色自然风住宅的家庭】，使用时机【家庭方案沟通、与室内设计师联合汇报】。",
+                "岩灰建筑(slate, 业主方案)：冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面；适合【现代建筑、清水混凝土与工业风住宅的业主】，使用时机【建筑师联合提案、需要清楚核对点位与预算的正式汇报】。",
                 "施工交底(construction, 施工交底)：点位代号、安装位置、房间配置与逐点核对表，不含任何价格；适合【安装团队、水电工与项目经理】，使用时机【进场施工前交底、现场安装与验收核对】。"
               ]
             }
@@ -2669,7 +2761,6 @@
         "id": "room-insights",
         "name": "房间智能分析",
         "stage": "design",
-        "tier": "free",
         "status": "ready",
         "tagline": "逐个房间检查漏配，顺手推荐联动场景",
         "description": "按房间类型评估点位完整度，提供缺失提醒与联动场景建议。",
@@ -2715,7 +2806,6 @@
         "id": "smart-select",
         "name": "智能选型",
         "stage": "design",
-        "tier": "free",
         "status": "ready",
         "tagline": "按平台和预算档位，一键给全屋选好型号",
         "description": "按生态平台与预算档位，一键匹配全屋各设备类型的默认型号。",
@@ -2756,7 +2846,6 @@
         "id": "ai-import",
         "name": "AI 识别导入",
         "stage": "design",
-        "tier": "free",
         "status": "ready",
         "tagline": "让 AI 读图纸，自动生成点位",
         "description": "识别标准图纸中的开关插座与点位符号，支持导入导出点位 JSON。",
@@ -2776,6 +2865,16 @@
           ],
           "knowledge": [
             {
+              "id": "switch-plan-vision-first",
+              "title": "开关布置图视觉直读策略",
+              "summary": "彩色铭牌开关图以视觉模型直读点位为主，本地几何识别只做吸附校验；插座只统计不落点",
+              "rules": [
+                "彩色底白字开关铭牌图优先让视觉模型直读点位，本地几何识别仅负责坐标吸附、去重与按图纸标注数量补缺。",
+                "插座（四孔/五孔/16A/网插）只统计 socketCount，不生成点位。",
+                "图纸文字统计与实际点位数不一致时，在确认文案中提示差异，由人工核对。"
+              ]
+            },
+            {
               "id": "fmkj-points-protocol",
               "title": "fmkj-points 户型图点位识别 JSON 协议",
               "summary": "基于 3:2 标准图纸的 0~1 比例坐标记录房间区域与设备点位",
@@ -2789,6 +2888,7 @@
           ],
           "tools": [],
           "skills": [
+            "tpl-switch-plan-recognition",
             "tpl-blueprint-vision"
           ]
         }
@@ -2797,7 +2897,6 @@
         "id": "dwg-import",
         "name": "DWG 导入",
         "stage": "design",
-        "tier": "pro",
         "status": "ready",
         "tagline": "CAD 图纸直接导入成户型底图",
         "description": "上传 CAD DWG 图纸并自动转换为标准户型底图。",
@@ -2827,159 +2926,9 @@
         }
       },
       {
-        "id": "site-survey",
-        "name": "现场勘测表",
-        "stage": "design",
-        "tier": "free",
-        "status": "ready",
-        "tagline": "现场条件一次记全，出勘测确认单",
-        "description": "记录配电箱、弱电箱、零火线与窗帘盒尺寸，导出勘测确认单。",
-        "where": "项目 → 信息 / 勘测记录",
-        "provides": [
-          "勘测清单",
-          "现场条件记录",
-          "勘测单打印"
-        ],
-        "ai": {
-          "permissions": [
-            "projects:read",
-            "documents:read"
-          ],
-          "guidance": [
-            "用户准备去工地现场勘测时，可生成现场勘测单打印链接（/print/projects/[id]/survey）并提醒核对配电箱、弱电箱、零火线与窗帘盒尺寸。"
-          ],
-          "knowledge": [
-            {
-              "id": "site-survey-checklist",
-              "title": "现场勘测核心核对项",
-              "summary": "进场前必查的强弱电、网络、窗帘盒与安装环境条件",
-              "rules": [
-                "强电条件：每个开关底盒是否预留零线（零火供电）、底盒深度是否 ≥ 50mm。",
-                "窗帘条件：窗帘盒宽度（单轨 ≥ 10cm，双轨 ≥ 18cm）、侧墙左/右上角是否预留五孔电源插座。",
-                "弱电与网络：弱电箱尺寸及散热、各房间超六类网线是否汇聚至弱电箱、主路由与 PoE 交换机安装空间。"
-              ]
-            }
-          ],
-          "tools": [],
-          "skills": []
-        }
-      },
-      {
-        "id": "wiring-schedule",
-        "name": "强弱电布线表",
-        "stage": "build",
-        "tier": "pro",
-        "status": "ready",
-        "tagline": "自动汇总回路与预留线缆，出水电交底单",
-        "description": "按点位图自动汇总开关回路、零火线与网线预留，生成水电交底单。",
-        "where": "项目 → 点位 / 施工交底",
-        "provides": [
-          "回路汇总",
-          "预留线缆清单",
-          "水电交底单"
-        ],
-        "ai": {
-          "permissions": [
-            "point-map:read",
-            "documents:read"
-          ],
-          "guidance": [
-            "用户需要给水电工交底时，可提供强弱电布线表打印链接（/print/projects/[id]/wiring）并按房间汇总零火线与网线需求。"
-          ],
-          "knowledge": [
-            {
-              "id": "wiring-schedule-rules",
-              "title": "强弱电布线与回路交底规范",
-              "summary": "按设备类型自动映射供电方式、预留线缆与底盒要求",
-              "rules": [
-                "智能开关/中控屏：86 型深底盒（≥50mm），必须预留零火线（L+N），中控屏位置建议额外预留六类网线。",
-                "吸顶 AP / 面板 AP：超六类网线直通弱电箱 PoE 交换机（PoE 供电，无需强电插座）。",
-                "电动窗帘：窗帘盒内距顶 20–30cm 预留 10A 五孔插座（常电，不受墙壁开关控制）。"
-              ]
-            }
-          ],
-          "tools": [],
-          "skills": []
-        }
-      },
-      {
-        "id": "procurement",
-        "name": "采购与备货单",
-        "stage": "build",
-        "tier": "team",
-        "status": "ready",
-        "tagline": "按确认报价出采购单，到货逐项核验",
-        "description": "按确认报价汇总采购清单，核对库存并生成到场核验单。",
-        "where": "项目 → 合同 / 备货核验",
-        "provides": [
-          "采购汇总",
-          "库存比对",
-          "到货核验单"
-        ],
-        "ai": {
-          "permissions": [
-            "quotes:read",
-            "catalog:read",
-            "documents:read"
-          ],
-          "guidance": [
-            "项目签约备货阶段，可提供采购与备货核验单链接（/print/projects/[id]/procurement），支持切换是否显示内部成本价。"
-          ],
-          "knowledge": [
-            {
-              "id": "procurement-workflow",
-              "title": "采购与到货核验流程",
-              "summary": "基于定稿报价汇总 SKU 数量、比对库存并生成到场签收表",
-              "rules": [
-                "采购单自动合并同一 SKU 在不同房间的数量，支持导出含成本内部采购单或不含成本的仓库备货核验单。"
-              ]
-            }
-          ],
-          "tools": [],
-          "skills": []
-        }
-      },
-      {
-        "id": "scene-handover",
-        "name": "场景与账号移交",
-        "stage": "after",
-        "tier": "pro",
-        "status": "ready",
-        "tagline": "交付时把场景、账号和设备绑定交给业主",
-        "description": "生成全屋联动场景卡、网关设备绑定表与业主账号交接单。",
-        "where": "项目 → 归档 / 交付资料",
-        "provides": [
-          "场景说明卡",
-          "账号交接单",
-          "维护指南"
-        ],
-        "ai": {
-          "permissions": [
-            "point-map:read",
-            "documents:read"
-          ],
-          "guidance": [
-            "项目完工交付业主时，可生成场景与账号移交单（/print/projects/[id]/handover），包含全屋联动场景说明卡与主平台账号交接表。"
-          ],
-          "knowledge": [
-            {
-              "id": "scene-handover-spec",
-              "title": "场景与账号移交规范",
-              "summary": "将项目匹配的智能联动场景、网关绑定关系与 App 账号密码整理成业主留存手册",
-              "rules": [
-                "移交单包含：1. 业主家庭成员账号权限表；2. 各房间已配置的智能场景触发词与按键说明；3. 断网/断电重启恢复指引。"
-              ]
-            }
-          ],
-          "tools": [],
-          "skills": []
-        }
-      },
-      {
         "id": "after-sales",
         "name": "售后维保记录",
         "stage": "after",
-        "tier": "team",
         "status": "ready",
         "tagline": "质保、检修与配置备份都有记录",
         "description": "按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。",
@@ -3038,6 +2987,8 @@
         "create_quote_from_competitor": 2,
         "create_or_update_contract": 1,
         "get_document_links": 0.2,
+        "plan_points_with_vision": 2,
+        "generate_image": 0,
         "room_insights": 0.5,
         "smart_select": 2,
         "recommend_proposal_template": 0.2
@@ -3103,6 +3054,11 @@
         "value": "templates:read",
         "label": "读取方案模板、适用客户与推荐匹配",
         "mutates": false
+      },
+      {
+        "value": "images:generate",
+        "label": "调用 AI 生成图片",
+        "mutates": true
       }
     ],
     "tools": [
@@ -3280,25 +3236,42 @@
         "permissions": [
           "point-map:write"
         ],
-        "description": "将用户在对话框中拖入或上传的户型图图片（带有 url 和 mediaId）添加到当前关联项目的点位图中作为标准楼层图纸。如果上传附件中带有真实识别出的点位（detectedPoints），会一并在图纸对应坐标上生成点位图标；若没有识别出点位，则只添加干净的户型图纸，不生成任何默认点位。",
+        "description": "将户型图纸添加或更新到当前关联项目的点位图中。当用户说「重新生成点位 / 重新识别刚才的图纸 / 改成导入全部点位」时，绝不要让用户重新上传图片！直接调用本工具（可省略 url 和 mediaId，服务端会自动复用当前项目已有的图纸或历史上传图纸），并设置 replaceExisting=true（及按需设置 redetect=true）即可原地重新识别并替换点位。",
         "parameters": {
           "type": "object",
           "properties": {
             "url": {
               "type": "string",
-              "description": "上传后返回的图片 URL（如 /api/media/file/...）"
+              "description": "图片 URL（如 /api/media/file/...；若是对当前项目已有图纸重新生成/切换导入模式，可省略不传）"
             },
             "mediaId": {
               "type": "string",
-              "description": "上传后返回的 mediaId"
+              "description": "上传后返回的 mediaId（可选，省略时自动匹配当前项目已有图纸）"
             },
             "sheetName": {
               "type": "string",
               "description": "图纸名称（如 一层平面图、二层开关布置图）"
             },
+            "importMode": {
+              "type": "string",
+              "enum": [
+                "switches",
+                "all",
+                "none"
+              ],
+              "description": "点位导入范围：switches 仅导入开关（默认，避免将灯具圆圈混入开关图）；all 导入开关+筒灯/射灯全部识别点位；none 仅添加干净图纸不生成点位"
+            },
+            "replaceExisting": {
+              "type": "boolean",
+              "description": "是否清空该图纸上的旧点位与旧区域后重新生成（当用户要求「重新生成 / 重新识别 / 切换为全部导入」时设为 true，默认对同一张图纸自动原地替换）"
+            },
+            "redetect": {
+              "type": "boolean",
+              "description": "是否强制重新读取图纸文件并调用 CAD 识别器与视觉大模型重新识别点位（当用户觉得识别不准或要求「重新识别」时设为 true）"
+            },
             "detectedPoints": {
               "type": "array",
-              "description": "上传户型图时自动识别出的真实点位坐标列表（若无识别点位则不传，不要编造坐标）",
+              "description": "可选：通常无需传递（传入 mediaId 后服务端会自动读取已识别点位；禁止编造坐标）",
               "items": {
                 "type": "object",
                 "properties": {
@@ -3322,10 +3295,7 @@
                 ]
               }
             }
-          },
-          "required": [
-            "url"
-          ]
+          }
         }
       },
       {
@@ -3785,6 +3755,86 @@
         }
       },
       {
+        "name": "plan_points_with_vision",
+        "title": "视觉智能布点",
+        "pluginId": null,
+        "cost": 2,
+        "scope": "project",
+        "mutates": true,
+        "permissions": [
+          "point-map:write"
+        ],
+        "description": "对当前项目已上传的户型图，调用视觉大模型看图，并按平台设计规范规划智能设备点位：全屋 WiFi（ap-node / ceiling-ap / network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、中控屏 touch-panel、摄像头 camera，以及门磁 contact-sensor、水浸 water-sensor、烟感 smoke-sensor。开关、插座、灯具只照图识别，本工具不会生成。用户说「帮我规划/补齐/布置 AP、窗帘、传感器、摄像头」「按户型把智能设备点位布好」时调用；重复调用会先替换上次规划的点位。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "deviceTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "要规划的设备类型代号（留空 = 按规范规划全部默认智能设备），如 [\"ap-node\",\"curtain-track\",\"motion-sensor\"]"
+            },
+            "rooms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "只规划这些房间（留空 = 全屋），如 [\"主卧\",\"客厅\"]"
+            },
+            "sheetName": {
+              "type": "string",
+              "description": "多张图纸时指定图纸名称（留空 = 全部已上传图纸，最多 3 张）"
+            },
+            "requirements": {
+              "type": "string",
+              "description": "客户的额外要求，如「老人房加人体传感器」「全屋 AP 用吸顶款」"
+            },
+            "replacePlanned": {
+              "type": "boolean",
+              "description": "是否先移除本工具之前规划的点位再重新规划（默认 true）"
+            }
+          }
+        }
+      },
+      {
+        "name": "generate_image",
+        "title": "AI 生图",
+        "pluginId": null,
+        "cost": 0,
+        "scope": "workspace",
+        "mutates": false,
+        "permissions": [
+          "images:generate"
+        ],
+        "description": "根据文字描述生成智能家居场景图、方案配图、效果图或材质意向图。用户说“画一张”“生成图片”“出个效果图”时调用。用户上传了参考图并希望据此出图时设 useAttachedImage=true：平台会先由视觉模型理解参考图再写提示词生成，生成后再由视觉模型质检。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "description": "图片描述，包含空间、风格、材质、光线、镜头"
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "1024*1024",
+                "1536*1024",
+                "1024*1536"
+              ],
+              "description": "输出尺寸，默认 1024*1024；横版效果图用 1536*1024"
+            },
+            "useAttachedImage": {
+              "type": "boolean",
+              "description": "是否参考本轮对话里用户上传的图片（户型图 / 实景照片 / 效果图）"
+            }
+          },
+          "required": [
+            "prompt"
+          ]
+        }
+      },
+      {
         "name": "room_insights",
         "title": "房间智能分析",
         "pluginId": "room-insights",
@@ -4067,6 +4117,29 @@
           }
         ],
         "promptTemplate": "当前客户属于【{clientProfile}】，处于【{meetingStage}】阶段。请调用 recommend_proposal_template 工具推荐最合适的方案模板，并给出 3 条针对该客户的提案讲解建议。"
+      },
+      {
+        "id": "tpl-switch-plan-recognition",
+        "name": "开关布置图识别（插座不落点）",
+        "category": "图纸识图",
+        "description": "按视觉直读模式识别开关面板与智能屏，读取图例和插座数量，但不生成插座点位",
+        "modelHint": "vision",
+        "recommendedModelId": "qwen3.7-plus",
+        "requiredPlugins": [
+          "ai-import"
+        ],
+        "variables": [
+          {
+            "key": "scope",
+            "label": "识别范围",
+            "defaultValue": "仅开关面板与智能屏",
+            "options": [
+              "仅开关面板与智能屏",
+              "开关面板 + 灯具"
+            ]
+          }
+        ],
+        "promptTemplate": "请按【{scope}】重新识别当前图纸：先读图例和房间文字统计，再让视觉模型直读开关面板/智能屏点位；本地几何识别只做坐标吸附与补缺。插座只统计数量，不生成点位。"
       },
       {
         "id": "tpl-blueprint-vision",
