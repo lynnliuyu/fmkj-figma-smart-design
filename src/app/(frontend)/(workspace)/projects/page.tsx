@@ -1,3 +1,4 @@
+import { StatTile } from '@/components/stat-tile'
 import Form from 'next/form'
 import Link from 'next/link'
 import { FolderKanban, Plus, Search, Sparkles } from 'lucide-react'
@@ -227,45 +228,22 @@ export default async function ProjectsPage({
       {/* Untitled UI 顶部 4 格业务数据概览卡片 */}
       {projects.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
-            <div className="text-xs font-medium text-muted-foreground">
-              {archived ? '已归档项目' : '进行中项目'}
-            </div>
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
-                {projects.length}
-              </span>
-              <span className="text-xs text-muted-foreground">个项目</span>
-            </div>
-          </div>
-          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
-            <div className="text-xs font-medium text-muted-foreground">累计设计点位</div>
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
-                {totalPoints.toLocaleString('zh-CN')}
-              </span>
-              <span className="text-xs text-muted-foreground">个智能点位</span>
-            </div>
-          </div>
-          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
-            <div className="text-xs font-medium text-muted-foreground">方案报价总额</div>
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
-                {yuan(totalQuoteAmount)}
-              </span>
-            </div>
-          </div>
-          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
-            <div className="text-xs font-medium text-muted-foreground">已生成报价 / 签约</div>
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
-                {quotes.docs.length}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                份报价 · {signedContractsCount} 份已签合同
-              </span>
-            </div>
-          </div>
+          <StatTile
+            label={archived ? '已归档项目' : '进行中项目'}
+            value={projects.length}
+            unit="个项目"
+          />
+          <StatTile
+            label="累计设计点位"
+            value={totalPoints.toLocaleString('zh-CN')}
+            unit="个智能点位"
+          />
+          <StatTile label="方案报价总额" value={yuan(totalQuoteAmount)} />
+          <StatTile
+            label="已生成报价 / 签约"
+            value={quotes.docs.length}
+            unit={`份报价 · ${signedContractsCount} 份已签合同`}
+          />
         </div>
       ) : null}
 

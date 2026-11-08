@@ -1,5 +1,6 @@
 'use client'
 
+import { StatTile } from '@/components/stat-tile'
 import { useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -754,33 +755,6 @@ function WarrantyHero({
             : '已过质保期：后续上门服务默认按「保外收费」登记，可在记录里调整。'}
         </div>
       ) : null}
-    </div>
-  )
-}
-
-function StatTile({
-  label,
-  value,
-  hint,
-  tone,
-}: {
-  label: string
-  value: string
-  hint?: string
-  tone?: 'warning'
-}) {
-  return (
-    <div className="rounded-[var(--radius-container)] bg-card px-4 py-3 shadow-xs ring-1 ring-border">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd
-        className={cn(
-          'mt-1 text-lg font-semibold tabular-nums',
-          tone === 'warning' && 'text-warning',
-        )}
-      >
-        {value}
-      </dd>
-      {hint ? <dd className="mt-0.5 text-xs text-muted-foreground">{hint}</dd> : null}
     </div>
   )
 }
