@@ -1,5 +1,6 @@
 'use client'
 
+import { EmptyState } from '@/components/empty-state'
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Check, ImageIcon, Search } from 'lucide-react'
@@ -262,9 +263,11 @@ export function SwapProductDialog({
               </section>
             ))}
             {groups.length === 0 ? (
-              <p className="py-10 text-center text-sm text-muted-foreground">
-                {candidates.length ? '没有匹配的产品' : '产品库里没有同类型的其他在售产品'}
-              </p>
+              <EmptyState
+                compact
+                title={candidates.length ? '没有匹配的产品' : '没有同类型的其他在售产品'}
+                description="换个关键词试试，或先在产品库里补充同类产品"
+              />
             ) : null}
           </div>
         </ScrollArea>

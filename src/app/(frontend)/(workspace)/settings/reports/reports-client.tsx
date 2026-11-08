@@ -741,9 +741,11 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             </CardHeader>
             <CardContent>
               {report.errorLogs.length === 0 ? (
-                <div className="rounded-xl border border-dashed py-10 text-center text-xs text-muted-foreground">
-                  当前系统运行良好，没有捕获到 AI 对话或工具异常记录
-                </div>
+                <EmptyState
+                  compact
+                  title="当前系统运行良好"
+                  description="没有捕获到 AI 对话或工具异常记录"
+                />
               ) : (
                 <div className="space-y-2.5">
                   {report.errorLogs.map((err) => (

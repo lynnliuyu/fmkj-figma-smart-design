@@ -45,9 +45,11 @@ export default async function ProjectContractPage({ params }: { params: Promise<
           <h2 className="text-xl font-semibold tracking-tight">合同</h2>
         </header>
         {readOnly ? (
-          <p className="rounded-xl border border-dashed px-6 py-10 text-center text-sm text-muted-foreground">
-            {archived ? '项目已归档，没有合同记录。' : '该项目尚未生成合同（当前为仅查看权限）。'}
-          </p>
+          <EmptyState
+            compact
+            title={archived ? '项目已归档，没有合同记录' : '该项目尚未生成合同'}
+            description={archived ? undefined : '当前为仅查看权限，需要编辑权限才能生成'}
+          />
         ) : defaultQuote ? (
           <CreateContractPanel projectId={pid} quotes={options} defaultQuoteId={defaultQuote.id} />
         ) : (
