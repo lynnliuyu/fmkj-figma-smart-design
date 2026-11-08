@@ -2,6 +2,22 @@
 @import 'tw-animate-css';
 @import './shadcn.css';
 
+/* Astryx 设计系统（试点）：组件样式与主题。二者都用 @layer 包裹，
+   不会覆盖本仓既有的 Tailwind 工具类与品牌 token。
+   刻意不引入 @astryxdesign/core/reset.css（避免全局 reset）与
+   tailwind-theme.css（它会把 --color-primary 重定向到 Astryx token，影响品牌色）。 */
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+/* Astryx 的 neutral 主题用 Figtree（其 fonts.css 会拉 Google Fonts 外链，本仓不走第三方 CDN）。
+   这里把 Astryx 的字体 token 指到本仓自托管字体，保证中文也有正确回退。 */
+@layer astryx-theme {
+  :root {
+    --font-family-body: var(--font-sans);
+    --font-family-heading: var(--font-sans);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* 文档模板按字体名引用的字体（来自 Figma 设计稿）。全部不走第三方 CDN：
