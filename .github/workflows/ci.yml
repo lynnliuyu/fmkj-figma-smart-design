@@ -46,6 +46,9 @@ jobs:
       - name: 领域知识库与规则回归测试
         run: pnpm run knowledge:check
 
+      - name: 单元测试
+        run: pnpm test
+
       # 生产构建门禁：复刻 Dockerfile builder（generate:importmap + payload build）。
       - name: 生产构建
         run: |
