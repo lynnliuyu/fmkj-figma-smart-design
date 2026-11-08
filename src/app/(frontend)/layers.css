@@ -1,0 +1,14 @@
+/*
+ * CSS 级联层序声明（必须在所有其它 CSS 之前加载）。
+ *
+ * 为什么单独放一个文件、并在根布局里第一个 import：
+ * Astryx 的组件样式与主题样式分别落在 astryx-base / astryx-theme 层，
+ * 而 Tailwind 的 preflight 落在 base 层。若 preflight 的层排在 astryx 之后，
+ * preflight 的 `button { background: transparent; border-radius: 0 }`
+ * 与 `* { padding: 0 }` 会把 Astryx 按钮整层压死（表现为「没有样式」）。
+ *
+ * 官方要求（styling-libraries/tailwind）：层序声明要能被第一个加载的样式表读到。
+ * 本仓的 styles.css 无法排在 astryx-themes 之前（layout 里它先被引用），
+ * 因此按官方给的兜底方案：把 @layer 单独成文件、在 layout 最先 import。
+ */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;

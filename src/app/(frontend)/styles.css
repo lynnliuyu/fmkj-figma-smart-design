@@ -1,12 +1,21 @@
-@import 'tailwindcss';
+/* 层序声明见 ./layers.css（在根布局里最先 import，必须早于本文件）。 */
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
 @import 'tw-animate-css';
 @import './shadcn.css';
 
-/* Astryx 设计系统（试点）：组件样式与主题。二者都用 @layer 包裹，
-   不会覆盖本仓既有的 Tailwind 工具类与品牌 token。
-   刻意不引入 @astryxdesign/core/reset.css（避免全局 reset）与
-   tailwind-theme.css（它会把 --color-primary 重定向到 Astryx token，影响品牌色）。 */
+/* Astryx 设计系统（试点）：组件样式与主题。
+   刻意不引入 core/reset.css（避免它重置既有页面）与 core/tailwind-theme.css
+   （后者会把 --color-primary 重定向到 Astryx token，改掉品牌色）。
+
+   两个主题样式表（neutral / stone）都从这里导入，不再由 astryx-themes.ts 导入：
+   那个模块会被 layout.tsx 在 styles.css 之前引用，导致主题样式被排到本文件前面，
+   连带把 astryx.css 自带的层序声明 `@layer reset, astryx-base, astryx-theme;` 也提前，
+   从而让上面那条层序语句失效（见 astryx-themes.ts 的说明）。 */
 @import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
 @import '@astryxdesign/theme-stone/theme.css';
 
 /* Astryx 的 neutral 主题用 Figtree（其 fonts.css 会拉 Google Fonts 外链，本仓不走第三方 CDN）。

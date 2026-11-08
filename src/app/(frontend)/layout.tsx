@@ -1,3 +1,7 @@
+// 必须最先 import：声明 CSS 级联层序，早于任何引用 Astryx / 主题 CSS 的模块。
+// 详见该文件内注释与 Astryx 官方 styling-libraries/tailwind 文档。
+import './layers.css'
+
 import React from 'react'
 import type { Metadata } from 'next'
 import Script from 'next/script'
