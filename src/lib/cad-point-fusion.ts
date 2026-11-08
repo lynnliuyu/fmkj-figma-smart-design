@@ -82,6 +82,10 @@ export function normalizeVerdictKind(raw: unknown): VisionVerdictKind | null {
   if (typeof raw !== 'string') return null
   const s = raw.trim().toLowerCase()
   if (VERDICT_KINDS.has(s as VisionVerdictKind)) return s as VisionVerdictKind
+  // 否定式必须先判：否则「不是插座 / 非灯 / 无灯」会先命中 socket/light 名词而被读成肯定
+  // 否定式先判，但要避免误伤：英文否定词必须是**独立词**（前后是空白/标点或串首尾），
+  // 否则 no.1 / no.2（图纸编号）与 socket-no（后缀）会被当成否定。
+  if (/(?:^|[\s,，、。;；:：])(?:none|no|not)(?=$|[\s,，、。;；:：])|不\s*是|没有|不含|无|非/.test(s)) return 'none'
   if (/^switch[-_]?1|单开|单键|一开/.test(s)) return 'switch-1'
   if (/^switch[-_]?2|双开|双键|二开|两开/.test(s)) return 'switch-2'
   if (/^switch[-_]?3|三开|三键/.test(s)) return 'switch-3'
@@ -91,7 +95,6 @@ export function normalizeVerdictKind(raw: unknown): VisionVerdictKind | null {
   if (/socket|outlet|插座/.test(s)) return 'socket'
   if (/sensor|传感/.test(s)) return 'sensor'
   if (/curtain|窗帘/.test(s)) return 'curtain'
-  if (/none|not|无|非/.test(s)) return 'none'
   return 'other-device'
 }
 

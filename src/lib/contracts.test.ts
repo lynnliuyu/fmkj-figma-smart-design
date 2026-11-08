@@ -101,10 +101,14 @@ describe('rmbUpper 金额大写', () => {
     expect(rmbUpper(Infinity)).toBe('')
   })
 
-  it('超过「亿」位的金额会丢失单位（已知上限：unit 只到 亿）', () => {
-    // 真实行为——万亿级金额拿到的是残缺大写，断言它是为了记录这个上限
-    expect(rmbUpper(1e12)).toBe('元整')
+  it('万亿级金额不再丢单位', () => {
+    expect(rmbUpper(1e12)).toBe('壹万亿元整')
     expect(rmbUpper(999999999999)).toBe('玖仟玖佰玖拾玖亿玖仟玖佰玖拾玖万玖仟玖佰玖拾玖元整')
+  })
+
+  it('超出可表示范围时返回空串，而不是静默丢弃高位', () => {
+    // 1e16 已超过「亿亿」量级，宁可不显示也不能给出错误大写
+    expect(rmbUpper(1e16)).toBe('')
   })
 })
 

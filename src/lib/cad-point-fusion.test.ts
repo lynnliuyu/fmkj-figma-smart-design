@@ -90,15 +90,27 @@ describe('normalizeVerdictKind', () => {
     expect(normalizeVerdictKind('switch-12')).toBe('switch-1')
   })
 
-  it('否定式表述会先命中它提到的名词（已知缺口：否定词不生效）', () => {
-    // 真实行为——`/socket|outlet|插座/` 在 `/none|not|无|非/` 之前，
-    // 所以「不是插座 / 非灯 / 没有插座」都被读成了肯定的设备名。
-    expect(normalizeVerdictKind('不是插座')).toBe('socket')
-    expect(normalizeVerdictKind('非灯')).toBe('light')
-    expect(normalizeVerdictKind('无灯')).toBe('light')
-    // 只有完全不含设备名词的否定词才落到 none
+  it('否定式表述一律读成 none（否定词优先于设备名词）', () => {
+    expect(normalizeVerdictKind('不是插座')).toBe('none')
+    expect(normalizeVerdictKind('非灯')).toBe('none')
+    expect(normalizeVerdictKind('无灯')).toBe('none')
+    expect(normalizeVerdictKind('没有插座')).toBe('none')
     expect(normalizeVerdictKind('非设备')).toBe('none')
     expect(normalizeVerdictKind('not a device')).toBe('none')
     expect(normalizeVerdictKind('none')).toBe('none')
+    expect(normalizeVerdictKind('不 是插座')).toBe('none')
+  })
+
+  it('否定词不能误伤设备名词与编号', () => {
+    // 英文否定词必须是独立词：单词内部（node/notice/non-smart）不算否定
+    expect(normalizeVerdictKind('node')).toBe('other-device')
+    expect(normalizeVerdictKind('notice')).toBe('other-device')
+    expect(normalizeVerdictKind('socket-node')).toBe('socket')
+    // 图纸编号 NO.1 / no.2 不是否定
+    expect(normalizeVerdictKind('no.2 插座')).toBe('socket')
+    expect(normalizeVerdictKind('NO.1 socket')).toBe('socket')
+    // 后缀形式（socket-no / socket_no）不是否定
+    expect(normalizeVerdictKind('socket-no')).toBe('socket')
+    expect(normalizeVerdictKind('socket_no')).toBe('socket')
   })
 })

@@ -47,9 +47,8 @@ describe('quoteTotals', () => {
     expect(quoteTotals([{ price: 100, quantity: 1 }], [], undefined).total).toBe(100)
   })
 
-  it('负数优惠会变成加价（接口层靠 discount 字段 min:0 兜底，函数本身不校验）', () => {
-    // Quotes 集合的 discount 字段声明了 { min: 0 }，这里只记录纯函数的真实行为
-    expect(quoteTotals([{ price: 100, quantity: 1 }], [], -50).total).toBe(150)
+  it('负数优惠按无优惠处理，不会变相加价', () => {
+    expect(quoteTotals([{ price: 100, quantity: 1 }], [], -50).total).toBe(100)
   })
 })
 
@@ -69,9 +68,10 @@ describe('yuan', () => {
     expect(yuan(-5)).toBe('¥-5.00')
   })
 
-  it('NaN 会原样带进输出（已知缺口：函数没有非有限数保护）', () => {
-    // 真实行为——断言它，是为了让「以后加上 NaN 保护」时这条测试会红
-    expect(yuan(NaN)).toBe('¥NaN')
+  it('NaN / Infinity 落 0，不输出脏金额', () => {
+    expect(yuan(NaN)).toBe('¥0.00')
+    expect(yuan(Infinity)).toBe('¥0.00')
+    expect(yuan(-Infinity)).toBe('¥0.00')
   })
 })
 

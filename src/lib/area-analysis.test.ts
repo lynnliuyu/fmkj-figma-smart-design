@@ -46,9 +46,11 @@ describe('floorTagFromSheetName', () => {
     expect(floorTagFromSheetName('负一层')).toBe('负一层')
   })
 
-  it('字母楼层号统一大写', () => {
-    expect(floorTagFromSheetName('b2f')).toBe('2F')
-    expect(floorTagFromSheetName('B1F')).toBe('1F')
+  it('字母楼层号统一大写，且保留地下室 B 前缀', () => {
+    expect(floorTagFromSheetName('b2f')).toBe('B2F')
+    expect(floorTagFromSheetName('B1F')).toBe('B1F')
+    // 关键：地下室与地上层必须不同，否则不同楼层的同名房间会被合并
+    expect(floorTagFromSheetName('B1F')).not.toBe(floorTagFromSheetName('1F'))
   })
 
   it('没有楼层标记时返回去空白的原名；空值返回空串', () => {
@@ -64,18 +66,16 @@ describe('floorTagFromSheetName', () => {
     expect(floorTagFromSheetName('一层、二层平面图')).toBe('一层')
   })
 
-  it('已知缺口：地下室编号丢失 B 前缀，B1F 与 1F 得到同一个标签', () => {
-    // `/…|[B1-9]F/` 只捕获 [B1-9] 而丢掉 F/B，于是地下层与地上层无法区分。
-    // 断言真实行为，等修复时这条会红。
-    expect(floorTagFromSheetName('B1F')).toBe(floorTagFromSheetName('1F'))
-    expect(floorTagFromSheetName('B2F')).toBe(floorTagFromSheetName('2F'))
+  it('地下室编号保留 B 前缀，B1F 与 1F 是不同楼层', () => {
+    expect(floorTagFromSheetName('B1F')).toBe('B1F')
+    expect(floorTagFromSheetName('B2F')).toBe('B2F')
+    expect(floorTagFromSheetName('B1F')).not.toBe(floorTagFromSheetName('1F'))
+    expect(floorTagFromSheetName('1F')).toBe('1F')
   })
 
-  it('已知缺口：中文数字地下室与阿拉伯数字写法不一致', () => {
-    // `地下[一二三123]层` 捕获整段，而 `地下一层` 与 `地下1层` 因此拿到不同标签
+  it('中文数字与阿拉伯数字的地下室写法都能识别；两位以上编号也不再回落原名', () => {
     expect(floorTagFromSheetName('地下一层')).toBe('地下一层')
     expect(floorTagFromSheetName('地下1层')).toBe('地下1层')
-    // 同上：[B1-9]F 分支对 2 位以上编号不生效，直接回落到原名
     expect(floorTagFromSheetName('B10F')).toBe('B10F')
   })
 })
@@ -110,14 +110,14 @@ describe('groupRooms', () => {
     expect(groups.map((g) => g.map((x) => x.id))).toEqual([['a', 'b']])
   })
 
-  it('已知缺口：楼层标签碰撞会把不同楼层合并 —— B1F 与 1F 的楼梯被当成同一间', () => {
+  it('不同楼层的同名房间保持独立 —— B1F 与 1F 的楼梯不会合并', () => {
     const floorById = new Map([
       ['sB1', floorTagFromSheetName('B1F')],
       ['sF1', floorTagFromSheetName('1F')],
     ])
     const groups = groupRooms([area('b1', '楼梯', 'stairs', 'sB1'), area('f1', '楼梯', 'stairs', 'sF1')], floorById)
-    // 两个楼层拿到同一个标签「1F」，于是被错误合并
-    expect(groups.map((g) => g.map((x) => x.id))).toEqual([['b1', 'f1']])
+    // 地下室与一层标签不同，必须分成两组（曾被错误合并为 [['b1','f1']]）
+    expect(groups.map((g) => g.map((x) => x.id))).toEqual([['b1'], ['f1']])
   })
 })
 

@@ -47,7 +47,7 @@ export function paymentAmounts(amount: number, payments: { percent?: number | nu
 export function rmbUpper(amount: number): string {
   if (!Number.isFinite(amount) || amount < 0) return ''
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
-  const unit = [['元', '万', '亿'], ['', '拾', '佰', '仟']]
+  const unit = [['元', '万', '亿', '万亿'], ['', '拾', '佰', '仟']]
   const cents = Math.round(amount * 100)
   const jiao = Math.floor(cents / 10) % 10
   const fen = cents % 10
@@ -61,6 +61,7 @@ export function rmbUpper(amount: number): string {
     }
     int = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + int
   }
+  if (n > 0) return '' // 超出可表示范围，宁可不显示也不静默丢弃高位
   int = int.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零')
   const frac = (jiao ? `${digit[jiao]}角` : '') + (fen ? `${int && !jiao ? '零' : ''}${digit[fen]}分` : '')
   if (!int && !frac) return '零元整'

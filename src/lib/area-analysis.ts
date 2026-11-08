@@ -173,10 +173,13 @@ export type AreaAnalysis = {
 /** 区域名称统一（去空格），同名区域视为同一个房间 */
 export const roomKey = (name: string) => name.replace(/\s+/g, '')
 
-/** 从图纸名称提取简短楼层标识（用于区分不同楼层的同名房间，如一层的楼梯与二层的楼梯） */
+/**
+ * 从图纸名称提取简短楼层标识（用于区分不同楼层的同名房间，如一层的楼梯与二层的楼梯）。
+ * 注意：地下室必须保留 B 前缀（B1F ≠ 1F），否则不同楼层的同名房间会被错误合并。
+ */
 export function floorTagFromSheetName(name: string | null | undefined): string {
   if (!name) return ''
-  const m = /(地下[一二三123]层|负[一二三123]层|[一二三四五六七八九十1-9]+层|[B1-9]F)/i.exec(name)
+  const m = /(地下[一二三四五六七八九十\d]+层|负[一二三四五六七八九十\d]+层|[一二三四五六七八九十\d]+层|B\d+F|\d+F)/i.exec(name)
   return m ? m[1].toUpperCase() : name.trim()
 }
 

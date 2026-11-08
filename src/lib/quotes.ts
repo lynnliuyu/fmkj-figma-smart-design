@@ -21,9 +21,13 @@ const round2 = (n: number) => Math.round(n * 100) / 100
 export function quoteTotals(items: QuoteLine[] = [], fees: QuoteFee[] = [], discount = 0) {
   const productTotal = round2(items.reduce((s, i) => s + (i.price ?? 0) * (i.quantity ?? 0), 0))
   const feeTotal = round2(fees.reduce((s, f) => s + (f.amount ?? 0), 0))
-  const total = round2(Math.max(0, productTotal + feeTotal - (discount || 0)))
+  const discountAmount = Math.max(0, discount || 0) // 负数优惠视为无优惠，不允许变相加价
+  const total = round2(Math.max(0, productTotal + feeTotal - discountAmount))
   return { productTotal, feeTotal, total }
 }
 
-export const yuan = (n: number | null | undefined) =>
-  `¥${(n ?? 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+export const yuan = (n: number | null | undefined) => {
+  // NaN / Infinity 落 0，避免出现「¥NaN」这种脏输出
+  const v = Number.isFinite(n) ? (n as number) : 0
+  return `¥${v.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
