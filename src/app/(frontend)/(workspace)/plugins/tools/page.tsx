@@ -9,7 +9,7 @@ import { PLUGIN_TOOLS } from '@/lib/plugin-tools'
 import { getPluginFlags } from '@/plugins/state'
 import { redirectToLogin } from '@/lib/login-redirect'
 
-export const metadata = { title: pageTitle('插件功能') }
+export const metadata = { title: pageTitle('工具') }
 
 const ICONS = {
   'ai-chat': Sparkles,
@@ -28,9 +28,9 @@ export default async function PluginToolsPage() {
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-5">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/plugins"><ArrowLeft className="size-4" />返回插件市场</Link>
+        <Link href="/plugins"><ArrowLeft className="size-4" />返回能力中心</Link>
       </Button>
-      <PageHeader title="插件功能" description="已启用插件里可以独立打开的功能页面；需要项目上下文的入口仍从项目内进入。" />
+      <PageHeader title="工具" description="可以独立打开的功能页面，点开即用、按 AI 积分计费；需要项目上下文的入口仍从项目内进入。" />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => {
           const Icon = ICONS[tool.id as keyof typeof ICONS] ?? Blocks
@@ -46,7 +46,7 @@ export default async function PluginToolsPage() {
           )
         })}
       </div>
-      {tools.length === 0 ? <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">还没有已启用的插件功能，先去插件市场开启。</p> : null}
+      {tools.length === 0 ? <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">还没有可用的工具，稍后会自动出现在这里。</p> : null}
     </section>
   )
 }

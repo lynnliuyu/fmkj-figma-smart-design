@@ -2,7 +2,7 @@ import { Bot, FileUp, Palette, Presentation, ScanSearch, Sparkles, Wand2, Wrench
 
 import type { PluginId } from '@/plugins/types'
 
-/** 插件图标（插件市场、项目工具箱共用） */
+/** 插件图标（能力中心、项目工具箱共用） */
 export const PLUGIN_ICONS: Record<PluginId, LucideIcon> = {
   'ai-copilot': Bot,
   'doc-styles': Palette,

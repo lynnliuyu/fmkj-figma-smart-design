@@ -3,8 +3,8 @@ import { PLUGIN_AI_SPECS } from './ai-catalog'
 import { PLUGIN_DOC_STYLES } from './doc-styles/styles'
 import type { AppPlugin, PluginId } from './types'
 
-export type { AppPlugin, PluginId, PluginStage } from './types'
-export { PLUGIN_STAGES } from './types'
+export type { AppPlugin, PluginCategory, PluginId, PluginStage } from './types'
+export { PLUGIN_CATEGORIES, PLUGIN_STAGES } from './types'
 export { PLUGIN_AI_SPECS, allAiSkillSpecs, allAiToolSpecs, validatePluginAiPermissions } from './ai-catalog'
 export { AI_PERMISSIONS, type AiKnowledgeEntry, type AiPermission, type AiSkillSpec, type AiToolSpec, type PluginAiSpec } from './ai-types'
 
@@ -15,6 +15,7 @@ export { AI_PERMISSIONS, type AiKnowledgeEntry, type AiPermission, type AiSkillS
 const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'ai-copilot',
+    category: 'ai', // AI 能力：会话里做户型识别、风格化与智能布点
     stage: 'global',
     entry: { label: '打开 AI 对话', href: () => '/ai' },
     tagline: '在任何页面直接问 AI，让它帮你识图、选型、写说明',
@@ -26,6 +27,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'doc-styles',
+    category: 'template', // 模板：打印与文档风格
     stage: 'quote',
     entry: { label: '报价单换风格', href: (id) => `/projects/${id}/quotes` },
     tagline: '报价单、合同换上更多高级排版风格',
@@ -38,6 +40,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'proposal',
+    category: 'template', // 模板：业主方案与施工交底
     stage: 'quote',
     entry: { label: '生成方案', href: (id) => `/print/projects/${id}/proposal` },
     tagline: '点位和预算一键变成给业主看的横版方案',
@@ -49,6 +52,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'room-insights',
+    category: 'tool', // 工具：房间配置完整度分析
     stage: 'design',
     entry: { label: '查看房间分析', href: (id) => `/projects/${id}/point-map` },
     tagline: '逐个房间检查漏配，顺手推荐联动场景',
@@ -60,6 +64,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'smart-select',
+    category: 'tool', // 工具：按平台与预算档位一键选型
     stage: 'design',
     entry: { label: '一键选型', href: (id) => `/projects/${id}/point-map` },
     tagline: '按平台和预算档位，一键给全屋选好型号',
@@ -71,6 +76,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'ai-import',
+    category: 'ai', // AI 能力：识图生成点位
     stage: 'design',
     entry: { label: 'AI 识别图纸', href: (id) => `/projects/${id}/point-map` },
     tagline: '让 AI 读图纸，自动生成点位',
@@ -82,6 +88,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'dwg-import',
+    category: 'tool', // 工具：CAD 图纸转户型底图
     stage: 'design',
     entry: { label: '导入 DWG', href: (id) => `/projects/${id}/point-map` },
     tagline: 'CAD 图纸直接导入成户型底图',
@@ -94,6 +101,7 @@ const RAW_PLUGINS: AppPlugin[] = [
   },
   {
     id: 'after-sales',
+    category: 'tool', // 工具：质保与维保记录
     stage: 'after',
     entry: { label: '售后维保', href: (id) => `/projects/${id}/after-sales` },
     tagline: '质保、检修与配置备份都有记录',

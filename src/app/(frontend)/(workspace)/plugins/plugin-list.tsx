@@ -1,15 +1,9 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Blocks, ChevronRight } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import type { PluginId } from '@/plugins/types'
 
@@ -21,50 +15,20 @@ export type PluginViewItem = {
   tagline: string
   description: string
   status: 'ready' | 'coming-soon'
-  stage: string
-  /** 在项目里的入口说明（待开发插件为 null） */
+  /** 在项目里的入口说明（待开发功能为 null） */
   entry: string | null
   provides: string[]
-  enabled: boolean
 }
 
-type StageGroup = { key: string; label: string; hint: string; step: number | null }
+/** 能力中心的一段（AI 能力 / 模板 / 工具） */
+export type PluginViewSection = { key: string; label: string; hint: string; items: PluginViewItem[] }
 
-
-export function PluginList({ items, selectedId }: { items: PluginViewItem[]; selectedId: string | null }) {
-  const router = useRouter()
-  const [busyId, setBusyId] = useState<string | null>(null)
-  const [optimistic, setOptimistic] = useState<Record<string, boolean>>({})
-
-  async function toggle(item: PluginViewItem, next: boolean) {
-    if (item.status !== 'ready' || busyId) return
-    setBusyId(item.id)
-    setOptimistic((prev) => ({ ...prev, [item.id]: next }))
-    try {
-      const res = await fetch('/plugins/toggle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: item.id, enabled: next }),
-      })
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string }
-      if (!res.ok || !data.ok) {
-        setOptimistic((prev) => ({ ...prev, [item.id]: item.enabled }))
-        toast.error(data.error ?? '操作失败，请稍后重试')
-        return
-      }
-      toast.success(next ? `已开启「${item.name}」` : `已关闭「${item.name}」`)
-      router.refresh()
-    } catch {
-      setOptimistic((prev) => ({ ...prev, [item.id]: item.enabled }))
-      toast.error('网络错误，请稍后重试')
-    } finally {
-      setBusyId(null)
-    }
-  }
-
-
+/**
+ * 能力中心列表：按分类分段展示，卡片只展示信息并点进详情页。
+ * 普通用户不安装、不启停，因此这里没有任何开关。
+ */
+export function PluginList({ sections, selectedId }: { sections: PluginViewSection[]; selectedId: string | null }) {
   const renderCard = (p: PluginViewItem) => {
-    const enabled = optimistic[p.id] ?? p.enabled
     const pending = p.status === 'coming-soon'
     const selected = selectedId === p.id
     const Icon = PLUGIN_ICONS[p.id as PluginId] ?? Blocks
@@ -85,9 +49,7 @@ export function PluginList({ items, selectedId }: { items: PluginViewItem[]; sel
                 'flex size-9 shrink-0 items-center justify-center rounded-xl border',
                 pending
                   ? 'bg-muted text-muted-foreground'
-                  : enabled
-                    ? 'border-primary/20 bg-primary/10 text-primary'
-                    : 'bg-muted/60 text-muted-foreground',
+                  : 'border-primary/20 bg-primary/10 text-primary',
               )}
             >
               <Icon className="size-4.5" />
@@ -101,19 +63,11 @@ export function PluginList({ items, selectedId }: { items: PluginViewItem[]; sel
               </Link>
             </CardTitle>
           </div>
-          <div className="flex shrink-0 items-center gap-2 pt-0.5">
-            {pending ? (
-              <Badge variant="outline" className="text-xs text-muted-foreground">规划中</Badge>
-            ) : (
-              <Switch
-                id={`plugin-${p.id}`}
-                checked={enabled}
-                disabled={busyId === p.id}
-                onCheckedChange={(next) => void toggle(p, next)}
-                aria-label={`切换${p.name}`}
-              />
-            )}
-          </div>
+          {pending ? (
+            <Badge variant="outline" className="shrink-0 text-xs text-muted-foreground">
+              规划中
+            </Badge>
+          ) : null}
         </CardHeader>
 
         <CardContent className="flex-1 py-0">
@@ -133,5 +87,17 @@ export function PluginList({ items, selectedId }: { items: PluginViewItem[]; sel
     )
   }
 
-  return <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{items.map(renderCard)}</div>
+  return (
+    <div className="flex flex-col gap-7">
+      {sections.map((section) => (
+        <section key={section.key} className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h2 className="text-sm font-medium text-foreground">{section.label}</h2>
+            {section.hint ? <p className="text-xs text-muted-foreground">{section.hint}</p> : null}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{section.items.map(renderCard)}</div>
+        </section>
+      ))}
+    </div>
+  )
 }

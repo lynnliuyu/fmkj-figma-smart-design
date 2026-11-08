@@ -16,17 +16,14 @@ import { PLUGIN_DOC_STYLES } from '@/plugins/doc-styles/styles'
 import { PLUGIN_STAGES } from '@/plugins'
 import { buildTemplateGallery, getTemplatePreviewDocs } from '@/plugins/proposal/preview'
 import { loadProposalTemplates } from '@/plugins/proposal/registry'
-import { getPluginFlags } from '@/plugins/state'
-
 import { TemplateCard } from '@/components/proposal-template-card'
-import { PluginDetailToggle } from './plugin-detail-toggle'
 import { projectDisplayName } from '@/lib/project-name'
 import { redirectToLogin } from '@/lib/login-redirect'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const plugin = PLUGINS.find((p) => p.id === id)
-  return { title: pageTitle(plugin ? `${plugin.name} · 插件市场` : '插件详情') }
+  return { title: pageTitle(plugin ? `${plugin.name} · 能力中心` : '能力详情') }
 }
 
 export default async function PluginDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,8 +36,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
   if (!plugin) notFound()
 
   const payload = await getPayloadClient()
-  const [flags, company, templates, projectsRes, previewDocs] = await Promise.all([
-    getPluginFlags(user.id),
+  const [company, templates, projectsRes, previewDocs] = await Promise.all([
     getCompanyInfo(user.id),
     plugin.id === 'proposal' ? loadProposalTemplates(user) : Promise.resolve([]),
     payload.find({
@@ -56,7 +52,6 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
     plugin.id === 'proposal' ? getTemplatePreviewDocs().catch(() => null) : Promise.resolve(null),
   ])
 
-  const enabled = flags[plugin.id]
   const pending = plugin.status === 'coming-soon'
   const stage = PLUGIN_STAGES.find((s) => s.key === plugin.stage)!
   const activeAiModels = enabledAiModels(company.aiModels)
@@ -75,7 +70,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
           <Link href="/plugins">
             <ArrowLeft className="size-4" />
-            返回插件市场
+            返回能力中心
           </Link>
         </Button>
         <Button asChild variant="outline" size="sm">
@@ -89,14 +84,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
       <PageHeader
         title={plugin.name}
         description={plugin.description}
-        actions={
-          <PluginDetailToggle
-            id={plugin.id}
-            name={plugin.name}
-            status={plugin.status}
-            initialEnabled={enabled}
-          />
-        }
+        actions={pending ? <Badge variant="outline" className="text-muted-foreground">规划中</Badge> : null}
       />
 
       <div className="-mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -281,7 +269,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           </div>
           <div className="flex items-center gap-2 pt-1">
             <Button asChild variant="outline" size="sm">
-              <Link href="/plugins">返回插件市场</Link>
+              <Link href="/plugins">返回能力中心</Link>
             </Button>
             <Button asChild size="sm">
               <Link href={`/ai?plugin=${plugin.id}`}>去 AI 对话推演需求</Link>
@@ -293,9 +281,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           <CardHeader>
             <CardTitle>在项目中使用</CardTitle>
             <CardDescription>
-              {enabled
-                ? `选择下方项目，直接进入插件在该项目里的入口（${plugin.entry?.label ?? stage.hint}）`
-                : '当前插件已关闭；开启后即可在项目点位图、方案和打印页中使用'}
+              {`选择下方项目，直接进入该能力在项目里的入口（${plugin.entry?.label ?? stage.hint}）`}
             </CardDescription>
           </CardHeader>
           <CardContent className="divide-y">
@@ -317,7 +303,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                         {proj.platform || '平台待定'} · {proj.points} 个点位
                       </p>
                     </div>
-                    <Button asChild variant="outline" size="xs" disabled={!enabled}>
+                    <Button asChild variant="outline" size="xs">
                       <Link href={targetHref}>
                         {targetLabel}
                         <ExternalLink className="size-3" />

@@ -27,11 +27,11 @@ export default async function ProjectAfterSalesPage({ params }: { params: Promis
         <div className="space-y-1.5">
           <h2 className="text-lg font-semibold">售后维保记录</h2>
           <p className="max-w-md text-sm text-muted-foreground">
-            这个插件目前处于关闭状态。启用后可以按合同质保期追踪检修、设备更换与配置备份。
+            这项能力目前不可用。可用时可以按合同质保期追踪检修、设备更换与配置备份。
           </p>
         </div>
         <Button asChild size="sm">
-          <Link href="/plugins/after-sales">去插件市场启用</Link>
+          <Link href="/plugins/after-sales">去能力中心查看</Link>
         </Button>
       </section>
     )

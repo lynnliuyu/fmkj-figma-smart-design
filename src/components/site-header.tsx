@@ -16,7 +16,7 @@ const TITLES: [RegExp, string][] = [
   [/^\/projects/, '项目'],
   [/^\/quotes/, '报价'],
   [/^\/products/, '产品库'],
-  [/^\/plugins/, '插件市场'],
+  [/^\/plugins/, '能力中心'],
   [/^\/ai/, 'AI 对话'],
   [/^\/membership/, '会员与积分'],
   [/^\/settings/, '设置'],

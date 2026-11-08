@@ -216,8 +216,8 @@ const DOC_GROUPS: NavGroup[] = [
     items: [
       {
         id: 'plugins',
-        title: '插件市场全览（12 款插件）',
-        keywords: '插件市场 房间分析 智能选型 AI识图 DWG 勘测 布线 采购 移交 售后',
+        title: '能力中心全览（12 项能力）',
+        keywords: '能力中心 房间分析 智能选型 AI识图 DWG 勘测 布线 采购 移交 售后',
         headings: [{ id: 'pl-list', label: '全平台插件功能与挂载位置' }],
       },
       {
@@ -554,7 +554,7 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                     → 会员兑换与积分明细
                   </Link>
                   <Link href="/plugins" className="hover:text-foreground">
-                    → 插件市场开关
+                    → 能力中心
                   </Link>
                   <Link href="/catalog" className="hover:text-foreground">
                     → 728 款产品与图例库
@@ -681,7 +681,7 @@ function SectionOverview({
             <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               <strong className="text-foreground">核心极简 + 外围插件化：</strong>
-              主导航只保留最核心的「信息 → 点位 → 报价 → 合同 → 归档」五步，DWG 转换、强弱电布线表、采购核验单等进阶工具全部收纳在独立的「插件市场」（共 {manual.plugins.length} 款）中按需开启。
+              主导航只保留最核心的「信息 → 点位 → 报价 → 合同 → 归档」五步，DWG 转换、强弱电布线表、采购核验单等进阶工具全部收录在「能力中心」（共 {manual.plugins.length} 项）里，点开即用。
             </span>
           </li>
           <li className="flex items-start gap-2">
@@ -1241,9 +1241,9 @@ function SectionPlugins({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">插件市场全览（共 {manual.plugins.length} 款）</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">能力中心全览（共 {manual.plugins.length} 项）</h1>
         <p className="text-sm text-muted-foreground">
-          外围功能均以独立插件提供，可在工作台左侧「插件市场」（<code className="font-mono">/plugins</code>）中自由开启或关闭。
+          外围能力统一收录在「能力中心」（<code className="font-mono">/plugins</code>），点开即用、按 AI 积分计费，不需要安装或启停。
         </p>
       </div>
 

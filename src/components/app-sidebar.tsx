@@ -5,20 +5,20 @@ import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import {
   Activity,
-  Blocks,
   BookOpen,
   Bot,
   Crown,
   FolderKanban,
   Image as ImageIcon,
   LayoutGrid,
+  LayoutTemplate,
   LogOut,
   MessageSquareText,
   PackageSearch,
   Palette,
   Plus,
   Settings,
-  WandSparkles,
+  Wrench,
 } from "lucide-react"
 
 import type { AiModelOption, AiProjectContext } from "@/components/ai/ai-elements"
@@ -79,8 +79,33 @@ const workNav = [
 const settingsNav = [
   { icon: Settings, label: "公司与报价设置", url: "/settings" },
   { icon: Activity, label: "客户使用报告", url: "/settings/reports" },
-  { icon: Blocks, label: "插件市场", url: "/plugins" },
   { icon: BookOpen, label: "使用文档", url: "/docs" },
+] as const
+
+/**
+ * 能力中心的三类入口（PROJECT-ARCHITECTURE §7.1）：AI 能力 / 模板 / 工具。
+ * 普通用户不安装、不启停：点条目直接进对应页面按积分使用。
+ */
+const capabilityNav = [
+  {
+    key: "ai",
+    label: "AI 能力",
+    items: [
+      { icon: Bot, label: "AI 对话", url: "/ai" },
+      { icon: ImageIcon, label: "AI 生图", url: "/ai/image" },
+      { icon: Palette, label: "户型图风格化", url: "/ai/image/style" },
+    ],
+  },
+  {
+    key: "template",
+    label: "模板",
+    items: [{ icon: LayoutTemplate, label: "方案模板", url: "/templates" }],
+  },
+  {
+    key: "tool",
+    label: "工具",
+    items: [{ icon: Wrench, label: "全部工具", url: "/plugins/tools" }],
+  },
 ] as const
 
 const initials = (name: string) => name.trim().slice(0, 1).toUpperCase() || "我"
@@ -240,22 +265,37 @@ export function AppSidebar({
                 {workNav.map((item) => (
                   <NavItem key={item.url} {...item} active={isActive(item.url) && pathname !== "/projects/new"} />
                 ))}
-                {aiCopilotEnabled ? <NavItem icon={Bot} label="AI 对话" url="/ai" active={isActive("/ai")} /> : null}
               </SidebarMenu>
             </SidebarGroup>
 
+            {/* 能力中心：AI 能力 / 模板 / 工具；三类都点开即用，没有启停开关。
+                分组标题本身就是入口，指向能力中心总览页（/plugins）。 */}
             <SidebarGroup>
-              <SidebarGroupLabel>插件</SidebarGroupLabel>
-              <SidebarMenu>
-                <NavItem icon={Blocks} label="插件市场" url="/plugins" active={isActive("/plugins")} />
-                {aiCopilotEnabled ? (
-                  <>
-                    <NavItem icon={WandSparkles} label="插件功能" url="/plugins/tools" active={isActive("/plugins/tools")} />
-                    <NavItem icon={ImageIcon} label="AI 生图" url="/ai/image" active={isActive("/ai/image")} />
-                    <NavItem icon={Palette} label="户型图风格化" url="/ai/image/style" active={isActive("/ai/image/style")} />
-                  </>
-                ) : null}
-              </SidebarMenu>
+              <SidebarGroupLabel
+                asChild
+                className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:pointer-events-none"
+              >
+                <GuardedLink href="/plugins" aria-current={isActive("/plugins") ? "page" : undefined}>
+                  <span>能力中心</span>
+                  <LinkPending className="ml-auto size-3.5" />
+                </GuardedLink>
+              </SidebarGroupLabel>
+              <div className="flex flex-col gap-1">
+                {capabilityNav.map((group) => (
+                  <div key={group.key}>
+                    <div className="px-3 pt-2 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground/75 group-data-[collapsible=icon]:hidden">
+                      {group.label}
+                    </div>
+                    <SidebarMenu className="gap-0.5">
+                      {group.key !== "ai" || aiCopilotEnabled
+                        ? group.items.map((item) => (
+                            <NavItem key={item.url} {...item} active={isActive(item.url)} />
+                          ))
+                        : null}
+                    </SidebarMenu>
+                  </div>
+                ))}
+              </div>
             </SidebarGroup>
 
           </SidebarContent>
