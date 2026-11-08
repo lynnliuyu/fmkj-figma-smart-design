@@ -5,6 +5,7 @@ import { ArrowLeft, Bot, Clock, ExternalLink, FolderKanban, Settings } from 'luc
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/empty-state'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
@@ -285,23 +286,21 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
       </Card>
 
       {pending ? (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center">
-          <Clock className="size-6 text-muted-foreground" />
-          <div className="space-y-1">
-            <p className="text-sm font-medium">「{plugin.name}」尚在待开发阶段</p>
-            <p className="max-w-md text-xs text-muted-foreground">
-              规划能力：{plugin.provides.join('、')}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 pt-1">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/plugins">返回能力中心</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={`/ai?plugin=${plugin.id}`}>去 AI 对话推演需求</Link>
-            </Button>
-          </div>
-        </div>
+        <EmptyState
+          icon={<Clock className="size-5" />}
+          title={`「${plugin.name}」尚在待开发阶段`}
+          description={`规划能力：${plugin.provides.join('、')}`}
+          action={
+            <>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/plugins">返回能力中心</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link href={`/ai?plugin=${plugin.id}`}>去 AI 对话推演需求</Link>
+              </Button>
+            </>
+          }
+        />
       ) : (
         <Card>
           <CardHeader>

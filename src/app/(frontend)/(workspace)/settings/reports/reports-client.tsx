@@ -1,5 +1,6 @@
 'use client'
 
+import { EmptyState } from '@/components/empty-state'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -464,9 +465,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             </CardHeader>
             <CardContent>
               {filteredSheets.length === 0 ? (
-                <div className="py-10 text-center text-xs text-muted-foreground">
-                  暂无符合条件的图纸记录
-                </div>
+                <EmptyState compact title="暂无符合条件的图纸记录" />
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredSheets.map((sh) => {
