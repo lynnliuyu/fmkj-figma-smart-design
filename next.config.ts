@@ -127,7 +127,17 @@ const nextConfig: NextConfig = {
   // so the Payload `/admin` panel renders blank in the preview iframe.
   // Dev-only - ignored by `next build`.
   //
-  allowedDevOrigins: makePublicPreviewOrigin ? [makePublicPreviewOrigin] : [],
+  // 回环地址必须显式列出：用 `127.0.0.1:3000` 打开页面时 host 与 dev server 绑定的
+  // `localhost` 不同源，客户端脚本会被拦——症状是页面**看起来正常但完全没交互**
+  // （按钮点不动、Tab 切不了、客户端路由退化成整页刷新），控制台只有一条 WebSocket
+  // 握手失败。生产构建不受此设置影响。
+  // 只写 host，不带端口——带端口的条目 Next 不认，仍会拦。
+  allowedDevOrigins: [
+    ...(makePublicPreviewOrigin ? [makePublicPreviewOrigin] : []),
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+  ],
   // Prerender source maps add ~100 MB per static build worker
   enablePrerenderSourceMaps: false,
   experimental: {
