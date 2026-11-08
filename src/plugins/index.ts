@@ -16,7 +16,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'ai-copilot',
     stage: 'global',
-    tier: 'pro',
     entry: { label: '打开 AI 对话', href: () => '/ai' },
     tagline: '在任何页面直接问 AI，让它帮你识图、选型、写说明',
     name: 'AI 对话侧栏（高级）',
@@ -28,7 +27,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'doc-styles',
     stage: 'quote',
-    tier: 'pro',
     entry: { label: '报价单换风格', href: (id) => `/projects/${id}/quotes` },
     tagline: '报价单、合同换上更多高级排版风格',
     name: '文档风格包',
@@ -41,7 +39,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'proposal',
     stage: 'quote',
-    tier: 'free',
     entry: { label: '生成方案', href: (id) => `/print/projects/${id}/proposal` },
     tagline: '点位和预算一键变成给业主看的横版方案',
     name: '方案演示',
@@ -53,7 +50,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'room-insights',
     stage: 'design',
-    tier: 'free',
     entry: { label: '查看房间分析', href: (id) => `/projects/${id}/point-map` },
     tagline: '逐个房间检查漏配，顺手推荐联动场景',
     name: '房间智能分析',
@@ -65,7 +61,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'smart-select',
     stage: 'design',
-    tier: 'free',
     entry: { label: '一键选型', href: (id) => `/projects/${id}/point-map` },
     tagline: '按平台和预算档位，一键给全屋选好型号',
     name: '智能选型',
@@ -77,7 +72,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'ai-import',
     stage: 'design',
-    tier: 'free',
     entry: { label: 'AI 识别图纸', href: (id) => `/projects/${id}/point-map` },
     tagline: '让 AI 读图纸，自动生成点位',
     name: 'AI 识别导入',
@@ -89,7 +83,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'dwg-import',
     stage: 'design',
-    tier: 'pro',
     entry: { label: '导入 DWG', href: (id) => `/projects/${id}/point-map` },
     tagline: 'CAD 图纸直接导入成户型底图',
     name: 'DWG 导入',
@@ -102,7 +95,6 @@ const RAW_PLUGINS: AppPlugin[] = [
   {
     id: 'after-sales',
     stage: 'after',
-    tier: 'team',
     entry: { label: '售后维保', href: (id) => `/projects/${id}/after-sales` },
     tagline: '质保、检修与配置备份都有记录',
     name: '售后维保记录',

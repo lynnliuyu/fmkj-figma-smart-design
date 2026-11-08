@@ -6,8 +6,6 @@ import { DocArticle, DocCheckbox, DocEmpty, DocFacts, DocFooter, DocHeader, DocR
 import { resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf } from '@/lib/device-types'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { cn } from '@/lib/utils'
@@ -156,13 +154,12 @@ export default async function WiringSchedulePage({
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/projects/${id}/wiring`)
 
-  const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
+  const d = await loadProjectDocs(id, user)
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
   const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  // 「强弱电布线表」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Pro
-  const tierOk = featureAccess(access.membership, 'pro', access.strict)
+  // 「强弱电布线表」已封存为 Beta 文档，不再受插件开关控制
   const { style, company } = setup
   const layout = sp.layout === 'summary' ? 'summary' : 'room'
   const t = docTable(style)
@@ -186,8 +183,6 @@ export default async function WiringSchedulePage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-强弱电水电交底单`}
-        locked={tierOk.allowed ? undefined : { message: `「强弱电布线表」是${tierBadge('pro')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge('pro')}功能`}
         groups={[
           { label: '版式', value: layout, options: LAYOUTS.map((l) => ({ value: l.value, label: l.label, href: href({ layout: l.value }) })) },
           ...(setup.styles.length > 1

@@ -4,7 +4,6 @@ import { SiteHeader } from '@/components/site-header'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { appAuth } from '@/lib/app-auth'
 import { getCompanyInfo } from '@/lib/cached-data'
-import { resolveMembership } from '@/lib/membership'
 import { getPayloadClient } from '@/lib/payload'
 import { isPlatformOperator } from '@/lib/platform-operator'
 import { PLUGINS } from '@/plugins'
@@ -53,12 +52,11 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
   }))
 
   const activeAiModels = enabledAiModels(company.aiModels)
-  const membership = resolveMembership(user as never)
 
   return (
     <SidebarProvider>
       <AppSidebar
-        user={{ name: user.name, email: user.email, membershipBadge: membership.badge }}
+        user={{ name: user.name, email: user.email }}
         brand={{ name: company.name, logo: company.logo?.url ?? null }}
         plugins={plugins}
         projects={projects}

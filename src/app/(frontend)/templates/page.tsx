@@ -10,7 +10,7 @@ import { getCompanyInfo } from '@/lib/cached-data'
 import { DECK_SECTIONS, ORCHESTRATION_RULES, PROPOSAL_FRAMEWORKS } from '@/plugins/proposal/framework'
 import { buildTemplateGallery, getTemplatePreviewDocs } from '@/plugins/proposal/preview'
 import { loadPublicProposalTemplates } from '@/plugins/proposal/registry'
-import { Swatches, TierPill } from '@/plugins/proposal/template-picker'
+import { Swatches } from '@/plugins/proposal/template-picker'
 
 import { TemplateCard } from '@/components/proposal-template-card'
 
@@ -25,8 +25,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function TemplatesPage() {
   const [templates, docs, company] = await Promise.all([loadPublicProposalTemplates(), getTemplatePreviewDocs().catch(() => null), getCompanyInfo().catch(() => null)])
-  // 公开页不按账号判断会员：只显示等级标签，不显示锁
-  const { items, thumbs } = buildTemplateGallery(templates, docs, { tier: 'team' })
+  const { items, thumbs } = buildTemplateGallery(templates, docs)
   const owner = items.filter((t) => t.kind === 'owner')
   const construction = items.filter((t) => t.kind === 'construction')
   const frameworks = PROPOSAL_FRAMEWORKS.filter((f) => owner.some((t) => t.framework === f.value))
@@ -117,7 +116,6 @@ export default async function TemplatesPage() {
                       <Link href={`/templates/${t.value}`} className="flex items-center gap-2 font-medium whitespace-nowrap hover:underline">
                         <Swatches colors={t.swatches} />
                         {t.label}
-                        <TierPill t={t} />
                       </Link>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{t.frameworkLabel}</td>

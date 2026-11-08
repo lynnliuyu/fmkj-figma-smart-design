@@ -71,22 +71,6 @@ export const aiModelsField = {
         type: 'row',
         fields: [
           {
-            name: 'minTier',
-            label: '所需会员等级（Go / Plus / Pro）',
-            type: 'select',
-            defaultValue: 'auto',
-            options: [
-              { label: '自动推断（按模型名与倍率匹配）', value: 'auto' },
-              { label: 'Go 基础版（免费及所有用户可用）', value: 'free' },
-              { label: 'Plus 专业版（Plus / Pro 可用）', value: 'pro' },
-              { label: 'Pro 旗舰版（仅 Pro 独占）', value: 'team' },
-            ],
-            admin: {
-              width: '28%',
-              description: '控制前台模型选择器上的 Go / Plus / Pro 标签与可用权限。',
-            },
-          },
-          {
             name: 'cost',
             label: '计费倍率',
             type: 'number',

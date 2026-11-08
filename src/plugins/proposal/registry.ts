@@ -1,6 +1,5 @@
 import { cache } from 'react'
 
-import { isMembershipTier } from '@/lib/membership'
 import { getPayloadClient } from '@/lib/payload'
 import { ensureBuiltinLibrarySeeded } from '@/lib/proposal-library'
 import type { User } from '@/payload-types'
@@ -52,7 +51,6 @@ export const loadProposalTemplates = cache(async (user: User | null): Promise<Pr
         theme: isDeckTheme(d.theme) ? d.theme : (base?.theme ?? 'qixu'),
         sections: normalizeSections(sections, framework),
         markers: 'symbol',
-        tier: isMembershipTier(d.tier) ? d.tier : (base?.tier ?? 'free'),
         headline: d.headline ?? null,
         tagline: d.tagline ?? null,
         coverPhoto: cover ?? null,

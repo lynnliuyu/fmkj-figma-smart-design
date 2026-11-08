@@ -2,7 +2,6 @@ import { createHash, randomBytes } from 'node:crypto'
 
 import { relId } from '@/lib/access'
 import { grantTaskCreditIfEligible, loadAndSyncUserCreditTasks } from '@/lib/credit-tasks'
-import { resolveMembership } from '@/lib/membership'
 import { getPayloadClient } from '@/lib/payload'
 import type { User } from '@/payload-types'
 
@@ -236,7 +235,6 @@ export async function autoRegisterWechatUser(openid: string, unionid: string | n
         email,
         password: randomPassword,
         status: 'active',
-        membershipTier: 'free',
       } as never,
       overrideAccess: true,
       depth: 0,
@@ -254,7 +252,6 @@ export async function presentMe(user: MpUser) {
   const { tasks: creditTasks } = await loadAndSyncUserCreditTasks(user).catch(() => ({ tasks: [] }))
   const fresh = (await payload.findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true }).catch(() => user)) as User
   const { totalDocs } = await payload.count({ collection: 'wechat-accounts', where: { user: { equals: user.id } }, overrideAccess: true })
-  const membership = resolveMembership(fresh as never)
   return {
     id: String(fresh.id),
     name: fresh.name,
@@ -262,10 +259,6 @@ export async function presentMe(user: MpUser) {
     phone: fresh.phone ?? null,
     aiCredits: fresh.aiCredits ?? 0,
     wechatBound: totalDocs > 0,
-    membershipTier: membership.effectiveTier,
-    membershipLabel: membership.label,
-    membershipBadge: membership.badge,
-    membershipExpiresAt: membership.expiresAt,
     creditTasks,
   }
 }

@@ -75,7 +75,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
   const filteredCustomers = useMemo(() => {
     const q = customerQuery.trim().toLowerCase()
     if (!q) return report.customers
-    return report.customers.filter((c) => `${c.name} ${c.email} ${c.phone} ${c.membershipBadge}`.toLowerCase().includes(q))
+    return report.customers.filter((c) => `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q))
   }, [report.customers, customerQuery])
 
   const filteredSheets = useMemo(() => {
@@ -90,12 +90,11 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
   }
 
   function exportCsv() {
-    const headers = ['客户姓名', '邮箱', '电话', '会员等级', '剩余积分', '已消耗积分', '创建项目数', '上传图纸数', '识别点位数', '生成报价数', '生成合同数', 'AI对话数', 'AI消息数', '最近活跃时间']
+    const headers = ['客户姓名', '邮箱', '电话', '剩余积分', '已消耗积分', '创建项目数', '上传图纸数', '识别点位数', '生成报价数', '生成合同数', 'AI对话数', 'AI消息数', '最近活跃时间']
     const rows = report.customers.map((c) => [
       c.name,
       c.email,
       c.phone,
-      c.membershipBadge,
       c.aiCredits,
       c.creditsConsumed,
       c.projectCount,
@@ -137,7 +136,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
       '',
       '## 最近活跃客户 Top 5',
       ...report.customers.slice(0, 5).map(
-        (c) => `- ${c.name} [${c.membershipBadge}]：项目 ${c.projectCount} / 图纸 ${c.sheetCount} / 报价 ${c.quoteCount} / 剩余积分 ${c.aiCredits}（最后活跃：${formatDateTime(c.lastActiveAt)}）`,
+        (c) => `- ${c.name}：项目 ${c.projectCount} / 图纸 ${c.sheetCount} / 报价 ${c.quoteCount} / 剩余积分 ${c.aiCredits}（最后活跃：${formatDateTime(c.lastActiveAt)}）`,
       ),
     ]
     if (report.errorLogs.length > 0) {
@@ -305,7 +304,6 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                   <thead className="border-y bg-muted/50 text-muted-foreground">
                     <tr>
                       <th className="px-4 py-2.5 font-medium">客户 / 账号</th>
-                      <th className="px-3 py-2.5 font-medium">会员</th>
                       <th className="px-3 py-2.5 text-right font-medium">剩余 / 已用积分</th>
                       <th className="px-3 py-2.5 text-right font-medium">项目数</th>
                       <th className="px-3 py-2.5 text-right font-medium">户型图 / 点位</th>
@@ -330,21 +328,6 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               {c.email}
                               {c.phone ? ` · ${c.phone}` : ''}
                             </div>
-                          </td>
-                          <td className="px-3 py-2.5">
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                'px-1.5 py-0 text-[10px]',
-                                c.membershipBadge === 'Pro'
-                                  ? 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-400'
-                                  : c.membershipBadge === 'Plus'
-                                    ? 'border-primary/40 bg-primary/10 text-primary'
-                                    : '',
-                              )}
-                            >
-                              {c.membershipBadge}
-                            </Badge>
                           </td>
                           <td className="px-3 py-2.5 text-right tabular-nums">
                             <span className={cn('font-medium', c.aiCredits < 5 && 'text-destructive')}>{c.aiCredits}</span>

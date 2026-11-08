@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
 import { cmsAdminOnly, cmsAdminOrMember, isCmsAdmin } from '@/lib/access'
-import { MEMBERSHIP_TIERS } from '@/lib/membership'
 import { revalidateTemplatePages } from '@/lib/revalidate-templates'
 import { DECK_SECTIONS, ORCHESTRATION_RULES, PROPOSAL_FRAMEWORKS } from '@/plugins/proposal/framework'
 
@@ -113,13 +112,7 @@ export const ProposalTemplates: CollectionConfig = {
       options: DECK_SECTIONS.map((s) => ({ label: s.label, value: s.value })),
       admin: { description: '留空使用版式框架的推荐章节；按编排规范，封面固定第一页，投资明细与服务交付固定在最后' },
     },
-    {
-      type: 'row',
-      fields: [
-        { name: 'markers', label: '点位显示', type: 'select', defaultValue: 'symbol', options: [{ label: '设备图标', value: 'symbol' }, { label: '编号', value: 'number' }] },
-        { name: 'tier', label: '导出所需会员', type: 'select', defaultValue: 'free', options: MEMBERSHIP_TIERS.map((t) => ({ label: t.label, value: t.value })) },
-      ],
-    },
+    { name: 'markers', label: '点位显示', type: 'select', defaultValue: 'symbol', options: [{ label: '设备图标', value: 'symbol' }, { label: '编号', value: 'number' }] },
     { name: 'accent', label: '强调色', type: 'text', admin: { description: '十六进制颜色，如 #7a5c22；留空沿用主题配色' }, validate: (v: unknown) => !v || /^#[0-9a-f]{6}$/i.test(String(v)) || '请填写 #RRGGBB 格式的颜色' },
     { name: 'headline', label: '封面主标语', type: 'text', admin: { description: '留空沿用主题标语' } },
     { name: 'tagline', label: '封面英文标语', type: 'text' },

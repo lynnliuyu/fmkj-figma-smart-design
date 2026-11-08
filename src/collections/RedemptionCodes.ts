@@ -2,7 +2,6 @@ import { randomBytes } from 'node:crypto'
 import type { CollectionConfig } from 'payload'
 
 import { isCmsAdmin } from '@/lib/access'
-import { MEMBERSHIP_TIERS } from '@/lib/membership'
 
 function generateRedemptionCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -13,9 +12,9 @@ function generateRedemptionCode(): string {
 }
 
 /**
- * 兑换码（方案 A）：
- * 管理员在 /admin 后台生成兑换码（可单独充 AI 积分、单独开通会员时长、或「会员 + 积分」组合包）。
- * 前台成员在「会员与积分」页或小程序输入兑换码即可自动核销入账。
+ * 兑换码：
+ * 管理员在 /admin 后台生成兑换码，用来发放 AI 积分。
+ * 前台成员在「积分与账单」页或小程序输入兑换码即可自动核销入账。
  */
 export const RedemptionCodes: CollectionConfig = {
   slug: 'redemption-codes',
@@ -23,9 +22,9 @@ export const RedemptionCodes: CollectionConfig = {
   labels: { singular: '兑换码', plural: '兑换码' },
   admin: {
     useAsTitle: 'code',
-    defaultColumns: ['code', 'label', 'grantTier', 'durationDays', 'credits', 'usedCount', 'maxUses', 'status'],
+    defaultColumns: ['code', 'label', 'credits', 'usedCount', 'maxUses', 'status'],
     group: '账号',
-    description: '新建兑换码发放会员时长或 AI 积分（兑换码留空时自动生成 FMKJ-XXXX-XXXX-XXXX）。',
+    description: '新建兑换码发放 AI 积分（兑换码留空时自动生成 FMKJ-XXXX-XXXX-XXXX）。',
   },
   access: {
     read: ({ req }) => isCmsAdmin(req),
@@ -65,50 +64,19 @@ export const RedemptionCodes: CollectionConfig = {
           type: 'text',
           maxLength: 80,
           admin: {
-            placeholder: '如：专业版年卡 + 500 积分',
+            placeholder: '如：新用户体验包 500 积分',
           },
         },
       ],
     },
     {
-      type: 'row',
-      fields: [
-        {
-          name: 'grantTier',
-          label: '开通会员等级',
-          type: 'select',
-          required: true,
-          defaultValue: 'none',
-          options: [
-            { label: '不改变会员等级（仅充积分）', value: 'none' },
-            ...MEMBERSHIP_TIERS.filter((t) => t.value !== 'free').map((t) => ({
-              label: `${t.label}（${t.badge}）`,
-              value: t.value,
-            })),
-          ],
-        },
-        {
-          name: 'durationDays',
-          label: '会员有效天数',
-          type: 'number',
-          required: true,
-          defaultValue: 30,
-          min: 0,
-          max: 3650,
-          admin: {
-            description: '如 30（月卡）、365（年卡）；仅充积分时填 0',
-          },
-        },
-        {
-          name: 'credits',
-          label: '赠送 AI 积分',
-          type: 'number',
-          required: true,
-          defaultValue: 100,
-          min: 0,
-          max: 1000000,
-        },
-      ],
+      name: 'credits',
+      label: '赠送 AI 积分',
+      type: 'number',
+      required: true,
+      defaultValue: 100,
+      min: 0,
+      max: 1000000,
     },
     {
       type: 'row',

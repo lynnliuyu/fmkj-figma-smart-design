@@ -12,7 +12,6 @@ import {
   Ellipsis,
   Headphones,
   Loader2,
-  Lock,
   Pencil,
   Plus,
   Printer,
@@ -102,15 +101,11 @@ export function AfterSalesBoard({
   data,
   canEdit,
   archived,
-  tierLabel,
-  exportLocked,
 }: {
   projectId: string
   data: AfterSalesData
   canEdit: boolean
   archived: boolean
-  tierLabel: string
-  exportLocked: boolean
 }) {
   const router = useRouter()
   const today = toShanghaiDay(new Date())!
@@ -226,7 +221,6 @@ export function AfterSalesBoard({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold tracking-tight">售后维保</h2>
-            <Badge variant="outline">{tierLabel}</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
             质保台账、检修与设备更换记录、配置备份{archived ? ' · 项目已归档，仍可继续登记售后' : ''}
@@ -235,7 +229,7 @@ export function AfterSalesBoard({
         <div className="flex flex-wrap items-center gap-2">
           <Button asChild variant="outline" size="sm">
             <Link href={`/print/projects/${projectId}/after-sales`}>
-              {exportLocked ? <Lock className="size-4" /> : <Printer className="size-4" />}
+              <Printer className="size-4" />
               打印维保卡
             </Link>
           </Button>

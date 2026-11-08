@@ -245,7 +245,6 @@ export function createAppAuth(appUserCollection: 'users') {
           password,
           ...(phone ? { phone } : {}),
           status: 'active',
-          membershipTier: 'free',
         } as never,
         overrideAccess: true,
         depth: 0,

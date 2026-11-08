@@ -1,7 +1,6 @@
 import { APIError, type Access, type CollectionConfig, type RelationshipFieldSingleValidation, type Where } from 'payload'
 
 import { cmsAdminOrMember, fieldCmsAdminOnly, isCmsAdmin, isMember, relId } from '@/lib/access'
-import { resolveMembership } from '@/lib/membership'
 import { countScenePoints } from '@/lib/point-count'
 import { canEditProject, canManageProject, type CollaboratorItem } from '@/lib/project-access'
 import { ARCHIVED_MESSAGE } from '@/lib/project-guards'
@@ -110,23 +109,6 @@ export const Projects: CollectionConfig = {
         // 新建时未指定负责人，默认由当前成员负责（服务端设置，不信任客户端）
         if (operation === 'create' && req.user?.collection === 'users') {
           if (!data.owner) data.owner = req.user.id
-          const membership = resolveMembership(req.user as never)
-          if (membership.activeProjectLimit !== null) {
-            const { totalDocs } = await req.payload.count({
-              collection: 'projects',
-              where: {
-                and: [{ owner: { equals: req.user.id } }, { status: { equals: 'active' } }],
-              },
-              req,
-              overrideAccess: true,
-            })
-            if (totalDocs >= membership.activeProjectLimit) {
-              throw new APIError(
-                `当前「${membership.label}」最多可同时进行 ${membership.activeProjectLimit} 个项目，请先将已完成的项目归档，或前往「会员与积分」升级会员`,
-                403,
-              )
-            }
-          }
         }
         // 点位数由点位图自动统计，项目列表和进度不用再读取整张点位图
         data.pointCount = countScenePoints(data.pointMap)

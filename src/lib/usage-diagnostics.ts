@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 import { relId } from './access'
-import { resolveMembership } from './membership'
 import { getPayloadClient } from './payload'
 import { normalizeScene, scenePoints, sceneSheets, type StoredScene } from './point-scene'
 
@@ -95,7 +94,6 @@ export type CustomerUsageRow = {
   name: string
   email: string
   phone: string
-  membershipBadge: 'Go' | 'Plus' | 'Pro'
   aiCredits: number
   creditsConsumed: number
   projectCount: number
@@ -243,15 +241,13 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
       .catch(() => ({ docs: [] })),
   ])
 
-  const userMap = new Map<string, { name: string; email: string; phone: string; badge: 'Go' | 'Plus' | 'Pro'; credits: number; updatedAt: string }>()
+  const userMap = new Map<string, { name: string; email: string; phone: string; credits: number; updatedAt: string }>()
   for (const u of usersRes.docs) {
     const uid = String(u.id)
-    const m = resolveMembership(u as never)
     userMap.set(uid, {
       name: u.name || u.email || '未命名用户',
       email: u.email || '',
       phone: (u as { phone?: string | null }).phone || '',
-      badge: m.badge,
       credits: u.aiCredits ?? 0,
       updatedAt: u.updatedAt,
     })
@@ -267,7 +263,6 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
       name: info?.name ?? `用户 #${uid.slice(-4)}`,
       email: info?.email ?? '',
       phone: info?.phone ?? '',
-      membershipBadge: info?.badge ?? 'Go',
       aiCredits: info?.credits ?? 0,
       creditsConsumed: 0,
       projectCount: 0,

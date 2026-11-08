@@ -6,13 +6,10 @@ import { DocArticle, DocFacts, DocFooter, DocHeader, DocRoot, DocSectionHeading,
 import { resolveDocSetup } from '@/documents/registry'
 import { longDay, serviceBillingLabel, serviceStatusLabel, serviceTypeLabel, WARRANTY_STATUS_LABEL } from '@/lib/after-sales'
 import { appAuth } from '@/lib/app-auth'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { loadAfterSales, snapshotFromDocs } from '@/lib/services/after-sales-service'
 import { cn } from '@/lib/utils'
-import { PLUGINS } from '@/plugins'
 
 export const metadata = { title: '售后维保卡与配置备份单', robots: { index: false, follow: false } }
 
@@ -34,16 +31,13 @@ export default async function AfterSalesPrintPage({
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/projects/${id}/after-sales`)
 
-  const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
+  const d = await loadProjectDocs(id, user)
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
   const setup = await resolveDocSetup('checklist', sp, ownerId)
   if (!setup.flags['after-sales']) notFound()
   const sales = await loadAfterSales(user, String(d.project.id))
 
-  const pluginDef = PLUGINS.find((p) => p.id === 'after-sales')
-  const tier = pluginDef?.tier ?? 'team'
-  const tierOk = featureAccess(access.membership, tier, access.strict)
   const { style, company } = setup
   const t = docTable(style)
   const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
@@ -72,8 +66,6 @@ export default async function AfterSalesPrintPage({
       <PrintToolbar
         back={{ href: `/projects/${id}/after-sales`, label: '返回售后维保' }}
         exportName={`${projectName}-售后维保卡`}
-        locked={tierOk.allowed ? undefined : { message: `「售后维保记录」是${tierBadge(tier)}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge(tier)}功能`}
         groups={
           setup.styles.length > 1
             ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: `${base}?${new URLSearchParams({ style: s.id, ...(sp.backup ? { backup: sp.backup } : {}) }).toString()}` })) }]

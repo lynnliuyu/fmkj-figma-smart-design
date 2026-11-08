@@ -27,7 +27,6 @@ import { GuardedLink } from "@/components/guarded-link"
 import { LinkPending } from "@/components/link-pending"
 import { MembershipDialog } from "@/components/workspace-dialogs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +57,7 @@ import type { PluginId } from "@/plugins/types"
 // AI 对话面板只在切到「AI 对话」时才加载，不拖慢其他页面的首屏
 const AiSidebarDock = dynamic(() => import("@/components/ai/ai-sidebar-dock").then((m) => m.AiSidebarDock), { ssr: false })
 
-export type SidebarUser = { name: string; email: string; membershipBadge?: string }
+export type SidebarUser = { name: string; email: string }
 export type SidebarBrand = { name: string; logo: string | null }
 export type SidebarPlugin = {
   id: PluginId
@@ -292,11 +291,6 @@ export function AppSidebar({
                     <span className="grid min-w-0 flex-1 gap-0.5 leading-tight">
                       <span className="flex min-w-0 items-center gap-1.5">
                         <span className="truncate text-sm font-semibold">{user.name}</span>
-                        {user.membershipBadge ? (
-                          <Badge variant="outline" className="h-4 shrink-0 px-1.5 text-xs">
-                            {user.membershipBadge}
-                          </Badge>
-                        ) : null}
                       </span>
                       <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                     </span>
@@ -347,12 +341,7 @@ export function AppSidebar({
         </>
       )}
       <SidebarRail />
-      <MembershipDialog
-        open={membershipOpen}
-        onOpenChange={setMembershipOpen}
-        membershipBadge={user.membershipBadge}
-        credits={ai.credits}
-      />
+      <MembershipDialog open={membershipOpen} onOpenChange={setMembershipOpen} credits={ai.credits} />
     </Sidebar>
   )
 }

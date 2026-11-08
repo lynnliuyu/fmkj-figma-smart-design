@@ -206,11 +206,6 @@ export interface UserAuthOperations {
  */
 export interface Admin {
   id: string;
-  figmaHandle?: string | null;
-  figmaImageUrl?: string | null;
-  userGroups?: string[] | null;
-  makePermission?: ('view' | 'edit') | null;
-  email?: string | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -231,6 +226,22 @@ export interface Admin {
       } | null);
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
   collection: 'admins';
 }
 /**
@@ -248,14 +259,6 @@ export interface User {
    * 停用后无法登录，已有项目保留
    */
   status: 'active' | 'disabled';
-  /**
-   * 可通过「兑换码」激活升级，或由管理员在后台直接调整
-   */
-  membershipTier: 'free' | 'pro' | 'team';
-  /**
-   * 留空表示长期有效；过期后自动恢复为标准体验版
-   */
-  membershipExpiresAt?: string | null;
   /**
    * 在「积分流水」里新建一条记录来发放积分
    */
@@ -351,8 +354,6 @@ export interface Media {
   alt: string;
   _h_folders?: (string | null) | Folder;
   _h_tags?: (string | Tag)[] | null;
-  prefix?: string | null;
-  _objectKey?: string | null;
   createdBy?:
     | ({
         relationTo: 'admins';
@@ -1131,13 +1132,12 @@ export interface ProposalTemplate {
   /**
    * 施工交底不使用
    */
-  theme?: ('qixu' | 'noir' | 'grove' | 'azure' | 'terra' | 'mono' | 'dawn' | 'jade') | null;
+  theme?: ('qixu' | 'noir' | 'grove' | 'azure' | 'terra' | 'mono' | 'dawn' | 'jade' | 'linen' | 'slate') | null;
   /**
    * 留空使用版式框架的推荐章节；按编排规范，封面固定第一页，投资明细与服务交付固定在最后
    */
   sections?: ('cover' | 'plans' | 'system' | 'zones' | 'scenes' | 'rooms' | 'investment' | 'service')[] | null;
   markers?: ('symbol' | 'number') | null;
-  tier?: ('free' | 'pro' | 'team') | null;
   /**
    * 十六进制颜色，如 #7a5c22；留空沿用主题配色
    */
@@ -1286,7 +1286,7 @@ export interface AiCreditLedger {
   createdAt: string;
 }
 /**
- * 新建兑换码发放会员时长或 AI 积分（兑换码留空时自动生成 FMKJ-XXXX-XXXX-XXXX）。
+ * 新建兑换码发放 AI 积分（兑换码留空时自动生成 FMKJ-XXXX-XXXX-XXXX）。
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redemption-codes".
@@ -1295,11 +1295,6 @@ export interface RedemptionCode {
   id: string;
   code: string;
   label?: string | null;
-  grantTier: 'none' | 'pro' | 'team';
-  /**
-   * 如 30（月卡）、365（年卡）；仅充积分时填 0
-   */
-  durationDays: number;
   credits: number;
   /**
    * 默认 1（一码一用）；活动通用码可设为多人可用，每个账号限兑一次
@@ -1608,15 +1603,25 @@ export interface PayloadLlmInstruction {
  * via the `definition` "admins_select".
  */
 export interface AdminsSelect<T extends boolean = true> {
-  figmaHandle?: T;
-  figmaImageUrl?: T;
-  userGroups?: T;
-  makePermission?: T;
-  email?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1626,8 +1631,6 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   phone?: T;
   status?: T;
-  membershipTier?: T;
-  membershipExpiresAt?: T;
   aiCredits?: T;
   companyProfile?:
     | T
@@ -1884,7 +1887,6 @@ export interface ProposalTemplatesSelect<T extends boolean = true> {
   theme?: T;
   sections?: T;
   markers?: T;
-  tier?: T;
   accent?: T;
   headline?: T;
   tagline?: T;
@@ -1930,8 +1932,6 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   _h_folders?: T;
   _h_tags?: T;
-  prefix?: T;
-  _objectKey?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -2040,8 +2040,6 @@ export interface AiCreditLedgerSelect<T extends boolean = true> {
 export interface RedemptionCodesSelect<T extends boolean = true> {
   code?: T;
   label?: T;
-  grantTier?: T;
-  durationDays?: T;
   credits?: T;
   maxUses?: T;
   usedCount?: T;
@@ -2193,10 +2191,6 @@ export interface CompanySetting {
         customChannel?: string | null;
         apiModel: string;
         /**
-         * 控制前台模型选择器上的 Go / Plus / Pro 标签与可用权限。
-         */
-        minTier?: ('auto' | 'free' | 'pro' | 'team') | null;
-        /**
          * 按用量计费：每次对话积分 = 倍率 ×（每 1K 输入 tokens 0.1 + 每 1K 输出 tokens 0.5）+ 工具调用费用，向上取整、最少 1。贵的模型可设 2、3。
          */
         cost: number;
@@ -2272,10 +2266,6 @@ export interface AiSetting {
         customChannel?: string | null;
         apiModel: string;
         /**
-         * 控制前台模型选择器上的 Go / Plus / Pro 标签与可用权限。
-         */
-        minTier?: ('auto' | 'free' | 'pro' | 'team') | null;
-        /**
          * 按用量计费：每次对话积分 = 倍率 ×（每 1K 输入 tokens 0.1 + 每 1K 输出 tokens 0.5）+ 工具调用费用，向上取整、最少 1。贵的模型可设 2、3。
          */
         cost: number;
@@ -2315,16 +2305,15 @@ export interface AiSetting {
   createdAt?: string | null;
 }
 /**
- * 会员等级与权益见「会员与积分」页；这里决定低于所需等级时是只提示还是直接限制。
+ * 平台不再有会员等级；所有功能统一按 AI 积分计费，这里只配置积分充值引导文案。
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership-settings".
  */
 export interface MembershipSetting {
   id: string;
-  enforcement?: ('soft' | 'strict') | null;
   /**
-   * 显示在会员页和各处「升级」提示里，例如客服微信、购买链接
+   * 显示在积分页的充值引导处，例如客服微信、购买链接、活动说明
    */
   upgradeHint?: string | null;
   createdBy?:
@@ -2373,7 +2362,6 @@ export interface CompanySettingsSelect<T extends boolean = true> {
         channelId?: T;
         customChannel?: T;
         apiModel?: T;
-        minTier?: T;
         cost?: T;
         tag?: T;
         description?: T;
@@ -2415,7 +2403,6 @@ export interface AiSettingsSelect<T extends boolean = true> {
         channelId?: T;
         customChannel?: T;
         apiModel?: T;
-        minTier?: T;
         cost?: T;
         tag?: T;
         description?: T;
@@ -2441,7 +2428,6 @@ export interface AiSettingsSelect<T extends boolean = true> {
  * via the `definition` "membership-settings_select".
  */
 export interface MembershipSettingsSelect<T extends boolean = true> {
-  enforcement?: T;
   upgradeHint?: T;
   createdBy?: T;
   updatedBy?: T;

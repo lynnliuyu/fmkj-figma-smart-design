@@ -1,5 +1,3 @@
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import type { User } from '@/payload-types'
 import { loadProposalTemplates } from '@/plugins/proposal/registry'
 import { BUILTIN_PROPOSAL_TEMPLATES, DEFAULT_PROPOSAL_TEMPLATE, ownerTemplates, resolveProposalTemplate, type ProposalTemplateDef } from '@/plugins/proposal/templates'
@@ -18,15 +16,12 @@ export type MpTemplateOption = {
   audience: string
   occasion: string
   highlights: string[]
-  tierBadge: string
   thumb: string
-  /** 会员严格模式下等级不够，不能设为交付方案 */
-  locked: boolean
 }
 
 /** 小程序的方案模板清单与项目当前使用的模板（未选择时为默认模板） */
 export async function presentProjectTemplates(user: User, chosen: string | null | undefined) {
-  const [templates, access] = await Promise.all([loadProposalTemplates(user), getMembershipContext(user)])
+  const templates = await loadProposalTemplates(user)
   const owners = ownerTemplates(templates)
   const current = resolveProposalTemplate(chosen, owners) ?? resolveProposalTemplate(DEFAULT_PROPOSAL_TEMPLATE, owners) ?? owners[0] ?? null
   const options: MpTemplateOption[] = owners.map((t) => ({
@@ -36,9 +31,7 @@ export async function presentProjectTemplates(user: User, chosen: string | null 
     audience: t.audience,
     occasion: t.occasion,
     highlights: t.highlights,
-    tierBadge: tierBadge(t.tier),
     thumb: templateThumb(t),
-    locked: !featureAccess(access.membership, t.tier, access.strict).allowed,
   }))
   return { current: current ? options.find((o) => o.slug === current.value) ?? null : null, chosen: Boolean(chosen && current && chosen === current.value), options }
 }

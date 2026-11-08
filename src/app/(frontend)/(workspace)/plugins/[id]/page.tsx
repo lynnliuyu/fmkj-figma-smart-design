@@ -13,8 +13,6 @@ import { getPayloadClient } from '@/lib/payload'
 import { AI_PERMISSIONS, isPluginId, PLUGINS } from '@/plugins'
 import { DEFAULT_AI_TEMPLATES, enabledAiModels } from '@/plugins/ai-copilot/templates'
 import { PLUGIN_DOC_STYLES } from '@/plugins/doc-styles/styles'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { PLUGIN_STAGES } from '@/plugins'
 import { buildTemplateGallery, getTemplatePreviewDocs } from '@/plugins/proposal/preview'
 import { loadProposalTemplates } from '@/plugins/proposal/registry'
@@ -41,10 +39,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
   if (!plugin) notFound()
 
   const payload = await getPayloadClient()
-  const [flags, company, access, templates, projectsRes, previewDocs] = await Promise.all([
+  const [flags, company, templates, projectsRes, previewDocs] = await Promise.all([
     getPluginFlags(user.id),
     getCompanyInfo(user.id),
-    getMembershipContext(user),
     plugin.id === 'proposal' ? loadProposalTemplates(user) : Promise.resolve([]),
     payload.find({
       collection: 'projects',
@@ -62,9 +59,8 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
   const enabled = flags[plugin.id]
   const pending = plugin.status === 'coming-soon'
   const stage = PLUGIN_STAGES.find((s) => s.key === plugin.stage)!
-  const tierOk = featureAccess(access.membership, plugin.tier, access.strict)
   const activeAiModels = enabledAiModels(company.aiModels)
-  const gallery = plugin.id === 'proposal' ? buildTemplateGallery(templates, previewDocs, { tier: access.membership.effectiveTier, strict: access.strict }) : null
+  const gallery = plugin.id === 'proposal' ? buildTemplateGallery(templates, previewDocs) : null
   const projects = projectsRes.docs.map((p) => ({
     id: String(p.id),
     name: projectDisplayName(p.name),
@@ -99,14 +95,12 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
             name={plugin.name}
             status={plugin.status}
             initialEnabled={enabled}
-            locked={tierOk.allowed ? undefined : `需要${tierBadge(plugin.tier)}`}
           />
         }
       />
 
       <div className="-mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <Badge variant="secondary">项目阶段 · {stage.label}</Badge>
-        <Badge variant={plugin.tier === 'free' ? 'outline' : 'default'}>{plugin.tier === 'free' ? '所有会员可用' : `${tierBadge(plugin.tier)}可用`}</Badge>
         <span>{plugin.tagline}</span>
       </div>
 

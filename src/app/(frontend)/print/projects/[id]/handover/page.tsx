@@ -6,8 +6,6 @@ import { DocArticle, DocCheckbox, DocEmpty, DocFacts, DocFooter, DocHeader, DocR
 import { resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf } from '@/lib/device-types'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { acceptanceChecks, loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { cn } from '@/lib/utils'
@@ -27,13 +25,12 @@ export default async function SceneHandoverPage({
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/projects/${id}/handover`)
 
-  const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
+  const d = await loadProjectDocs(id, user)
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
   const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  // 「场景与账号移交」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Pro
-  const tierOk = featureAccess(access.membership, 'pro', access.strict)
+  // 「场景与账号移交」已封存为 Beta 文档，不再受插件开关控制
   const { style, company } = setup
   const t = docTable(style)
   const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
@@ -53,8 +50,6 @@ export default async function SceneHandoverPage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-场景与账号交付移交单`}
-        locked={tierOk.allowed ? undefined : { message: `「场景与账号移交」是${tierBadge('pro')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge('pro')}功能`}
         groups={
           setup.styles.length > 1
             ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: `${base}?style=${s.id}` })) }]

@@ -1,6 +1,5 @@
 import { relId } from '@/lib/access'
 import { appAuth } from '@/lib/app-auth'
-import { collaboratorLimitFor } from '@/lib/membership-policy'
 import { getPayloadClient } from '@/lib/payload'
 import { parseShareConfig, type CollaboratorItem } from '@/lib/project-access'
 
@@ -71,9 +70,6 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         currentCollabs[existingIdx].role = 'edit'
       }
     } else {
-      // 严格模式：协作成员数按项目负责人的会员等级限制
-      const limit = await collaboratorLimitFor(ownerId)
-      if (limit !== null && currentCollabs.length >= limit) return fail(403, `这个项目的协作成员已满（${limit} 人），请联系项目负责人升级会员后再加入`)
       currentCollabs.push({
         user: uid,
         role: shareConfig.role,

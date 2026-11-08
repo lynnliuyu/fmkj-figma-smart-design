@@ -32,7 +32,6 @@ import {
   VRF_PER_FLOOR,
 } from '@/lib/design-rules'
 import { DEVICE_CATEGORIES, DEVICE_TYPES, inferDeviceType, symbolUrl } from '@/lib/device-types'
-import { MEMBERSHIP_TIERS } from '@/lib/membership'
 import { PROJECT_PLATFORMS } from '@/lib/projects'
 import {
   AI_PERMISSIONS,
@@ -140,7 +139,6 @@ function buildKnowledgeBundle() {
       slug: t.value,
       name: t.label,
       kind: t.kind,
-      tier: t.tier,
       framework: t.framework,
       theme: t.theme,
       description: t.description,
@@ -168,20 +166,10 @@ function buildKnowledgeBundle() {
   }
 
   const plugins = {
-    membershipTiers: MEMBERSHIP_TIERS.map((m) => ({
-      value: m.value,
-      label: m.label,
-      badge: m.badge,
-      activeProjectLimit: m.activeProjectLimit,
-      collaboratorLimit: m.collaboratorLimit,
-      monthlyCredits: m.monthlyCredits,
-      description: m.description,
-    })),
     plugins: PLUGINS.map((p) => ({
       id: p.id,
       name: p.name,
       stage: p.stage,
-      tier: p.tier,
       status: p.status,
       tagline: p.tagline,
       description: p.description,

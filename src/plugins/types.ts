@@ -1,7 +1,6 @@
 import type { Plugin as PayloadPlugin } from 'payload'
 
 import type { DocStyle } from '@/documents/types'
-import type { MembershipTier } from '@/lib/membership'
 import type { PluginAiSpec } from './ai-types'
 
 /** 插件服务于项目的哪个阶段（插件市场按阶段分组，项目里按阶段给出入口） */
@@ -20,8 +19,6 @@ export type AppPlugin = {
   description: string
   /** 接入的项目阶段 */
   stage: PluginStage
-  /** 使用所需的会员等级（严格模式下低于该等级不能启用） */
-  tier: MembershipTier
   /** 在项目里的入口：按钮文字与地址（全局插件可以不填项目） */
   entry?: { label: string; href: (projectId: string) => string }
   /** 插件开发状态：ready 可开关使用；coming-soon 尚未开发，界面显示「待开发」 */

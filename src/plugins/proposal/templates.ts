@@ -5,8 +5,6 @@
  * 每个模板都要回答三个问题（选择器、模板库、知识库导出都会展示）：
  * - audience：适合什么客户；occasion：什么时候用；highlights：一眼能看出的 2–3 个外观特点。
  */
-import type { MembershipTier } from '@/lib/membership'
-
 import type { DeckThemeId } from './deck/themes'
 import { frameworkSections, kindOfFramework, type DeckSection, type ProposalFrameworkId, type ProposalKind } from './framework'
 
@@ -32,8 +30,6 @@ export type ProposalTemplateDef = {
   /** 实际使用的章节（按顺序） */
   sections: DeckSection[]
   markers: 'number' | 'symbol'
-  /** 导出需要的会员等级 */
-  tier: MembershipTier
   headline?: string | null
   tagline?: string | null
   coverPhoto?: string | null
@@ -43,78 +39,78 @@ export type ProposalTemplateDef = {
 
 type BuiltinCopy = { description: string; audience: string; occasion: string; highlights: string[] }
 
-function builtin(value: string, label: string, framework: ProposalFrameworkId, theme: DeckThemeId, tier: MembershipTier, copy: BuiltinCopy): ProposalTemplateDef {
-  return { value, label, ...copy, kind: kindOfFramework(framework), framework, theme, sections: frameworkSections(framework), markers: 'symbol', tier }
+function builtin(value: string, label: string, framework: ProposalFrameworkId, theme: DeckThemeId, copy: BuiltinCopy): ProposalTemplateDef {
+  return { value, label, ...copy, kind: kindOfFramework(framework), framework, theme, sections: frameworkSections(framework), markers: 'symbol' }
 }
 
 export const BUILTIN_PROPOSAL_TEMPLATES: ProposalTemplateDef[] = [
-  builtin('qixu', '栖序雅致', 'full', 'qixu', 'free', {
+  builtin('qixu', '栖序雅致', 'full', 'qixu', {
     description: '暖白纸色、灰紫强调、细体大编号，忠于设计稿的 8 章完整提案',
     audience: '大多数改善型住宅业主（三房到大平层）',
     occasion: '方案深化后的正式汇报、签约前定稿',
     highlights: ['暖白纸面', '照片色带封面', '8 章完整'],
   }),
-  builtin('noir', '墨金臻选', 'full', 'noir', 'pro', {
+  builtin('noir', '墨金臻选', 'full', 'noir', {
     description: '深色画面、香槟金与衬线标题，屏幕演示质感最强',
     audience: '别墅、大平层等高净值业主',
     occasion: '大屏投影或平板现场演示、高端项目提案',
     highlights: ['深色画面', '整幅照片封面', '金线表头'],
   }),
-  builtin('grove', '原木自然', 'full', 'grove', 'free', {
+  builtin('grove', '原木自然', 'full', 'grove', {
     description: '燕麦纸色、橄榄绿、左文右图封面与圆角卡片',
     audience: '原木、日式、侘寂等自然风格的家庭',
     occasion: '与室内设计师联合提案、软装偏自然的项目',
     highlights: ['燕麦纸面', '分栏封面', '圆角卡片'],
   }),
-  builtin('quick', '预算速览', 'budget', 'qixu', 'free', {
+  builtin('quick', '预算速览', 'budget', 'qixu', {
     description: '封面、系统、投资与交付 4 章，几页讲清预算',
     audience: '预算敏感、第一次咨询的业主',
     occasion: '首次沟通后当天出报价、比价阶段',
     highlights: ['4 章精简', '先讲预算', '约 5 页'],
   }),
-  builtin('azure', '智域科技', 'story', 'azure', 'pro', {
+  builtin('azure', '智域科技', 'story', 'azure', {
     description: '冷白纸面、深海蓝强调与细线卡片，先讲生活场景再落到预算',
     audience: '年轻业主、数码爱好者与偏好科技感的家庭',
     occasion: '首次方案沟通，用场景打动业主',
     highlights: ['场景先行', '深海蓝细线', '现代简约'],
   }),
-  builtin('mono', '素白极简', 'full', 'mono', 'pro', {
+  builtin('mono', '素白极简', 'full', 'mono', {
     description: '纯白纸面与黑色粗体，纯文字大字封面，克制高级',
     audience: '设计师工作室、极简风业主与商务客户',
     occasion: '与设计公司合作提案、需要打印装订的正式文本',
     highlights: ['纯文字封面', '黑白克制', '打印友好'],
   }),
-  builtin('dawn', '晨曦暖调', 'story', 'dawn', 'pro', {
+  builtin('dawn', '晨曦暖调', 'story', 'dawn', {
     description: '奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户',
     audience: '有老人和孩子的家庭、偏爱温馨风格的业主',
     occasion: '首次方案沟通、全家一起看方案',
     highlights: ['场景先行', '陶土暖色', '竖幅照片'],
   }),
-  builtin('jade', '东方雅韵', 'full', 'jade', 'team', {
+  builtin('jade', '东方雅韵', 'full', 'jade', {
     description: '宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅',
     audience: '新中式、东方风别墅与高端住宅业主',
     occasion: '顶奢项目正式提案、需要文化调性的汇报',
     highlights: ['宣纸青瓷', '衬线标题', '东方意境'],
   }),
-  builtin('terra', '赤陶中古', 'full', 'terra', 'free', {
+  builtin('terra', '赤陶中古', 'full', 'terra', {
     description: '羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感',
     audience: '中古、复古与胡桃木风格住宅的业主',
     occasion: '设计深化汇报、软装与全屋智能联合提案',
     highlights: ['画廊式封面', '羊皮纸赤陶棕', '8 章完整'],
   }),
-  builtin('linen', '海盐柔雅', 'full', 'linen', 'free', {
+  builtin('linen', '海盐柔雅', 'full', 'linen', {
     description: '海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案',
     audience: '法式、轻复古与浅色自然风住宅的家庭',
     occasion: '家庭方案沟通、与室内设计师联合汇报',
     highlights: ['拱窗照片封面', '海盐蓝灰', '8 章完整'],
   }),
-  builtin('slate', '岩灰建筑', 'full', 'slate', 'free', {
+  builtin('slate', '岩灰建筑', 'full', 'slate', {
     description: '冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面',
     audience: '现代建筑、清水混凝土与工业风住宅的业主',
     occasion: '建筑师联合提案、需要清楚核对点位与预算的正式汇报',
     highlights: ['建筑目录封面', '石墨直角线框', '8 章完整'],
   }),
-  builtin('construction', '施工交底', 'construction', 'qixu', 'free', {
+  builtin('construction', '施工交底', 'construction', 'qixu', {
     description: '点位代号、安装位置、房间配置与逐点核对表，不含任何价格',
     audience: '安装团队、水电工与项目经理',
     occasion: '进场施工前交底、现场安装与验收核对',

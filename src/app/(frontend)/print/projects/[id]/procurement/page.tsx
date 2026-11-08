@@ -8,8 +8,6 @@ import { DocArticle, DocCheckbox, DocEmpty, DocFacts, DocFooter, DocHeader, DocR
 import { resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf } from '@/lib/device-types'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
 import { yuan } from '@/lib/quotes'
@@ -29,13 +27,12 @@ export default async function ProcurementPage({
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/projects/${id}/procurement`)
 
-  const [d, access] = await Promise.all([loadProjectDocs(id, user), getMembershipContext(user)])
+  const d = await loadProjectDocs(id, user)
   if (!d) notFound()
   const ownerId = d.owner?.id ?? user.id
   const setup = await resolveDocSetup('checklist', sp, ownerId)
 
-  // 「采购与备货单」已封存为 Beta 文档，不再受插件开关控制，会员等级沿用原插件的 Team
-  const tierOk = featureAccess(access.membership, 'team', access.strict)
+  // 「采购与备货单」已封存为 Beta 文档，不再受插件开关控制
   const { style, company } = setup
   const showCost = sp.cost !== '0'
   const t = docTable(style)
@@ -67,8 +64,6 @@ export default async function ProcurementPage({
       <PrintToolbar
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-采购与备货核验单`}
-        locked={tierOk.allowed ? undefined : { message: `「采购与备货单」是${tierBadge('team')}功能，升级后可导出`, href: '/membership' }}
-        note={tierOk.meets ? undefined : `${tierBadge('team')}功能`}
         groups={[
           {
             label: '成本列',

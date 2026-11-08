@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ExternalLink, FileArchive, FileStack, Loader2, Lock } from 'lucide-react'
+import { ExternalLink, FileArchive, FileStack, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
@@ -25,7 +25,6 @@ export type DeliveryDoc = {
   /** 打印页地址；null = 还不能生成（例如没有点位、没有合同） */
   url: string | null
   defaultOn: boolean
-  tierBadge?: 'Go' | 'Plus' | 'Pro'
 }
 
 type Option = { value: string; label: string }
@@ -74,7 +73,6 @@ export function DeliveryPackage({
   proposalPicker,
   betaDoc,
   cover,
-  access,
 }: {
   projectId: string
   projectName: string
@@ -88,8 +86,6 @@ export function DeliveryPackage({
   /** 还不进资料包的 Beta 单据（场景移交），单独打开打印页 */
   betaDoc?: React.ReactNode
   cover: { company: string; customer: string; address: string; date: string }
-  /** 资料包所需会员：meets 是否满足；allowed 是否可用（提示模式下不满足也可用） */
-  access: { meets: boolean; allowed: boolean; badge: string; hint: string }
 }) {
   const router = useRouter()
   const [selected, setSelected] = useState<Record<string, boolean>>(() => Object.fromEntries(docs.map((d) => [d.key, d.defaultOn && Boolean(d.url)])))
@@ -153,31 +149,18 @@ export function DeliveryPackage({
       <div className="flex flex-wrap items-start justify-between gap-3 border-b px-5 py-4">
         <div className="flex min-w-0 items-center gap-2">
           <h3 id="package-title" className="text-base font-semibold">交付资料包</h3>
-          <span className="inline-flex items-center rounded-md bg-primary/12 px-2 py-0.5 text-xs font-semibold text-primary ring-1 ring-primary/25">
-            {access.badge} 一键打包特权
-          </span>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" disabled={!access.allowed || busy || !chosen.length} onClick={() => void build('zip')}>
+          <Button variant="outline" size="sm" disabled={busy || !chosen.length} onClick={() => void build('zip')}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : <FileArchive className="size-4" />}
             下载 ZIP
           </Button>
-          <Button size="sm" disabled={!access.allowed || busy || !chosen.length} onClick={() => void build('pdf')}>
+          <Button size="sm" disabled={busy || !chosen.length} onClick={() => void build('pdf')}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : <FileStack className="size-4" />}
             合并为一份 PDF
           </Button>
         </div>
       </div>
-
-      {!access.allowed ? (
-        <p className="flex items-center gap-2 border-b bg-muted/40 px-5 py-2.5 text-xs text-muted-foreground">
-          <Lock className="size-3.5 shrink-0" />
-          打包下载是{access.badge}功能，单份资料仍可在预览里导出。{access.hint}
-          <Link href="/membership" className="shrink-0 font-medium text-primary underline-offset-4 hover:underline">
-            查看会员
-          </Link>
-        </p>
-      ) : null}
 
       {progress ? (
         <div className="space-y-1.5 border-b px-5 py-3" role="status" aria-live="polite">
@@ -204,18 +187,6 @@ export function DeliveryPackage({
             />
             <label htmlFor={`pkg-${d.key}`} className={cn('flex min-w-44 flex-1 items-center gap-2', !d.url && 'text-muted-foreground')}>
               <span className="text-sm font-medium">{d.title}</span>
-              {d.tierBadge && d.tierBadge !== 'Go' ? (
-                <span
-                  className={cn(
-                    'inline-flex items-center rounded px-1.5 py-0.2 text-[10px] font-semibold',
-                    d.tierBadge === 'Pro'
-                      ? 'bg-amber-500/12 text-amber-800 dark:text-amber-400'
-                      : 'bg-primary/12 text-primary',
-                  )}
-                >
-                  {d.tierBadge}
-                </span>
-              ) : null}
               {d.note ? <span className="text-xs text-muted-foreground tabular-nums">{d.note}</span> : null}
             </label>
             {d.key === 'quote' && quotes.length > 1 ? (

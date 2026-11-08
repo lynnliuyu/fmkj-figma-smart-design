@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
-import { Check, ChevronLeft, Columns3, ExternalLink, Eye, Loader2, Lock, X } from 'lucide-react'
+import { Check, ChevronLeft, Columns3, ExternalLink, Eye, Loader2, X } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,23 +18,6 @@ const KIND_TABS: { value: ProposalKind; label: string; hint: string }[] = [
 const MAX_COMPARE = 3
 const pad = (n: number) => String(n).padStart(2, '0')
 
-/** 会员等级标签：Go 灰色、Plus 主色、Pro 琥珀色；不满足时带锁 */
-export function TierPill({ t, className }: { t: Pick<PickerTemplate, 'tier' | 'tierBadge' | 'meets'>; className?: string }) {
-  return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] leading-none font-semibold',
-        t.tier === 'team' ? 'bg-amber-500/12 text-amber-800 dark:text-amber-400' : t.tier === 'pro' ? 'bg-primary/12 text-primary' : 'bg-muted text-muted-foreground',
-        className,
-      )}
-      title={t.meets ? `${t.tierBadge} 模板` : `${t.tierBadge} 模板 · 当前会员可预览，导出需升级`}
-    >
-      {t.meets ? null : <Lock className="size-3" aria-hidden />}
-      {t.tierBadge}
-    </span>
-  )
-}
-
 /** 主题色板：纸色、主色、强调色、浅色面板 */
 export function Swatches({ colors, className }: { colors: string[]; className?: string }) {
   return (
@@ -44,29 +26,6 @@ export function Swatches({ colors, className }: { colors: string[]; className?: 
         <span key={i} className="size-3" style={{ backgroundColor: c }} />
       ))}
     </span>
-  )
-}
-
-function AccessNotice({ t, upgradeHref }: { t: PickerTemplate; upgradeHref: string }) {
-  if (t.meets) {
-    return (
-      <p className="flex items-center gap-1.5 rounded-lg bg-emerald-500/8 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
-        <Check className="size-3.5 shrink-0" />
-        当前会员可以直接预览和导出
-      </p>
-    )
-  }
-  return (
-    <p className="flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-3 py-2 text-xs leading-relaxed text-amber-800 dark:text-amber-300">
-      <Lock className="mt-0.5 size-3.5 shrink-0" />
-      <span>
-        {t.tierBadge} 模板。
-        {t.allowed ? '当前为提示模式，可以正常导出；启用会员限制后需要升级。' : `可以先预览，导出需要升级到 ${t.tierBadge}。`}{' '}
-        <Link href={upgradeHref} className="font-medium underline underline-offset-2">
-          查看会员
-        </Link>
-      </span>
-    </p>
   )
 }
 
@@ -118,7 +77,6 @@ const COMPARE_ROWS: Row[] = [
   { label: '适合客户', render: (t) => t.audience },
   { label: '什么时候用', render: (t) => t.occasion },
   { label: '外观特点', render: (t) => t.highlights.join('、') || '—' },
-  { label: '会员要求', render: (t) => <TierPill t={t} /> },
 ]
 
 /**
@@ -135,8 +93,6 @@ export function TemplatePicker({
   selectLabel = '使用此模板',
   kinds = ['owner', 'construction'],
   pageNote = '按示例别墅项目计算',
-  upgradeHref = '/membership',
-  blockLocked = false,
   disabled = false,
 }: {
   templates: PickerTemplate[]
@@ -149,9 +105,6 @@ export function TemplatePicker({
   selectLabel?: string
   kinds?: ProposalKind[]
   pageNote?: string
-  upgradeHref?: string
-  /** 严格模式下不满足会员等级的模板不能选（例如设为交付方案） */
-  blockLocked?: boolean
   disabled?: boolean
 }) {
   const [open, setOpen] = useState(false)
@@ -197,8 +150,8 @@ export function TemplatePicker({
   const toggleCompare = (v: string) =>
     setCompareIds((ids) => (ids.includes(v) ? ids.filter((x) => x !== v) : ids.length >= MAX_COMPARE ? ids : [...ids, v]))
 
-  const canChoose = (t: PickerTemplate) => Boolean(onSelect) && !disabled && t.value !== value && !(blockLocked && !t.allowed)
-  const chooseLabel = (t: PickerTemplate) => (t.value === value ? '当前使用中' : blockLocked && !t.allowed ? `升级 ${t.tierBadge} 后可用` : selectLabel)
+  const canChoose = (t: PickerTemplate) => Boolean(onSelect) && !disabled && t.value !== value
+  const chooseLabel = (t: PickerTemplate) => (t.value === value ? '当前使用中' : selectLabel)
   const compared = compareIds.map((id) => templates.find((t) => t.value === id)).filter((t): t is PickerTemplate => Boolean(t))
 
   return (
@@ -261,7 +214,6 @@ export function TemplatePicker({
                 返回模板列表
               </Button>
               <span className="text-sm font-medium">{activeT.label}</span>
-              <TierPill t={activeT} />
               <span className="hidden text-xs text-muted-foreground md:inline">{activeT.pages ? `约 ${activeT.pages} 页 · ` : ''}{pageNote}</span>
               <div className="ml-auto flex gap-2">
                 <Button asChild variant="outline" size="sm">
@@ -386,7 +338,6 @@ export function TemplatePicker({
                         <div className="flex flex-1 flex-col gap-1.5 p-3">
                           <div className="flex items-center justify-between gap-2">
                             <span className="truncate text-sm font-semibold">{t.label}</span>
-                            <TierPill t={t} />
                           </div>
                           <p className="text-xs text-muted-foreground">
                             {t.frameworkLabel}
@@ -453,7 +404,6 @@ export function TemplatePicker({
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">{activeT.description}</p>
                   </div>
-                  <AccessNotice t={activeT} upgradeHref={upgradeHref} />
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                     <div className="col-span-2">
                       <dt className="text-muted-foreground">适合什么客户</dt>

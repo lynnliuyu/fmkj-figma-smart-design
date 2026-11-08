@@ -1,4 +1,3 @@
-import { tierBadge } from '@/lib/membership'
 import type { AiToolHandler } from '@/plugins/ai-copilot/tools/context'
 import { loadProposalTemplates } from './registry'
 import { recommendTemplates } from './templates'
@@ -22,7 +21,6 @@ export const proposalHandlers: Record<string, AiToolHandler> = {
         recommendations: picks.map(({ template: t, reasons }) => ({
           slug: t.value,
           name: t.label,
-          tier: tierBadge(t.tier),
           framework: t.framework,
           audience: t.audience,
           occasion: t.occasion,

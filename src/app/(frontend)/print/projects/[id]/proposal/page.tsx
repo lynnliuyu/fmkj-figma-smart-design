@@ -6,8 +6,6 @@ import { PrintToolbar } from '@/components/print-toolbar'
 import { Button } from '@/components/ui/button'
 import { DocEmpty } from '@/documents/parts'
 import { appAuth } from '@/lib/app-auth'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { isPointScope, loadProjectDocs, POINT_SCOPES, type PointScope } from '@/lib/project-docs'
 import { constructionDeckPages } from '@/plugins/proposal/construction-deck'
 import { customizeTheme, DECK_THEMES, DeckRoot, deckPages, isDeckTheme } from '@/plugins/proposal/deck'
@@ -42,9 +40,8 @@ export default async function ProposalPage({
   const user = await appAuth.getCurrentUser()
   if (!user) redirect(`/login?from=/print/projects/${id}/proposal`)
   let scope: PointScope = isPointScope(sp.scope) ? sp.scope : 'all'
-  // 模板与会员设置只依赖当前用户，和项目数据同时读取
+  // 模板只依赖当前用户，和项目数据同时读取
   const templatesP = loadProposalTemplates(user)
-  const accessP = getMembershipContext(user)
   let d = await loadProjectDocs(id, user, scope, sp.quoteId ?? null)
   if (!d) notFound()
   // 没指定范围和报价时用定稿报价（定稿可能是「不含灯具」等其他范围）
@@ -56,7 +53,7 @@ export default async function ProposalPage({
     }
   }
   const docs = d
-  const [flags, templates, access] = await Promise.all([getPluginFlags(docs.owner?.id ?? user.id), templatesP, accessP])
+  const [flags, templates] = await Promise.all([getPluginFlags(docs.owner?.id ?? user.id), templatesP])
   if (!flags.proposal) notFound()
   if (!templates.length) {
     return (
@@ -100,10 +97,9 @@ export default async function ProposalPage({
     if (nextQuoteId) q.set('quoteId', nextQuoteId)
     return `${base}?${q.toString()}`
   }
-  const tierOk = featureAccess(access.membership, tpl.tier, access.strict)
   const empty = docs.points.length === 0 ? <DocEmpty projectId={id}>点位图里还没有点位。布置好设备后，这里会生成整套方案。</DocEmpty> : null
   // 模板选择器：缩略图与页数直接用本项目的数据计算（只在打开选择器时渲染）
-  const gallery = embed ? null : buildTemplateGallery(templates, docs, { tier: access.membership.effectiveTier, strict: access.strict, insights: flags['room-insights'] })
+  const gallery = embed ? null : buildTemplateGallery(templates, docs, { insights: flags['room-insights'] })
   const templateLinks = Object.fromEntries(templates.map((x) => [x.value, href({ template: x.value })]))
 
   return (
@@ -114,8 +110,6 @@ export default async function ProposalPage({
           back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
           exportName={`${docs.project.name}-${tpl.label}${scope === 'all' ? '' : '-' + POINT_SCOPES.find((x) => x.value === scope)!.label}`}
           wide={deck}
-          locked={tierOk.allowed ? undefined : { message: `「${tpl.label}」是${tierBadge(tpl.tier)}模板，可以预览，升级后导出`, href: '/membership' }}
-          note={tierOk.meets ? undefined : `${tierBadge(tpl.tier)}模板`}
           picker={
             <ProposalTemplateSwitcher
               templates={gallery.items}

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
 import type { PickerTemplate } from '@/plugins/proposal/picker-data'
-import { Swatches, TierPill } from '@/plugins/proposal/template-picker'
+import { Swatches } from '@/plugins/proposal/template-picker'
 import { cn } from '@/lib/utils'
 
 /** 模板库卡片：真实封面缩略图 + 适合客户 / 使用时机 / 外观特点，点进去看整套样张 */
@@ -18,7 +18,6 @@ export function TemplateCard({ t, thumb, className }: { t: PickerTemplate; thumb
           <h3 className="text-base font-semibold tracking-tight">{t.label}</h3>
           <span className="flex items-center gap-2">
             <Swatches colors={t.swatches} />
-            <TierPill t={t} />
           </span>
         </div>
         <p className="text-xs text-muted-foreground">

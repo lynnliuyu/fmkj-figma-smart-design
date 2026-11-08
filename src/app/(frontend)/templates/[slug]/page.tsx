@@ -16,7 +16,7 @@ import { toPickerTemplate } from '@/plugins/proposal/picker-data'
 import { getTemplatePreviewDocs, templatePreview, templateTheme } from '@/plugins/proposal/preview'
 import { loadPublicProposalTemplates } from '@/plugins/proposal/registry'
 import { resolveProposalTemplate } from '@/plugins/proposal/templates'
-import { Swatches, TierPill } from '@/plugins/proposal/template-picker'
+import { Swatches } from '@/plugins/proposal/template-picker'
 
 import { TemplateCard } from '@/components/proposal-template-card'
 
@@ -49,13 +49,13 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
   const tpl = resolveProposalTemplate(slug, templates)
   if (!tpl) notFound()
   const { pages } = templatePreview(tpl, docs)
-  const t = toPickerTemplate(tpl, { pages, tier: 'team' })
+  const t = toPickerTemplate(tpl, { pages })
   const theme = templateTheme(tpl)
   const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
   const others = templates.filter((x) => x.value !== tpl.value && x.kind === tpl.kind).slice(0, 3)
   const otherCards = others.map((x) => {
     const p = templatePreview(x, docs)
-    return { t: toPickerTemplate(x, { pages: p.pages, tier: 'team' }), thumb: p.thumb }
+    return { t: toPickerTemplate(x, { pages: p.pages }), thumb: p.thumb }
   })
   const facts: [string, string][] = [
     ['版式', t.frameworkLabel],
@@ -63,7 +63,6 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
     ['封面', t.coverStyle],
     ['画面', t.mood],
     ['价格', t.priceShown ? '含预算与设备明细' : '不含价格'],
-    ['会员', `${t.tierBadge} 可导出`],
   ]
 
   return (
@@ -84,7 +83,6 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                   <h1 id="template-title" className="text-headline font-medium">
                     {t.label}
                   </h1>
-                  <TierPill t={t} className="text-xs" />
                   <Swatches colors={t.swatches} />
                 </div>
                 <p className="mt-4 text-lead text-muted-foreground">{t.description}</p>

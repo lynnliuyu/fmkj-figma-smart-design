@@ -4,7 +4,6 @@ import { CACHE_TAGS, expireOnChange, expireOnDelete } from '@/lib/cache-tags'
 import { fieldCmsAdminOnly, isCmsAdmin, isMember } from '@/lib/access'
 import { DEFAULT_CONTRACT_TERMS } from '@/lib/contracts'
 import { cloneDemoProjectForUser } from '@/lib/demo-project'
-import { MEMBERSHIP_TIERS } from '@/lib/membership'
 
 /** 成员只能读取和修改自己的账号资料，防止通过 /api/users 遍历其他用户的邮箱与手机号。 */
 const selfOrCmsAdmin: Access = ({ req }) => {
@@ -23,7 +22,7 @@ export const Users: CollectionConfig = {
   labels: { singular: '成员', plural: '成员' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'membershipTier', 'aiCredits', 'status'],
+    defaultColumns: ['name', 'email', 'aiCredits', 'status'],
     group: '账号',
   },
   auth: {
@@ -63,23 +62,6 @@ export const Users: CollectionConfig = {
         { label: '停用', value: 'disabled' },
       ],
       admin: { description: '停用后无法登录，已有项目保留' },
-      access: { create: fieldCmsAdminOnly, update: fieldCmsAdminOnly },
-    },
-    {
-      name: 'membershipTier',
-      label: '会员等级',
-      type: 'select',
-      required: true,
-      defaultValue: 'free',
-      options: MEMBERSHIP_TIERS.map((t) => ({ label: t.label, value: t.value })),
-      admin: { position: 'sidebar', description: '可通过「兑换码」激活升级，或由管理员在后台直接调整' },
-      access: { create: fieldCmsAdminOnly, update: fieldCmsAdminOnly },
-    },
-    {
-      name: 'membershipExpiresAt',
-      label: '会员到期时间',
-      type: 'date',
-      admin: { position: 'sidebar', description: '留空表示长期有效；过期后自动恢复为标准体验版' },
       access: { create: fieldCmsAdminOnly, update: fieldCmsAdminOnly },
     },
     {

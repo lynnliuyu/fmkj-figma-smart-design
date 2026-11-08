@@ -10,8 +10,6 @@ import {
   Bot,
   Check,
   ChevronRight,
-  Coins,
-  Crown,
   FileCheck2,
   FileText,
   FolderKanban,
@@ -20,7 +18,6 @@ import {
   Layers,
   MapPinned,
   Menu,
-  Minus,
   ReceiptText,
   Search,
   Smartphone,
@@ -186,12 +183,12 @@ const DOC_GROUPS: NavGroup[] = [
     items: [
       {
         id: 'membership',
-        title: '会员订阅体系（Go / Plus / Pro）',
-        keywords: '会员 订阅 Go Plus Pro 免费 兑换码 额度 权益对比',
+        title: 'AI 积分与充值',
+        keywords: '积分 充值 兑换码 余额 流水 任务奖励 绑定邮箱 绑定微信',
         headings: [
-          { id: 'mb-tiers', label: '三档会员定位与核心额度' },
-          { id: 'mb-matrix', label: '完整权益对比矩阵' },
-          { id: 'mb-redeem', label: '兑换码激活与到期规则' },
+          { id: 'mb-balance', label: '积分余额与流水' },
+          { id: 'mb-redeem', label: '兑换码充值' },
+          { id: 'mb-tasks', label: '绑定与成长任务奖励' },
         ],
       },
       {
@@ -221,7 +218,7 @@ const DOC_GROUPS: NavGroup[] = [
         id: 'plugins',
         title: '插件市场全览（12 款插件）',
         keywords: '插件市场 房间分析 智能选型 AI识图 DWG 勘测 布线 采购 移交 售后',
-        headings: [{ id: 'pl-list', label: '全平台插件功能与所需等级' }],
+        headings: [{ id: 'pl-list', label: '全平台插件功能与挂载位置' }],
       },
       {
         id: 'templates',
@@ -480,7 +477,7 @@ export function DocsClient({ manual }: { manual: ManualData }) {
               {activeId === 'quotes' && <SectionQuotes />}
               {activeId === 'contracts' && <SectionContracts />}
               {activeId === 'archive' && <SectionArchive />}
-              {activeId === 'membership' && <SectionMembership manual={manual} />}
+              {activeId === 'membership' && <SectionMembership />}
               {activeId === 'ai-models' && <SectionAiModels manual={manual} />}
               {activeId === 'ai-billing' && <SectionAiBilling manual={manual} />}
               {activeId === 'plugins' && <SectionPlugins manual={manual} />}
@@ -691,7 +688,7 @@ function SectionOverview({
             <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               <strong className="text-foreground">文档与系统配置实时同步：</strong>
-              本文档中心（<code className="font-mono">/docs</code>）直接绑定系统的会员配置、AI 计费常量、后台启用的国产大模型列表与插件注册表，任何配置调整均会自动反映在文档表格中。
+              本文档中心（<code className="font-mono">/docs</code>）直接绑定系统的 AI 计费常量、后台启用的国产大模型列表与插件注册表，任何配置调整均会自动反映在文档表格中。
             </span>
           </li>
         </ul>
@@ -806,7 +803,7 @@ function SectionProjects() {
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
           <li><strong>自动生成项目名称：</strong>新建项目时若不手填项目名称，系统会自动组合「小区/楼盘 + 房号」（如 <code className="font-mono">西溪壹号·3幢1201</code>）或「客户姓名 + 全屋智能项目」。</li>
           <li><strong>主平台与预算：</strong>选定主平台（米家 / Aqara Home / Apple Home / 华为鸿蒙智家 / KNX / Control4 / 网络弱电）后，智能选型插件会以此为依据自动过滤兼容型号。</li>
-          <li><strong>归档释放额度：</strong>完工交付后的项目可在「归档」页设为「已归档」。已归档项目<strong>不占用</strong>会员的「进行中项目数」额度，且随时可恢复为进行中。</li>
+          <li><strong>归档与检索：</strong>完工交付后的项目可在「归档」页设为「已归档」，项目列表默认只展示进行中的项目，已归档项目随时可恢复为进行中。</li>
         </ul>
       </section>
 
@@ -1067,116 +1064,41 @@ function SectionArchive() {
       <section id="ar-bundle" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 业主交付资料包（合并 PDF / ZIP 打包下载）</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          Plus 专业版与 Pro 旗舰版会员可在归档页勾选任意几份交付单据，点击 <strong>「合并导出单份 PDF」</strong> 或 <strong>「打包下载 ZIP 资料包」</strong>，系统会自动在服务端渲染并合成为标准命名的完整交付包。
+          在归档页勾选任意几份交付单据，点击 <strong>「合并导出单份 PDF」</strong> 或 <strong>「打包下载 ZIP 资料包」</strong>，系统会自动在服务端渲染并合成为标准命名的完整交付包。
         </p>
       </section>
     </article>
   )
 }
 
-function SectionMembership({ manual }: { manual: ManualData }) {
+function SectionMembership() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">会员订阅体系（Go / Plus / Pro）</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">AI 积分与充值</h1>
         <p className="text-sm text-muted-foreground">
-          本章节直接读取系统会员配置（<code className="font-mono">src/lib/membership.ts</code>），展示最新档位额度与特权对比。
+          平台已取消会员分级：项目数、协作成员、AI 模型、方案模板与插件全部对所有账号开放，使用 AI 能力时统一按积分扣除。
         </p>
       </div>
 
-      <section id="mb-tiers" className="scroll-mt-20 space-y-3">
-        <h2 className="text-base font-semibold">1. 三档会员定位与核心额度</h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          {manual.tiers.map((t) => (
-            <div
-              key={t.value}
-              className={cn(
-                'flex flex-col justify-between rounded-xl border p-4 text-xs',
-                t.value === 'pro' && 'border-primary bg-primary/[0.02] ring-1 ring-primary/20',
-              )}
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">{t.label}</span>
-                  <Badge variant={t.value === 'pro' ? 'default' : 'secondary'}>{t.badge}</Badge>
-                </div>
-                <p className="text-muted-foreground">{t.description}</p>
-                <div className="space-y-1 border-y py-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">进行中项目</span>
-                    <span className="font-semibold">{t.activeProjectLimit === null ? '不限' : `${t.activeProjectLimit} 个`}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">单项目协作人数</span>
-                    <span className="font-semibold">{t.collaboratorLimit === null ? '不限' : `${t.collaboratorLimit} 人`}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">每月赠送积分</span>
-                    <span className="font-semibold text-primary">{t.monthlyCredits ? `${t.monthlyCredits} 积分/月` : '—'}</span>
-                  </div>
-                </div>
-                <ul className="space-y-1.5 pt-1">
-                  {t.features.map((f) => (
-                    <li key={f} className="flex items-start gap-1.5">
-                      <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="mb-matrix" className="scroll-mt-20 space-y-3">
-        <h2 className="text-base font-semibold">2. 完整权益对比矩阵</h2>
-        <div className="overflow-hidden rounded-xl border">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b bg-muted/40">
-              <tr>
-                <th className="px-4 py-2.5 font-semibold">权益项</th>
-                {manual.tiers.map((t) => (
-                  <th key={t.value} className="px-3 py-2.5 text-center font-semibold">
-                    {t.badge}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {manual.benefitRows.map((row) => (
-                <tr key={row.label}>
-                  <td className="px-4 py-2.5">
-                    <span className="font-medium">{row.label}</span>
-                    {row.hint ? <span className="block text-[11px] text-muted-foreground">{row.hint}</span> : null}
-                  </td>
-                  {manual.tiers.map((t) => {
-                    const val = row.values[t.value]
-                    return (
-                      <td key={t.value} className="px-3 py-2.5 text-center">
-                        {typeof val === 'boolean' ? (
-                          val ? (
-                            <Check className="mx-auto size-4 text-primary" />
-                          ) : (
-                            <Minus className="mx-auto size-4 text-muted-foreground/40" />
-                          )
-                        ) : (
-                          <span>{val}</span>
-                        )}
-                      </td>
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <section id="mb-balance" className="scroll-mt-20 space-y-3">
+        <h2 className="text-base font-semibold">1. 积分余额与流水</h2>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          前往工作台 <Link href="/membership" className="font-medium text-primary underline">/membership</Link> 页面，或在左下角头像菜单点击「积分与账单」，即可查看当前 AI 积分余额与最近 30 条积分流水。每次 AI 对话会按「模型倍率 × Token 用量 + 工具调用附加积分」扣减，并记入流水（余额与流水见 <code className="font-mono">src/collections/AiCreditLedger.ts</code>）。
+        </p>
       </section>
 
       <section id="mb-redeem" className="scroll-mt-20 space-y-2">
-        <h2 className="text-base font-semibold">3. 兑换码激活与到期说明</h2>
+        <h2 className="text-base font-semibold">2. 兑换码充值</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          前往工作台 <Link href="/membership" className="font-medium text-primary underline">/membership</Link> 页面或点击侧边栏「会员与积分」，输入格式如 <code className="font-mono">FMKJ-XXXX-XXXX-XXXX</code> 的兑换码即可一键开通对应等级会员或充值 AI 积分。会员到期后会自动降级为 Go 基础版，您已创建的所有项目、点位图与报价数据均完好保留。
+          在「积分与账单」页或头像菜单的兑换弹窗中，输入格式如 <code className="font-mono">FMKJ-XXXX-XXXX-XXXX</code> 的兑换码即可直接充值 AI 积分，余额实时到账，您已创建的所有项目、点位图与报价数据不受影响。
+        </p>
+      </section>
+
+      <section id="mb-tasks" className="scroll-mt-20 space-y-2">
+        <h2 className="text-base font-semibold">3. 绑定与成长任务奖励</h2>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          「积分与账单」页还提供一次性任务奖励：绑定电子邮箱赠 10 积分、绑定微信小程序赠 10 积分、关注官方公众号赠 5 积分、完善报价抬头赠 5 积分、生成首份报价单赠 5 积分。每项任务每个账号终生仅可领取一次，达成条件后自动或点击领取记入积分流水。
         </p>
       </section>
     </article>
@@ -1187,21 +1109,21 @@ function SectionAiModels({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">纯国产 AI 大模型分级矩阵</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">纯国产 AI 大模型矩阵</h1>
         <p className="text-sm text-muted-foreground">
-          全站仅选用国内合规优质大模型（DeepSeek、阿里通义千问 Qwen、字节豆包、智谱 GLM、月之暗面 Kimi），按 Go / Plus / Pro 会员档位分级开放。
+          全站仅选用国内合规优质大模型（DeepSeek、阿里通义千问 Qwen、字节豆包、智谱 GLM、月之暗面 Kimi），所有模型对所有账号开放，按计费倍率扣减 AI 积分。
         </p>
       </div>
 
       <section id="am-policy" className="scroll-mt-20 space-y-2">
-        <h2 className="text-base font-semibold">1. 模型分级与后台统一管控说明</h2>
+        <h2 className="text-base font-semibold">1. 模型倍率与后台统一管控说明</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>Go 基础高速档（1x 倍率）：</strong>面向日常高速对话、产品库检索与基础点位规划，全员可用。</li>
-          <li><strong>Plus 高阶视觉多模态与长文本档（2x 倍率）：</strong>面向复杂 CAD/户型图点位视觉识别、高定提案话术润色与长清单核对，Plus 及 Pro 会员可用。</li>
-          <li><strong>Pro 满血深度推理旗舰档（3x 倍率）：</strong>面向多层别墅全案点位回路审查、跨生态协议架构规划与整案预算精算优化，Pro 旗舰版会员独占。</li>
+          <li><strong>高速档（1x 倍率）：</strong>面向日常高速对话、产品库检索与基础点位规划。</li>
+          <li><strong>视觉多模态与长文本档（2x 倍率）：</strong>面向复杂 CAD/户型图点位视觉识别、高定提案话术润色与长清单核对。</li>
+          <li><strong>深度推理旗舰档（3x 倍率）：</strong>面向多层别墅全案点位回路审查、跨生态协议架构规划与整案预算精算优化。</li>
         </ul>
         <Callout type="note" title="后台统一管控（客户不可自行修改模型配置）">
-          平台上开放给客户使用的模型列表、接口渠道、所属会员档位（Go / Plus / Pro）与计费倍率，均由平台超级管理员在 Payload 管理后台（<code className="font-mono">/admin/globals/ai-settings</code>）统一维护，下表实时同步自后台当前配置。
+          平台上开放给客户使用的模型列表、接口渠道与计费倍率，均由平台超级管理员在 Payload 管理后台（<code className="font-mono">/admin/globals/ai-settings</code>）统一维护，下表实时同步自后台当前配置。
         </Callout>
       </section>
 
@@ -1213,7 +1135,6 @@ function SectionAiModels({ manual }: { manual: ManualData }) {
               <tr>
                 <th className="px-4 py-2.5 font-semibold">模型名称</th>
                 <th className="px-3 py-2.5 font-semibold">接入渠道</th>
-                <th className="px-3 py-2.5 text-center font-semibold">所需等级</th>
                 <th className="px-3 py-2.5 text-center font-semibold">计费倍率</th>
                 <th className="px-4 py-2.5 font-semibold">适用场景说明</th>
               </tr>
@@ -1228,11 +1149,6 @@ function SectionAiModels({ manual }: { manual: ManualData }) {
                     </code>
                   </td>
                   <td className="px-3 py-2.5 text-muted-foreground">{m.provider}</td>
-                  <td className="px-3 py-2.5 text-center">
-                    <Badge variant={m.tierBadge === 'Go' ? 'secondary' : 'default'} className="text-[10px]">
-                      {m.tierBadge}
-                    </Badge>
-                  </td>
                   <td className="px-3 py-2.5 text-center font-mono font-semibold tabular-nums">{m.cost}x</td>
                   <td className="px-4 py-2.5 text-muted-foreground">{m.description}</td>
                 </tr>
@@ -1337,7 +1253,6 @@ function SectionPlugins({ manual }: { manual: ManualData }) {
             <thead className="border-b bg-muted/40">
               <tr>
                 <th className="px-4 py-2.5 font-semibold">插件名称</th>
-                <th className="px-3 py-2.5 text-center font-semibold">所需等级</th>
                 <th className="px-3 py-2.5 font-semibold">挂载位置</th>
                 <th className="px-4 py-2.5 font-semibold">功能说明</th>
               </tr>
@@ -1346,11 +1261,6 @@ function SectionPlugins({ manual }: { manual: ManualData }) {
               {manual.plugins.map((p) => (
                 <tr key={p.id}>
                   <td className="px-4 py-2.5 font-semibold">{p.name}</td>
-                  <td className="px-3 py-2.5 text-center">
-                    <Badge variant={p.tierBadge === 'Go' ? 'secondary' : 'default'} className="text-[10px]">
-                      {p.tierBadge}
-                    </Badge>
-                  </td>
                   <td className="px-3 py-2.5 text-muted-foreground">{p.where}</td>
                   <td className="px-4 py-2.5 text-muted-foreground">{p.description}</td>
                 </tr>
@@ -1388,7 +1298,6 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
             <thead className="border-b bg-muted/40">
               <tr>
                 <th className="px-4 py-2.5 font-semibold">模板名称</th>
-                <th className="px-3 py-2.5 text-center font-semibold">所需等级</th>
                 <th className="px-3 py-2.5 font-semibold">适合什么客户</th>
                 <th className="px-4 py-2.5 font-semibold">什么时候用 / 外观特点</th>
               </tr>
@@ -1401,11 +1310,6 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
                       {t.name}
                     </Link>
                     <code className="ml-1.5 font-mono text-[10px] text-muted-foreground">{t.id}</code>
-                  </td>
-                  <td className="px-3 py-2.5 text-center">
-                    <Badge variant={t.tierBadge === 'Go' ? 'secondary' : 'default'} className="text-[10px]">
-                      {t.tierBadge}
-                    </Badge>
                   </td>
                   <td className="px-3 py-2.5">{t.audience}</td>
                   <td className="px-4 py-2.5 text-muted-foreground">
@@ -1429,7 +1333,7 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
               <div className="flex items-center justify-between">
                 <span className="font-semibold">{s.name}</span>
                 <Badge variant={s.isBuiltin ? 'secondary' : 'outline'} className="text-[10px]">
-                  {s.isBuiltin ? 'Go 默认内置' : 'Plus 文档风格包'}
+                  {s.isBuiltin ? '内置风格' : '扩展风格包'}
                 </Badge>
               </div>
               <p className="mt-1 text-muted-foreground">{s.description}</p>

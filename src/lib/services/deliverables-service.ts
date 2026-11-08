@@ -1,7 +1,5 @@
 import { APIError } from 'payload'
 
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { getPayloadClient } from '@/lib/payload'
 import type { User } from '@/payload-types'
 import { loadProposalTemplates } from '@/plugins/proposal/registry'
@@ -11,8 +9,7 @@ export type DeliverablesResult = { ok: true } | { ok: false; error: string }
 
 /**
  * 设置交付资料：定稿报价、交付方案模板（只接受这两个字段；网页归档页与小程序共用）。
- * 报价必须属于本项目（由项目集合的校验保证）；模板必须是当前可用的业主方案模板（施工交底单独生成），
- * 会员严格模式下还要满足模板的会员等级。
+ * 报价必须属于本项目（由项目集合的校验保证）；模板必须是当前可用的业主方案模板（施工交底单独生成）。
  */
 export async function saveDeliverables(user: User, projectId: string, patch: DeliverablesPatch): Promise<DeliverablesResult> {
   const data: { finalQuote?: string | null; proposalTemplate?: string | null } = {}
@@ -24,8 +21,6 @@ export async function saveDeliverables(user: User, projectId: string, patch: Del
       const tpl = templates.find((t) => t.value === slug)
       if (!tpl) return { ok: false, error: '方案模板不存在或已停用' }
       if (tpl.kind !== 'owner') return { ok: false, error: '施工交底会单独生成，交付方案请选择业主方案模板' }
-      const access = await getMembershipContext(user)
-      if (!featureAccess(access.membership, tpl.tier, access.strict).allowed) return { ok: false, error: `「${tpl.label}」是 ${tierBadge(tpl.tier)} 模板，升级后才能设为交付方案` }
     }
     data.proposalTemplate = slug || null
   }

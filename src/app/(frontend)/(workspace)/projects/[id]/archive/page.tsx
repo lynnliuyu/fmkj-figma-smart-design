@@ -6,8 +6,6 @@ import { relId } from '@/lib/access'
 import { getCompanyInfo } from '@/lib/cached-data'
 import { contractStatusLabel, fmtLongDate, paymentAmounts } from '@/lib/contracts'
 import { FINAL_QUOTE_SOURCE_LABEL, resolveFinalQuote } from '@/lib/deliverables'
-import { FEATURE_TIERS, featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { categoryOfType, deviceTypeOf } from '@/lib/device-types'
 import { nightScenePhotoForScene } from '@/lib/scene-night-photos'
 import { miniAppCodeForCompany } from '@/lib/mini-app-code'
@@ -47,11 +45,10 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
     await payload.update({ collection: 'projects', id: project.id, data: { shareConfig } as never, overrideAccess: true, depth: 0 }).catch(() => null)
   }
   const ownerId = relId(project.owner) || user.id
-  const [flags, templates, company, access, fullSceneDoc, previewDocs] = await Promise.all([
+  const [flags, templates, company, fullSceneDoc, previewDocs] = await Promise.all([
     getPluginFlags(ownerId),
     loadProposalTemplates(user),
     getCompanyInfo(ownerId),
-    getMembershipContext(user),
     payload.findByID({ collection: 'projects', id: project.id, depth: 0, overrideAccess: true, select: { pointMap: true } }).catch(() => null),
     getTemplatePreviewDocs().catch(() => null),
   ])
@@ -169,7 +166,6 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
             note: points ? '' : '未布置点位',
             url: proposalUrl,
             defaultOn: true,
-            tierBadge: tpl ? (tierBadge(tpl.tier) as 'Go' | 'Plus' | 'Pro') : 'Go',
           },
         ]
       : []),
@@ -193,16 +189,14 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
             note: afterSales?.warranty.end ? `质保至 ${afterSales.warranty.end}` : '质保权益、设备台账与报修方式',
             url: `/print/projects/${pid}/after-sales`,
             defaultOn: false,
-            tierBadge: 'Pro' as const,
           },
         ]
       : []),
   ]
-  const pkg = featureAccess(access.membership, FEATURE_TIERS.package, access.strict)
   const otherQuotes = quotes.filter((q) => String(q.id) !== String(finalQuote?.id ?? ''))
   const otherTemplates = flags.proposal && points ? deckTemplates.filter((t) => t.value !== tpl?.value) : []
   // 交付方案模板选择器：缩略图用示例别墅（各项目共用缓存），预览样张用本项目的数据
-  const gallery = flags.proposal ? buildTemplateGallery(deckTemplates, previewDocs, { tier: access.membership.effectiveTier, strict: access.strict, insights: flags['room-insights'] }) : null
+  const gallery = flags.proposal ? buildTemplateGallery(deckTemplates, previewDocs, { insights: flags['room-insights'] }) : null
   const previewLinks = Object.fromEntries(
     deckTemplates.map((t) => [
       t.value,
@@ -240,7 +234,6 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
               value={tpl?.value ?? null}
               previewLinks={previewLinks}
               editable={!readOnly}
-              strict={access.strict}
             />
           ) : undefined
         }
@@ -250,7 +243,6 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
           address: [project.community, project.address].filter(Boolean).join(' '),
           date: new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' }),
         }}
-        access={{ meets: pkg.meets, allowed: pkg.allowed, badge: tierBadge(FEATURE_TIERS.package), hint: access.upgradeHint }}
       />
 
       {afterSales ? <AfterSalesSummary projectId={pid} data={afterSales} /> : null}

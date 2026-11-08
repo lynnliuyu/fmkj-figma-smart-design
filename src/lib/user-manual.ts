@@ -2,14 +2,13 @@
  * 繁梦空间（FMKJ）用户手册数据源（单一事实来源）。
  *
  * 同步维护约定：
- * 1. 会员等级、月度赠分、项目与协作上限、对比表直接引自 `@/lib/membership`；
- * 2. AI Token 计费单价与各工具调用费率直接引自 `@/plugins/ai-copilot/billing`；
- * 3. 插件清单直接引自 `@/plugins`；方案模板引自 `@/plugins/proposal/templates`；文档风格引自 `@/documents/registry`；
- * 4. 后续若新增或修改核心功能、操作流程、计费规则或快捷键，必须同步更新本文件与 `docs/USER_MANUAL.md`。
+ * 1. AI 积分计费单价与各工具调用费率直接引自 `@/plugins/ai-copilot/billing`；
+ * 2. 插件清单直接引自 `@/plugins`；方案模板引自 `@/plugins/proposal/templates`；文档风格引自 `@/documents/registry`；
+ * 3. 后续若新增或修改核心功能、操作流程、计费规则或快捷键，必须同步更新本文件与 `docs/USER_MANUAL.md`。
+ * 平台已取消会员分级：所有功能统一按 AI 积分扣除（积分余额与流水见 `src/collections/AiCreditLedger.ts`）。
  */
 import { allStyles, DOC_KIND_LIST, DOC_KINDS } from '@/documents/registry'
 import { DEVICE_GROUPS } from '@/lib/device-types'
-import { BENEFIT_ROWS, MEMBERSHIP_TIERS, tierBadge } from '@/lib/membership'
 import { PLUGINS } from '@/plugins'
 import { DEFAULT_TOOL_COST, INPUT_PER_1K, OUTPUT_PER_1K, TOOL_COSTS } from '@/plugins/ai-copilot/billing'
 import { AI_PROVIDER_PRESETS, type AiModelConfig } from '@/plugins/ai-copilot/templates'
@@ -35,7 +34,7 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     bullets: [
       '自动命名：项目名称留空时，系统自动按「小区 + 房号」或客户姓名生成标准项目名。',
       '主平台绑定：选定主平台后，智能选型插件与 AI 助手会优先匹配兼容该生态的设备型号。',
-      '链接分享与多人协作：支持生成只读分享链接发给业主查看，或生成协作邀请链接供团队工程师共同编辑点位与报价（协作人数上限按项目负责人的会员等级计算）。',
+      '链接分享与多人协作：支持生成只读分享链接发给业主查看，或生成协作邀请链接供团队工程师共同编辑点位与报价（协作成员人数不限）。',
       '业主方案对比与意向确认：业主打开分享链接后，可同屏对比「已发送 / 已确认」的多套报价（按设备类别看数量与差价），把暂时不需要的设备标记为「暂缓」，手写签名提交意向；反馈出现在项目「报价」页，可一键生成去掉暂缓设备的调整版报价（原报价不变）。',
     ],
   },
@@ -86,8 +85,8 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     bullets: [
       '8 章 A4 横版方案演示：含封面、设计理念、点位平面图（直接显示设备图标）、AC+AP 网络与中控系统拓扑图、分房间配置、智能联动场景、预算投资汇总与服务交付确认。',
       '施工与工程专业单据：支持导出正式报价单、施工合同、A4 横版点位布置图、施工交底核对清单（自动隐去价格）、现场勘测单、强弱电布线表、场景与账号移交单、采购与备货核验单。',
-      '业主交付资料包（Plus / Pro 专属）：支持在归档页勾选所需文档，一键合并为单份完整 PDF 或打包为 ZIP 压缩包下载交付业主。',
-      '售后维保（Pro 旗舰）：在归档页进入「售后维保」，登记交付验收后质保自动倒计时（到期前 30 天提醒），记录巡检、上门检修、设备更换与收费；一键留存全屋设备台账作为配置备份，并打印售后维保卡交给业主。项目归档后仍可继续登记。',
+      '业主交付资料包：支持在归档页勾选任意文档，一键合并为单份完整 PDF 或打包为 ZIP 压缩包下载交付业主。',
+      '售后维保：在归档页进入「售后维保」，登记交付验收后质保自动倒计时（到期前 30 天提醒），记录巡检、上门检修、设备更换与收费；一键留存全屋设备台账作为配置备份，并打印售后维保卡交给业主。项目归档后仍可继续登记。',
     ],
   },
 ]
@@ -241,7 +240,6 @@ export function getManualSnapshot(activeModels?: AiModelConfig[]) {
     name: m.name,
     provider: m.provider,
     apiModel: m.apiModel,
-    tierBadge: m.tierBadge ?? (m.minTier === 'team' ? 'Pro' : m.minTier === 'pro' ? 'Plus' : 'Go'),
     cost: m.cost,
     reasoning: Boolean(m.reasoning),
     description: m.description,
@@ -251,7 +249,6 @@ export function getManualSnapshot(activeModels?: AiModelConfig[]) {
     id: p.id,
     name: p.name,
     where: p.where,
-    tierBadge: tierBadge(p.tier),
     description: p.description,
     provides: p.provides,
     aiTools: p.ai?.tools.map((t) => t.name) ?? [],
@@ -266,7 +263,6 @@ export function getManualSnapshot(activeModels?: AiModelConfig[]) {
     audience: t.audience,
     occasion: t.occasion,
     highlights: t.highlights,
-    tierBadge: tierBadge(t.tier),
     description: t.description,
   }))
 
@@ -291,8 +287,6 @@ export function getManualSnapshot(activeModels?: AiModelConfig[]) {
 
   return {
     lastUpdated: MANUAL_LAST_UPDATED,
-    tiers: MEMBERSHIP_TIERS,
-    benefitRows: BENEFIT_ROWS,
     billing: {
       inputPer1k: INPUT_PER_1K,
       outputPer1k: OUTPUT_PER_1K,

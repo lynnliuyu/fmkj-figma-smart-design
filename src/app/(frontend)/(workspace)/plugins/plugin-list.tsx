@@ -3,14 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Blocks, ChevronRight, Lock } from 'lucide-react'
+import { Blocks, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { PluginId } from '@/plugins/types'
 
@@ -27,23 +26,18 @@ export type PluginViewItem = {
   entry: string | null
   provides: string[]
   enabled: boolean
-  tier?: 'free' | 'pro' | 'team'
-  /** 所需会员（免费为 null） */
-  tierBadge: string | null
-  /** 严格模式下会员等级不够，不能启用 */
-  locked: boolean
 }
 
 type StageGroup = { key: string; label: string; hint: string; step: number | null }
 
 
-export function PluginList({ items, stages, selectedId, upgradeHint }: { items: PluginViewItem[]; stages: StageGroup[]; selectedId: string | null; upgradeHint: string }) {
+export function PluginList({ items, selectedId }: { items: PluginViewItem[]; selectedId: string | null }) {
   const router = useRouter()
   const [busyId, setBusyId] = useState<string | null>(null)
   const [optimistic, setOptimistic] = useState<Record<string, boolean>>({})
 
   async function toggle(item: PluginViewItem, next: boolean) {
-    if (item.status !== 'ready' || busyId || (next && item.locked)) return
+    if (item.status !== 'ready' || busyId) return
     setBusyId(item.id)
     setOptimistic((prev) => ({ ...prev, [item.id]: next }))
     try {
@@ -108,31 +102,8 @@ export function PluginList({ items, stages, selectedId, upgradeHint }: { items: 
             </CardTitle>
           </div>
           <div className="flex shrink-0 items-center gap-2 pt-0.5">
-            {p.tierBadge ? (
-              <span
-                className={cn(
-                  'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold',
-                  p.tierBadge === 'Pro'
-                    ? 'bg-amber-500/12 text-amber-800 ring-1 ring-amber-500/30 dark:text-amber-400'
-                    : p.tierBadge === 'Plus'
-                      ? 'bg-primary/12 text-primary ring-1 ring-primary/25'
-                      : 'bg-muted text-muted-foreground',
-                )}
-              >
-                {p.tierBadge}
-              </span>
-            ) : null}
             {pending ? (
               <Badge variant="outline" className="text-xs text-muted-foreground">规划中</Badge>
-            ) : p.locked && !enabled ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex size-6 items-center justify-center rounded-md bg-muted text-muted-foreground" aria-label={`${p.name}需要${p.tierBadge}`}>
-                    <Lock className="size-3.5" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-60">需要{p.tierBadge}。{upgradeHint}</TooltipContent>
-              </Tooltip>
             ) : (
               <Switch
                 id={`plugin-${p.id}`}

@@ -2,8 +2,6 @@ import { revalidatePath } from 'next/cache'
 
 import { appAuth } from '@/lib/app-auth'
 import { getCompanyInfo } from '@/lib/cached-data'
-import { featureAccess, tierBadge } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { getPayloadClient } from '@/lib/payload'
 import { isPluginId, PLUGINS } from '@/plugins'
 
@@ -28,14 +26,6 @@ export async function POST(request: Request) {
   const plugin = PLUGINS.find((p) => p.id === body.id)
   if (!plugin || plugin.status !== 'ready') {
     return fail(400, '该插件尚在待开发阶段，暂不可开启')
-  }
-
-  // 严格模式下，会员等级不够的插件不能开启；提示模式只提示不拦截
-  if (body.enabled) {
-    const access = await getMembershipContext(user)
-    if (!featureAccess(access.membership, plugin.tier, access.strict).allowed) {
-      return fail(403, `「${plugin.name}」需要${tierBadge(plugin.tier)}。${access.upgradeHint}`)
-    }
   }
 
   const company = await getCompanyInfo(user.id)

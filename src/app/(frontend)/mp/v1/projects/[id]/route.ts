@@ -30,7 +30,7 @@ export const GET = mpRoute<{ id: string }>(async ({ user, params }) => {
     },
     quotes: d.quotes.map((q) => ({ id: q.id, title: q.title, total: q.total, status: q.status, statusLabel: quoteStatusLabel(q.status), scope: q.scope })),
     contract: d.contract ? presentContract(d.contract) : null,
-    proposal: tpl ? { slug: tpl.slug, label: tpl.label, tierBadge: tpl.tierBadge, thumb: tpl.thumb, audience: tpl.audience, chosen: templates!.chosen, count: templates!.options.length } : null,
+    proposal: tpl ? { slug: tpl.slug, label: tpl.label, thumb: tpl.thumb, audience: tpl.audience, chosen: templates!.chosen, count: templates!.options.length } : null,
     documents: [
       { key: 'plans', title: '点位图', note: '每张图纸一页，附设备图例和统计', path: `/print/projects/${id}/plans` },
       { key: 'checklist', title: '点位交底清单', note: '给安装团队逐点核对', path: `/print/projects/${id}/checklist` },

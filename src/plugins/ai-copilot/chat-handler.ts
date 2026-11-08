@@ -1,6 +1,4 @@
 import { getCompanyInfo } from '@/lib/cached-data'
-import { featureAccess, resolveMembership } from '@/lib/membership'
-import { getMembershipContext } from '@/lib/membership-policy'
 import { getPayloadClient } from '@/lib/payload'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { recordAiErrorDiagnostic } from '@/lib/usage-diagnostics'
@@ -145,7 +143,7 @@ function truncateToolOutput(json: string) {
  * - 按每个模型的真实价格分别计费后合计，调用成功后才扣费。
  */
 export async function handleAiChat(request: Request, user: User): Promise<Response> {
-  const [flags, company, access] = await Promise.all([getPluginFlags(user.id), getCompanyInfo(user.id), getMembershipContext(user)])
+  const [flags, company] = await Promise.all([getPluginFlags(user.id), getCompanyInfo(user.id)])
   if (!flags['ai-copilot']) return fail(404, '「AI 对话」插件已关闭')
 
   const body = (await request.json().catch(() => null)) as
@@ -160,10 +158,6 @@ export async function handleAiChat(request: Request, user: User): Promise<Respon
   const requestedModel = findModel(body?.modelId, company.aiModels)
   if (!requestedModel) return fail(400, '不支持的模型')
   const isAutoMode = requestedModel.id === 'auto'
-  const canUseModel = (m: AiModelConfig) => featureAccess(access.membership, m.minTier ?? 'free', access.strict).allowed
-  if (!isAutoMode && !canUseModel(requestedModel)) {
-    return fail(403, `模型「${requestedModel.name}」为 ${requestedModel.tierBadge ?? 'Plus'} 会员专属高阶模型，请升级至 ${requestedModel.tierBadge ?? 'Plus'} 会员后使用`)
-  }
   const pluginIds = Array.isArray(body?.pluginIds) ? body.pluginIds.filter((v): v is string => typeof v === 'string') : []
 
   const payload = await getPayloadClient()
@@ -225,7 +219,8 @@ export async function handleAiChat(request: Request, user: User): Promise<Respon
     ),
   ])
   const images = loadedImages.filter((i): i is ToolImage => Boolean(i))
-  const visionModels = rankVisionModels(company.aiModels, { canAccessModel: canUseModel })
+  // 平台已取消会员分级：所有已启用且配置了密钥的模型都对用户开放
+  const visionModels = rankVisionModels(company.aiModels)
 
   // 选择本轮主模型：Auto 按场景路由；手动选择时尊重用户选择（出错时才自动切换）
   const initialScene: RouteScene = inferRouteScene({ hasImage: hasImages, userText: visibleText })
@@ -235,13 +230,13 @@ export async function handleAiChat(request: Request, user: User): Promise<Respon
       if (m && m.id !== 'auto' && !out.some((x) => x.id === m.id) && resolveModelApiKey(m)) out.push(m)
     }
     add(primary)
-    for (const m of rankModelsForScene(company.aiModels, scene, { canAccessModel: canUseModel })) add(m)
-    if (scene !== 'fast') for (const m of rankModelsForScene(company.aiModels, 'expert', { canAccessModel: canUseModel })) add(m)
-    for (const m of rankModelsForScene(company.aiModels, 'fast', { canAccessModel: canUseModel })) add(m)
+    for (const m of rankModelsForScene(company.aiModels, scene)) add(m)
+    if (scene !== 'fast') for (const m of rankModelsForScene(company.aiModels, 'expert')) add(m)
+    for (const m of rankModelsForScene(company.aiModels, 'fast')) add(m)
     return out.slice(0, 3)
   }
   let activeModel: AiModelConfig = isAutoMode
-    ? resolveAutoRouteModel(company.aiModels, { hasImage: hasImages, userText: visibleText, canAccessModel: canUseModel }).model
+    ? resolveAutoRouteModel(company.aiModels, { hasImage: hasImages, userText: visibleText }).model
     : requestedModel
   if (!resolveModelApiKey(activeModel)) {
     const alt = chainFor(null, initialScene)[0]
@@ -265,13 +260,11 @@ export async function handleAiChat(request: Request, user: User): Promise<Respon
   const tools = availableTools(activeModel.id, pluginIds, flags)
   const toolDefs = tools.map((t) => t.definition)
   const toolTitle = (name: string) => tools.find((t) => t.spec.name === name)?.pluginName ?? name
-  const membership = resolveMembership(user as never)
   const messages: LlmMessage[] = [
     {
       role: 'system',
       content: systemPrompt(project, pluginIds, flags, sessionUploads, {
         userName: user.name,
-        membershipLabel: membership.label,
         credits: me.aiCredits ?? 0,
         pageLabel: describePage(body?.pagePath, project?.project.name),
         hasImages,
@@ -425,7 +418,7 @@ export async function handleAiChat(request: Request, user: User): Promise<Respon
         for (let step = 0; step < MAX_STEPS; step++) {
           if (request.signal.aborted) break
           if (isAutoMode && calledToolNames.length) {
-            const routed = resolveAutoRouteModel(company.aiModels, { hasImage: hasImages, userText: visibleText, calledToolNames, canAccessModel: canUseModel }).model
+            const routed = resolveAutoRouteModel(company.aiModels, { hasImage: hasImages, userText: visibleText, calledToolNames }).model
             if (routed.id !== activeModel.id && resolveModelApiKey(routed)) {
               activeModel = routed
               send({ type: 'meta', conversationId, modelId: activeModel.id, modelName: displayModelLabel(activeModel) })

@@ -89,7 +89,6 @@ export async function seedBuiltinTemplates(payload: Payload, opts: { fill?: bool
             theme: t.theme,
             sections: t.sections,
             markers: 'symbol',
-            tier: t.tier,
             enabled: true,
             sortOrder: (i + 1) * 10,
           } as never,

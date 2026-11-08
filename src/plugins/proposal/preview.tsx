@@ -6,7 +6,6 @@
  */
 import { ScaledFrame } from '@/components/scaled-frame'
 import { ensureDemoTemplateProject } from '@/lib/demo-project'
-import type { MembershipTier } from '@/lib/membership'
 import { memoize } from '@/lib/memo-cache'
 import { getPayloadClient } from '@/lib/payload'
 import { loadSystemProjectDocs, type ProjectDocsData } from '@/lib/project-docs'
@@ -81,17 +80,17 @@ export function templatePreview(template: ProposalTemplateDef, docs: ProjectDocs
   }
 }
 
-/** 选择器 / 模板库要用的全部数据：展示信息、会员状态、缩略图 */
+/** 选择器 / 模板库要用的全部数据：展示信息与缩略图 */
 export function buildTemplateGallery(
   templates: ProposalTemplateDef[],
   docs: ProjectDocsData | null,
-  opts: { tier?: MembershipTier; strict?: boolean; insights?: boolean } = {},
+  opts: { insights?: boolean } = {},
 ): { items: PickerTemplate[]; thumbs: Record<string, React.ReactNode> } {
   const thumbs: Record<string, React.ReactNode> = {}
   const items = templates.map((t) => {
     const p = templatePreview(t, docs, opts.insights ?? true)
     thumbs[t.value] = p.thumb
-    return toPickerTemplate(t, { pages: p.pages, tier: opts.tier, strict: opts.strict })
+    return toPickerTemplate(t, { pages: p.pages })
   })
   return { items, thumbs }
 }
