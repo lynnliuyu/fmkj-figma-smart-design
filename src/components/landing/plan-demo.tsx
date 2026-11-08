@@ -174,12 +174,20 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
             id="plan-canvas"
             className="relative aspect-3/2 overflow-hidden rounded-lg bg-white ring-1 ring-border"
           >
+            {/*
+              这张 demo 户型图是 public/ 下的静态 PNG（/demo-plans/*）。
+              本项目的 next/image 用的是 Figma 自定义 loader，它在 fill 模式下
+              无法从 loader 拿到宽度，会报
+                "Image with src ... has a loader property that does not implement width"
+              静态 demo 图本来就不需要按需缩放，直接用 unoptimized 交给浏览器原样加载。
+            */}
             <Image
               src={sheet.url}
               alt={`${data.project.name} ${sheet.name}`}
               fill
               sizes="(min-width: 1280px) 780px, (min-width: 1024px) 560px, 100vw"
               className="object-contain opacity-70"
+              unoptimized
               priority
             />
             <svg
