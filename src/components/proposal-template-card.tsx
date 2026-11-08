@@ -19,7 +19,7 @@ export function TemplateCard({
     <Link
       href={`/templates/${t.value}`}
       className={cn(
-        'group flex flex-col overflow-hidden rounded-xl border bg-card transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+        'group flex flex-col overflow-hidden rounded-[var(--radius-container)] border bg-card transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
         className,
       )}
     >

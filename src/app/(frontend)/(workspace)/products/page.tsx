@@ -374,7 +374,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
               return (
                 <li
                   key={p.id}
-                  className="group flex flex-col overflow-hidden rounded-xl border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-[var(--radius-container)] border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative flex aspect-square w-full items-center justify-center bg-white p-5">
                     {p.image?.url ? (

@@ -26,7 +26,7 @@ export function AfterSalesSummary({
   return (
     <section
       aria-labelledby="after-sales-title"
-      className="rounded-xl bg-card shadow-xs ring-1 ring-border"
+      className="rounded-[var(--radius-container)] bg-card shadow-xs ring-1 ring-border"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3.5">
         <h2 id="after-sales-title" className="text-base font-semibold">

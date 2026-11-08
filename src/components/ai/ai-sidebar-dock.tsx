@@ -770,7 +770,7 @@ export function AiSidebarDock({
                   key={t.id}
                   type="button"
                   onClick={() => pickTemplate(t.id)}
-                  className="group flex items-center gap-3 rounded-xl bg-card px-3.5 py-3 text-left shadow-xs ring-1 ring-border transition-[box-shadow,background-color] duration-150 ease-out-quart hover:bg-subtle hover:ring-border-strong focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:outline-none"
+                  className="group flex items-center gap-3 rounded-[var(--radius-container)] bg-card px-3.5 py-3 text-left shadow-xs ring-1 ring-border transition-[box-shadow,background-color] duration-150 ease-out-quart hover:bg-subtle hover:ring-border-strong focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:outline-none"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-medium text-foreground">{t.name}</span>

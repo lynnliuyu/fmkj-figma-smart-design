@@ -69,7 +69,7 @@ export function ClientFeedbackList({
   return (
     <section
       aria-labelledby="feedback-title"
-      className="overflow-hidden rounded-xl bg-card shadow-xs ring-1 ring-border"
+      className="overflow-hidden rounded-[var(--radius-container)] bg-card shadow-xs ring-1 ring-border"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3.5">
         <h3 id="feedback-title" className="flex items-center gap-2 text-base font-semibold">

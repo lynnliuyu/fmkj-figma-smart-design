@@ -19,7 +19,7 @@ const MODES = [
 
 // 整块选项可点；Radix 单选项输出 data-state，据此高亮选中的那一块
 const tile =
-  'relative cursor-pointer rounded-xl border bg-card font-normal leading-normal transition-colors hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/30'
+  'relative cursor-pointer rounded-[var(--radius-container)] border bg-card font-normal leading-normal transition-colors hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/30'
 
 /** 主题风格的示意小窗：侧栏 + 内容 + 主按钮 */
 function AccentPreview({ swatch }: { swatch: string }) {

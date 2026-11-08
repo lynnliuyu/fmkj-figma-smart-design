@@ -32,7 +32,7 @@ export function CreateContractPanel({
   const [quoteId, setQuoteId] = useState(defaultQuoteId)
   const [pending, startTransition] = useTransition()
   return (
-    <div className="rounded-xl bg-card shadow-xs ring-1 ring-border">
+    <div className="rounded-[var(--radius-container)] bg-card shadow-xs ring-1 ring-border">
       <div className="border-b px-5 py-4">
         <h3 className="text-base font-semibold">选择报价生成合同</h3>
         <p className="text-sm text-muted-foreground">

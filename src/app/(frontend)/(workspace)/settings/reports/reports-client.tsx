@@ -473,7 +473,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                     return (
                       <div
                         key={sh.id}
-                        className="flex flex-col justify-between rounded-xl border bg-card p-3 shadow-2xs"
+                        className="flex flex-col justify-between rounded-[var(--radius-container)] border bg-card p-3 shadow-2xs"
                       >
                         <div className="flex gap-3">
                           <button

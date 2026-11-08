@@ -438,7 +438,7 @@ export function TemplatePicker({
                         onDoubleClick={() => !compareMode && canChoose(t) && void choose(t.value)}
                         aria-pressed={compareMode ? checked : isActive}
                         className={cn(
-                          'group flex flex-col overflow-hidden rounded-xl border bg-card text-left transition-[border-color,box-shadow] outline-none hover:border-foreground/25 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-ring',
+                          'group flex flex-col overflow-hidden rounded-[var(--radius-container)] border bg-card text-left transition-[border-color,box-shadow] outline-none hover:border-foreground/25 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-ring',
                           (isActive || checked) &&
                             'border-primary ring-1 ring-primary/40 hover:border-primary',
                         )}

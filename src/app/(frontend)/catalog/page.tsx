@@ -92,7 +92,7 @@ export default async function PublicCatalogPage() {
                     return (
                       <div
                         key={t.value}
-                        className="flex items-start gap-3.5 rounded-xl border border-border bg-card p-4"
+                        className="flex items-start gap-3.5 rounded-[var(--radius-container)] border border-border bg-card p-4"
                       >
                         <PointMarker type={t.value} className="mt-0.5 size-8 shrink-0" />
                         <div className="min-w-0 flex-1 text-xs">
@@ -150,7 +150,7 @@ export default async function PublicCatalogPage() {
                     {shown.map((p) => (
                       <div
                         key={p.id}
-                        className="flex flex-col justify-between gap-3 rounded-xl border border-border bg-card p-3.5"
+                        className="flex flex-col justify-between gap-3 rounded-[var(--radius-container)] border border-border bg-card p-3.5"
                       >
                         <div className="flex gap-3">
                           <ProductThumb

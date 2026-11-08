@@ -203,7 +203,7 @@ export function DeliveryPackage({
   return (
     <section
       aria-labelledby="package-title"
-      className="rounded-xl bg-card shadow-xs ring-1 ring-border"
+      className="rounded-[var(--radius-container)] bg-card shadow-xs ring-1 ring-border"
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b px-5 py-4">
         <div className="flex min-w-0 items-center gap-2">

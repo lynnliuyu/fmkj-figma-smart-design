@@ -39,7 +39,7 @@ export default function DesignPilotPage() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* ── 现有组件 ── */}
-        <section className="flex flex-col gap-4 rounded-xl border bg-card p-5">
+        <section className="flex flex-col gap-4 rounded-[var(--radius-container)] border bg-card p-5">
           <h2 className="text-sm font-semibold text-muted-foreground">现有组件</h2>
 
           <div className="flex flex-wrap gap-2">
@@ -78,7 +78,7 @@ export default function DesignPilotPage() {
         </section>
 
         {/* ── Astryx ── */}
-        <section className="flex flex-col gap-4 rounded-xl border bg-card p-5">
+        <section className="flex flex-col gap-4 rounded-[var(--radius-container)] border bg-card p-5">
           <h2 className="text-sm font-semibold text-muted-foreground">Astryx</h2>
 
           <AstryxStack direction="horizontal" gap={2}>

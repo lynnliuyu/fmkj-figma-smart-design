@@ -680,7 +680,7 @@ function WarrantyHero({
     w.status === 'expired' ? ShieldX : w.status === 'expiring' ? ShieldAlert : ShieldCheck
   const days = w.daysLeft ?? 0
   return (
-    <div className="overflow-hidden rounded-xl bg-card shadow-xs ring-1 ring-border">
+    <div className="overflow-hidden rounded-[var(--radius-container)] bg-card shadow-xs ring-1 ring-border">
       <div className="grid gap-6 p-6 md:grid-cols-[auto_minmax(0,1fr)] md:items-center md:gap-10">
         <div className="flex items-center gap-4">
           <span
@@ -770,7 +770,7 @@ function StatTile({
   tone?: 'warning'
 }) {
   return (
-    <div className="rounded-xl bg-card px-4 py-3 shadow-xs ring-1 ring-border">
+    <div className="rounded-[var(--radius-container)] bg-card px-4 py-3 shadow-xs ring-1 ring-border">
       <dt className="text-xs text-muted-foreground">{label}</dt>
       <dd
         className={cn(

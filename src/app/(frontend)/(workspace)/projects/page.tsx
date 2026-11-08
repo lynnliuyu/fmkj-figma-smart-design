@@ -227,7 +227,7 @@ export default async function ProjectsPage({
       {/* Untitled UI 顶部 4 格业务数据概览卡片 */}
       {projects.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-xl bg-card p-4 shadow-xs ring-1 ring-border">
+          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
             <div className="text-xs font-medium text-muted-foreground">
               {archived ? '已归档项目' : '进行中项目'}
             </div>
@@ -238,7 +238,7 @@ export default async function ProjectsPage({
               <span className="text-xs text-muted-foreground">个项目</span>
             </div>
           </div>
-          <div className="rounded-xl bg-card p-4 shadow-xs ring-1 ring-border">
+          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
             <div className="text-xs font-medium text-muted-foreground">累计设计点位</div>
             <div className="mt-1.5 flex items-baseline gap-2">
               <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
@@ -247,7 +247,7 @@ export default async function ProjectsPage({
               <span className="text-xs text-muted-foreground">个智能点位</span>
             </div>
           </div>
-          <div className="rounded-xl bg-card p-4 shadow-xs ring-1 ring-border">
+          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
             <div className="text-xs font-medium text-muted-foreground">方案报价总额</div>
             <div className="mt-1.5 flex items-baseline gap-2">
               <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
@@ -255,7 +255,7 @@ export default async function ProjectsPage({
               </span>
             </div>
           </div>
-          <div className="rounded-xl bg-card p-4 shadow-xs ring-1 ring-border">
+          <div className="rounded-[var(--radius-container)] bg-card p-4 shadow-xs ring-1 ring-border">
             <div className="text-xs font-medium text-muted-foreground">已生成报价 / 签约</div>
             <div className="mt-1.5 flex items-baseline gap-2">
               <span className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">

@@ -117,7 +117,7 @@ export function ProjectOverview({
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-2">
           <section
             aria-labelledby="overview-customer"
-            className="rounded-xl border bg-card shadow-xs"
+            className="rounded-[var(--radius-container)] border bg-card shadow-xs"
           >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3">
               <h3 id="overview-customer" className="text-sm font-semibold">
@@ -155,7 +155,10 @@ export function ProjectOverview({
             </dl>
           </section>
 
-          <section aria-labelledby="overview-notes" className="rounded-xl border bg-card shadow-xs">
+          <section
+            aria-labelledby="overview-notes"
+            className="rounded-[var(--radius-container)] border bg-card shadow-xs"
+          >
             <h3 id="overview-notes" className="border-b px-5 py-3 text-sm font-semibold">
               备注与需求
             </h3>
@@ -175,7 +178,7 @@ export function ProjectOverview({
         <div className="flex min-w-0 flex-col gap-4">
           <section
             aria-labelledby="overview-config"
-            className="rounded-xl border bg-card shadow-xs"
+            className="rounded-[var(--radius-container)] border bg-card shadow-xs"
           >
             <h3 id="overview-config" className="border-b px-5 py-3 text-sm font-semibold">
               方案配置
@@ -193,7 +196,7 @@ export function ProjectOverview({
 
           <section
             aria-labelledby="overview-progress"
-            className="rounded-xl border bg-card shadow-xs"
+            className="rounded-[var(--radius-container)] border bg-card shadow-xs"
           >
             <h3 id="overview-progress" className="border-b px-5 py-3 text-sm font-semibold">
               交付进度

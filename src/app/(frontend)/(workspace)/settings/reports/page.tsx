@@ -20,7 +20,7 @@ export default async function CustomerUsageReportsPage() {
           title="客户使用与运维诊断报告"
           description="汇总全体客户的使用数据，仅对平台运营人员开放"
         />
-        <div className="rounded-xl border bg-card px-5 py-6 text-sm text-muted-foreground shadow-2xs">
+        <div className="rounded-[var(--radius-container)] border bg-card px-5 py-6 text-sm text-muted-foreground shadow-2xs">
           当前账号没有平台运营权限，无法查看跨客户的使用报告。你自己的项目、报价与 AI
           用量可以在对应页面查看。
         </div>

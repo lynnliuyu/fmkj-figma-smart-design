@@ -159,7 +159,7 @@ export default async function TemplatesPage() {
               {ORCHESTRATION_RULES.map((r, i) => (
                 <li
                   key={r}
-                  className="flex gap-4 rounded-xl border bg-card p-4 text-sm leading-relaxed"
+                  className="flex gap-4 rounded-[var(--radius-container)] border bg-card p-4 text-sm leading-relaxed"
                 >
                   <span className="font-medium text-muted-foreground tabular-nums">
                     {String(i + 1).padStart(2, '0')}
