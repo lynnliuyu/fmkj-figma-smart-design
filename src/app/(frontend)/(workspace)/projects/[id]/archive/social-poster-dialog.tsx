@@ -264,7 +264,9 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
                 />
               </label>
               <label className="flex items-center justify-between gap-3">
-                <span>{data.miniAppCodeUrl ? '收尾页附带小程序码' : '收尾页附带服务方联系二维码'}</span>
+                <span>
+                  {data.miniAppCodeUrl ? '收尾页附带小程序码' : '收尾页附带服务方联系二维码'}
+                </span>
                 <Switch checked={showQr} disabled={busy} onCheckedChange={setShowQr} />
               </label>
             </div>

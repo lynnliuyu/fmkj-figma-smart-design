@@ -31,7 +31,10 @@ function checkQrRateLimit(ip: string): boolean {
 }
 
 /** 尝试调用微信官方 getwxacodeunlimit 生成小程序码；若未配置或小程序尚未发布正式版则返回 null，自动降级为标准 QR 码。 */
-async function tryCreateWxacodeDataUrl(scene: string, requestedEnv?: string): Promise<string | null> {
+async function tryCreateWxacodeDataUrl(
+  scene: string,
+  requestedEnv?: string,
+): Promise<string | null> {
   if (!wechatConfigured()) return null
   try {
     const tokenParams = new URLSearchParams({
@@ -39,9 +42,12 @@ async function tryCreateWxacodeDataUrl(scene: string, requestedEnv?: string): Pr
       appid: process.env.WECHAT_MP_APPID!,
       secret: process.env.WECHAT_MP_SECRET!,
     })
-    const tokenRes = await fetch(`https://api.weixin.qq.com/cgi-bin/token?${tokenParams.toString()}`, {
-      signal: AbortSignal.timeout(5000),
-    })
+    const tokenRes = await fetch(
+      `https://api.weixin.qq.com/cgi-bin/token?${tokenParams.toString()}`,
+      {
+        signal: AbortSignal.timeout(5000),
+      },
+    )
     const tokenJson = (await tokenRes.json().catch(() => null)) as { access_token?: string } | null
     if (!tokenJson?.access_token) return null
 
@@ -158,13 +164,17 @@ export async function GET(request: Request) {
   if (!doc) return Response.json({ ok: true, status: 'expired' })
 
   if (new Date(doc.expiresAt).getTime() < Date.now()) {
-    await payload.delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 }).catch(() => null)
+    await payload
+      .delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 })
+      .catch(() => null)
     return Response.json({ ok: true, status: 'expired' })
   }
 
   if (doc.client === 'qr-confirmed' && relId(doc.user)) {
     const user = await loadActiveUser(relId(doc.user))
-    await payload.delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 }).catch(() => null)
+    await payload
+      .delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 })
+      .catch(() => null)
     if (!user) return Response.json({ ok: false, status: 'expired', error: '该账号已停用' })
 
     const { token: webToken, expiresAt } = await issueToken('web', {

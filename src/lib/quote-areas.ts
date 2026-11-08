@@ -80,7 +80,9 @@ export function buildQuoteFloorGroups(
   // 按产品 ID 和设备类型索引报价单中的有效行，并跟踪已分配给图纸点位的数量，确保楼层房间小计之和与整单产品小计严格相等
   const activeItems = quoteItems.filter((item) => item.quantity > 0)
   if (!activeItems.length) return []
-  const remainingQty = new Map<QuoteLineRef, number>(activeItems.map((item) => [item, item.quantity]))
+  const remainingQty = new Map<QuoteLineRef, number>(
+    activeItems.map((item) => [item, item.quantity]),
+  )
   const byProduct = new Map<string, QuoteLineRef[]>()
   const byType = new Map<string, QuoteLineRef[]>()
   for (const item of activeItems) {
@@ -98,7 +100,21 @@ export function buildQuoteFloorGroups(
   const areaById = new Map(areas.map((a) => [a.id, a]))
   const sheetList = sheets.length
     ? sheets
-    : [{ id: '__default', elementId: '__default', index: 0, name: '全屋', x: 0, y: 0, width: 1200, height: 800, fileId: null, url: null, missing: false }]
+    : [
+        {
+          id: '__default',
+          elementId: '__default',
+          index: 0,
+          name: '全屋',
+          x: 0,
+          y: 0,
+          width: 1200,
+          height: 800,
+          fileId: null,
+          url: null,
+          missing: false,
+        },
+      ]
 
   const floors: QuoteFloorGroup[] = []
   for (const [idx, sheet] of sheetList.entries()) {
@@ -106,10 +122,17 @@ export function buildQuoteFloorGroups(
     if (!sheetPoints.length) continue
 
     // 按房间名合并同一层里的同名区域（例如 L 形厨房的两个框）
-    const roomMap = new Map<string, { id: string; name: string; typeLabel: string; buckets: Map<string, RoomDeviceLine> }>()
+    const roomMap = new Map<
+      string,
+      { id: string; name: string; typeLabel: string; buckets: Map<string, RoomDeviceLine> }
+    >()
     const planPoints: PlanPoint[] = []
     for (const pt of sheetPoints) {
-      const resolved = resolvePoint({ deviceType: pt.deviceType, productId: pt.productId }, byId, defaults)
+      const resolved = resolvePoint(
+        { deviceType: pt.deviceType, productId: pt.productId },
+        byId,
+        defaults,
+      )
       const matched = pickItem(resolved.productId, pt.deviceType)
       // 报价单里没有该设备类型（例如选了「不含灯具」或已删除该行）时跳过
       if (!matched) continue
@@ -129,7 +152,12 @@ export function buildQuoteFloorGroups(
       const rKey = roomName.replace(/\s+/g, '')
       let room = roomMap.get(rKey)
       if (!room) {
-        room = { id: `${sheet.id}-${rKey}`, name: roomName, typeLabel: area ? areaTypeLabel(area.areaType) : '未分区', buckets: new Map() }
+        room = {
+          id: `${sheet.id}-${rKey}`,
+          name: roomName,
+          typeLabel: area ? areaTypeLabel(area.areaType) : '未分区',
+          buckets: new Map(),
+        }
         roomMap.set(rKey, room)
       }
 
@@ -159,7 +187,10 @@ export function buildQuoteFloorGroups(
 
     const rooms: QuoteRoomGroup[] = [...roomMap.values()]
       .map((r) => {
-        const lines = [...r.buckets.values()].sort((a, b) => DEVICE_TYPE_ORDER.indexOf(a.deviceType) - DEVICE_TYPE_ORDER.indexOf(b.deviceType))
+        const lines = [...r.buckets.values()].sort(
+          (a, b) =>
+            DEVICE_TYPE_ORDER.indexOf(a.deviceType) - DEVICE_TYPE_ORDER.indexOf(b.deviceType),
+        )
         for (const l of lines) l.codes.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
         const pointCount = lines.reduce((s, l) => s + l.quantity, 0)
         const subtotal = Math.round(lines.reduce((s, l) => s + l.subtotal, 0) * 100) / 100

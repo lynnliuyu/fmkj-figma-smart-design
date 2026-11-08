@@ -73,12 +73,16 @@ export type AiCustomChannel = { key: string; label: string; baseUrl: string; api
 /** 自定义渠道的密钥变量名必须以 AI_ 开头，避免借此读取平台或其它业务的密钥 */
 export const CUSTOM_KEY_ENV_RE = /^AI_[A-Z0-9_]{2,60}$/
 
-const PRIVATE_HOST_RE = /^(localhost|0\.0\.0\.0|\[::1\]|127\.|10\.|192\.168\.|169\.254\.|0\.|172\.(1[6-9]|2\d|3[01])\.)|\.(local|internal|localhost)$/i
+const PRIVATE_HOST_RE =
+  /^(localhost|0\.0\.0\.0|\[::1\]|127\.|10\.|192\.168\.|169\.254\.|0\.|172\.(1[6-9]|2\d|3[01])\.)|\.(local|internal|localhost)$/i
 
 /** 规范化自定义渠道的接口根地址：必须是公网 HTTPS；去掉结尾的 /chat/completions 与斜杠 */
 export function normalizeCustomBaseUrl(raw: unknown): string | null {
   if (typeof raw !== 'string') return null
-  const base = raw.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '')
+  const base = raw
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/chat\/completions$/, '')
   try {
     const u = new URL(base)
     if (u.protocol !== 'https:' || PRIVATE_HOST_RE.test(u.hostname)) return null
@@ -97,7 +101,8 @@ export function parseCustomChannels(value: unknown): AiCustomChannel[] {
     const key = cleanStr(r.key, 40).replace(/[^a-zA-Z0-9_-]/g, '')
     const baseUrl = normalizeCustomBaseUrl(r.baseUrl)
     const apiKeyEnv = cleanStr(r.apiKeyEnv, 64)
-    if (!key || !baseUrl || !CUSTOM_KEY_ENV_RE.test(apiKeyEnv) || out.some((c) => c.key === key)) continue
+    if (!key || !baseUrl || !CUSTOM_KEY_ENV_RE.test(apiKeyEnv) || out.some((c) => c.key === key))
+      continue
     out.push({ key, label: cleanStr(r.label, 60, key), baseUrl, apiKeyEnv })
   }
   return out
@@ -122,12 +127,27 @@ export type AiModelConfig = AiModelOption & {
   pricing?: ModelPricing | null
 }
 
-export function inferModelTier(apiModel: string, reasoning?: boolean, cost?: number): { minTier: 'free' | 'pro' | 'team'; tierBadge: 'Go' | 'Plus' | 'Pro' } {
+export function inferModelTier(
+  apiModel: string,
+  reasoning?: boolean,
+  cost?: number,
+): { minTier: 'free' | 'pro' | 'team'; tierBadge: 'Go' | 'Plus' | 'Pro' } {
   const m = apiModel.toLowerCase()
-  if (reasoning || /reasoner|deepseek-r1|\br1\b|qwq|qvq|thinking|glm-zero|qwen-?3\.8(?!.*flash)|glm-?5\.3(?!.*flash)/i.test(m) || (cost ?? 1) >= 3) {
+  if (
+    reasoning ||
+    /reasoner|deepseek-r1|\br1\b|qwq|qvq|thinking|glm-zero|qwen-?3\.8(?!.*flash)|glm-?5\.3(?!.*flash)/i.test(
+      m,
+    ) ||
+    (cost ?? 1) >= 3
+  ) {
     return { minTier: 'team', tierBadge: 'Pro' }
   }
-  if (/vl|vision|qwen-max|qwen-?3\.[5678]|glm-4v|glm-4-plus|glm-?5\.3.*flash|kimi|moonshot-v1-128k|doubao-1-5-vision/i.test(m) || (cost ?? 1) === 2) {
+  if (
+    /vl|vision|qwen-max|qwen-?3\.[5678]|glm-4v|glm-4-plus|glm-?5\.3.*flash|kimi|moonshot-v1-128k|doubao-1-5-vision/i.test(
+      m,
+    ) ||
+    (cost ?? 1) === 2
+  ) {
     return { minTier: 'pro', tierBadge: 'Plus' }
   }
   return { minTier: 'free', tierBadge: 'Go' }
@@ -137,7 +157,8 @@ export function inferModelTier(apiModel: string, reasoning?: boolean, cost?: num
  * 判断模型代号是否支持多模态视觉识图（image_url）：
  * 涵盖千问 Qwen-3.6/3.7/3.8、智谱 GLM-5.3 / GLM-5.3-Flash，以及 Qwen-VL / QVQ / GLM-4V / 豆包 Vision 等。
  */
-export const VISION_MODEL_RE = /vl|vision|glm-4v|qvq|omni|doubao.*vision|qwen-?3\.[5-9]|glm-?5\.[0-9]|gpt-4o|claude-3|gemini/i
+export const VISION_MODEL_RE =
+  /vl|vision|glm-4v|qvq|omni|doubao.*vision|qwen-?3\.[5-9]|glm-?5\.[0-9]|gpt-4o|claude-3|gemini/i
 
 export function isVisionCapableModel(apiModelOrId: string | undefined | null): boolean {
   if (!apiModelOrId) return false
@@ -155,7 +176,8 @@ export const AUTO_AI_MODEL: AiModelConfig = {
   channelId: 'deepseek',
   tag: '日常 DeepSeek · 识图与重工具自动切 Qwen/GLM',
   cost: 1,
-  description: '日常对话使用 DeepSeek Flash 高速响应；上传图纸或调用智能选型/审查/报价等专业工具时自动切换 Qwen-3.x / GLM-5.3 等强模型',
+  description:
+    '日常对话使用 DeepSeek Flash 高速响应；上传图纸或调用智能选型/审查/报价等专业工具时自动切换 Qwen-3.x / GLM-5.3 等强模型',
   apiModel: 'auto',
   baseUrl: AI_PROVIDER_CHANNELS.deepseek.baseUrl,
   apiKeyEnv: AI_PROVIDER_CHANNELS.deepseek.apiKeyEnv,
@@ -310,7 +332,8 @@ export const AI_PROVIDER_PRESETS: Omit<AiModelConfig, 'id' | 'enabled' | 'isDefa
     channelId: 'dashscope',
     tag: 'Pro 旗舰 · Auto 识图与重工具首选',
     cost: 3,
-    description: '千问 3.8 旗舰多模态与深度工程模型，Auto 模式下遇到复杂 CAD 识图与全屋选型/审查时自动优先调度',
+    description:
+      '千问 3.8 旗舰多模态与深度工程模型，Auto 模式下遇到复杂 CAD 识图与全屋选型/审查时自动优先调度',
     apiModel: 'qwen-3.8',
     baseUrl: AI_PROVIDER_CHANNELS.dashscope.baseUrl,
     apiKeyEnv: AI_PROVIDER_CHANNELS.dashscope.apiKeyEnv,
@@ -520,7 +543,10 @@ const cleanStr = (v: unknown, max: number, fallback = '') =>
   typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : fallback
 
 /** 解析并校验后台保存的 AI 模型列表；为空时回退到默认模型。 */
-export function parseAiModels(value: unknown, customChannels: AiCustomChannel[] = []): AiModelConfig[] {
+export function parseAiModels(
+  value: unknown,
+  customChannels: AiCustomChannel[] = [],
+): AiModelConfig[] {
   if (!Array.isArray(value) || value.length === 0) return DEFAULT_AI_MODELS.map((m) => ({ ...m }))
   const out: AiModelConfig[] = []
   const seen = new Set<string>()
@@ -531,11 +557,18 @@ export function parseAiModels(value: unknown, customChannels: AiCustomChannel[] 
     const apiModel = cleanStr(r.apiModel, 120)
     const rawId = cleanStr(r.id, 60) || apiModel
     const id = rawId.replace(/[^a-zA-Z0-9._:-]/g, '-')
-    const custom = r.channelId === 'custom' ? customChannels.find((c) => c.key === r.customChannel) : undefined
+    const custom =
+      r.channelId === 'custom' ? customChannels.find((c) => c.key === r.customChannel) : undefined
     // 指向不存在（或校验未通过）的自定义渠道时跳过该模型
     if (r.channelId === 'custom' && !custom) continue
-    const channelId: AiProviderChannelId | 'custom' = custom ? 'custom' : isAiProviderChannelId(r.channelId) ? r.channelId : 'deepseek'
-    const channel = custom ? { label: custom.label, baseUrl: custom.baseUrl, apiKeyEnv: custom.apiKeyEnv } : AI_PROVIDER_CHANNELS[channelId as AiProviderChannelId]
+    const channelId: AiProviderChannelId | 'custom' = custom
+      ? 'custom'
+      : isAiProviderChannelId(r.channelId)
+        ? r.channelId
+        : 'deepseek'
+    const channel = custom
+      ? { label: custom.label, baseUrl: custom.baseUrl, apiKeyEnv: custom.apiKeyEnv }
+      : AI_PROVIDER_CHANNELS[channelId as AiProviderChannelId]
     if (!id || !name || !apiModel || seen.has(id)) continue
     seen.add(id)
     const costNum = Number(r.cost)
@@ -556,7 +589,8 @@ export function parseAiModels(value: unknown, customChannels: AiCustomChannel[] 
       output: num(r.offPeakOutputPrice),
       cachedInput: num(r.offPeakCachedInputPrice),
     }
-    const offPeak = offPeakRaw.input || offPeakRaw.output || offPeakRaw.cachedInput ? offPeakRaw : peak
+    const offPeak =
+      offPeakRaw.input || offPeakRaw.output || offPeakRaw.cachedInput ? offPeakRaw : peak
     const pricing = peak.input || peak.output || peak.cachedInput ? { peak, offPeak } : null
     out.push({
       id,
@@ -589,7 +623,10 @@ export function parseAiModels(value: unknown, customChannels: AiCustomChannel[] 
 }
 
 /** 获取当前已启用且排好序的模型（默认模型排第一）。 */
-export function enabledAiModels(models: AiModelConfig[], options?: { includeAuto?: boolean }): AiModelConfig[] {
+export function enabledAiModels(
+  models: AiModelConfig[],
+  options?: { includeAuto?: boolean },
+): AiModelConfig[] {
   const active = models.filter((m) => m.enabled && m.id !== 'auto')
   const list = active.length ? active : [models[0] ?? DEFAULT_AI_MODELS[0]]
   const sorted = [...list].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0))

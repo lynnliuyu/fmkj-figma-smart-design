@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import dynamic from "next/dynamic"
-import { usePathname } from "next/navigation"
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 import {
   Activity,
   BookOpen,
@@ -19,14 +19,14 @@ import {
   Plus,
   Settings,
   Wrench,
-} from "lucide-react"
+} from 'lucide-react'
 
-import type { AiModelOption, AiProjectContext } from "@/components/ai/ai-elements"
-import { BrandMark } from "@/components/brand/brand-mark"
-import { GuardedLink } from "@/components/guarded-link"
-import { LinkPending } from "@/components/link-pending"
-import { MembershipDialog } from "@/components/workspace-dialogs"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import type { AiModelOption, AiProjectContext } from '@/components/ai/ai-elements'
+import { BrandMark } from '@/components/brand/brand-mark'
+import { GuardedLink } from '@/components/guarded-link'
+import { LinkPending } from '@/components/link-pending'
+import { MembershipDialog } from '@/components/workspace-dialogs'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +34,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -47,15 +47,18 @@ import {
   SidebarMenuItem,
   SidebarRail,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { APP_NAME, APP_TAGLINE } from "@/lib/brand"
-import { cn } from "@/lib/utils"
-import type { PluginId } from "@/plugins/types"
+} from '@/components/ui/sidebar'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
+import { cn } from '@/lib/utils'
+import type { PluginId } from '@/plugins/types'
 
 // AI 对话面板只在切到「AI 对话」时才加载，不拖慢其他页面的首屏
-const AiSidebarDock = dynamic(() => import("@/components/ai/ai-sidebar-dock").then((m) => m.AiSidebarDock), { ssr: false })
+const AiSidebarDock = dynamic(
+  () => import('@/components/ai/ai-sidebar-dock').then((m) => m.AiSidebarDock),
+  { ssr: false },
+)
 
 export type SidebarUser = { name: string; email: string }
 export type SidebarBrand = { name: string; logo: string | null }
@@ -63,7 +66,7 @@ export type SidebarPlugin = {
   id: PluginId
   name: string
   description: string
-  status: "ready" | "coming-soon"
+  status: 'ready' | 'coming-soon'
   enabled: boolean
   where: string
   provides: string[]
@@ -71,15 +74,15 @@ export type SidebarPlugin = {
 
 /** 日常工作：项目 → 产品 → AI */
 const workNav = [
-  { icon: FolderKanban, label: "项目", url: "/projects" },
-  { icon: PackageSearch, label: "产品库", url: "/products" },
+  { icon: FolderKanban, label: '项目', url: '/projects' },
+  { icon: PackageSearch, label: '产品库', url: '/products' },
 ] as const
 
 /** 低频入口不占侧栏：收在左下角齿轮的「设置」菜单里 */
 const settingsNav = [
-  { icon: Settings, label: "公司与报价设置", url: "/settings" },
-  { icon: Activity, label: "客户使用报告", url: "/settings/reports" },
-  { icon: BookOpen, label: "使用文档", url: "/docs" },
+  { icon: Settings, label: '公司与报价设置', url: '/settings' },
+  { icon: Activity, label: '客户使用报告', url: '/settings/reports' },
+  { icon: BookOpen, label: '使用文档', url: '/docs' },
 ] as const
 
 /**
@@ -88,33 +91,43 @@ const settingsNav = [
  */
 const capabilityNav = [
   {
-    key: "ai",
-    label: "AI 能力",
+    key: 'ai',
+    label: 'AI 能力',
     items: [
-      { icon: Bot, label: "AI 对话", url: "/ai" },
-      { icon: ImageIcon, label: "AI 生图", url: "/ai/image" },
-      { icon: Palette, label: "户型图风格化", url: "/ai/image/style" },
+      { icon: Bot, label: 'AI 对话', url: '/ai' },
+      { icon: ImageIcon, label: 'AI 生图', url: '/ai/image' },
+      { icon: Palette, label: '户型图风格化', url: '/ai/image/style' },
     ],
   },
   {
-    key: "template",
-    label: "模板",
-    items: [{ icon: LayoutTemplate, label: "方案模板", url: "/templates" }],
+    key: 'template',
+    label: '模板',
+    items: [{ icon: LayoutTemplate, label: '方案模板', url: '/templates' }],
   },
   {
-    key: "tool",
-    label: "工具",
-    items: [{ icon: Wrench, label: "全部工具", url: "/plugins/tools" }],
+    key: 'tool',
+    label: '工具',
+    items: [{ icon: Wrench, label: '全部工具', url: '/plugins/tools' }],
   },
 ] as const
 
-const initials = (name: string) => name.trim().slice(0, 1).toUpperCase() || "我"
+const initials = (name: string) => name.trim().slice(0, 1).toUpperCase() || '我'
 
 /** 左下角两个按钮共用的样式：图标模式下都收成 32px 的方块 */
 const footerButton =
-  "flex items-center rounded-lg outline-hidden transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+  'flex items-center rounded-lg outline-hidden transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
 
-function NavItem({ icon: Icon, label, url, active }: { icon: React.ComponentType; label: string; url: string; active: boolean }) {
+function NavItem({
+  icon: Icon,
+  label,
+  url,
+  active,
+}: {
+  icon: React.ComponentType
+  label: string
+  url: string
+  active: boolean
+}) {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={active} tooltip={label}>
@@ -148,23 +161,27 @@ export function AppSidebar({
   const pathname = usePathname()
   const { state, isMobile, setOpen, widthPx } = useSidebar()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const [mode, setMode] = useState<"nav" | "chat">("nav")
+  const [mode, setMode] = useState<'nav' | 'chat'>('nav')
   const [membershipOpen, setMembershipOpen] = useState(false)
 
-  const aiCopilotEnabled = plugins.some((p) => p.id === "ai-copilot" && p.status === "ready" && p.enabled)
-  const effectiveMode = aiCopilotEnabled && state === "expanded" ? mode : "nav"
+  const aiCopilotEnabled = plugins.some(
+    (p) => p.id === 'ai-copilot' && p.status === 'ready' && p.enabled,
+  )
+  const effectiveMode = aiCopilotEnabled && state === 'expanded' ? mode : 'nav'
   const isActive = (url: string) => pathname === url || pathname.startsWith(`${url}/`)
-  const collapsed = state === "collapsed" && !isMobile
-  const visibleSettingsNav = settingsNav.filter((item) => showOperatorReports || item.url !== "/settings/reports")
+  const collapsed = state === 'collapsed' && !isMobile
+  const visibleSettingsNav = settingsNav.filter(
+    (item) => showOperatorReports || item.url !== '/settings/reports',
+  )
   const inSettings = visibleSettingsNav.some((item) => isActive(item.url))
 
   async function handleLogout() {
     if (isLoggingOut) return
     setIsLoggingOut(true)
     try {
-      await fetch("/auth/logout", { method: "POST" })
+      await fetch('/auth/logout', { method: 'POST' })
     } finally {
-      window.location.assign("/login?switch=1")
+      window.location.assign('/login?switch=1')
     }
   }
 
@@ -172,9 +189,9 @@ export function AppSidebar({
     <Sidebar
       collapsible="icon"
       style={
-        effectiveMode === "chat" && !widthPx
+        effectiveMode === 'chat' && !widthPx
           ? // AI 对话比导航宽一些便于阅读，但随屏幕宽度收放，避免挤压右侧工作区（1280 宽约 19rem，1440 宽约 21.5rem）
-            ({ "--sidebar-width": "clamp(18rem, 24vw, 22rem)" } as React.CSSProperties)
+            ({ '--sidebar-width': 'clamp(18rem, 24vw, 22rem)' } as React.CSSProperties)
           : undefined
       }
     >
@@ -188,7 +205,9 @@ export function AppSidebar({
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold tracking-wide">{APP_NAME}</span>
                   {/* 公司名与平台名相同（自营团队）时显示平台副标，避免上下两行重复 */}
-                  <span className="truncate text-xs text-muted-foreground">{brand.name && brand.name !== APP_NAME ? brand.name : APP_TAGLINE}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {brand.name && brand.name !== APP_NAME ? brand.name : APP_TAGLINE}
+                  </span>
                 </div>
               </GuardedLink>
             </SidebarMenuButton>
@@ -200,7 +219,7 @@ export function AppSidebar({
           <>
             <Tabs
               value={effectiveMode}
-              onValueChange={(v) => setMode(v === "chat" ? "chat" : "nav")}
+              onValueChange={(v) => setMode(v === 'chat' ? 'chat' : 'nav')}
               className="group-data-[collapsible=icon]:hidden"
             >
               <TabsList className="w-full">
@@ -222,7 +241,7 @@ export function AppSidebar({
                   tooltip="展开 AI 对话侧栏"
                   onClick={() => {
                     setOpen(true)
-                    setMode("chat")
+                    setMode('chat')
                   }}
                 >
                   <MessageSquareText />
@@ -234,9 +253,15 @@ export function AppSidebar({
         ) : null}
       </SidebarHeader>
 
-      {effectiveMode === "chat" ? (
+      {effectiveMode === 'chat' ? (
         <div id="sidebar-panel" className="flex min-h-0 flex-1 flex-col">
-          <AiSidebarDock plugins={plugins.filter((p) => p.id !== "ai-copilot")} projects={projects} credits={ai.credits} configured={ai.configured} models={ai.models} />
+          <AiSidebarDock
+            plugins={plugins.filter((p) => p.id !== 'ai-copilot')}
+            projects={projects}
+            credits={ai.credits}
+            configured={ai.configured}
+            models={ai.models}
+          />
         </div>
       ) : (
         <>
@@ -263,7 +288,11 @@ export function AppSidebar({
               <SidebarGroupLabel>工作台</SidebarGroupLabel>
               <SidebarMenu>
                 {workNav.map((item) => (
-                  <NavItem key={item.url} {...item} active={isActive(item.url) && pathname !== "/projects/new"} />
+                  <NavItem
+                    key={item.url}
+                    {...item}
+                    active={isActive(item.url) && pathname !== '/projects/new'}
+                  />
                 ))}
               </SidebarMenu>
             </SidebarGroup>
@@ -275,7 +304,10 @@ export function AppSidebar({
                 asChild
                 className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:pointer-events-none"
               >
-                <GuardedLink href="/plugins" aria-current={isActive("/plugins") ? "page" : undefined}>
+                <GuardedLink
+                  href="/plugins"
+                  aria-current={isActive('/plugins') ? 'page' : undefined}
+                >
                   <span>能力中心</span>
                   <LinkPending className="ml-auto size-3.5" />
                 </GuardedLink>
@@ -287,7 +319,7 @@ export function AppSidebar({
                       {group.label}
                     </div>
                     <SidebarMenu className="gap-0.5">
-                      {group.key !== "ai" || aiCopilotEnabled
+                      {group.key !== 'ai' || aiCopilotEnabled
                         ? group.items.map((item) => (
                             <NavItem key={item.url} {...item} active={isActive(item.url)} />
                           ))
@@ -297,7 +329,6 @@ export function AppSidebar({
                 ))}
               </div>
             </SidebarGroup>
-
           </SidebarContent>
 
           {/* 左下角：头像（账户菜单）+ 齿轮（设置菜单）；外观切换在顶栏右侧，这里不重复 */}
@@ -310,12 +341,19 @@ export function AppSidebar({
                       <button
                         type="button"
                         aria-label={`账户：${user.name}`}
-                        className={cn(footerButton, "h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0")}
+                        className={cn(
+                          footerButton,
+                          'h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
+                        )}
                       >
                         <Avatar className="size-7">
-                          <AvatarFallback className="bg-sidebar-primary/12 text-xs font-semibold text-sidebar-primary">{initials(user.name)}</AvatarFallback>
+                          <AvatarFallback className="bg-sidebar-primary/12 text-xs font-semibold text-sidebar-primary">
+                            {initials(user.name)}
+                          </AvatarFallback>
                         </Avatar>
-                        <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">{user.name}</span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
+                          {user.name}
+                        </span>
                       </button>
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
@@ -326,7 +364,9 @@ export function AppSidebar({
                 <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2.5 p-2 font-normal">
                     <Avatar className="size-9">
-                      <AvatarFallback className="bg-sidebar-primary/12 text-sm font-semibold text-sidebar-primary">{initials(user.name)}</AvatarFallback>
+                      <AvatarFallback className="bg-sidebar-primary/12 text-sm font-semibold text-sidebar-primary">
+                        {initials(user.name)}
+                      </AvatarFallback>
                     </Avatar>
                     <span className="grid min-w-0 flex-1 gap-0.5 leading-tight">
                       <span className="flex min-w-0 items-center gap-1.5">
@@ -339,12 +379,14 @@ export function AppSidebar({
                   <DropdownMenuItem onSelect={() => setMembershipOpen(true)}>
                     <Crown />
                     会员与积分
-                    <span className="ml-auto text-xs text-muted-foreground tabular-nums">{ai.credits.toLocaleString("zh-CN")}</span>
+                    <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+                      {ai.credits.toLocaleString('zh-CN')}
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem disabled={isLoggingOut} onSelect={() => void handleLogout()}>
                     <LogOut />
-                    {isLoggingOut ? "退出中" : "退出登录"}
+                    {isLoggingOut ? '退出中' : '退出登录'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -357,18 +399,30 @@ export function AppSidebar({
                         type="button"
                         aria-label="设置"
                         data-active={inSettings || undefined}
-                        className={cn(footerButton, "size-8 shrink-0 justify-center text-sidebar-foreground/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground")}
+                        className={cn(
+                          footerButton,
+                          'size-8 shrink-0 justify-center text-sidebar-foreground/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground',
+                        )}
                       >
                         <Settings className="size-4" />
                       </button>
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
-                  <TooltipContent side={collapsed ? "right" : "top"}>设置</TooltipContent>
+                  <TooltipContent side={collapsed ? 'right' : 'top'}>设置</TooltipContent>
                 </Tooltip>
-                <DropdownMenuContent side="top" align={collapsed ? "start" : "end"} sideOffset={8} className="w-52">
+                <DropdownMenuContent
+                  side="top"
+                  align={collapsed ? 'start' : 'end'}
+                  sideOffset={8}
+                  className="w-52"
+                >
                   {visibleSettingsNav.map(({ icon: Icon, label, url }) => (
-                    <DropdownMenuItem key={url} asChild className={cn(isActive(url) && "bg-accent/60 font-medium")}>
-                      <GuardedLink href={url} aria-current={isActive(url) ? "page" : undefined}>
+                    <DropdownMenuItem
+                      key={url}
+                      asChild
+                      className={cn(isActive(url) && 'bg-accent/60 font-medium')}
+                    >
+                      <GuardedLink href={url} aria-current={isActive(url) ? 'page' : undefined}>
                         <Icon />
                         {label}
                       </GuardedLink>
@@ -381,7 +435,11 @@ export function AppSidebar({
         </>
       )}
       <SidebarRail />
-      <MembershipDialog open={membershipOpen} onOpenChange={setMembershipOpen} credits={ai.credits} />
+      <MembershipDialog
+        open={membershipOpen}
+        onOpenChange={setMembershipOpen}
+        credits={ai.credits}
+      />
     </Sidebar>
   )
 }

@@ -17,7 +17,9 @@ export default async function MembershipPage() {
   // 先同步并自动发放已满足条件的绑定邮箱/微信积分，确保本页余额与流水立即可见
   const { tasks: creditTasks } = await loadAndSyncUserCreditTasks(user)
   const [freshUser, ledgerRes, policy] = await Promise.all([
-    payload.findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true }).catch(() => user),
+    payload
+      .findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true })
+      .catch(() => user),
     payload.find({
       collection: 'ai-credit-ledger',
       where: { user: { equals: user.id } },

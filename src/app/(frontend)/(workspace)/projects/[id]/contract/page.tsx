@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button'
 import { ContractDocument } from '@/documents/contract-document'
 import { resolveDocSetup } from '@/documents/registry'
 import { relId } from '@/lib/access'
-import { contractStatusLabel, DEFAULT_CONTRACT_TERMS, fmtLongDate, paymentAmounts } from '@/lib/contracts'
+import {
+  contractStatusLabel,
+  DEFAULT_CONTRACT_TERMS,
+  fmtLongDate,
+  paymentAmounts,
+} from '@/lib/contracts'
 import { quoteShortTitle } from '@/lib/project-name'
 import { yuan } from '@/lib/quotes'
 import type { Project, Quote } from '@/payload-types'
@@ -21,9 +26,15 @@ import { ContractActions, ContractSectionEdit } from './contract-preview'
  */
 export default async function ProjectContractPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const [{ project, archived, readOnly, role, user, payload }, { quotes, contract }] = await Promise.all([getProject(id), getProjectDeals(id)])
+  const [{ project, archived, readOnly, role, user, payload }, { quotes, contract }] =
+    await Promise.all([getProject(id), getProjectDeals(id)])
   const pid = String(project.id)
-  const options: QuoteOption[] = quotes.map((q) => ({ id: String(q.id), title: quoteShortTitle(q.title, project.name), total: q.total ?? 0, status: q.status }))
+  const options: QuoteOption[] = quotes.map((q) => ({
+    id: String(q.id),
+    title: quoteShortTitle(q.title, project.name),
+    total: q.total ?? 0,
+    status: q.status,
+  }))
 
   if (!contract) {
     const defaultQuote = options.find((q) => q.status === 'accepted') ?? options[0]
@@ -42,9 +53,14 @@ export default async function ProjectContractPage({ params }: { params: Promise<
           <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-14 text-center">
             <FileSignature className="size-8 text-muted-foreground" />
             <p className="font-medium">先生成一份报价</p>
-            <p className="max-w-md text-sm text-muted-foreground">合同按报价生成，金额和设备清单都来自报价。</p>
+            <p className="max-w-md text-sm text-muted-foreground">
+              合同按报价生成，金额和设备清单都来自报价。
+            </p>
             <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={`/projects/${pid}/quotes`}><ReceiptText className="size-4" />去报价</Link>
+              <Link href={`/projects/${pid}/quotes`}>
+                <ReceiptText className="size-4" />
+                去报价
+              </Link>
             </Button>
           </div>
         )}
@@ -54,7 +70,13 @@ export default async function ProjectContractPage({ params }: { params: Promise<
 
   // 合同依据的报价一定在选项里（即使被移到列表之外，也补上）
   const quoteId = relId(contract.quote) ?? ''
-  if (quoteId && !options.some((q) => q.id === quoteId)) options.push({ id: quoteId, title: '依据的报价', total: contract.amount ?? 0, status: 'accepted' })
+  if (quoteId && !options.some((q) => q.id === quoteId))
+    options.push({
+      id: quoteId,
+      title: '依据的报价',
+      total: contract.amount ?? 0,
+      status: 'accepted',
+    })
 
   // 预览与打印页同样的取数：带上项目名称、平台和依据报价的明细
   const [full, setup] = await Promise.all([
@@ -67,7 +89,15 @@ export default async function ProjectContractPage({ params }: { params: Promise<
         overrideAccess: false,
         populate: {
           projects: { name: true, platform: true, owner: true },
-          quotes: { title: true, items: true, fees: true, discount: true, productTotal: true, feeTotal: true, total: true },
+          quotes: {
+            title: true,
+            items: true,
+            fees: true,
+            discount: true,
+            productTotal: true,
+            feeTotal: true,
+            total: true,
+          },
         },
       })
       .catch(() => null),
@@ -91,7 +121,11 @@ export default async function ProjectContractPage({ params }: { params: Promise<
     durationDays: contract.durationDays ?? null,
     warrantyMonths: contract.warrantyMonths ?? null,
     terms: contract.terms ?? DEFAULT_CONTRACT_TERMS,
-    payments: (contract.payments ?? []).map((p) => ({ name: p.name, percent: p.percent, received: Boolean(p.received) })),
+    payments: (contract.payments ?? []).map((p) => ({
+      name: p.name,
+      percent: p.percent,
+      received: Boolean(p.received),
+    })),
   }
   const amounts = paymentAmounts(values.amount, values.payments)
   const received = values.payments.reduce((sum, p, i) => sum + (p.received ? amounts[i] : 0), 0)
@@ -109,34 +143,55 @@ export default async function ProjectContractPage({ params }: { params: Promise<
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold tracking-tight">合同</h2>
-            <Badge variant={signed ? 'success' : 'outline'}>{contractStatusLabel(contract.status)}</Badge>
+            <Badge variant={signed ? 'success' : 'outline'}>
+              {contractStatusLabel(contract.status)}
+            </Badge>
           </div>
           <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
             <span className="font-mono">{contract.number}</span>
-            <span aria-hidden className="text-muted-foreground/60">·</span>
+            <span aria-hidden className="text-muted-foreground/60">
+              ·
+            </span>
             <span>
-              金额 <span className="font-medium text-foreground tabular-nums">{yuan(values.amount)}</span>
+              金额{' '}
+              <span className="font-medium text-foreground tabular-nums">
+                {yuan(values.amount)}
+              </span>
             </span>
             {values.payments.length ? (
               <>
-                <span aria-hidden className="text-muted-foreground/60">·</span>
+                <span aria-hidden className="text-muted-foreground/60">
+                  ·
+                </span>
                 <span>
-                  已收 <span className="font-medium text-foreground tabular-nums">{yuan(received)}</span>
+                  已收{' '}
+                  <span className="font-medium text-foreground tabular-nums">{yuan(received)}</span>
                 </span>
               </>
             ) : null}
           </p>
         </div>
-        <ContractActions id={values.id} signed={signed} readOnly={readOnly} printHref={`/print/contracts/${values.id}`} />
+        <ContractActions
+          id={values.id}
+          signed={signed}
+          readOnly={readOnly}
+          printHref={`/print/contracts/${values.id}`}
+        />
       </header>
 
       {notice ? (
-        <p role="status" className="flex items-start gap-2 rounded-lg border bg-muted/50 px-4 py-2.5 text-sm">
+        <p
+          role="status"
+          className="flex items-start gap-2 rounded-lg border bg-muted/50 px-4 py-2.5 text-sm"
+        >
           <Lock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           {notice}
         </p>
       ) : (
-        <p className="text-xs text-muted-foreground">下面就是导出给客户的合同。把鼠标移到要改的部分，点右上角「编辑」；版式与风格在「打印 / 导出 PDF」里切换。</p>
+        <p className="text-xs text-muted-foreground">
+          下面就是导出给客户的合同。把鼠标移到要改的部分，点右上角「编辑」；版式与风格在「打印 /
+          导出 PDF」里切换。
+        </p>
       )}
 
       <div className="rounded-xl border bg-muted/40 px-2 pb-6 sm:px-6">
@@ -150,7 +205,15 @@ export default async function ProjectContractPage({ params }: { params: Promise<
           edit={
             readOnly
               ? undefined
-              : (section) => (signed && section !== 'payments' ? null : <ContractSectionEdit section={section} values={values} quotes={options} signed={signed} />)
+              : (section) =>
+                  signed && section !== 'payments' ? null : (
+                    <ContractSectionEdit
+                      section={section}
+                      values={values}
+                      quotes={options}
+                      signed={signed}
+                    />
+                  )
           }
         />
       </div>

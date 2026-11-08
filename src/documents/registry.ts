@@ -6,7 +6,10 @@ import { MINIMAL_STYLE } from './minimal'
 import type { DocKind, DocLayout, DocStyle } from './types'
 
 /** 每类文档的版式（内容怎么排），风格（长什么样）对所有文档通用。 */
-export const DOC_KINDS: Record<DocKind, { label: string; orientation: 'portrait' | 'landscape'; layouts: DocLayout[] }> = {
+export const DOC_KINDS: Record<
+  DocKind,
+  { label: string; orientation: 'portrait' | 'landscape'; layouts: DocLayout[] }
+> = {
   quote: {
     label: '报价单',
     orientation: 'portrait',
@@ -15,8 +18,16 @@ export const DOC_KINDS: Record<DocKind, { label: string; orientation: 'portrait'
       { value: 'standard', label: '标准版', description: '一张明细表，附各层点位图' },
       { value: 'detailed', label: '图文版', description: '按类别排列产品卡片，带产品图和品牌' },
       { value: 'compact', label: '精简版', description: '紧凑表格，一两页打完' },
-      { value: 'system', label: '按系统版', description: '按照明、安防、网络等系统分组列设备，附各系统小计与占比' },
-      { value: 'budget', label: '预算概览', description: '一页看懂总价：楼层与系统小计、付款节点，不列型号' },
+      {
+        value: 'system',
+        label: '按系统版',
+        description: '按照明、安防、网络等系统分组列设备，附各系统小计与占比',
+      },
+      {
+        value: 'budget',
+        label: '预算概览',
+        description: '一页看懂总价：楼层与系统小计、付款节点，不列型号',
+      },
     ],
   },
   plans: {
@@ -34,8 +45,16 @@ export const DOC_KINDS: Record<DocKind, { label: string; orientation: 'portrait'
     layouts: [
       { value: 'full', label: '含报价附件', description: '合同正文 + 附件《报价明细》' },
       { value: 'brief', label: '仅正文', description: '只打印合同正文' },
-      { value: 'formal', label: '正式版', description: '封面 + 「第 X 条」正文 + 签署页 + 附件《报价明细》' },
-      { value: 'confirm', label: '订单确认书', description: '单页确认金额、付款与工期，适合小型项目' },
+      {
+        value: 'formal',
+        label: '正式版',
+        description: '封面 + 「第 X 条」正文 + 签署页 + 附件《报价明细》',
+      },
+      {
+        value: 'confirm',
+        label: '订单确认书',
+        description: '单页确认金额、付款与工期，适合小型项目',
+      },
     ],
   },
   checklist: {
@@ -82,19 +101,49 @@ export async function resolveDocSetup(
   const styles = availableStyles(flags)
   const layouts = DOC_KINDS[kind].layouts
   const defaults = company.documentDefaults[kind] ?? {}
-  const style = styles.find((s) => s.id === params.style) ?? styles.find((s) => s.id === defaults.style) ?? MINIMAL_STYLE
-  const layout = (layouts.find((l) => l.value === params.layout) ?? layouts.find((l) => l.value === defaults.layout) ?? layouts[0]).value
+  const style =
+    styles.find((s) => s.id === params.style) ??
+    styles.find((s) => s.id === defaults.style) ??
+    MINIMAL_STYLE
+  const layout = (
+    layouts.find((l) => l.value === params.layout) ??
+    layouts.find((l) => l.value === defaults.layout) ??
+    layouts[0]
+  ).value
   return { kind, style, layout, styles, layouts, company, flags }
 }
 
 /** 打印工具条里的「版式」「风格」切换项。 */
-export function docToolbarGroups(setup: DocSetup, href: (patch: { style?: string; layout?: string }) => string) {
+export function docToolbarGroups(
+  setup: DocSetup,
+  href: (patch: { style?: string; layout?: string }) => string,
+) {
   return [
     ...(setup.layouts.length > 1
-      ? [{ label: '版式', value: setup.layout, options: setup.layouts.map((l) => ({ value: l.value, label: l.label, href: href({ layout: l.value }) })) }]
+      ? [
+          {
+            label: '版式',
+            value: setup.layout,
+            options: setup.layouts.map((l) => ({
+              value: l.value,
+              label: l.label,
+              href: href({ layout: l.value }),
+            })),
+          },
+        ]
       : []),
     ...(setup.styles.length > 1
-      ? [{ label: '风格', value: setup.style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: href({ style: s.id }) })) }]
+      ? [
+          {
+            label: '风格',
+            value: setup.style.id,
+            options: setup.styles.map((s) => ({
+              value: s.id,
+              label: s.name,
+              href: href({ style: s.id }),
+            })),
+          },
+        ]
       : []),
   ]
 }

@@ -22,7 +22,9 @@ export default async function AiImagePage() {
         <Sparkles className="size-7 text-primary" />
         <h1 className="text-base font-semibold">「AI 对话侧栏（高级）」插件已关闭</h1>
         <p className="text-xs text-muted-foreground">AI 生图依赖 AI 插件，请先在插件中心开启。</p>
-        <Button asChild size="sm" variant="outline"><Link href="/plugins/ai-copilot">去插件页开启</Link></Button>
+        <Button asChild size="sm" variant="outline">
+          <Link href="/plugins/ai-copilot">去插件页开启</Link>
+        </Button>
       </section>
     )
   }
@@ -32,13 +34,34 @@ export default async function AiImagePage() {
         <div>
           <p className="text-xs font-medium tracking-[0.18em] text-primary">AI IMAGE</p>
           <h1 className="mt-1 text-2xl font-semibold">AI 生图</h1>
-          <p className="mt-1 text-sm text-muted-foreground">用文字描述生成智能家居场景图、方案配图、材质意向图。</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            用文字描述生成智能家居场景图、方案配图、材质意向图。
+          </p>
         </div>
-        <div className="flex gap-2"><Button asChild variant="outline" size="sm"><Link href="/ai/image/style"><Palette className="size-4" />户型图风格化</Link></Button><Button asChild variant="ghost" size="sm"><Link href="/ai"><ArrowLeft className="size-4" />返回 AI 对话</Link></Button></div>
+        <div className="flex gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/ai/image/style">
+              <Palette className="size-4" />
+              户型图风格化
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/ai">
+              <ArrowLeft className="size-4" />
+              返回 AI 对话
+            </Link>
+          </Button>
+        </div>
       </div>
       <ImageGenerator
         configured={imageGenerationConfigured()}
-        models={IMAGE_MODELS.map((m) => ({ id: m.id, name: m.name, description: m.description, sizes: [...m.sizes], cost: m.cost }))}
+        models={IMAGE_MODELS.map((m) => ({
+          id: m.id,
+          name: m.name,
+          description: m.description,
+          sizes: [...m.sizes],
+          cost: m.cost,
+        }))}
       />
     </div>
   )

@@ -27,7 +27,14 @@ export const MpSessions: CollectionConfig = {
     delete: cmsAdminOnly,
   },
   fields: [
-    { name: 'tokenHash', type: 'text', required: true, unique: true, index: true, admin: { hidden: true } },
+    {
+      name: 'tokenHash',
+      type: 'text',
+      required: true,
+      unique: true,
+      index: true,
+      admin: { hidden: true },
+    },
     {
       name: 'kind',
       label: '类型',
@@ -47,7 +54,19 @@ export const MpSessions: CollectionConfig = {
     { name: 'unionid', label: 'UnionID', type: 'text', admin: { readOnly: true } },
     { name: 'redirect', label: '跳转页面', type: 'text', admin: { readOnly: true } },
     { name: 'client', label: '登录方式', type: 'text', admin: { readOnly: true } },
-    { name: 'expiresAt', label: '过期时间', type: 'date', required: true, index: true, admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
-    { name: 'lastUsedAt', label: '最近使用', type: 'date', admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
+    {
+      name: 'expiresAt',
+      label: '过期时间',
+      type: 'date',
+      required: true,
+      index: true,
+      admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+    },
+    {
+      name: 'lastUsedAt',
+      label: '最近使用',
+      type: 'date',
+      admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+    },
   ],
 }

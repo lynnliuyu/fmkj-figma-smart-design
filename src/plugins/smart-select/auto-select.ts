@@ -14,15 +14,29 @@ export const SELECTION_TIERS = [
   { value: 'premium', label: '高端', percentile: 0.85 },
 ] as const
 export type SelectionTier = (typeof SELECTION_TIERS)[number]['value']
-export const isSelectionTier = (v: unknown): v is SelectionTier => SELECTION_TIERS.some((t) => t.value === v)
+export const isSelectionTier = (v: unknown): v is SelectionTier =>
+  SELECTION_TIERS.some((t) => t.value === v)
 
-export type SelectableProduct = { id: string; name: string; price: number; status?: string; deviceType: string | null; platforms: string[]; brand: { name: string } | null; image: unknown }
+export type SelectableProduct = {
+  id: string
+  name: string
+  price: number
+  status?: string
+  deviceType: string | null
+  platforms: string[]
+  brand: { name: string } | null
+  image: unknown
+}
 
 type Pref = { brands?: RegExp; platforms?: string[] }
 /** 项目主平台 → 逐级放宽的候选条件 */
 export const PLATFORM_PREFS: Record<string, Pref[]> = {
   米家: [{ platforms: ['米家'] }, { platforms: ['通用', 'Matter'] }],
-  'Aqara Home': [{ brands: /aqara/i }, { platforms: ['Apple Home', 'Matter'] }, { platforms: ['通用'] }],
+  'Aqara Home': [
+    { brands: /aqara/i },
+    { platforms: ['Apple Home', 'Matter'] },
+    { platforms: ['通用'] },
+  ],
   'Apple Home': [{ platforms: ['Apple Home', 'Matter'] }, { platforms: ['通用'] }],
   华为鸿蒙智家: [{ platforms: ['华为'] }, { platforms: ['通用'] }],
   KNX: [{ platforms: ['KNX'] }, { platforms: ['通用'] }],
@@ -31,9 +45,14 @@ export const PLATFORM_PREFS: Record<string, Pref[]> = {
 }
 
 const matches = (p: SelectableProduct, pref: Pref) =>
-  (!pref.brands || pref.brands.test(p.brand?.name ?? '')) && (!pref.platforms || p.platforms.some((x) => pref.platforms!.includes(x)))
+  (!pref.brands || pref.brands.test(p.brand?.name ?? '')) &&
+  (!pref.platforms || p.platforms.some((x) => pref.platforms!.includes(x)))
 
-function candidates(all: SelectableProduct[], deviceType: string, platform: string | null | undefined) {
+function candidates(
+  all: SelectableProduct[],
+  deviceType: string,
+  platform: string | null | undefined,
+) {
   let pool = all.filter((p) => (p.status ?? 'active') === 'active' && p.deviceType === deviceType)
   if (!pool.length) return { pool, level: -1 }
   const priced = pool.filter((p) => p.price > 0)
@@ -53,9 +72,17 @@ const pickAt = (pool: SelectableProduct[], percentile: number) => {
   return sorted[Math.round(percentile * (sorted.length - 1))]
 }
 
-export type SelectionResult = { deviceType: string; product: SelectableProduct; platformMatched: boolean }
+export type SelectionResult = {
+  deviceType: string
+  product: SelectableProduct
+  platformMatched: boolean
+}
 
-export function autoSelectProducts(all: SelectableProduct[], deviceTypes: string[], opts: { platform?: string | null; tier: SelectionTier }) {
+export function autoSelectProducts(
+  all: SelectableProduct[],
+  deviceTypes: string[],
+  opts: { platform?: string | null; tier: SelectionTier },
+) {
   const percentile = SELECTION_TIERS.find((t) => t.value === opts.tier)?.percentile ?? 0.5
   const prefs = (opts.platform && PLATFORM_PREFS[opts.platform]) || []
   const chosen = new Map<string, SelectionResult>()
@@ -68,7 +95,11 @@ export function autoSelectProducts(all: SelectableProduct[], deviceTypes: string
       continue
     }
     pools.set(t, pool)
-    chosen.set(t, { deviceType: t, product: pickAt(pool, percentile), platformMatched: prefs.length === 0 || level < prefs.length })
+    chosen.set(t, {
+      deviceType: t,
+      product: pickAt(pool, percentile),
+      platformMatched: prefs.length === 0 || level < prefs.length,
+    })
   }
   // 品牌统一：每个类别找出用得最多的品牌，价格相近时把其他类型也换成这个品牌
   const byCategory = new Map<string, SelectionResult[]>()
@@ -79,15 +110,19 @@ export function autoSelectProducts(all: SelectableProduct[], deviceTypes: string
   for (const rows of byCategory.values()) {
     if (rows.length < 2) continue
     const counts = new Map<string, number>()
-    for (const r of rows) counts.set(r.product.brand?.name ?? '', (counts.get(r.product.brand?.name ?? '') ?? 0) + 1)
+    for (const r of rows)
+      counts.set(r.product.brand?.name ?? '', (counts.get(r.product.brand?.name ?? '') ?? 0) + 1)
     const [main] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]
     if (!main) continue
     for (const r of rows) {
       if (r.product.brand?.name === main) continue
       const alt = (pools.get(r.deviceType) ?? []).filter((p) => p.brand?.name === main)
       if (!alt.length) continue
-      const best = alt.reduce((a, b) => (Math.abs(b.price - r.product.price) < Math.abs(a.price - r.product.price) ? b : a))
-      if (Math.abs(best.price - r.product.price) <= Math.max(30, r.product.price * 0.4)) chosen.set(r.deviceType, { ...r, product: best })
+      const best = alt.reduce((a, b) =>
+        Math.abs(b.price - r.product.price) < Math.abs(a.price - r.product.price) ? b : a,
+      )
+      if (Math.abs(best.price - r.product.price) <= Math.max(30, r.product.price * 0.4))
+        chosen.set(r.deviceType, { ...r, product: best })
     }
   }
   return { chosen: [...chosen.values()], missing }

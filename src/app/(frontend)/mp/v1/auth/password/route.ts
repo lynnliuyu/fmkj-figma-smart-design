@@ -30,6 +30,10 @@ export const POST = mpPublicRoute(async (request: Request) => {
     }
   }
 
-  const { token, expiresAt } = await issueToken('session', { userId: String(user.id), openid: boundOpenid, client: 'password' })
+  const { token, expiresAt } = await issueToken('session', {
+    userId: String(user.id),
+    openid: boundOpenid,
+    client: 'password',
+  })
   return ok({ token, expiresAt, user: await presentMe(user) })
 })

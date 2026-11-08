@@ -7,7 +7,13 @@ import { ArrowRight, Coins, Gift, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
 /** 兑换码充值弹窗：不再有会员等级卡片，只保留「输入兑换码充值 AI 积分」 */
@@ -39,7 +45,11 @@ export function MembershipDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: trimmed }),
       })
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string }
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean
+        message?: string
+        error?: string
+      }
       if (!res.ok || !data.ok) {
         toast.error(data.error ?? '兑换失败，请检查兑换码')
         return
@@ -67,7 +77,9 @@ export function MembershipDialog({
             </div>
             <div className="flex items-center gap-1.5 rounded-xl border bg-muted/40 px-3 py-1.5 text-xs">
               <Coins className="size-3.5 text-primary" />
-              <span className="font-medium tabular-nums">{credits.toLocaleString('zh-CN')} 积分</span>
+              <span className="font-medium tabular-nums">
+                {credits.toLocaleString('zh-CN')} 积分
+              </span>
             </div>
           </div>
         </DialogHeader>
@@ -90,7 +102,12 @@ export function MembershipDialog({
           </Button>
         </form>
 
-        <Button asChild variant="ghost" size="sm" className="justify-start text-xs text-muted-foreground hover:text-foreground">
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          className="justify-start text-xs text-muted-foreground hover:text-foreground"
+        >
           <Link href="/membership" onClick={() => onOpenChange(false)}>
             查看积分任务与明细
             <ArrowRight className="size-3.5" />

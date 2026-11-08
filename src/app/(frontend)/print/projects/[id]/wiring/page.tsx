@@ -2,7 +2,19 @@ import { notFound, redirect } from 'next/navigation'
 
 import { PointMarker } from '@/components/point-marker'
 import { PrintToolbar } from '@/components/print-toolbar'
-import { DocArticle, DocCheckbox, DocEmpty, DocFacts, DocFooter, DocHeader, DocRoot, DocSectionHeading, DocSignatures, DocTitle, docTable } from '@/documents/parts'
+import {
+  DocArticle,
+  DocCheckbox,
+  DocEmpty,
+  DocFacts,
+  DocFooter,
+  DocHeader,
+  DocRoot,
+  DocSectionHeading,
+  DocSignatures,
+  DocTitle,
+  docTable,
+} from '@/documents/parts'
 import { resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf } from '@/lib/device-types'
@@ -163,14 +175,23 @@ export default async function WiringSchedulePage({
   const { style, company } = setup
   const layout = sp.layout === 'summary' ? 'summary' : 'room'
   const t = docTable(style)
-  const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
+  const date = new Date().toLocaleDateString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const base = `/print/projects/${id}/wiring`
   const href = (patch: { style?: string; layout?: string }) => {
-    const q = new URLSearchParams({ layout: patch.layout ?? layout, style: patch.style ?? style.id })
+    const q = new URLSearchParams({
+      layout: patch.layout ?? layout,
+      style: patch.style ?? style.id,
+    })
     return `${base}?${q.toString()}`
   }
 
-  const countByCat = (cat: WiringSpec['category']) => d.points.filter((p) => wiringSpecOf(p.deviceType).category === cat).length
+  const countByCat = (cat: WiringSpec['category']) =>
+    d.points.filter((p) => wiringSpecOf(p.deviceType).category === cat).length
   const zeroLiveCount = countByCat('zero-live')
   const netCableCount = countByCat('network')
   const power220Count = countByCat('power-220v')
@@ -184,15 +205,35 @@ export default async function WiringSchedulePage({
         back={{ href: `/projects/${id}/archive`, label: '返回归档' }}
         exportName={`${projectName}-强弱电水电交底单`}
         groups={[
-          { label: '版式', value: layout, options: LAYOUTS.map((l) => ({ value: l.value, label: l.label, href: href({ layout: l.value }) })) },
+          {
+            label: '版式',
+            value: layout,
+            options: LAYOUTS.map((l) => ({
+              value: l.value,
+              label: l.label,
+              href: href({ layout: l.value }),
+            })),
+          },
           ...(setup.styles.length > 1
-            ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: href({ style: s.id }) })) }]
+            ? [
+                {
+                  label: '风格',
+                  value: style.id,
+                  options: setup.styles.map((s) => ({
+                    value: s.id,
+                    label: s.name,
+                    href: href({ style: s.id }),
+                  })),
+                },
+              ]
             : []),
         ]}
       />
 
       {d.points.length === 0 ? (
-        <DocEmpty projectId={id}>点位图里还没有点位。布置好设备后，这里会自动汇总强弱电水电交底单。</DocEmpty>
+        <DocEmpty projectId={id}>
+          点位图里还没有点位。布置好设备后，这里会自动汇总强弱电水电交底单。
+        </DocEmpty>
       ) : (
         <DocRoot style={style}>
           <DocArticle>
@@ -228,129 +269,192 @@ export default async function WiringSchedulePage({
               ].map(([label, val, hint]) => (
                 <div key={label} className="rounded-doc border border-doc-rule p-3">
                   <div className="text-[11px] text-doc-muted">{label}</div>
-                  <div className="doc-numeral mt-1 text-[22px] leading-none text-doc-accent">{val}</div>
+                  <div className="doc-numeral mt-1 text-[22px] leading-none text-doc-accent">
+                    {val}
+                  </div>
                   <div className="mt-1.5 text-[10px] text-doc-muted">{hint}</div>
                 </div>
               ))}
             </section>
 
-            <section data-pdf-block className="mt-5 rounded-doc bg-doc-stripe p-3.5 text-[11.5px] break-inside-avoid">
+            <section
+              data-pdf-block
+              className="mt-5 rounded-doc bg-doc-stripe p-3.5 text-[11.5px] break-inside-avoid"
+            >
               <p className="doc-strong">水电施工核心规范：</p>
               <ol className="mt-1.5 list-decimal space-y-1 pl-4 text-doc-muted">
-                <li>全屋所有智能开关、中控屏底盒必须预留<strong>零线 + 火线（220V）</strong>，严禁只下火线（单火）；选用深≥50mm 的 86 型底盒，多联并排须使用连体底盒。</li>
-                <li>全屋 AP 面板、吸顶 AP、网络面板及网关点位，均由<strong>弱电箱单根直通敷设超六类非屏蔽网线（Cat6A）</strong>，中间严禁串接或分线，线头两端张贴代号标签。</li>
-                <li>电动窗帘盒内靠窗角侧顶面预留 86 型三孔插座（220V 常电），双轨窗帘盒净宽≥20cm、单轨≥12cm、深≥15cm，木工打底加固。</li>
+                <li>
+                  全屋所有智能开关、中控屏底盒必须预留<strong>零线 + 火线（220V）</strong>
+                  ，严禁只下火线（单火）；选用深≥50mm 的 86 型底盒，多联并排须使用连体底盒。
+                </li>
+                <li>
+                  全屋 AP 面板、吸顶 AP、网络面板及网关点位，均由
+                  <strong>弱电箱单根直通敷设超六类非屏蔽网线（Cat6A）</strong>
+                  ，中间严禁串接或分线，线头两端张贴代号标签。
+                </li>
+                <li>
+                  电动窗帘盒内靠窗角侧顶面预留 86 型三孔插座（220V
+                  常电），双轨窗帘盒净宽≥20cm、单轨≥12cm、深≥15cm，木工打底加固。
+                </li>
               </ol>
             </section>
 
             <div className="mt-6 space-y-6">
-              {layout === 'room' ? (
-                d.rooms.map((room) => (
-                  <section key={room.areaId}>
-                    <DocSectionHeading
-                      style={style}
-                      className="mb-2"
-                      title={room.displayName}
-                      note={`${room.points.length} 个点位 · ${room.typeLabel}`}
-                    />
-                    <table className="w-full table-fixed border-collapse text-[11.5px]">
-                      <thead>
-                        <tr className={t.head}>
-                          <th className={cn(t.th, 'w-14')}>代号</th>
-                          <th className={cn(t.th, 'w-28')}>设备类型</th>
-                          <th className={cn(t.th, 'w-36')}>底盒 / 端口要求</th>
-                          <th className={t.th}>线缆与供电预留</th>
-                          <th className={cn(t.th, 'w-36')}>建议安装位置</th>
-                          <th className={cn(t.th, 'w-12 text-center')}>复核</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {room.points
-                          .slice()
-                          .sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true }))
-                          .map((pt, idx) => {
-                            const spec = wiringSpecOf(pt.deviceType)
-                            return (
-                              <tr key={pt.id} className={t.row(idx)}>
-                                <td className={cn(t.td, 'py-1.5 font-mono font-semibold text-doc-accent')}>{pt.code}</td>
-                                <td className={cn(t.td, 'py-1.5')}>
-                                  <span className="flex items-center gap-1.5">
-                                    <PointMarker type={pt.deviceType} className="size-3.5 shrink-0" />
-                                    <span className="truncate">{deviceTypeOf(pt.deviceType)?.name ?? '设备'}</span>
-                                  </span>
-                                </td>
-                                <td className={cn(t.td, 'py-1.5')}>{spec.box}</td>
-                                <td className={cn(t.td, 'py-1.5 text-doc-muted')}>{spec.cable}</td>
-                                <td className={cn(t.td, 'py-1.5 text-doc-muted')}>{spec.height}</td>
-                                <td className={cn(t.td, 'py-1.5 text-center')}>
-                                  <DocCheckbox />
-                                </td>
-                              </tr>
-                            )
-                          })}
-                      </tbody>
-                    </table>
-                  </section>
-                ))
-              ) : (
-                ([
-                  ['zero-live', '一、86型零火深底盒（智能开关与中控屏）'],
-                  ['network', '二、弱电箱超六类网线直通点位（AC/AP/网关/监控）'],
-                  ['power-220v', '三、220V 强电与窗帘盒电源预留'],
-                  ['lighting', '四、受控照明灯线预留'],
-                  ['battery', '五、无线免布线点位（仅核对安装位置）'],
-                ] as const).map(([cat, title]) => {
-                  const pts = d.points
-                    .filter((p) => wiringSpecOf(p.deviceType).category === cat)
-                    .sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true }))
-                  if (!pts.length) return null
-                  const areaMap = new Map(d.areas.map((a) => [a.id, a.name]))
-                  return (
-                    <section key={cat}>
-                      <DocSectionHeading style={style} className="mb-2" title={title} note={`共 ${pts.length} 处`} />
+              {layout === 'room'
+                ? d.rooms.map((room) => (
+                    <section key={room.areaId}>
+                      <DocSectionHeading
+                        style={style}
+                        className="mb-2"
+                        title={room.displayName}
+                        note={`${room.points.length} 个点位 · ${room.typeLabel}`}
+                      />
                       <table className="w-full table-fixed border-collapse text-[11.5px]">
                         <thead>
                           <tr className={t.head}>
                             <th className={cn(t.th, 'w-14')}>代号</th>
-                            <th className={cn(t.th, 'w-24')}>所在房间</th>
                             <th className={cn(t.th, 'w-28')}>设备类型</th>
-                            <th className={cn(t.th, 'w-36')}>底盒要求</th>
+                            <th className={cn(t.th, 'w-36')}>底盒 / 端口要求</th>
                             <th className={t.th}>线缆与供电预留</th>
+                            <th className={cn(t.th, 'w-36')}>建议安装位置</th>
                             <th className={cn(t.th, 'w-12 text-center')}>复核</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {pts.map((pt, idx) => {
-                            const spec = wiringSpecOf(pt.deviceType)
-                            return (
-                              <tr key={pt.id} className={t.row(idx)}>
-                                <td className={cn(t.td, 'py-1.5 font-mono font-semibold text-doc-accent')}>{pt.code}</td>
-                                <td className={cn(t.td, 'py-1.5 truncate')}>{pt.areaId ? (areaMap.get(pt.areaId) ?? '—') : '公共区'}</td>
-                                <td className={cn(t.td, 'py-1.5')}>
-                                  <span className="flex items-center gap-1.5">
-                                    <PointMarker type={pt.deviceType} className="size-3.5 shrink-0" />
-                                    <span className="truncate">{deviceTypeOf(pt.deviceType)?.name ?? '设备'}</span>
-                                  </span>
-                                </td>
-                                <td className={cn(t.td, 'py-1.5')}>{spec.box}</td>
-                                <td className={cn(t.td, 'py-1.5 text-doc-muted')}>{spec.cable}</td>
-                                <td className={cn(t.td, 'py-1.5 text-center')}>
-                                  <DocCheckbox />
-                                </td>
-                              </tr>
-                            )
-                          })}
+                          {room.points
+                            .slice()
+                            .sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true }))
+                            .map((pt, idx) => {
+                              const spec = wiringSpecOf(pt.deviceType)
+                              return (
+                                <tr key={pt.id} className={t.row(idx)}>
+                                  <td
+                                    className={cn(
+                                      t.td,
+                                      'py-1.5 font-mono font-semibold text-doc-accent',
+                                    )}
+                                  >
+                                    {pt.code}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5')}>
+                                    <span className="flex items-center gap-1.5">
+                                      <PointMarker
+                                        type={pt.deviceType}
+                                        className="size-3.5 shrink-0"
+                                      />
+                                      <span className="truncate">
+                                        {deviceTypeOf(pt.deviceType)?.name ?? '设备'}
+                                      </span>
+                                    </span>
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5')}>{spec.box}</td>
+                                  <td className={cn(t.td, 'py-1.5 text-doc-muted')}>
+                                    {spec.cable}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5 text-doc-muted')}>
+                                    {spec.height}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5 text-center')}>
+                                    <DocCheckbox />
+                                  </td>
+                                </tr>
+                              )
+                            })}
                         </tbody>
                       </table>
                     </section>
-                  )
-                })
-              )}
+                  ))
+                : (
+                    [
+                      ['zero-live', '一、86型零火深底盒（智能开关与中控屏）'],
+                      ['network', '二、弱电箱超六类网线直通点位（AC/AP/网关/监控）'],
+                      ['power-220v', '三、220V 强电与窗帘盒电源预留'],
+                      ['lighting', '四、受控照明灯线预留'],
+                      ['battery', '五、无线免布线点位（仅核对安装位置）'],
+                    ] as const
+                  ).map(([cat, title]) => {
+                    const pts = d.points
+                      .filter((p) => wiringSpecOf(p.deviceType).category === cat)
+                      .sort((a, b) => a.code.localeCompare(b.code, 'en', { numeric: true }))
+                    if (!pts.length) return null
+                    const areaMap = new Map(d.areas.map((a) => [a.id, a.name]))
+                    return (
+                      <section key={cat}>
+                        <DocSectionHeading
+                          style={style}
+                          className="mb-2"
+                          title={title}
+                          note={`共 ${pts.length} 处`}
+                        />
+                        <table className="w-full table-fixed border-collapse text-[11.5px]">
+                          <thead>
+                            <tr className={t.head}>
+                              <th className={cn(t.th, 'w-14')}>代号</th>
+                              <th className={cn(t.th, 'w-24')}>所在房间</th>
+                              <th className={cn(t.th, 'w-28')}>设备类型</th>
+                              <th className={cn(t.th, 'w-36')}>底盒要求</th>
+                              <th className={t.th}>线缆与供电预留</th>
+                              <th className={cn(t.th, 'w-12 text-center')}>复核</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pts.map((pt, idx) => {
+                              const spec = wiringSpecOf(pt.deviceType)
+                              return (
+                                <tr key={pt.id} className={t.row(idx)}>
+                                  <td
+                                    className={cn(
+                                      t.td,
+                                      'py-1.5 font-mono font-semibold text-doc-accent',
+                                    )}
+                                  >
+                                    {pt.code}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5 truncate')}>
+                                    {pt.areaId ? (areaMap.get(pt.areaId) ?? '—') : '公共区'}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5')}>
+                                    <span className="flex items-center gap-1.5">
+                                      <PointMarker
+                                        type={pt.deviceType}
+                                        className="size-3.5 shrink-0"
+                                      />
+                                      <span className="truncate">
+                                        {deviceTypeOf(pt.deviceType)?.name ?? '设备'}
+                                      </span>
+                                    </span>
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5')}>{spec.box}</td>
+                                  <td className={cn(t.td, 'py-1.5 text-doc-muted')}>
+                                    {spec.cable}
+                                  </td>
+                                  <td className={cn(t.td, 'py-1.5 text-center')}>
+                                    <DocCheckbox />
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      </section>
+                    )
+                  })}
             </div>
 
             <section data-pdf-block className="mt-8 break-inside-avoid">
-              <DocSignatures parties={[{ label: '水电施工负责人签字' }, { label: '智能设计师复核签字' }, { label: '业主确认签字' }]} />
-              <DocFooter className="mt-6" left={address || projectName} center={date} right={company.name} />
+              <DocSignatures
+                parties={[
+                  { label: '水电施工负责人签字' },
+                  { label: '智能设计师复核签字' },
+                  { label: '业主确认签字' },
+                ]}
+              />
+              <DocFooter
+                className="mt-6"
+                left={address || projectName}
+                center={date}
+                right={company.name}
+              />
             </section>
           </DocArticle>
         </DocRoot>

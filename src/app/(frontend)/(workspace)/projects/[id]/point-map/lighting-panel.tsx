@@ -6,25 +6,51 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import type { SymbolTemplate } from '@/board/core/types'
-import { artOf, defaultVariant, LIGHTING_GROUPS, type LightingFamily } from '@/board/packs/smart-home/look'
+import {
+  artOf,
+  defaultVariant,
+  LIGHTING_GROUPS,
+  type LightingFamily,
+} from '@/board/packs/smart-home/look'
 import { cn } from '@/lib/utils'
 
 import { DRAG_TYPE } from './editor-panels'
 
-export const variantTemplate = (fam: LightingFamily, variantId: string, real: boolean): SymbolTemplate => {
+export const variantTemplate = (
+  fam: LightingFamily,
+  variantId: string,
+  real: boolean,
+): SymbolTemplate => {
   const v = fam.variants.find((x) => x.id === variantId) ?? defaultVariant(fam)
-  return { symbolId: v.id, sizeCm: v.sizeCm, real: real && !!v.sizeCm, data: { deviceType: fam.deviceType } }
+  return {
+    symbolId: v.id,
+    sizeCm: v.sizeCm,
+    real: real && !!v.sizeCm,
+    data: { deviceType: fam.deviceType },
+  }
 }
 
 function Art({ id, className }: { id: string; className?: string }) {
   const art = artOf(id)
   if (!art) return null
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={art.srcSm} alt="" draggable={false} className={cn('object-contain', className)} />
+  return (
+    <img src={art.srcSm} alt="" draggable={false} className={cn('object-contain', className)} />
+  )
 }
 
 /** 灯光设计：按款式分组，每款几个尺寸档；可按真实尺寸落图（图纸需先标定） */
-export function LightingPanel({ armedId, onArm, disabled, calibrated }: { armedId: string | null; onArm: (tpl: SymbolTemplate | null) => void; disabled: boolean; calibrated: boolean }) {
+export function LightingPanel({
+  armedId,
+  onArm,
+  disabled,
+  calibrated,
+}: {
+  armedId: string | null
+  onArm: (tpl: SymbolTemplate | null) => void
+  disabled: boolean
+  calibrated: boolean
+}) {
   const [famId, setFamId] = useState<string>(LIGHTING_GROUPS[0].families[0].id)
   const [real, setReal] = useState(true)
   const fam = LIGHTING_GROUPS.flatMap((g) => g.families).find((f) => f.id === famId)!
@@ -44,18 +70,26 @@ export function LightingPanel({ armedId, onArm, disabled, calibrated }: { armedI
                     disabled={disabled}
                     draggable={!disabled}
                     onDragStart={(e) => {
-                      e.dataTransfer.setData(DRAG_TYPE, JSON.stringify(variantTemplate(f, defaultVariant(f).id, real)))
+                      e.dataTransfer.setData(
+                        DRAG_TYPE,
+                        JSON.stringify(variantTemplate(f, defaultVariant(f).id, real)),
+                      )
                       e.dataTransfer.effectAllowed = 'copy'
                     }}
                     onClick={() => {
                       setFamId(f.id)
                       const inFam = f.variants.some((v) => v.id === armedId)
-                      onArm(inFam && f.id === famId ? null : variantTemplate(f, defaultVariant(f).id, real))
+                      onArm(
+                        inFam && f.id === famId
+                          ? null
+                          : variantTemplate(f, defaultVariant(f).id, real),
+                      )
                     }}
                     aria-pressed={f.id === famId}
                     className={cn(
                       'h-auto flex-col gap-1 rounded-lg border-border bg-background px-1 py-2 text-[11px] font-normal text-fg-secondary shadow-none hover:border-border-strong hover:bg-subtle',
-                      f.id === famId && 'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
+                      f.id === famId &&
+                        'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
                     )}
                   >
                     <Art id={f.cover} className="size-7" />
@@ -99,13 +133,17 @@ export function LightingPanel({ armedId, onArm, disabled, calibrated }: { armedI
               )}
               onClick={() => onArm(armedId === v.id ? null : variantTemplate(fam, v.id, real))}
             >
-              {fam.variants.some((x) => x.art !== v.art) ? <Art id={v.art} className="size-4" /> : null}
+              {fam.variants.some((x) => x.art !== v.art) ? (
+                <Art id={v.art} className="size-4" />
+              ) : null}
               {v.label}
             </Button>
           ))}
         </div>
         <p className="text-[11px] text-muted-foreground">
-          {real && !calibrated ? '当前图纸未标定，按比例的灯具先按固定大小示意；标定后自动换成真实尺寸。' : `计入报价：按设备类型统计（${fam.variants.length} 个尺寸档）。`}
+          {real && !calibrated
+            ? '当前图纸未标定，按比例的灯具先按固定大小示意；标定后自动换成真实尺寸。'
+            : `计入报价：按设备类型统计（${fam.variants.length} 个尺寸档）。`}
         </p>
       </div>
     </div>

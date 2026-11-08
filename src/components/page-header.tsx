@@ -13,10 +13,19 @@ export function PageHeader({
   className?: string
 }) {
   return (
-    <header className={cn('flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-border pb-4', className)}>
+    <header
+      className={cn(
+        'flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-border pb-4',
+        className,
+      )}
+    >
       <div className="min-w-0 space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{title}</h1>
-        {description ? <p className="max-w-2xl text-sm text-pretty text-muted-foreground">{description}</p> : null}
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          {title}
+        </h1>
+        {description ? (
+          <p className="max-w-2xl text-sm text-pretty text-muted-foreground">{description}</p>
+        ) : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </header>

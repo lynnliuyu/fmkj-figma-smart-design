@@ -1,25 +1,28 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
+import * as React from 'react'
+import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes'
 
-import { ACCENT_STORAGE_KEY, DEFAULT_ACCENT, isAccent, type AccentId } from "@/lib/appearance"
+import { ACCENT_STORAGE_KEY, DEFAULT_ACCENT, isAccent, type AccentId } from '@/lib/appearance'
 
 type AccentContextValue = { accent: AccentId; setAccent: (accent: AccentId) => void }
-const AccentContext = React.createContext<AccentContextValue>({ accent: DEFAULT_ACCENT, setAccent: () => {} })
+const AccentContext = React.createContext<AccentContextValue>({
+  accent: DEFAULT_ACCENT,
+  setAccent: () => {},
+})
 
 /** 主题风格（强调色）：写到 <html data-accent> 并记住选择。 */
 function AccentProvider({ children }: { children: React.ReactNode }) {
   const [accent, setAccentState] = React.useState<AccentId>(DEFAULT_ACCENT)
 
   React.useEffect(() => {
-    const current = document.documentElement.getAttribute("data-accent")
+    const current = document.documentElement.getAttribute('data-accent')
     if (isAccent(current)) setAccentState(current)
   }, [])
 
   const setAccent = React.useCallback((next: AccentId) => {
     setAccentState(next)
-    document.documentElement.setAttribute("data-accent", next)
+    document.documentElement.setAttribute('data-accent', next)
     try {
       localStorage.setItem(ACCENT_STORAGE_KEY, next)
     } catch {
@@ -35,10 +38,7 @@ export function useAccent() {
   return React.useContext(AccentContext)
 }
 
-function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+function ThemeProvider({ children, ...props }: React.ComponentProps<typeof NextThemesProvider>) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -60,9 +60,9 @@ function isTypingTarget(target: EventTarget | null) {
 
   return (
     target.isContentEditable ||
-    target.tagName === "INPUT" ||
-    target.tagName === "TEXTAREA" ||
-    target.tagName === "SELECT"
+    target.tagName === 'INPUT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.tagName === 'SELECT'
   )
 }
 
@@ -79,7 +79,7 @@ function ThemeHotkey() {
         return
       }
 
-      if (event.key?.toLowerCase() !== "d") {
+      if (event.key?.toLowerCase() !== 'd') {
         return
       }
 
@@ -87,13 +87,13 @@ function ThemeHotkey() {
         return
       }
 
-      setTheme(resolvedTheme === "dark" ? "light" : "dark")
+      setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
     }
 
-    window.addEventListener("keydown", onKeyDown)
+    window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener('keydown', onKeyDown)
     }
   }, [resolvedTheme, setTheme])
 

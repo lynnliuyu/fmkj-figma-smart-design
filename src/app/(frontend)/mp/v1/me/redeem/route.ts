@@ -1,4 +1,9 @@
-import { CREDIT_TASKS, grantTaskCreditIfEligible, loadAndSyncUserCreditTasks, type CreditTaskId } from '@/lib/credit-tasks'
+import {
+  CREDIT_TASKS,
+  grantTaskCreditIfEligible,
+  loadAndSyncUserCreditTasks,
+  type CreditTaskId,
+} from '@/lib/credit-tasks'
 import { fail, mpRoute, ok, readJson, text } from '@/lib/mp/http'
 import { redeemCodeForUser } from '@/lib/services/membership-service'
 

@@ -7,7 +7,13 @@
 一行一条 JSON。格式：
 
 ```json
-{"date":"YYYY-MM-DD","area":"ci|repo|issue|docs|prod","finding":"发现的问题","action":"做了什么","status":"open|fixed"}
+{
+  "date": "YYYY-MM-DD",
+  "area": "ci|repo|issue|docs|prod",
+  "finding": "发现的问题",
+  "action": "做了什么",
+  "status": "open|fixed"
+}
 ```
 
 只记**值得留下来的**：踩过的坑、非显而易见的约束、决策及理由。

@@ -1,4 +1,3 @@
-
 import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
@@ -60,13 +59,20 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
         brand={{ name: company.name, logo: company.logo?.url ?? null }}
         plugins={plugins}
         projects={projects}
-        ai={{ credits: user.aiCredits ?? 0, configured: aiConfigured(activeAiModels), models: activeAiModels }}
+        ai={{
+          credits: user.aiCredits ?? 0,
+          configured: aiConfigured(activeAiModels),
+          models: activeAiModels,
+        }}
         showOperatorReports={operator}
       />
       <SidebarInset>
         <SiteHeader />
         {/* SidebarInset 本身就是 <main>，这里用 div，避免页面出现两个 main 区域 */}
-        <div data-slot="workspace-page" className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 md:px-8 md:py-7">
+        <div
+          data-slot="workspace-page"
+          className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 md:px-8 md:py-7"
+        >
           {children}
         </div>
       </SidebarInset>

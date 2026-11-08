@@ -28,8 +28,20 @@ export async function ensureBuiltinLibrarySeeded(payload: Payload): Promise<void
   autoSeedPromise = (async () => {
     try {
       const [tpl, scn] = await Promise.all([
-        payload.find({ collection: 'proposal-templates', limit: 200, depth: 0, overrideAccess: true, select: { slug: true } }),
-        payload.find({ collection: 'scenes', limit: 200, depth: 0, overrideAccess: true, select: { slug: true } }),
+        payload.find({
+          collection: 'proposal-templates',
+          limit: 200,
+          depth: 0,
+          overrideAccess: true,
+          select: { slug: true },
+        }),
+        payload.find({
+          collection: 'scenes',
+          limit: 200,
+          depth: 0,
+          overrideAccess: true,
+          select: { slug: true },
+        }),
       ])
       const tplSlugs = new Set(tpl.docs.map((d) => d.slug))
       const scnSlugs = new Set(scn.docs.map((d) => d.slug))
@@ -40,7 +52,10 @@ export async function ensureBuiltinLibrarySeeded(payload: Payload): Promise<void
       }
       if (scn.totalDocs === 0 || missingScn) {
         await seedBuiltinScenes(payload, {
-          origin: process.env.NEXT_PUBLIC_SITE_URL || process.env.PUBLIC_URL || process.env.FIGMA_PUBLIC_URL,
+          origin:
+            process.env.NEXT_PUBLIC_SITE_URL ||
+            process.env.PUBLIC_URL ||
+            process.env.FIGMA_PUBLIC_URL,
         })
       }
     } catch {
@@ -54,24 +69,61 @@ export async function ensureBuiltinLibrarySeeded(payload: Payload): Promise<void
 export async function proposalLibraryStatus(payload: Payload): Promise<LibraryStatus> {
   await ensureBuiltinLibrarySeeded(payload)
   const [tpl, scn] = await Promise.all([
-    payload.find({ collection: 'proposal-templates', limit: 500, depth: 0, overrideAccess: true, select: { slug: true } }),
-    payload.find({ collection: 'scenes', limit: 500, depth: 0, overrideAccess: true, select: { slug: true } }),
+    payload.find({
+      collection: 'proposal-templates',
+      limit: 500,
+      depth: 0,
+      overrideAccess: true,
+      select: { slug: true },
+    }),
+    payload.find({
+      collection: 'scenes',
+      limit: 500,
+      depth: 0,
+      overrideAccess: true,
+      select: { slug: true },
+    }),
   ])
   const tplSlugs = new Set(tpl.docs.map((d) => d.slug))
   const scnSlugs = new Set(scn.docs.map((d) => d.slug))
   return {
-    templates: { builtin: BUILTIN_PROPOSAL_TEMPLATES.length, existing: tpl.totalDocs, missing: BUILTIN_PROPOSAL_TEMPLATES.filter((t) => !tplSlugs.has(t.value)).map((t) => t.label) },
-    scenes: { builtin: BUILTIN_SCENES.length, existing: scn.totalDocs, missing: BUILTIN_SCENES.filter((s) => !scnSlugs.has(s.slug)).map((s) => s.name) },
+    templates: {
+      builtin: BUILTIN_PROPOSAL_TEMPLATES.length,
+      existing: tpl.totalDocs,
+      missing: BUILTIN_PROPOSAL_TEMPLATES.filter((t) => !tplSlugs.has(t.value)).map((t) => t.label),
+    },
+    scenes: {
+      builtin: BUILTIN_SCENES.length,
+      existing: scn.totalDocs,
+      missing: BUILTIN_SCENES.filter((s) => !scnSlugs.has(s.slug)).map((s) => s.name),
+    },
   }
 }
 
 type SeedResult = { created: string[]; filled: string[]; skipped: number; errors: string[] }
 
 /** 补齐内置方案模板（按标识跳过已有的；fill 时给已有记录补空着的适合客户 / 使用时机 / 外观特点） */
-export async function seedBuiltinTemplates(payload: Payload, opts: { fill?: boolean } = {}): Promise<SeedResult> {
+export async function seedBuiltinTemplates(
+  payload: Payload,
+  opts: { fill?: boolean } = {},
+): Promise<SeedResult> {
   const out: SeedResult = { created: [], filled: [], skipped: 0, errors: [] }
-  const existing = await payload.find({ collection: 'proposal-templates', limit: 500, depth: 0, overrideAccess: true })
-  const bySlug = new Map(existing.docs.map((d) => [d.slug, d as typeof d & { audience?: string | null; occasion?: string | null; highlights?: string[] | null }]))
+  const existing = await payload.find({
+    collection: 'proposal-templates',
+    limit: 500,
+    depth: 0,
+    overrideAccess: true,
+  })
+  const bySlug = new Map(
+    existing.docs.map((d) => [
+      d.slug,
+      d as typeof d & {
+        audience?: string | null
+        occasion?: string | null
+        highlights?: string[] | null
+      },
+    ]),
+  )
   for (const [i, t] of BUILTIN_PROPOSAL_TEMPLATES.entries()) {
     const doc = bySlug.get(t.value)
     try {
@@ -105,7 +157,13 @@ export async function seedBuiltinTemplates(payload: Payload, opts: { fill?: bool
         if (!doc.highlights?.length) patch.highlights = t.highlights
       }
       if (Object.keys(patch).length) {
-        await payload.update({ collection: 'proposal-templates', id: doc.id, data: patch as never, overrideAccess: true, depth: 0 })
+        await payload.update({
+          collection: 'proposal-templates',
+          id: doc.id,
+          data: patch as never,
+          overrideAccess: true,
+          depth: 0,
+        })
         out.filled.push(t.label)
       } else out.skipped++
     } catch (e) {
@@ -115,10 +173,20 @@ export async function seedBuiltinTemplates(payload: Payload, opts: { fill?: bool
   return out
 }
 
-async function sceneImage(payload: Payload, slug: string, alt: string, origin?: string, builtinUrl?: string): Promise<string | null> {
-  const rel = builtinUrl?.startsWith('/proposal/') ? builtinUrl.slice(1) : `proposal/photos/scenes/${slug}.jpg`
+async function sceneImage(
+  payload: Payload,
+  slug: string,
+  alt: string,
+  origin?: string,
+  builtinUrl?: string,
+): Promise<string | null> {
+  const rel = builtinUrl?.startsWith('/proposal/')
+    ? builtinUrl.slice(1)
+    : `proposal/photos/scenes/${slug}.jpg`
   const png = rel.endsWith('.png')
-  let data: Buffer | null = await fs.readFile(path.join(process.cwd(), 'public', rel)).catch(() => null)
+  let data: Buffer | null = await fs
+    .readFile(path.join(process.cwd(), 'public', rel))
+    .catch(() => null)
   if (!data && origin) {
     const res = await fetch(`${origin.replace(/\/+$/, '')}/${rel}`).catch(() => null)
     if (res?.ok) data = Buffer.from(await res.arrayBuffer())
@@ -127,7 +195,12 @@ async function sceneImage(payload: Payload, slug: string, alt: string, origin?: 
   const media = await payload.create({
     collection: 'media',
     data: { alt },
-    file: { data, mimetype: png ? 'image/png' : 'image/jpeg', name: `scene-${slug}.${png ? 'png' : 'jpg'}`, size: data.length },
+    file: {
+      data,
+      mimetype: png ? 'image/png' : 'image/jpeg',
+      name: `scene-${slug}.${png ? 'png' : 'jpg'}`,
+      size: data.length,
+    },
     overrideAccess: true,
     depth: 0,
   })
@@ -135,9 +208,18 @@ async function sceneImage(payload: Payload, slug: string, alt: string, origin?: 
 }
 
 /** 补齐内置场景（按标识跳过已有的；图片一并上传到媒体库） */
-export async function seedBuiltinScenes(payload: Payload, opts: { origin?: string } = {}): Promise<SeedResult> {
+export async function seedBuiltinScenes(
+  payload: Payload,
+  opts: { origin?: string } = {},
+): Promise<SeedResult> {
   const out: SeedResult = { created: [], filled: [], skipped: 0, errors: [] }
-  const existing = await payload.find({ collection: 'scenes', limit: 500, depth: 0, overrideAccess: true, select: { slug: true } })
+  const existing = await payload.find({
+    collection: 'scenes',
+    limit: 500,
+    depth: 0,
+    overrideAccess: true,
+    select: { slug: true },
+  })
   const slugs = new Set(existing.docs.map((d) => d.slug))
   for (const s of BUILTIN_SCENES) {
     if (slugs.has(s.slug)) {
@@ -145,7 +227,13 @@ export async function seedBuiltinScenes(payload: Payload, opts: { origin?: strin
       continue
     }
     try {
-      const image = await sceneImage(payload, s.slug, `${s.image?.alt ?? s.name}（${s.credit}）`, opts.origin, s.image?.url).catch(() => null)
+      const image = await sceneImage(
+        payload,
+        s.slug,
+        `${s.image?.alt ?? s.name}（${s.credit}）`,
+        opts.origin,
+        s.image?.url,
+      ).catch(() => null)
       await payload.create({
         collection: 'scenes',
         data: {

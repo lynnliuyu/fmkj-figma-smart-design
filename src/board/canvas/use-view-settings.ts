@@ -29,7 +29,12 @@ export function useViewSettings() {
         const overlays = { ...DEFAULT_VIEW.overlays, ...saved.overlays }
         // 旧视图升级时启用展示效果，关闭旧覆盖圈，避免两个默认效果叠在一起。
         if (saved.overlays?.['display-effects'] === undefined) overlays.coverage = false
-        setView({ ...DEFAULT_VIEW, ...saved, layers: { ...DEFAULT_VIEW.layers, ...saved.layers }, overlays })
+        setView({
+          ...DEFAULT_VIEW,
+          ...saved,
+          layers: { ...DEFAULT_VIEW.layers, ...saved.layers },
+          overlays,
+        })
       }
     } catch {
       /* 忽略损坏的设置 */
@@ -37,7 +42,12 @@ export function useViewSettings() {
   }, [])
   const update = useCallback((patch: Partial<ViewSettings>) => {
     setView((v) => {
-      const next = { ...v, ...patch, layers: { ...v.layers, ...patch.layers }, overlays: { ...v.overlays, ...patch.overlays } }
+      const next = {
+        ...v,
+        ...patch,
+        layers: { ...v.layers, ...patch.layers },
+        overlays: { ...v.overlays, ...patch.overlays },
+      }
       try {
         localStorage.setItem(KEY, JSON.stringify(next))
       } catch {

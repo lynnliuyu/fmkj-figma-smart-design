@@ -9,7 +9,15 @@ import { type DeckSheet } from '../model'
 import { PlanLegend } from '@/components/plan-legend'
 import { PointMarker } from '@/components/point-marker'
 
-import { Chapter, contentCrop, PlanCard, PlanView, SectionTitle, Slide, type DeckCtx } from '../parts'
+import {
+  Chapter,
+  contentCrop,
+  PlanCard,
+  PlanView,
+  SectionTitle,
+  Slide,
+  type DeckCtx,
+} from '../parts'
 
 /** 需求色带（4 栏渐变） */
 function NeedsBand({ ctx }: { ctx: DeckCtx }) {
@@ -27,7 +35,19 @@ function NeedsBand({ ctx }: { ctx: DeckCtx }) {
 
 const ROW = 62
 
-export function PlanPage({ ctx, no, total, s, first }: { ctx: DeckCtx; no: number; total: number; s: DeckSheet; first: boolean }) {
+export function PlanPage({
+  ctx,
+  no,
+  total,
+  s,
+  first,
+}: {
+  ctx: DeckCtx
+  no: number
+  total: number
+  s: DeckSheet
+  first: boolean
+}) {
   const { m } = ctx
   const multi = m.sheets.length > 1
   const title = first ? '从生活出发，把智能放对位置。' : `${s.floorName}，逐点落位。`
@@ -49,59 +69,110 @@ export function PlanPage({ ctx, no, total, s, first }: { ctx: DeckCtx; no: numbe
       <div className="flex min-h-0 w-full flex-1 items-start gap-[24px] overflow-hidden">
         <div className="flex w-[936px] shrink-0 flex-col gap-[8px]">
           <PlanCard
-            left={<span className="doc-strong text-[18px] text-doc-ink">{`${multi ? s.floorName : '住宅平面'} · ${s.groups.length ? `${s.points.length}点` : '暂无点位'}`}</span>}
+            left={
+              <span className="doc-strong text-[18px] text-doc-ink">{`${multi ? s.floorName : '住宅平面'} · ${s.groups.length ? `${s.points.length}点` : '暂无点位'}`}</span>
+            }
             right={<span className="text-[13px]">示意平面 · 不按比例</span>}
             className="w-[936px]"
           >
-            <div className="flex items-center justify-center pt-[34px] pb-[12px]" style={{ height: planH }}>
-              <PlanView ctx={ctx} sheet={s.sheet} points={s.points} areas={s.areas} width={888} height={planH - 46} crop={contentCrop(s.sheet, s.areas, s.points)} />
+            <div
+              className="flex items-center justify-center pt-[34px] pb-[12px]"
+              style={{ height: planH }}
+            >
+              <PlanView
+                ctx={ctx}
+                sheet={s.sheet}
+                points={s.points}
+                areas={s.areas}
+                width={888}
+                height={planH - 46}
+                crop={contentCrop(s.sheet, s.areas, s.points)}
+              />
             </div>
           </PlanCard>
-          {legend ? <PlanLegend points={s.points} variant="inline" className="doc-body max-h-[40px] overflow-hidden text-doc-ink" /> : null}
-          <p className="doc-body text-[13px] leading-[1.4] text-doc-muted">设备图标与右侧清单、报价条目对应。示意图不表示布线路由、准确尺寸或电气回路；尺寸与安装条件以现场复核为准。</p>
+          {legend ? (
+            <PlanLegend
+              points={s.points}
+              variant="inline"
+              className="doc-body max-h-[40px] overflow-hidden text-doc-ink"
+            />
+          ) : null}
+          <p className="doc-body text-[13px] leading-[1.4] text-doc-muted">
+            设备图标与右侧清单、报价条目对应。示意图不表示布线路由、准确尺寸或电气回路；尺寸与安装条件以现场复核为准。
+          </p>
         </div>
         <div className="flex w-[368px] shrink-0 flex-col gap-[12px] overflow-hidden">
           <SectionTitle title="点位索引" note={`${s.points.length}点 / ${s.types}类设备`} />
           <div className="flex flex-col">
             {perPoint
               ? s.points.map((p) => (
-                  <div key={p.id} className="flex items-center gap-[12px] border-b border-doc-rule" style={{ height: ROW }}>
+                  <div
+                    key={p.id}
+                    className="flex items-center gap-[12px] border-b border-doc-rule"
+                    style={{ height: ROW }}
+                  >
                     <PointMarker type={p.deviceType} className="size-[24px] shrink-0" />
                     <div className="min-w-0 flex-1 leading-[1.35]">
                       <p className="doc-body line-clamp-2 text-[16px] leading-[1.4] wrap-anywhere">
                         {p.room} · {p.typeName}
                       </p>
-                      
                     </div>
                     <p className="doc-latin max-w-[116px] shrink-0 text-right text-[12px] leading-[1.35] text-doc-muted wrap-anywhere">
-                      {p.ref ?? (p.productId ? '未纳入本次报价' : '待选型')} / 1{m.itemOf.get(p.ref ?? '')?.unit ?? '个'}
+                      {p.ref ?? (p.productId ? '未纳入本次报价' : '待选型')} / 1
+                      {m.itemOf.get(p.ref ?? '')?.unit ?? '个'}
                     </p>
                   </div>
                 ))
               : groups.map((g) => {
                   const types = [...new Set(g.points.map((p) => p.deviceType))]
-                  const refs = [...new Set(g.points.map((p) => p.ref).filter((r): r is string => !!r))]
+                  const refs = [
+                    ...new Set(g.points.map((p) => p.ref).filter((r): r is string => !!r)),
+                  ]
                   return (
-                    <div key={g.key} className="flex items-center gap-[10px] border-b border-doc-rule" style={{ height: groupRow }}>
+                    <div
+                      key={g.key}
+                      className="flex items-center gap-[10px] border-b border-doc-rule"
+                      style={{ height: groupRow }}
+                    >
                       <span className="flex min-w-[42px] shrink-0 items-center -space-x-1">
                         {types.slice(0, 3).map((t) => (
-                          <PointMarker key={t} type={t} className="size-[20px] rounded-full ring-1 ring-white" />
+                          <PointMarker
+                            key={t}
+                            type={t}
+                            className="size-[20px] rounded-full ring-1 ring-white"
+                          />
                         ))}
                       </span>
                       <div className="min-w-0 flex-1 leading-[1.35]">
                         <p className="doc-body line-clamp-2 text-[16px] leading-[1.3] wrap-anywhere">
                           {g.name} · {g.points.length}点
                         </p>
-                        <p className={cn('doc-body line-clamp-2 leading-[1.35] text-doc-muted wrap-anywhere', groupRow < 60 ? 'text-[12px]' : 'text-[13px]')}>
-                          {types.map((t) => `${deviceTypeOf(t)?.name ?? '设备'}×${g.points.filter((p) => p.deviceType === t).length}`).join('  ')}
+                        <p
+                          className={cn(
+                            'doc-body line-clamp-2 leading-[1.35] text-doc-muted wrap-anywhere',
+                            groupRow < 60 ? 'text-[12px]' : 'text-[13px]',
+                          )}
+                        >
+                          {types
+                            .map(
+                              (t) =>
+                                `${deviceTypeOf(t)?.name ?? '设备'}×${g.points.filter((p) => p.deviceType === t).length}`,
+                            )
+                            .join('  ')}
                         </p>
                       </div>
-                      <p className="doc-latin max-w-[78px] shrink-0 text-right text-[12px] leading-[1.4] text-doc-muted wrap-anywhere">{refs.slice(0, 3).join(' ')}{refs.length > 3 ? ' …' : ''}</p>
+                      <p className="doc-latin max-w-[78px] shrink-0 text-right text-[12px] leading-[1.4] text-doc-muted wrap-anywhere">
+                        {refs.slice(0, 3).join(' ')}
+                        {refs.length > 3 ? ' …' : ''}
+                      </p>
                     </div>
                   )
                 })}
             {!perPoint && hidden > 0 ? (
-              <p className="doc-body flex items-center border-b border-doc-rule text-[13px] text-doc-muted" style={{ height: groupRow }}>
+              <p
+                className="doc-body flex items-center border-b border-doc-rule text-[13px] text-doc-muted"
+                style={{ height: groupRow }}
+              >
                 另有 {hidden} 个空间，详见各空间章节与报价明细
               </p>
             ) : null}

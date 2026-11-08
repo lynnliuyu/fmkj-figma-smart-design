@@ -4,28 +4,56 @@ import { categoryOfType, deviceTypeOf, isDeviceType } from '@/lib/device-types'
 import { markerUrl } from '@/lib/point-markers'
 
 import { POINT_ICON_GEOM, POINT_ICON_VERSION } from './point-icons.generated'
-import { LIGHTING_FAMILIES, SYMBOL_ASSET_PAD, SYMBOL_ASSET_VERSION, SYMBOL_ASSETS, type LightingFamilyDef } from './symbols.generated'
+import {
+  LIGHTING_FAMILIES,
+  SYMBOL_ASSET_PAD,
+  SYMBOL_ASSET_VERSION,
+  SYMBOL_ASSETS,
+  type LightingFamilyDef,
+} from './symbols.generated'
 
 const BASE = '/board/symbols/smart-home'
 
 export function artOf(key: string): SymbolArt | null {
   const a = SYMBOL_ASSETS[key]
   if (!a) return null
-  return { src: `${BASE}/${key}.png?v=${SYMBOL_ASSET_VERSION}`, srcSm: `${BASE}/${key}.sm.png?v=${SYMBOL_ASSET_VERSION}`, gw: a.gw, gh: a.gh, pad: SYMBOL_ASSET_PAD }
+  return {
+    src: `${BASE}/${key}.png?v=${SYMBOL_ASSET_VERSION}`,
+    srcSm: `${BASE}/${key}.sm.png?v=${SYMBOL_ASSET_VERSION}`,
+    gw: a.gw,
+    gh: a.gh,
+    pad: SYMBOL_ASSET_PAD,
+  }
 }
 
 /** 点位图标（平面符号样式，scripts/point-icons/mapping.json 选定的原图，build-point-icons.mjs 优化）：画板、面板、导出共用 */
 export function pointIconArt(type: string): SymbolArt | null {
   const g = POINT_ICON_GEOM[type]
   if (!g) return null
-  return { src: `/point-icons/${type}.png?v=${POINT_ICON_VERSION}`, srcSm: `/point-icons/${type}.png?v=${POINT_ICON_VERSION}`, gw: g.gw, gh: g.gh, pad: SYMBOL_ASSET_PAD }
+  return {
+    src: `/point-icons/${type}.png?v=${POINT_ICON_VERSION}`,
+    srcSm: `/point-icons/${type}.png?v=${POINT_ICON_VERSION}`,
+    gw: g.gw,
+    gh: g.gh,
+    pad: SYMBOL_ASSET_PAD,
+  }
 }
 
-export type LightingVariant = { id: string; art: string; sizeCm: SizeCm | null; label: string; family: LightingFamily }
-export type LightingFamily = Omit<LightingFamilyDef, 'variants'> & { variants: LightingVariant[]; cover: string }
+export type LightingVariant = {
+  id: string
+  art: string
+  sizeCm: SizeCm | null
+  label: string
+  family: LightingFamily
+}
+export type LightingFamily = Omit<LightingFamilyDef, 'variants'> & {
+  variants: LightingVariant[]
+  cover: string
+}
 
 const num = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1))
-export const sizeText = (s: SizeCm | null) => (!s ? '标准' : s[1] == null ? `${num(s[0])}cm` : `${num(s[0])}×${num(s[1])}cm`)
+export const sizeText = (s: SizeCm | null) =>
+  !s ? '标准' : s[1] == null ? `${num(s[0])}cm` : `${num(s[0])}×${num(s[1])}cm`
 
 export const LIGHTING: LightingFamily[] = LIGHTING_FAMILIES.map((def) => {
   const fam: LightingFamily = { ...def, variants: [], cover: '' }
@@ -52,8 +80,10 @@ for (const f of LIGHTING) {
 }
 
 const VARIANTS = new Map(LIGHTING.flatMap((f) => f.variants.map((v) => [v.id, v] as const)))
-export const lightingVariant = (id: string | null | undefined) => (id ? VARIANTS.get(id) : undefined)
-export const defaultVariant = (f: LightingFamily) => f.variants[Math.floor((f.variants.length - 1) / 2)]
+export const lightingVariant = (id: string | null | undefined) =>
+  id ? VARIANTS.get(id) : undefined
+export const defaultVariant = (f: LightingFamily) =>
+  f.variants[Math.floor((f.variants.length - 1) / 2)]
 
 export function deviceLook(deviceType: string): SymbolLook {
   const t = deviceTypeOf(deviceType) ?? deviceTypeOf('other')!
@@ -80,7 +110,16 @@ export function lookOf(o: Pick<SymbolObj, 'symbolId' | 'data'>): SymbolLook {
   const base = deviceLook(dt)
   const v = lightingVariant(o.symbolId)
   const look: SymbolLook =
-    v && v.family.deviceType === dt ? { ...base, key: `${dt}:${v.family.id}`, name: `${v.family.name} ${v.label}`, art: artOf(v.art) ?? base.art, badge: undefined, linear: v.family.linear } : base
+    v && v.family.deviceType === dt
+      ? {
+          ...base,
+          key: `${dt}:${v.family.id}`,
+          name: `${v.family.name} ${v.label}`,
+          art: artOf(v.art) ?? base.art,
+          badge: undefined,
+          linear: v.family.linear,
+        }
+      : base
   cache.set(k, look)
   return look
 }

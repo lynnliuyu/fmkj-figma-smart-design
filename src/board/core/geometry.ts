@@ -12,12 +12,28 @@ export function rotatePoint(p: Vec, c: Vec, a: number): Vec {
   return { x: c.x + dx * k - dy * s, y: c.y + dx * s + dy * k }
 }
 
-export const boxContains = (b: Box, p: Vec, pad = 0) => p.x >= b.x - pad && p.x <= b.x + b.w + pad && p.y >= b.y - pad && p.y <= b.y + b.h + pad
-export const boxInside = (inner: Box, outer: Box) => inner.x >= outer.x && inner.y >= outer.y && inner.x + inner.w <= outer.x + outer.w && inner.y + inner.h <= outer.y + outer.h
-export const boxIntersects = (a: Box, b: Box) => a.x <= b.x + b.w && b.x <= a.x + a.w && a.y <= b.y + b.h && b.y <= a.y + a.h
+export const boxContains = (b: Box, p: Vec, pad = 0) =>
+  p.x >= b.x - pad && p.x <= b.x + b.w + pad && p.y >= b.y - pad && p.y <= b.y + b.h + pad
+export const boxInside = (inner: Box, outer: Box) =>
+  inner.x >= outer.x &&
+  inner.y >= outer.y &&
+  inner.x + inner.w <= outer.x + outer.w &&
+  inner.y + inner.h <= outer.y + outer.h
+export const boxIntersects = (a: Box, b: Box) =>
+  a.x <= b.x + b.w && b.x <= a.x + a.w && a.y <= b.y + b.h && b.y <= a.y + a.h
 export const boxCenter = (b: Box): Vec => ({ x: b.x + b.w / 2, y: b.y + b.h / 2 })
-export const normBox = (a: Vec, b: Vec): Box => ({ x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), w: Math.abs(a.x - b.x), h: Math.abs(a.y - b.y) })
-export const padBox = (b: Box, p: number): Box => ({ x: b.x - p, y: b.y - p, w: b.w + 2 * p, h: b.h + 2 * p })
+export const normBox = (a: Vec, b: Vec): Box => ({
+  x: Math.min(a.x, b.x),
+  y: Math.min(a.y, b.y),
+  w: Math.abs(a.x - b.x),
+  h: Math.abs(a.y - b.y),
+})
+export const padBox = (b: Box, p: number): Box => ({
+  x: b.x - p,
+  y: b.y - p,
+  w: b.w + 2 * p,
+  h: b.h + 2 * p,
+})
 
 export function unionBox(boxes: Box[]): Box | null {
   if (!boxes.length) return null
@@ -60,7 +76,9 @@ export function distToSegment(p: Vec, a: Vec, b: Vec) {
 /** 矩形边框附近（内外各 band）算命中；用于只点边框才选中的区域 */
 export function nearBoxEdge(b: Box, p: Vec, band: number) {
   if (!boxContains(b, p, band)) return false
-  return p.x <= b.x + band || p.x >= b.x + b.w - band || p.y <= b.y + band || p.y >= b.y + b.h - band
+  return (
+    p.x <= b.x + band || p.x >= b.x + b.w - band || p.y <= b.y + band || p.y >= b.y + b.h - band
+  )
 }
 
 /* ---------------- 多边形（区域轮廓） ---------------- */
@@ -71,7 +89,8 @@ export function pointInPolygon(p: Vec, poly: readonly Vec[]) {
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
     const a = poly[i]
     const b = poly[j]
-    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x)
+      inside = !inside
   }
   return inside
 }
@@ -79,7 +98,8 @@ export function pointInPolygon(p: Vec, poly: readonly Vec[]) {
 /** 点到多边形边界的最短距离 */
 export function distToPolygon(p: Vec, poly: readonly Vec[]) {
   let d = Infinity
-  for (let i = 0; i < poly.length; i++) d = Math.min(d, distToSegment(p, poly[i], poly[(i + 1) % poly.length]))
+  for (let i = 0; i < poly.length; i++)
+    d = Math.min(d, distToSegment(p, poly[i], poly[(i + 1) % poly.length]))
   return d
 }
 

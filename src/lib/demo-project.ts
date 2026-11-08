@@ -1,11 +1,24 @@
 import type { PayloadRequest } from 'payload'
 
-import { DEFAULT_CONTRACT_TERMS, DEFAULT_DURATION_DAYS, DEFAULT_PAYMENTS, DEFAULT_WARRANTY_MONTHS } from '@/lib/contracts'
+import {
+  DEFAULT_CONTRACT_TERMS,
+  DEFAULT_DURATION_DAYS,
+  DEFAULT_PAYMENTS,
+  DEFAULT_WARRANTY_MONTHS,
+} from '@/lib/contracts'
 import { relId } from '@/lib/access'
 import { BUILTIN_DEMO_SHEETS } from '@/lib/builtin-demo-sheets'
 import { DEVICE_TYPE_ORDER } from '@/lib/device-types'
 import { getPayloadClient } from '@/lib/payload'
-import { buildAreaElements, buildPointElements, buildSheetElements, compactScene, markerFile, type SceneEl, type SceneFile } from '@/lib/point-scene'
+import {
+  buildAreaElements,
+  buildPointElements,
+  buildSheetElements,
+  compactScene,
+  markerFile,
+  type SceneEl,
+  type SceneFile,
+} from '@/lib/point-scene'
 import { inPointScope } from '@/lib/point-scopes'
 import { SHEET, sheetOrigin } from '@/lib/sheet-spec'
 import type { Product, Project, Quote } from '@/payload-types'
@@ -24,7 +37,9 @@ export function buildBuiltinDemoScene(defaultProducts: Record<string, string> = 
   BUILTIN_DEMO_SHEETS.forEach((sheet, idx) => {
     const fileId = `sheet-file-${sheet.id}`
     files[fileId] = { id: fileId, dataURL: sheet.url, mimeType: 'image/png' }
-    elements.push(...buildSheetElements({ index: idx, name: sheet.name, fileId, sheetId: sheet.id }))
+    elements.push(
+      ...buildSheetElements({ index: idx, name: sheet.name, fileId, sheetId: sheet.id }),
+    )
 
     const origin = sheetOrigin(idx)
     for (const a of sheet.areas) {
@@ -33,10 +48,13 @@ export function buildBuiltinDemoScene(defaultProducts: Record<string, string> = 
       const aw = Math.max(20, Math.round((a.x1 - a.x0) * SHEET.width))
       const ah = Math.max(20, Math.round((a.y1 - a.y0) * SHEET.height))
       const polygon = a.poly
-        ? a.poly.map(([px, py]) => [
-            Math.round((px - a.x0) * SHEET.width),
-            Math.round((py - a.y0) * SHEET.height),
-          ] as [number, number])
+        ? a.poly.map(
+            ([px, py]) =>
+              [Math.round((px - a.x0) * SHEET.width), Math.round((py - a.y0) * SHEET.height)] as [
+                number,
+                number,
+              ],
+          )
         : undefined
       elements.push(
         ...buildAreaElements({
@@ -90,32 +108,36 @@ export async function ensureDemoTemplateProject(): Promise<Project | null> {
     })
     .catch(() => null)
   const existingTemplate = byFlag?.docs?.[0] as Project | undefined
-  if (existingTemplate && !isLegacyBlankDemoScene(existingTemplate.pointMap) && (existingTemplate.pointCount ?? 0) >= 100) {
+  if (
+    existingTemplate &&
+    !isLegacyBlankDemoScene(existingTemplate.pointMap) &&
+    (existingTemplate.pointCount ?? 0) >= 100
+  ) {
     return existingTemplate
   }
 
   if (!existingTemplate) {
-  const byOwnerless = await payload
-    .find({
-      collection: 'projects',
-      where: { owner: { exists: false } },
-      limit: 1,
-      depth: 0,
-      overrideAccess: true,
-    })
-    .catch(() => null)
-  if (byOwnerless?.docs?.[0] && !isLegacyBlankDemoScene(byOwnerless.docs[0].pointMap)) {
-    const updated = await payload
-      .update({
+    const byOwnerless = await payload
+      .find({
         collection: 'projects',
-        id: byOwnerless.docs[0].id,
-        data: { isDemoTemplate: true, name: DEMO_TEMPLATE_NAME, community: '湖山赋' } as never,
-        overrideAccess: true,
+        where: { owner: { exists: false } },
+        limit: 1,
         depth: 0,
+        overrideAccess: true,
       })
-      .catch(() => byOwnerless.docs[0])
-    return updated as Project
-  }
+      .catch(() => null)
+    if (byOwnerless?.docs?.[0] && !isLegacyBlankDemoScene(byOwnerless.docs[0].pointMap)) {
+      const updated = await payload
+        .update({
+          collection: 'projects',
+          id: byOwnerless.docs[0].id,
+          data: { isDemoTemplate: true, name: DEMO_TEMPLATE_NAME, community: '湖山赋' } as never,
+          overrideAccess: true,
+          depth: 0,
+        })
+        .catch(() => byOwnerless.docs[0])
+      return updated as Project
+    }
   }
 
   // 数据库中没有任何母版项目时，根据当前产品库自动初始化母版项目与两份示例报价单
@@ -177,7 +199,8 @@ export async function ensureDemoTemplateProject(): Promise<Project | null> {
       status: 'active',
       owner: null,
       isDemoTemplate: true,
-      notes: '系统内置的全屋智能演示项目（含点位图、智能选型、报价单与合同），你可以自由修改点位、导出打印或直接删除。',
+      notes:
+        '系统内置的全屋智能演示项目（含点位图、智能选型、报价单与合同），你可以自由修改点位、导出打印或直接删除。',
       pointMap,
       pointCount: TOTAL_DEMO_POINTS,
       defaultProducts,
@@ -282,7 +305,9 @@ export async function cloneDemoProjectForUser(
     const ownerId = coerceRelId(userId, template.id) ?? userId
     // 若在 Users.afterChange 钩子中调用，复用当前事务（清空 user 以免触发普通成员权限拦截），
     // 这样未提交的新用户记录在同一事务内对外键检查可见，不会报 projects_owner_id_users_id_fk。
-    const txReq = req?.transactionID ? ({ ...req, user: null } as unknown as PayloadRequest) : undefined
+    const txReq = req?.transactionID
+      ? ({ ...req, user: null } as unknown as PayloadRequest)
+      : undefined
 
     // 避免同一用户重复发放示例项目
     const existing = await payload.count({
@@ -379,10 +404,19 @@ export async function cloneDemoProjectForUser(
               amount: q.total ?? 51820,
               customerName: template.customerName ?? '林先生',
               customerPhone: template.customerPhone ?? '13800008888',
-              address: [template.community ?? '湖山赋', template.address ?? 'A区 12栋（三层联排别墅）'].filter(Boolean).join(' '),
+              address: [
+                template.community ?? '湖山赋',
+                template.address ?? 'A区 12栋（三层联排别墅）',
+              ]
+                .filter(Boolean)
+                .join(' '),
               durationDays: DEFAULT_DURATION_DAYS,
               warrantyMonths: DEFAULT_WARRANTY_MONTHS,
-              payments: DEFAULT_PAYMENTS.map((p) => ({ name: p.name, percent: p.percent, received: false })),
+              payments: DEFAULT_PAYMENTS.map((p) => ({
+                name: p.name,
+                percent: p.percent,
+                received: false,
+              })),
               terms: DEFAULT_CONTRACT_TERMS,
             } as never,
             req: txReq,

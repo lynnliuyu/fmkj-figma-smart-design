@@ -10,6 +10,13 @@ export const PUT = mpRoute(async ({ request, user }) => {
   const name = text(body.name, 60)
   if (!name) return fail(400, '请填写姓名')
   const payload = await getPayloadClient()
-  const updated = await payload.update({ collection: 'users', id: user.id, data: { name, phone: text(body.phone, 30) || null }, user, overrideAccess: false, depth: 0 })
+  const updated = await payload.update({
+    collection: 'users',
+    id: user.id,
+    data: { name, phone: text(body.phone, 30) || null },
+    user,
+    overrideAccess: false,
+    depth: 0,
+  })
   return ok(await presentMe({ ...user, ...updated, collection: 'users' }))
 })

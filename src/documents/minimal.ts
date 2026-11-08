@@ -1,6 +1,7 @@
 import type { DocStyle } from './types'
 
-export const SANS = "var(--font-sans), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif"
+export const SANS =
+  "var(--font-sans), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif"
 
 /** 核心自带的风格：白底细线、黑白为主。其他风格由「文档风格包」插件提供。 */
 export const MINIMAL_STYLE: DocStyle = {

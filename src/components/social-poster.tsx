@@ -66,7 +66,9 @@ export function SocialPoster({
       >
         <div className="flex min-w-0 items-center gap-2">
           <span className="min-w-0 truncate">{data.companyName}</span>
-          {page.kind === 'closing' && showQr && qrUrl ? <CodeImage src={qrUrl} size={20} dark={dark} className="shrink-0" /> : null}
+          {page.kind === 'closing' && showQr && qrUrl ? (
+            <CodeImage src={qrUrl} size={20} dark={dark} className="shrink-0" />
+          ) : null}
         </div>
         <span className="shrink-0">SMART HOME / {String(pageNumber).padStart(2, '0')}</span>
       </div>

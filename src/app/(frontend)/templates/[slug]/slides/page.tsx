@@ -15,14 +15,26 @@ export const dynamicParams = true
  * 只有方案页面的样张（无页头页脚、无留白，第一屏就是 1440 × 960 的封面）：
  * 后台「方案模板」的实时预览、选择器预览与 scripts/generate-template-thumbnails.mjs 截图都用它。
  */
-export default async function TemplateSlidesPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function TemplateSlidesPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
-  const [templates, docs] = await Promise.all([loadPublicProposalTemplates(), getTemplatePreviewDocs().catch(() => null)])
+  const [templates, docs] = await Promise.all([
+    loadPublicProposalTemplates(),
+    getTemplatePreviewDocs().catch(() => null),
+  ])
   const tpl = resolveProposalTemplate(slug, templates)
   if (!tpl) notFound()
   if (!docs) return <p className="p-10 text-sm text-muted-foreground">示例项目暂时不可用。</p>
   if (tpl.kind === 'construction') {
-    const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
+    const date = new Date().toLocaleDateString('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
     return (
       <div className="w-[297mm] bg-white [&_section]:shadow-none">
         {constructionDeckPages(docs, 'symbol', true, date).map((render, i) => (

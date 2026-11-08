@@ -5,8 +5,10 @@ export const CLIENT_FEEDBACK_DECISIONS = [
   { value: 'revise', label: '希望调整方案' },
 ] as const
 export type ClientFeedbackDecision = (typeof CLIENT_FEEDBACK_DECISIONS)[number]['value']
-export const isClientFeedbackDecision = (v: unknown): v is ClientFeedbackDecision => CLIENT_FEEDBACK_DECISIONS.some((d) => d.value === v)
-export const feedbackDecisionLabel = (v?: string | null) => CLIENT_FEEDBACK_DECISIONS.find((d) => d.value === v)?.label ?? '业主反馈'
+export const isClientFeedbackDecision = (v: unknown): v is ClientFeedbackDecision =>
+  CLIENT_FEEDBACK_DECISIONS.some((d) => d.value === v)
+export const feedbackDecisionLabel = (v?: string | null) =>
+  CLIENT_FEEDBACK_DECISIONS.find((d) => d.value === v)?.label ?? '业主反馈'
 
 export const CLIENT_FEEDBACK_STATUSES = [
   { value: 'new', label: '待处理' },
@@ -18,10 +20,19 @@ export type ClientFeedbackStatus = (typeof CLIENT_FEEDBACK_STATUSES)[number]['va
 export const MAX_SIGNATURE_CHARS = 200_000
 export const MAX_FEEDBACK_MESSAGE = 1000
 
-export type DeferredItem = { itemId: string; name: string; sku: string | null; quantity: number; amount: number }
+export type DeferredItem = {
+  itemId: string
+  name: string
+  sku: string | null
+  quantity: number
+  amount: number
+}
 
 /** 分享页默认展示的主方案：手动定稿 → 已确认 → 最近更新（quotes 需按更新时间倒序） */
-export function mainQuoteId(quotes: { id: string | number; status?: string | null }[], finalQuoteId: string | null): string | null {
+export function mainQuoteId(
+  quotes: { id: string | number; status?: string | null }[],
+  finalQuoteId: string | null,
+): string | null {
   const byId = finalQuoteId ? quotes.find((q) => String(q.id) === finalQuoteId) : undefined
   const q = byId ?? quotes.find((x) => x.status === 'accepted') ?? quotes[0]
   return q ? String(q.id) : null
@@ -34,8 +45,13 @@ export const MAX_COMPARE_QUOTES = 4
  * 业主分享页能看到（并可确认意向）的方案：主方案 + 状态为「已发送 / 已确认」的报价。
  * 草稿报价视为内部稿，不对业主展示。
  */
-export function clientVisibleQuoteIds(quotes: { id: string | number; status?: string | null }[], mainId: string | null): string[] {
-  const ids = quotes.filter((q) => q.status === 'sent' || q.status === 'accepted').map((q) => String(q.id))
+export function clientVisibleQuoteIds(
+  quotes: { id: string | number; status?: string | null }[],
+  mainId: string | null,
+): string[] {
+  const ids = quotes
+    .filter((q) => q.status === 'sent' || q.status === 'accepted')
+    .map((q) => String(q.id))
   if (mainId && !ids.includes(mainId)) ids.unshift(mainId)
   return ids.slice(0, MAX_COMPARE_QUOTES)
 }

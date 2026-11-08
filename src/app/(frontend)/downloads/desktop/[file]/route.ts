@@ -28,11 +28,17 @@ export function HEAD(request: Request, context: Context) {
 }
 
 function notFound() {
-  return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' } })
+  return new Response('Not Found', {
+    status: 404,
+    headers: { 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' },
+  })
 }
 
 /** 解析单段 Range；多段请求返回 null（按完整文件响应，electron-updater 会自动改为整包下载） */
-function parseRange(header: string | null, size: number): { start: number; end: number } | 'invalid' | null {
+function parseRange(
+  header: string | null,
+  size: number,
+): { start: number; end: number } | 'invalid' | null {
   if (!header) return null
   const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim())
   if (!match) return null
@@ -74,7 +80,8 @@ async function serve(request: Request, context: Context, headOnly: boolean) {
     'Cache-Control': isFeed ? 'no-cache' : 'public, max-age=604800',
   })
   if (!isFeed) headers.set('Content-Disposition', `attachment; filename="${file}"`)
-  if (request.headers.get('if-none-match') === etag) return new Response(null, { status: 304, headers })
+  if (request.headers.get('if-none-match') === etag)
+    return new Response(null, { status: 304, headers })
 
   const range = parseRange(request.headers.get('range'), local.size)
   if (range === 'invalid') {
@@ -88,6 +95,8 @@ async function serve(request: Request, context: Context, headOnly: boolean) {
   const status = range ? 206 : 200
   if (headOnly || local.size === 0) return new Response(null, { status, headers })
 
-  const body = Readable.toWeb(createReadStream(/*turbopackIgnore: true*/ local.path, { start, end })) as unknown as ReadableStream<Uint8Array>
+  const body = Readable.toWeb(
+    createReadStream(/*turbopackIgnore: true*/ local.path, { start, end }),
+  ) as unknown as ReadableStream<Uint8Array>
   return new Response(body, { status, headers })
 }

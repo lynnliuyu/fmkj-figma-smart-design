@@ -44,8 +44,11 @@ export const getProject = cache(async (id: string) => {
     })
     .catch(() => null)
 
-  const collabs = ((project as unknown as { collaborators?: CollaboratorItem[] | null })?.collaborators ?? [])
-  const role = project ? getProjectRole({ owner: project.owner, collaborators: collabs }, user.id) : null
+  const collabs =
+    (project as unknown as { collaborators?: CollaboratorItem[] | null })?.collaborators ?? []
+  const role = project
+    ? getProjectRole({ owner: project.owner, collaborators: collabs }, user.id)
+    : null
 
   // 若地址栏中的项目 ID 已失效或属于其他账号（例如切换了账号后从 ?from= 跳回旧项目地址），自动跳转到当前用户的首个可用项目或项目列表页，避免卡在 404
   if (!project || !role) {
@@ -70,7 +73,16 @@ export const getProject = cache(async (id: string) => {
 
   // 早于「点位数」字段保存（或从旧数据导入）的项目还没有统计值：临时从点位图计算，下次保存点位图时写入
   if (project.pointCount == null) {
-    const full = await payload.findByID({ collection: 'projects', id, depth: 0, user, overrideAccess: false, select: { pointMap: true } }).catch(() => null)
+    const full = await payload
+      .findByID({
+        collection: 'projects',
+        id,
+        depth: 0,
+        user,
+        overrideAccess: false,
+        select: { pointMap: true },
+      })
+      .catch(() => null)
     project.pointCount = countScenePoints(full?.pointMap)
   }
   const archived = project.status === 'archived'
@@ -99,7 +111,14 @@ export const getProjectDeals = cache(async (id: string) => {
       overrideAccess: false,
       select: { title: true, status: true, total: true, updatedAt: true },
     }),
-    payload.find({ collection: 'contracts', where: { project: { equals: project.id } }, limit: 1, depth: 0, user, overrideAccess: false }),
+    payload.find({
+      collection: 'contracts',
+      where: { project: { equals: project.id } },
+      limit: 1,
+      depth: 0,
+      user,
+      overrideAccess: false,
+    }),
   ])
   return { quotes: quotes.docs, contract: contracts.docs[0] ?? null }
 })

@@ -25,7 +25,13 @@ export const CompanySettings: GlobalConfig = {
       maxLength: 60,
       admin: { description: '公司、工作室或个人名称，显示在报价单和合同上' },
     },
-    { name: 'slogan', label: '副标题', type: 'text', defaultValue: '全屋智能方案 · 设计 · 安装 · 售后', maxLength: 80 },
+    {
+      name: 'slogan',
+      label: '副标题',
+      type: 'text',
+      defaultValue: '全屋智能方案 · 设计 · 安装 · 售后',
+      maxLength: 80,
+    },
     {
       type: 'row',
       fields: [
@@ -41,10 +47,27 @@ export const CompanySettings: GlobalConfig = {
         { name: 'qrCode', label: '二维码', type: 'upload', relationTo: 'media' },
       ],
     },
-    { name: 'qrCaption', label: '二维码说明', type: 'text', defaultValue: '扫码添加微信', maxLength: 40 },
+    {
+      name: 'qrCaption',
+      label: '二维码说明',
+      type: 'text',
+      defaultValue: '扫码添加微信',
+      maxLength: 40,
+    },
     { name: 'quoteNotes', label: '新报价默认备注', type: 'textarea', maxLength: 2000 },
-    { name: 'contractTerms', label: '合同默认条款', type: 'textarea', maxLength: 5000, defaultValue: DEFAULT_CONTRACT_TERMS },
-    { name: 'printProductImages', label: '打印报价单时显示产品图片', type: 'checkbox', defaultValue: true },
+    {
+      name: 'contractTerms',
+      label: '合同默认条款',
+      type: 'textarea',
+      maxLength: 5000,
+      defaultValue: DEFAULT_CONTRACT_TERMS,
+    },
+    {
+      name: 'printProductImages',
+      label: '打印报价单时显示产品图片',
+      type: 'checkbox',
+      defaultValue: true,
+    },
     {
       // 各类文档的默认风格和版式：{ quote: { style, layout }, plans: …, contract: …, checklist: … }，在「设置」页修改
       name: 'documentDefaults',
@@ -57,7 +80,10 @@ export const CompanySettings: GlobalConfig = {
           type: 'object',
           additionalProperties: {
             type: 'object',
-            properties: { style: { type: 'string', maxLength: 40 }, layout: { type: 'string', maxLength: 40 } },
+            properties: {
+              style: { type: 'string', maxLength: 40 },
+              layout: { type: 'string', maxLength: 40 },
+            },
             additionalProperties: false,
           },
         },
@@ -72,7 +98,11 @@ export const CompanySettings: GlobalConfig = {
       jsonSchema: {
         uri: 'a://fmkj/disabled-plugins.json',
         fileMatch: ['a://fmkj/disabled-plugins.json'],
-        schema: { type: 'array', maxItems: 50, items: { type: 'string', minLength: 1, maxLength: 40 } },
+        schema: {
+          type: 'array',
+          maxItems: 50,
+          items: { type: 'string', minLength: 1, maxLength: 40 },
+        },
       },
       admin: { description: '在系统「设置 → 插件」里修改' },
     },

@@ -11,16 +11,35 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import type { CreditTaskId, UserCreditTaskStatus } from '@/lib/credit-tasks'
 import { cn } from '@/lib/utils'
 
 import { claimTaskCredit } from './actions'
 
-type LedgerRow = { id: string; delta: number; balanceAfter: number; reason: string; model: string | null; createdAt: string }
+type LedgerRow = {
+  id: string
+  delta: number
+  balanceAfter: number
+  reason: string
+  model: string | null
+  createdAt: string
+}
 
 const fmtDateTime = (iso: string) =>
-  new Date(iso).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+  new Date(iso).toLocaleString('zh-CN', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
 /** 积分与账单：积分余额 → 兑换码充值 → 任务领分 → 积分明细 */
 export function MembershipClient({
@@ -49,7 +68,11 @@ export function MembershipClient({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code: trimmed }),
         })
-        const data = (await res.json().catch(() => null)) as { ok?: boolean; message?: string; error?: string } | null
+        const data = (await res.json().catch(() => null)) as {
+          ok?: boolean
+          message?: string
+          error?: string
+        } | null
         if (!res.ok || !data?.ok) return void toast.error(data?.error || '兑换失败，请核对兑换码')
         toast.success(data.message || '兑换成功')
         setCode('')
@@ -99,7 +122,9 @@ export function MembershipClient({
               <Coins className="size-3.5" />
               AI 积分余额
             </p>
-            <p className="text-3xl font-semibold tabular-nums">{initial.aiCredits.toLocaleString('zh-CN')}</p>
+            <p className="text-3xl font-semibold tabular-nums">
+              {initial.aiCredits.toLocaleString('zh-CN')}
+            </p>
             <p className="text-xs text-muted-foreground">{initial.upgradeHint}</p>
           </div>
         </div>
@@ -111,7 +136,10 @@ export function MembershipClient({
             <Gift className="size-4 text-muted-foreground" />
             输入兑换码充值 AI 积分
           </p>
-          <form onSubmit={handleRedeem} className="flex flex-1 flex-col gap-2 sm:max-w-md sm:flex-row">
+          <form
+            onSubmit={handleRedeem}
+            className="flex flex-1 flex-col gap-2 sm:max-w-md sm:flex-row"
+          >
             <Input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
@@ -140,11 +168,13 @@ export function MembershipClient({
                   积分任务与绑定奖励
                 </CardTitle>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  绑定邮箱赠 10 积分、绑定微信小程序赠 10 积分、关注公众号赠 5 积分；每项任务每个账号限领一次，自动记入积分流水。
+                  绑定邮箱赠 10 积分、绑定微信小程序赠 10 积分、关注公众号赠 5
+                  积分；每项任务每个账号限领一次，自动记入积分流水。
                 </p>
               </div>
               <Badge variant="outline" className="text-xs">
-                已完成 {initial.creditTasks.filter((t) => t.claimed).length} / {initial.creditTasks.length}
+                已完成 {initial.creditTasks.filter((t) => t.claimed).length} /{' '}
+                {initial.creditTasks.length}
               </Badge>
             </div>
           </CardHeader>
@@ -161,7 +191,9 @@ export function MembershipClient({
                 >
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium text-foreground">{task.title}</span>
+                      <span className="truncate text-sm font-medium text-foreground">
+                        {task.title}
+                      </span>
                       <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.2 text-xs font-semibold text-primary tabular-nums">
                         +{task.credits} 积分
                       </span>
@@ -175,9 +207,16 @@ export function MembershipClient({
                         已领取
                       </Badge>
                     ) : task.eligible ? (
-                      <Button size="sm" className="h-8 text-xs" disabled={isBusy} onClick={() => handleClaimTask(task.id)}>
+                      <Button
+                        size="sm"
+                        className="h-8 text-xs"
+                        disabled={isBusy}
+                        onClick={() => handleClaimTask(task.id)}
+                      >
                         {isBusy ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                        {task.id === 'follow_official_account' ? '已关注 · 领 5 分' : `领取 +${task.credits}`}
+                        {task.id === 'follow_official_account'
+                          ? '已关注 · 领 5 分'
+                          : `领取 +${task.credits}`}
                       </Button>
                     ) : task.id === 'complete_company_profile' ? (
                       <Button asChild variant="outline" size="sm" className="h-8 text-xs">
@@ -224,13 +263,24 @@ export function MembershipClient({
                   <TableRow key={row.id}>
                     <TableCell className="pl-6">
                       <span className="font-medium">{row.reason}</span>
-                      {row.model ? <span className="ml-2 text-xs text-muted-foreground">{row.model}</span> : null}
+                      {row.model ? (
+                        <span className="ml-2 text-xs text-muted-foreground">{row.model}</span>
+                      ) : null}
                     </TableCell>
-                    <TableCell className={cn('text-right font-medium tabular-nums', row.delta > 0 ? 'text-success' : 'text-foreground')}>
+                    <TableCell
+                      className={cn(
+                        'text-right font-medium tabular-nums',
+                        row.delta > 0 ? 'text-success' : 'text-foreground',
+                      )}
+                    >
                       {row.delta > 0 ? `+${row.delta}` : row.delta}
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground tabular-nums">{row.balanceAfter}</TableCell>
-                    <TableCell className="pr-6 text-right text-xs text-muted-foreground tabular-nums">{fmtDateTime(row.createdAt)}</TableCell>
+                    <TableCell className="text-right text-muted-foreground tabular-nums">
+                      {row.balanceAfter}
+                    </TableCell>
+                    <TableCell className="pr-6 text-right text-xs text-muted-foreground tabular-nums">
+                      {fmtDateTime(row.createdAt)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

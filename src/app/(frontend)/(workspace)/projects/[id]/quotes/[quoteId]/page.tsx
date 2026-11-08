@@ -38,11 +38,14 @@ export default async function QuotePage({
   if (!quote) notFound()
   // 报价不属于这个项目（例如旧链接）时跳到它所在的项目
   const quoteProjectId = relId(quote.project)
-  if (quoteProjectId !== String(project.id)) redirect(quoteProjectId ? `/projects/${quoteProjectId}/quotes/${quoteId}` : '/projects')
+  if (quoteProjectId !== String(project.id))
+    redirect(quoteProjectId ? `/projects/${quoteProjectId}/quotes/${quoteId}` : '/projects')
 
   const populated = typeof quote.project === 'object' ? (quote.project as Project) : null
   const rawScene = (populated?.pointMap ?? null) as Partial<StoredScene> | null
-  const projectScene = rawScene?.elements ? { elements: rawScene.elements, files: rawScene.files ?? {} } : null
+  const projectScene = rawScene?.elements
+    ? { elements: rawScene.elements, files: rawScene.files ?? {} }
+    : null
   const byId = new Map(catalog.map((p) => [p.id, p]))
 
   // 在售产品可选；下架产品也下发基础信息，用于已有行显示与对比
@@ -67,9 +70,9 @@ export default async function QuotePage({
     ? '项目已归档，报价只读。需要修改时请在「归档」里恢复项目。'
     : role === 'read'
       ? '你对该项目仅有查看权限，报价处于只读模式。'
-    : usesThisQuote && contract?.status === 'signed'
-      ? `这份报价已用于已签订的合同 ${contract.number}，内容已锁定。需要修改时请先在「合同」里撤销签订。`
-      : null
+      : usesThisQuote && contract?.status === 'signed'
+        ? `这份报价已用于已签订的合同 ${contract.number}，内容已锁定。需要修改时请先在「合同」里撤销签订。`
+        : null
   const pendingCount = Number(pending)
 
   return (
@@ -82,7 +85,8 @@ export default async function QuotePage({
         notes: quote.notes ?? '',
         items: (quote.items ?? []).map((i) => {
           const productId = relId(i.product)
-          const snapshot = i.image && typeof i.image === 'object' ? resolveMediaUrl(i.image as Media) : null
+          const snapshot =
+            i.image && typeof i.image === 'object' ? resolveMediaUrl(i.image as Media) : null
           const live = productId ? byId.get(productId) : undefined
           return {
             key: i.id ?? crypto.randomUUID(),
@@ -97,10 +101,22 @@ export default async function QuotePage({
             quantity: i.quantity,
           }
         }),
-        fees: (quote.fees ?? []).map((f) => ({ key: f.id ?? crypto.randomUUID(), name: f.name, amount: f.amount })),
+        fees: (quote.fees ?? []).map((f) => ({
+          key: f.id ?? crypto.randomUUID(),
+          name: f.name,
+          amount: f.amount,
+        })),
       }}
-      project={{ id: String(project.id), name: project.name, customerName: project.customerName ?? '' }}
-      projectQuotes={deals.quotes.map((q) => ({ id: String(q.id), title: q.title, total: q.total ?? 0 }))}
+      project={{
+        id: String(project.id),
+        name: project.name,
+        customerName: project.customerName ?? '',
+      }}
+      projectQuotes={deals.quotes.map((q) => ({
+        id: String(q.id),
+        title: q.title,
+        total: q.total ?? 0,
+      }))}
       projectScene={projectScene}
       projectDefaults={populated?.defaultProducts ?? null}
       products={options}
@@ -108,7 +124,9 @@ export default async function QuotePage({
       costSettings={costSettings}
       readOnly={Boolean(lockReason)}
       lockReason={lockReason}
-      contract={contract ? { number: contract.number, status: contract.status, usesThisQuote } : null}
+      contract={
+        contract ? { number: contract.number, status: contract.status, usesThisQuote } : null
+      }
       pendingPoints={Number.isInteger(pendingCount) && pendingCount > 0 ? pendingCount : 0}
     />
   )

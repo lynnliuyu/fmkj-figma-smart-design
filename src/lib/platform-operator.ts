@@ -10,7 +10,9 @@ const PREVIEW_DEMO_EMAIL = 'demo@fmkj.dev'
  * - 邮箱与 Payload 后台（/admin）的 CMS 管理员账号一致；
  * - Figma Make 预览环境中的内置演示管理员账号。
  */
-export async function isPlatformOperator(user: { email?: string | null } | null | undefined): Promise<boolean> {
+export async function isPlatformOperator(
+  user: { email?: string | null } | null | undefined,
+): Promise<boolean> {
   const email = user?.email?.trim().toLowerCase()
   if (!email) return false
   const listed = (process.env.PLATFORM_ADMIN_EMAILS ?? '')

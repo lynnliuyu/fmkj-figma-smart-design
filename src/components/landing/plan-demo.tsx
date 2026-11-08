@@ -47,13 +47,23 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>()
-    for (const p of sheet?.points ?? []) counts.set(catSlug(p.type), (counts.get(catSlug(p.type)) ?? 0) + 1)
-    return DEVICE_CATEGORIES.filter((c) => counts.has(c.slug)).map((c) => ({ ...c, count: counts.get(c.slug)! }))
+    for (const p of sheet?.points ?? [])
+      counts.set(catSlug(p.type), (counts.get(catSlug(p.type)) ?? 0) + 1)
+    return DEVICE_CATEGORIES.filter((c) => counts.has(c.slug)).map((c) => ({
+      ...c,
+      count: counts.get(c.slug)!,
+    }))
   }, [sheet])
 
-  const visible = useMemo(() => (sheet?.points ?? []).filter((p) => !hidden.has(catSlug(p.type))), [sheet, hidden])
+  const visible = useMemo(
+    () => (sheet?.points ?? []).filter((p) => !hidden.has(catSlug(p.type))),
+    [sheet, hidden],
+  )
   // 入场顺序：从左到右扫过图纸
-  const order = useMemo(() => new Map([...visible].sort((a, b) => a.rx - b.rx).map((p, i) => [p.id, i])), [visible])
+  const order = useMemo(
+    () => new Map([...visible].sort((a, b) => a.rx - b.rx).map((p, i) => [p.id, i])),
+    [visible],
+  )
 
   const rows: Row[] = useMemo(() => {
     const qty = new Map<string, number>()
@@ -78,7 +88,11 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
   const ticketLine = ticket ? lineOf.get(ticket.type) : undefined
 
   return (
-    <div role="group" aria-label={`示例项目「${data.project.name}」点位图演示`} className="overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-window">
+    <div
+      role="group"
+      aria-label={`示例项目「${data.project.name}」点位图演示`}
+      className="overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-window"
+    >
       {/* 窗口抬头：项目、楼层、报价状态 */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border bg-muted/50 px-4 py-2.5 sm:px-5">
         <p className="min-w-0 truncate text-sm font-medium">
@@ -98,9 +112,17 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
           }}
           className="order-last w-full sm:order-none sm:w-auto"
         >
-          <TabsList aria-label="楼层" className="w-full bg-background/70 sm:w-auto dark:bg-background/40">
+          <TabsList
+            aria-label="楼层"
+            className="w-full bg-background/70 sm:w-auto dark:bg-background/40"
+          >
             {data.sheets.map((s) => (
-              <TabsTrigger key={s.id} value={s.id} aria-controls="plan-canvas" className="gap-1.5 px-3 text-xs">
+              <TabsTrigger
+                key={s.id}
+                value={s.id}
+                aria-controls="plan-canvas"
+                className="gap-1.5 px-3 text-xs"
+              >
                 {s.floor}
                 <span className="text-muted-foreground tabular-nums">{s.points.length}</span>
               </TabsTrigger>
@@ -121,7 +143,11 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
         {/* 图例：设备类别，点一下隐藏 / 显示 */}
         <div className="flex flex-col gap-2 border-b border-border px-4 py-3 lg:border-r lg:border-b-0 lg:px-3 lg:py-4">
           <p className="px-1 text-xs text-muted-foreground">图例 · 点击筛选</p>
-          <div className="flex flex-wrap gap-1 lg:flex-col" role="group" aria-label="按设备类别显示">
+          <div
+            className="flex flex-wrap gap-1 lg:flex-col"
+            role="group"
+            aria-label="按设备类别显示"
+          >
             {categories.map((c) => (
               <Toggle
                 key={c.slug}
@@ -130,7 +156,11 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
                 onPressedChange={(on) => toggleCategory(c.slug, on)}
                 className="h-8 justify-start gap-2 rounded-lg px-2 text-xs font-normal text-muted-foreground line-through decoration-muted-foreground/60 aria-pressed:bg-transparent aria-pressed:text-foreground aria-pressed:no-underline aria-pressed:hover:bg-muted lg:w-full"
               >
-                <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: c.color }} />
+                <span
+                  aria-hidden
+                  className="size-2 shrink-0 rounded-full"
+                  style={{ background: c.color }}
+                />
                 <span className="flex-1 text-left">{c.name}</span>
                 <span className="text-muted-foreground tabular-nums">{c.count}</span>
               </Toggle>
@@ -140,11 +170,36 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
 
         {/* 户型图与点位：图纸始终是白纸 */}
         <div className="border-b border-border p-3 sm:p-4 lg:border-r lg:border-b-0">
-          <div id="plan-canvas" className="relative aspect-3/2 overflow-hidden rounded-lg bg-white ring-1 ring-border">
-            <Image src={sheet.url} alt={`${data.project.name} ${sheet.name}`} fill sizes="(min-width: 1280px) 780px, (min-width: 1024px) 560px, 100vw" className="object-contain opacity-70" priority />
-            <svg viewBox={`0 0 ${VW} ${VH}`} className="absolute inset-0 size-full" role="img" aria-label={`${sheet.floor}点位图，显示 ${visible.length} 个设备点位`}>
+          <div
+            id="plan-canvas"
+            className="relative aspect-3/2 overflow-hidden rounded-lg bg-white ring-1 ring-border"
+          >
+            <Image
+              src={sheet.url}
+              alt={`${data.project.name} ${sheet.name}`}
+              fill
+              sizes="(min-width: 1280px) 780px, (min-width: 1024px) 560px, 100vw"
+              className="object-contain opacity-70"
+              priority
+            />
+            <svg
+              viewBox={`0 0 ${VW} ${VH}`}
+              className="absolute inset-0 size-full"
+              role="img"
+              aria-label={`${sheet.floor}点位图，显示 ${visible.length} 个设备点位`}
+            >
               {sheet.areas.map((a) => (
-                <text key={a.id} x={planAreaLabelAt(a)[0] * VW + 8} y={planAreaLabelAt(a)[1] * VH + 22} fontSize={15} fontWeight={500} className="fill-neutral-500" stroke="white" strokeWidth={4} paintOrder="stroke">
+                <text
+                  key={a.id}
+                  x={planAreaLabelAt(a)[0] * VW + 8}
+                  y={planAreaLabelAt(a)[1] * VH + 22}
+                  fontSize={15}
+                  fontWeight={500}
+                  className="fill-neutral-500"
+                  stroke="white"
+                  strokeWidth={4}
+                  paintOrder="stroke"
+                >
                   {a.name}
                 </text>
               ))}
@@ -160,12 +215,34 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
                     onPointerLeave={() => setTicket((t) => (t?.id === p.id ? null : t))}
                     onClick={() => setTicket((t) => (t?.id === p.id ? null : p))}
                   >
-                    <g className="transition-opacity duration-200" style={{ opacity: dim ? 0.14 : 1 }}>
-                      {focusType === p.type ? <circle cx={p.rx * VW} cy={p.ry * VH} r={ICON * 0.7} className="fill-primary/15 stroke-primary" strokeWidth={1.5} /> : null}
+                    <g
+                      className="transition-opacity duration-200"
+                      style={{ opacity: dim ? 0.14 : 1 }}
+                    >
+                      {focusType === p.type ? (
+                        <circle
+                          cx={p.rx * VW}
+                          cy={p.ry * VH}
+                          r={ICON * 0.7}
+                          className="fill-primary/15 stroke-primary"
+                          strokeWidth={1.5}
+                        />
+                      ) : null}
                       {src ? (
-                        <image href={src} x={p.rx * VW - ICON / 2} y={p.ry * VH - ICON / 2} width={ICON} height={ICON} />
+                        <image
+                          href={src}
+                          x={p.rx * VW - ICON / 2}
+                          y={p.ry * VH - ICON / 2}
+                          width={ICON}
+                          height={ICON}
+                        />
                       ) : (
-                        <circle cx={p.rx * VW} cy={p.ry * VH} r={8} fill={categoryOfType(p.type)?.color} />
+                        <circle
+                          cx={p.rx * VW}
+                          cy={p.ry * VH}
+                          r={8}
+                          fill={categoryOfType(p.type)?.color}
+                        />
                       )}
                       <circle cx={p.rx * VW} cy={p.ry * VH} r={ICON * 0.6} fill="transparent" />
                     </g>
@@ -188,7 +265,11 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
             </div>
             <ul className="max-h-80 min-h-0 flex-1 overflow-y-auto py-1 lg:max-h-none">
               {rows.map((r, i) => (
-                <li key={r.type} className="px-1.5 motion-safe:animate-ledger-in" style={{ animationDelay: `${120 + i * 40}ms` }}>
+                <li
+                  key={r.type}
+                  className="px-1.5 motion-safe:animate-ledger-in"
+                  style={{ animationDelay: `${120 + i * 40}ms` }}
+                >
                   <Toggle
                     pressed={pinnedType === r.type}
                     onPressedChange={(on) => setPinnedType(on ? r.type : null)}
@@ -199,13 +280,19 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
                   >
                     <PointMarker type={r.type} className="size-7" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm">{r.line?.name ?? typeName(r.type)}</span>
+                      <span className="block truncate text-sm">
+                        {r.line?.name ?? typeName(r.type)}
+                      </span>
                       <span className="block truncate text-xs text-muted-foreground">
                         {typeName(r.type)}
-                        {r.line ? ` · ${r.qty} ${r.line.unit} × ${money(r.line.price)}` : ` · ${r.qty} 个 · 未选型`}
+                        {r.line
+                          ? ` · ${r.qty} ${r.line.unit} × ${money(r.line.price)}`
+                          : ` · ${r.qty} 个 · 未选型`}
                       </span>
                     </span>
-                    <span className="text-sm font-medium tabular-nums">{r.line ? money(r.subtotal) : '—'}</span>
+                    <span className="text-sm font-medium tabular-nums">
+                      {r.line ? money(r.subtotal) : '—'}
+                    </span>
                   </Toggle>
                 </li>
               ))}
@@ -219,7 +306,9 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
                 <>
                   <div className="mt-2 flex items-baseline justify-between gap-3">
                     <span className="text-sm font-medium">全屋报价合计</span>
-                    <span className="text-2xl font-semibold tracking-tight tabular-nums">{money(quote.total)}</span>
+                    <span className="text-2xl font-semibold tracking-tight tabular-nums">
+                      {money(quote.total)}
+                    </span>
                   </div>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                     {data.sheets.length} 层设备 {money(quote.productTotal)}
@@ -264,7 +353,9 @@ function PriceTicket({ point, line }: { point: ShowcasePoint; line: ShowcaseLine
         </span>
         <span className="text-base font-semibold tabular-nums">
           {line ? money(line.price) : '—'}
-          {line ? <span className="text-xs font-normal text-muted-foreground"> / {line.unit}</span> : null}
+          {line ? (
+            <span className="text-xs font-normal text-muted-foreground"> / {line.unit}</span>
+          ) : null}
         </span>
       </div>
     </div>

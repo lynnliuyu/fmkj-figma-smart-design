@@ -13,7 +13,9 @@ export function ListSkeleton() {
         <Skeleton className="h-8 w-16" />
       </div>
       <div className="flex gap-1.5">
-        {Array.from({ length: 2 }, (_, i) => <Skeleton key={i} className="h-7 w-20" />)}
+        {Array.from({ length: 2 }, (_, i) => (
+          <Skeleton key={i} className="h-7 w-20" />
+        ))}
       </div>
       <div className="space-y-px overflow-hidden rounded-xl border">
         {Array.from({ length: 7 }, (_, i) => (
@@ -60,7 +62,11 @@ export function CardGridSkeleton() {
 /** 详情 / 编辑页骨架。 */
 export function DetailSkeleton() {
   return (
-    <section className="mx-auto flex w-full max-w-3xl flex-col gap-5" aria-busy="true" aria-label="加载中">
+    <section
+      className="mx-auto flex w-full max-w-3xl flex-col gap-5"
+      aria-busy="true"
+      aria-label="加载中"
+    >
       <Skeleton className="h-7 w-24" />
       <div className="space-y-2">
         <Skeleton className="h-8 w-72" />
@@ -75,7 +81,11 @@ export function DetailSkeleton() {
 /** 项目板块（信息、合同、归档）加载骨架：顶栏和板块切换保持不动，只替换内容区。 */
 export function ProjectTabSkeleton({ width = 'max-w-4xl' }: { width?: string }) {
   return (
-    <section className={`mx-auto flex w-full ${width} flex-col gap-6`} aria-busy="true" aria-label="加载中">
+    <section
+      className={`mx-auto flex w-full ${width} flex-col gap-6`}
+      aria-busy="true"
+      aria-label="加载中"
+    >
       <div className="overflow-hidden rounded-xl border">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div className="space-y-2">
@@ -104,7 +114,11 @@ export function ProjectTabSkeleton({ width = 'max-w-4xl' }: { width?: string }) 
 /** 项目报价列表骨架。 */
 export function ProjectListSkeleton() {
   return (
-    <section className="mx-auto flex w-full max-w-4xl flex-col gap-5" aria-busy="true" aria-label="加载中">
+    <section
+      className="mx-auto flex w-full max-w-4xl flex-col gap-5"
+      aria-busy="true"
+      aria-label="加载中"
+    >
       <div className="flex items-end justify-between gap-3">
         <div className="space-y-2">
           <Skeleton className="h-6 w-20" />

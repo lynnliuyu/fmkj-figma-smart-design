@@ -2,7 +2,12 @@ import { relId } from './access'
 import { getPayloadClient } from './payload'
 import type { User } from '@/payload-types'
 
-export type CreditTaskId = 'bind_email' | 'bind_wechat' | 'follow_official_account' | 'complete_company_profile' | 'first_quote'
+export type CreditTaskId =
+  | 'bind_email'
+  | 'bind_wechat'
+  | 'follow_official_account'
+  | 'complete_company_profile'
+  | 'first_quote'
 
 export type CreditTaskSpec = {
   id: CreditTaskId
@@ -130,7 +135,13 @@ async function grantTaskCreditUnlocked(
       overrideAccess: true,
       select: { user: true },
     })
-    const otherUserIds = Array.from(new Set(prior.docs.map((d) => relId(d.user)).filter((id): id is string => Boolean(id) && id !== userId)))
+    const otherUserIds = Array.from(
+      new Set(
+        prior.docs
+          .map((d) => relId(d.user))
+          .filter((id): id is string => Boolean(id) && id !== userId),
+      ),
+    )
     if (otherUserIds.length) {
       // 只拦截仍在使用中的账号；换绑时被自动停用的临时微信小号不算，避免真实账号领不到奖励
       const activeOthers = await payload.count({
@@ -200,13 +211,17 @@ export async function loadAndSyncUserCreditTasks(user: User): Promise<{
   const hasRealEmail = isRealUserEmail(user.email)
   const hasWechat = wechatRes.docs.length > 0
   const wechatOpenid = (wechatRes.docs[0] as { openid?: string | null } | undefined)?.openid ?? null
-  const profile = (user as { companyProfile?: { name?: string | null; phone?: string | null } | null }).companyProfile
+  const profile = (
+    user as { companyProfile?: { name?: string | null; phone?: string | null } | null }
+  ).companyProfile
   const hasProfile = Boolean(profile?.name?.trim() && profile?.phone?.trim())
   const hasQuote = quoteCount.totalDocs > 0
 
   const claimedReasons = new Set(ledgerRes.docs.map((d) => String(d.reason ?? '')))
   const isClaimed = (spec: CreditTaskSpec) =>
-    Array.from(claimedReasons).some((r) => r === spec.ledgerReason || r.startsWith(`${spec.ledgerReason} (`))
+    Array.from(claimedReasons).some(
+      (r) => r === spec.ledgerReason || r.startsWith(`${spec.ledgerReason} (`),
+    )
 
   const eligibilityMap: Record<CreditTaskId, boolean> = {
     bind_email: hasRealEmail,
@@ -221,7 +236,11 @@ export async function loadAndSyncUserCreditTasks(user: User): Promise<{
   for (const autoId of ['bind_email', 'bind_wechat'] as CreditTaskId[]) {
     const spec = CREDIT_TASKS.find((t) => t.id === autoId)!
     if (eligibilityMap[autoId] && !isClaimed(spec)) {
-      const res = await grantTaskCreditIfEligible(userId, autoId, autoId === 'bind_wechat' ? { openid: wechatOpenid } : {}).catch(() => ({
+      const res = await grantTaskCreditIfEligible(
+        userId,
+        autoId,
+        autoId === 'bind_wechat' ? { openid: wechatOpenid } : {},
+      ).catch(() => ({
         granted: false,
         credits: 0,
       }))

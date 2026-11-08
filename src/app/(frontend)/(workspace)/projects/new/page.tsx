@@ -29,12 +29,16 @@ export default async function NewProjectPage() {
     select: { platform: true },
   })
   const lastPlatform = last.docs[0]?.platform
-  const platform = isProjectPlatform(lastPlatform) && lastPlatform !== '待定' ? lastPlatform : DEFAULT_PLATFORM
+  const platform =
+    isProjectPlatform(lastPlatform) && lastPlatform !== '待定' ? lastPlatform : DEFAULT_PLATFORM
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/projects"><ChevronLeft className="size-4" />项目</Link>
+        <Link href="/projects">
+          <ChevronLeft className="size-4" />
+          项目
+        </Link>
       </Button>
       <PageHeader title="新建项目" />
       <ProjectForm initial={{ platform }} />

@@ -42,8 +42,13 @@ const collections = useS3
               {
                 path: '/file/:filename',
                 method: 'get' as const,
-                handler: async (req: { routeParams?: Record<string, unknown>; url?: string; headers: Headers }) => {
-                  const rawName = typeof req.routeParams?.filename === 'string' ? req.routeParams.filename : ''
+                handler: async (req: {
+                  routeParams?: Record<string, unknown>
+                  url?: string
+                  headers: Headers
+                }) => {
+                  const rawName =
+                    typeof req.routeParams?.filename === 'string' ? req.routeParams.filename : ''
                   const filename = path.basename(decodeURIComponent(rawName))
                   if (!filename) return new Response('Not Found', { status: 404 })
 
@@ -54,10 +59,21 @@ const collections = useS3
 
                   const stat = fs.statSync(/*turbopackIgnore: true*/ filePath)
                   const reqUrl = new URL(req.url || 'http://localhost', 'http://localhost')
-                  const widthParam = Number(reqUrl.searchParams.get('width') || reqUrl.searchParams.get('w') || 0)
-                  const qualityParam = Math.min(92, Math.max(50, Number(reqUrl.searchParams.get('quality') || reqUrl.searchParams.get('q') || 78)))
+                  const widthParam = Number(
+                    reqUrl.searchParams.get('width') || reqUrl.searchParams.get('w') || 0,
+                  )
+                  const qualityParam = Math.min(
+                    92,
+                    Math.max(
+                      50,
+                      Number(
+                        reqUrl.searchParams.get('quality') || reqUrl.searchParams.get('q') || 78,
+                      ),
+                    ),
+                  )
                   const ext = path.extname(filename).toLowerCase()
-                  const isRaster = ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.webp'
+                  const isRaster =
+                    ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.webp'
 
                   // 当带有 ?width= 缩略图参数，或原图超过 350KB（例如 9MB 的 XLSX-CLEAN-0338-original.png）时，自动用 sharp 转为轻量 WebP 并缓存
                   const targetWidth =
@@ -157,20 +173,20 @@ export default buildConfig({
   }),
   storage: useS3
     ? [
-    s3Storage({
-      collections: { media: true },
-      bucket: required('S3_BUCKET'),
-      config: {
-        region: process.env.S3_REGION || 'auto',
-        endpoint: process.env.S3_ENDPOINT || undefined,
-        // MinIO 等自建存储需要路径风格；阿里云 OSS / 腾讯云 COS 用默认的虚拟主机风格。
-        forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
-        credentials: {
-          accessKeyId: required('S3_ACCESS_KEY_ID'),
-          secretAccessKey: required('S3_SECRET_ACCESS_KEY'),
-        },
-      },
-    }),
+        s3Storage({
+          collections: { media: true },
+          bucket: required('S3_BUCKET'),
+          config: {
+            region: process.env.S3_REGION || 'auto',
+            endpoint: process.env.S3_ENDPOINT || undefined,
+            // MinIO 等自建存储需要路径风格；阿里云 OSS / 腾讯云 COS 用默认的虚拟主机风格。
+            forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
+            credentials: {
+              accessKeyId: required('S3_ACCESS_KEY_ID'),
+              secretAccessKey: required('S3_SECRET_ACCESS_KEY'),
+            },
+          },
+        }),
       ]
     : [],
 })

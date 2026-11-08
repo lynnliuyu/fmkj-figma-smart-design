@@ -62,7 +62,8 @@ async function loadSharedShowcase(token: string) {
       select: { shareConfig: true } as never,
     })
     const matched = (res.docs as Project[]).find((p) => {
-      const sc = (p as unknown as { shareConfig?: { enabled?: boolean; token?: string } | null }).shareConfig
+      const sc = (p as unknown as { shareConfig?: { enabled?: boolean; token?: string } | null })
+        .shareConfig
       return sc && sc.enabled !== false && sc.token === trimmed
     })
     if (matched) {
@@ -129,15 +130,28 @@ async function loadSharedShowcase(token: string) {
   let quote: ShowcaseQuote | null = null
   if (main) {
     const items = (Array.isArray(main.items) ? main.items : []) as Record<string, unknown>[]
-    const imageIds = [...new Set(items.map((i) => i.image).filter((id): id is string => typeof id === 'string'))]
+    const imageIds = [
+      ...new Set(items.map((i) => i.image).filter((id): id is string => typeof id === 'string')),
+    ]
     const media = imageIds.length
-      ? await payload.find({ collection: 'media', where: { id: { in: imageIds } }, limit: imageIds.length, depth: 0, overrideAccess: true })
+      ? await payload.find({
+          collection: 'media',
+          where: { id: { in: imageIds } },
+          limit: imageIds.length,
+          depth: 0,
+          overrideAccess: true,
+        })
       : { docs: [] as Media[] }
     const imageUrl = new Map(media.docs.map((m) => [String(m.id), resolveMediaUrl(m)]))
     quote = {
       title: text(main.title),
       lines: items.map((i) => {
-        const pid = typeof i.product === 'string' ? i.product : i.product && typeof i.product === 'object' ? String((i.product as { id?: unknown }).id ?? '') : ''
+        const pid =
+          typeof i.product === 'string'
+            ? i.product
+            : i.product && typeof i.product === 'object'
+              ? String((i.product as { id?: unknown }).id ?? '')
+              : ''
         const catProd = pid ? catalogById.get(pid) : undefined
         const customImg = typeof i.image === 'string' ? (imageUrl.get(i.image) ?? null) : null
         return {
@@ -152,7 +166,10 @@ async function loadSharedShowcase(token: string) {
           brandLogo: catProd?.brand?.logo ?? null,
         }
       }),
-      fees: ((Array.isArray(main.fees) ? main.fees : []) as Record<string, unknown>[]).map((f) => ({ name: text(f.name), amount: num(f.amount) })),
+      fees: ((Array.isArray(main.fees) ? main.fees : []) as Record<string, unknown>[]).map((f) => ({
+        name: text(f.name),
+        amount: num(f.amount),
+      })),
       discount: num(main.discount),
       productTotal: num(main.productTotal),
       total: num(main.total),
@@ -161,8 +178,14 @@ async function loadSharedShowcase(token: string) {
   }
 
   // 业主可见的方案（主方案 + 已发送 / 已确认的报价），用于方案对比与意向确认；按总价从低到高排列
-  const mainId = mainQuoteId(docs.map((q) => ({ id: String(q.id), status: text(q.status) })), finalQuoteId)
-  const visibleIds = clientVisibleQuoteIds(docs.map((q) => ({ id: String(q.id), status: text(q.status) })), mainId)
+  const mainId = mainQuoteId(
+    docs.map((q) => ({ id: String(q.id), status: text(q.status) })),
+    finalQuoteId,
+  )
+  const visibleIds = clientVisibleQuoteIds(
+    docs.map((q) => ({ id: String(q.id), status: text(q.status) })),
+    mainId,
+  )
   const compare: CompareQuote[] = visibleIds
     .map((qid) => docs.find((q) => String(q.id) === qid))
     .filter((q): q is Record<string, unknown> => Boolean(q))
@@ -179,7 +202,12 @@ async function loadSharedShowcase(token: string) {
         lines: items
           .filter((i) => typeof i.id === 'string' && i.id)
           .map((i) => {
-            const pid = typeof i.product === 'string' ? i.product : i.product && typeof i.product === 'object' ? String((i.product as { id?: unknown }).id ?? '') : ''
+            const pid =
+              typeof i.product === 'string'
+                ? i.product
+                : i.product && typeof i.product === 'object'
+                  ? String((i.product as { id?: unknown }).id ?? '')
+                  : ''
             const catProd = pid ? catalogById.get(pid) : undefined
             const cat = categoryOfType(text(i.deviceType) || catProd?.deviceType || 'other')
             return {
@@ -231,11 +259,20 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             {company.logo ? (
-              <Image src={company.logo.url} alt={company.name} width={company.logo.width ?? 96} height={company.logo.height ?? 96} className="h-8 w-auto object-contain" unoptimized />
+              <Image
+                src={company.logo.url}
+                alt={company.name}
+                width={company.logo.width ?? 96}
+                height={company.logo.height ?? 96}
+                className="h-8 w-auto object-contain"
+                unoptimized
+              />
             ) : null}
             <div>
               <p className="text-sm font-medium">{company.name}</p>
-              {company.slogan ? <p className="text-xs text-muted-foreground">{company.slogan}</p> : null}
+              {company.slogan ? (
+                <p className="text-xs text-muted-foreground">{company.slogan}</p>
+              ) : null}
             </div>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -245,7 +282,9 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
                 {company.phone}
               </span>
             ) : null}
-            <Badge variant="outline" className="hidden sm:inline-flex">业主方案预览</Badge>
+            <Badge variant="outline" className="hidden sm:inline-flex">
+              业主方案预览
+            </Badge>
             <ShareExportButton projectName={data.project.name} />
             {compare.length ? (
               <Button asChild size="sm" className="rounded-full">
@@ -271,12 +310,16 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
                   ) : null}
                   {data.project.platform ? <span>主平台：{data.project.platform}</span> : null}
                 </div>
-                <h1 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">{data.project.name}</h1>
+                <h1 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">
+                  {data.project.name}
+                </h1>
               </div>
               {data.quote ? (
                 <div className="text-left sm:text-right">
                   <p className="text-xs text-muted-foreground">方案报价合计</p>
-                  <p className="text-3xl font-semibold tracking-tight tabular-nums">{money(data.quote.total)}</p>
+                  <p className="text-3xl font-semibold tracking-tight tabular-nums">
+                    {money(data.quote.total)}
+                  </p>
                 </div>
               ) : null}
             </div>
@@ -295,12 +338,24 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
 
         {data.quote ? (
           <Section id="quote" labelledBy="quote-title" className="pt-20 sm:pt-28">
-            <QuoteShowcase data={data} quote={data.quote} styles={DOC_STYLES} layouts={DOC_KINDS.quote.layouts} company={company} />
+            <QuoteShowcase
+              data={data}
+              quote={data.quote}
+              styles={DOC_STYLES}
+              layouts={DOC_KINDS.quote.layouts}
+              company={company}
+            />
           </Section>
         ) : null}
 
         {compare.length ? (
-          <ClientDecisionPanel shareToken={token} quotes={compare} companyName={company.name} defaultName={data.project.customer} canSubmit={canSubmit} />
+          <ClientDecisionPanel
+            shareToken={token}
+            quotes={compare}
+            companyName={company.name}
+            defaultName={data.project.customer}
+            canSubmit={canSubmit}
+          />
         ) : null}
       </main>
 
@@ -309,9 +364,13 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
           {/* 左侧：本方案专属设计师 / 服务商联系卡 */}
           <div className="flex flex-col justify-between gap-4 rounded-2xl border bg-card p-6 sm:flex-row sm:items-center lg:col-span-6">
             <div className="space-y-2">
-              <Badge variant="secondary" className="text-xs">方案设计及交付团队</Badge>
+              <Badge variant="secondary" className="text-xs">
+                方案设计及交付团队
+              </Badge>
               <p className="text-lg font-semibold">{company.name}</p>
-              {company.slogan ? <p className="text-xs text-muted-foreground">{company.slogan}</p> : null}
+              {company.slogan ? (
+                <p className="text-xs text-muted-foreground">{company.slogan}</p>
+              ) : null}
               <div className="space-y-1 pt-1 text-xs text-muted-foreground">
                 {company.phone ? <p>联系电话：{company.phone}</p> : null}
                 {company.address ? <p>服务地址：{company.address}</p> : null}
@@ -344,9 +403,12 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
                 <Sparkles className="size-3.5" />
                 由「繁梦空间 FMKJ」全屋智能设计工作台驱动生成
               </div>
-              <p className="text-base font-semibold">几分钟完成全屋智能点位图、8 章横版提案与精准报价</p>
+              <p className="text-base font-semibold">
+                几分钟完成全屋智能点位图、8 章横版提案与精准报价
+              </p>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                上传户型图自动识别开关灯具点位，一键匹配米家、Aqara、Apple Home、华为、KNX 产品库，同步导出客户提案、报价单、合同与水电施工交底单。
+                上传户型图自动识别开关灯具点位，一键匹配米家、Aqara、Apple Home、华为、KNX
+                产品库，同步导出客户提案、报价单、合同与水电施工交底单。
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2.5 pt-1">

@@ -75,10 +75,26 @@ function insideFrame({ w, h, m }: Mask): Region {
   const colRun = (x: number) => longestRun((y) => m[y * w + x], 0, h)
   const edgeY = Math.floor(h * 0.15)
   const edgeX = Math.floor(w * 0.15)
-  for (let y = edgeY; y >= 0; y--) if (rowRun(y) >= w * 0.6) { r.y0 = y + 3; break }
-  for (let y = h - 1 - edgeY; y < h; y++) if (rowRun(y) >= w * 0.6) { r.y1 = y - 3; break }
-  for (let x = edgeX; x >= 0; x--) if (colRun(x) >= h * 0.6) { r.x0 = x + 3; break }
-  for (let x = w - 1 - edgeX; x < w; x++) if (colRun(x) >= h * 0.6) { r.x1 = x - 3; break }
+  for (let y = edgeY; y >= 0; y--)
+    if (rowRun(y) >= w * 0.6) {
+      r.y0 = y + 3
+      break
+    }
+  for (let y = h - 1 - edgeY; y < h; y++)
+    if (rowRun(y) >= w * 0.6) {
+      r.y1 = y - 3
+      break
+    }
+  for (let x = edgeX; x >= 0; x--)
+    if (colRun(x) >= h * 0.6) {
+      r.x0 = x + 3
+      break
+    }
+  for (let x = w - 1 - edgeX; x < w; x++)
+    if (colRun(x) >= h * 0.6) {
+      r.x1 = x - 3
+      break
+    }
   return r
 }
 
@@ -127,7 +143,9 @@ function mainSpan(profile: number[], minGap: number): [number, number] | null {
   if (!blocks.length) return null
   const main = blocks.reduce((a, b) => (b.mass > a.mass ? b : a))
   const span = (b: { a: number; b: number }) => b.b - b.a + 1
-  const keep = blocks.filter((b) => b === main || (b.mass >= main.mass * 0.12 && span(b) >= span(main) * 0.15))
+  const keep = blocks.filter(
+    (b) => b === main || (b.mass >= main.mass * 0.12 && span(b) >= span(main) * 0.15),
+  )
   return [Math.min(...keep.map((b) => b.a)), Math.max(...keep.map((b) => b.b))]
 }
 
@@ -172,7 +190,12 @@ export function detectPlanBounds(img: Pixels): Rect {
   const rx1 = Math.min(w - 1, x1 + pad)
   const ry1 = Math.min(h - 1, y1 + pad)
   return clampRect(
-    { x: Math.floor(rx0 * scale), y: Math.floor(ry0 * scale), width: Math.ceil((rx1 - rx0 + 1) * scale), height: Math.ceil((ry1 - ry0 + 1) * scale) },
+    {
+      x: Math.floor(rx0 * scale),
+      y: Math.floor(ry0 * scale),
+      width: Math.ceil((rx1 - rx0 + 1) * scale),
+      height: Math.ceil((ry1 - ry0 + 1) * scale),
+    },
     img.width,
     img.height,
   )
@@ -181,7 +204,12 @@ export function detectPlanBounds(img: Pixels): Rect {
 export function clampRect(r: Rect, width: number, height: number): Rect {
   const x = Math.max(0, Math.min(width - 1, Math.round(r.x)))
   const y = Math.max(0, Math.min(height - 1, Math.round(r.y)))
-  return { x, y, width: Math.max(1, Math.min(width - x, Math.round(r.width))), height: Math.max(1, Math.min(height - y, Math.round(r.height))) }
+  return {
+    x,
+    y,
+    width: Math.max(1, Math.min(width - x, Math.round(r.width))),
+    height: Math.max(1, Math.min(height - y, Math.round(r.height))),
+  }
 }
 
 /**
@@ -193,5 +221,14 @@ export function fitIntoSheet(crop: Rect, sheetWidth: number, sheetHeight: number
   const scale = Math.min((sheetWidth - pad * 2) / crop.width, (sheetHeight - pad * 2) / crop.height)
   const dw = Math.round(crop.width * scale)
   const dh = Math.round(crop.height * scale)
-  return { source: crop, target: { x: Math.round((sheetWidth - dw) / 2), y: Math.round((sheetHeight - dh) / 2), width: dw, height: dh }, scale }
+  return {
+    source: crop,
+    target: {
+      x: Math.round((sheetWidth - dw) / 2),
+      y: Math.round((sheetHeight - dh) / 2),
+      width: dw,
+      height: dh,
+    },
+    scale,
+  }
 }

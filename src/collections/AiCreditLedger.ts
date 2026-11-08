@@ -37,8 +37,16 @@ export const AiCreditLedger: CollectionConfig = {
         const userId = relId(data.user)
         if (!userId) throw new APIError('请选择成员', 400)
         const delta = Number(data.delta)
-        if (!Number.isInteger(delta) || delta === 0) throw new APIError('积分变动必须是非零整数', 400)
-        const user = await req.payload.findByID({ collection: 'users', id: userId, depth: 0, overrideAccess: true, req, select: { aiCredits: true } })
+        if (!Number.isInteger(delta) || delta === 0)
+          throw new APIError('积分变动必须是非零整数', 400)
+        const user = await req.payload.findByID({
+          collection: 'users',
+          id: userId,
+          depth: 0,
+          overrideAccess: true,
+          req,
+          select: { aiCredits: true },
+        })
         const balanceAfter = (user.aiCredits ?? 0) + delta
         if (balanceAfter < 0) throw new APIError('积分不足', 402)
         data.balanceAfter = balanceAfter
@@ -63,12 +71,31 @@ export const AiCreditLedger: CollectionConfig = {
     ],
   },
   fields: [
-    { name: 'user', label: '成员', type: 'relationship', relationTo: 'users', required: true, index: true },
-    { name: 'delta', label: '积分变动', type: 'number', required: true, admin: { description: '正数为发放，负数为扣减' } },
+    {
+      name: 'user',
+      label: '成员',
+      type: 'relationship',
+      relationTo: 'users',
+      required: true,
+      index: true,
+    },
+    {
+      name: 'delta',
+      label: '积分变动',
+      type: 'number',
+      required: true,
+      admin: { description: '正数为发放，负数为扣减' },
+    },
     { name: 'balanceAfter', label: '变动后余额', type: 'number', admin: { readOnly: true } },
     { name: 'reason', label: '说明', type: 'text', maxLength: 120 },
     { name: 'model', label: '模型', type: 'text', maxLength: 60, admin: { readOnly: true } },
-    { name: 'message', label: '对应消息', type: 'relationship', relationTo: 'ai-messages', admin: { readOnly: true } },
+    {
+      name: 'message',
+      label: '对应消息',
+      type: 'relationship',
+      relationTo: 'ai-messages',
+      admin: { readOnly: true },
+    },
   ],
   timestamps: true,
 }

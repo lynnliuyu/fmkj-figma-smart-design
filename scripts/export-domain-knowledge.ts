@@ -40,9 +40,20 @@ import {
   PLUGINS,
   validatePluginAiPermissions,
 } from '@/plugins'
-import { CREDIT_VALUE_CNY, DEFAULT_TOOL_COST, INPUT_PER_1K, OUTPUT_PER_1K, TOOL_COSTS } from '@/plugins/ai-copilot/billing'
+import {
+  CREDIT_VALUE_CNY,
+  DEFAULT_TOOL_COST,
+  INPUT_PER_1K,
+  OUTPUT_PER_1K,
+  TOOL_COSTS,
+} from '@/plugins/ai-copilot/billing'
 import { DECK_THEMES } from '@/plugins/proposal/deck/themes'
-import { DECK_SECTIONS, normalizeSections, ORCHESTRATION_RULES, PROPOSAL_FRAMEWORKS } from '@/plugins/proposal/framework'
+import {
+  DECK_SECTIONS,
+  normalizeSections,
+  ORCHESTRATION_RULES,
+  PROPOSAL_FRAMEWORKS,
+} from '@/plugins/proposal/framework'
 import { BUILTIN_PROPOSAL_TEMPLATES, recommendTemplates } from '@/plugins/proposal/templates'
 import { PLATFORM_PREFS, SELECTION_TIERS } from '@/plugins/smart-select/auto-select'
 
@@ -76,7 +87,8 @@ function buildKnowledgeBundle() {
   }
 
   const roomRules = {
-    scoringRule: 'score = 已满足的(必备 core + 推荐 recommended)项数量 / 总(必备 core + 推荐 recommended)项数量 × 100（四舍五入，可选 optional 不计入分母）',
+    scoringRule:
+      'score = 已满足的(必备 core + 推荐 recommended)项数量 / 总(必备 core + 推荐 recommended)项数量 × 100（四舍五入，可选 optional 不计入分母）',
     designRules: {
       summaryText: DESIGN_RULE_TEXT,
       drawingOnlyCategories: [...DRAWING_ONLY_CATEGORIES],
@@ -107,7 +119,8 @@ function buildKnowledgeBundle() {
         })),
       ]),
     ),
-    brandUnificationRule: '同一设备大类内统计选中次数最多的主品牌；若同大类其他设备类型存在该主品牌产品，且价差 ≤ max(30元, 原选中产品价格 × 40%)，自动替换为该主品牌产品以保持面板与设备外观统一。',
+    brandUnificationRule:
+      '同一设备大类内统计选中次数最多的主品牌；若同大类其他设备类型存在该主品牌产品，且价差 ≤ max(30元, 原选中产品价格 × 40%)，自动替换为该主品牌产品以保持面板与设备外观统一。',
   }
 
   const proposalTemplates = {
@@ -247,8 +260,16 @@ type DomainTestCases = {
 
 const DEFAULT_TEST_CASES: DomainTestCases = {
   deviceInference: [
-    { inputName: 'Aqara 智能墙壁开关 H1 零火版（三键）', categorySlug: 'switch', expectedType: 'switch-3' },
-    { inputName: 'Yeelight 易来 Pro S20 嵌入式射灯', categorySlug: 'lighting', expectedType: 'spotlight' },
+    {
+      inputName: 'Aqara 智能墙壁开关 H1 零火版（三键）',
+      categorySlug: 'switch',
+      expectedType: 'switch-3',
+    },
+    {
+      inputName: 'Yeelight 易来 Pro S20 嵌入式射灯',
+      categorySlug: 'lighting',
+      expectedType: 'spotlight',
+    },
     { inputName: '小米人体存在传感器 Pro', categorySlug: 'sensor', expectedType: 'motion-sensor' },
     { inputName: '华为全屋智能吸顶AP面板', categorySlug: 'network', expectedType: 'ceiling-ap' },
   ],
@@ -338,7 +359,9 @@ function runTestSuite(casesPath: string) {
   for (const c of cases.sectionNormalization) {
     const actual = normalizeSections(c.inputSections, c.framework)
     if (JSON.stringify(actual) !== JSON.stringify(c.expectedSections)) {
-      failures.push(`[sectionNormalization] 期望 ${JSON.stringify(c.expectedSections)}，实际 ${JSON.stringify(actual)}`)
+      failures.push(
+        `[sectionNormalization] 期望 ${JSON.stringify(c.expectedSections)}，实际 ${JSON.stringify(actual)}`,
+      )
     } else passed++
   }
 
@@ -351,7 +374,9 @@ function runTestSuite(casesPath: string) {
     })
     const actualTop = picks[0]?.template.value
     if (actualTop !== c.expectedTopSlug) {
-      failures.push(`[templateRecommendation] "${c.audience}" 期望首选 ${c.expectedTopSlug}，实际 ${actualTop}`)
+      failures.push(
+        `[templateRecommendation] "${c.audience}" 期望首选 ${c.expectedTopSlug}，实际 ${actualTop}`,
+      )
     } else passed++
   }
 

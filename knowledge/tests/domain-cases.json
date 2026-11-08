@@ -43,22 +43,14 @@
     {
       "name": "满配玄关",
       "areaType": "entrance",
-      "devices": [
-        "smart-lock",
-        "downlight",
-        "motion-sensor",
-        "switch-2"
-      ],
+      "devices": ["smart-lock", "downlight", "motion-sensor", "switch-2"],
       "expectedScore": 100,
       "expectedMissingCount": 1
     },
     {
       "name": "缺烟感与水浸的厨房",
       "areaType": "kitchen",
-      "devices": [
-        "downlight",
-        "switch-1"
-      ],
+      "devices": ["downlight", "switch-1"],
       "expectedScore": 50,
       "expectedMissingCount": 3
     }
@@ -66,27 +58,12 @@
   "sectionNormalization": [
     {
       "framework": "full",
-      "inputSections": [
-        "zones",
-        "service",
-        "plans",
-        "investment",
-        "plans"
-      ],
-      "expectedSections": [
-        "cover",
-        "zones",
-        "plans",
-        "investment",
-        "service"
-      ]
+      "inputSections": ["zones", "service", "plans", "investment", "plans"],
+      "expectedSections": ["cover", "zones", "plans", "investment", "service"]
     },
     {
       "framework": "construction",
-      "inputSections": [
-        "cover",
-        "plans"
-      ],
+      "inputSections": ["cover", "plans"],
       "expectedSections": []
     }
   ],

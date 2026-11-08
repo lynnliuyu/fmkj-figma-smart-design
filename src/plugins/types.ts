@@ -52,7 +52,12 @@ export type PluginId =
 
 /** 项目阶段：能力中心按阶段筛选、项目里的插件入口共用 */
 export const PLUGIN_STAGES = [
-  { key: 'design', label: '勘测与点位设计', core: '信息 · 点位', hint: '上传户型图、布置点位、检查配置' },
+  {
+    key: 'design',
+    label: '勘测与点位设计',
+    core: '信息 · 点位',
+    hint: '上传户型图、布置点位、检查配置',
+  },
   { key: 'quote', label: '报价与方案', core: '报价', hint: '出报价单、生成给业主看的方案' },
   { key: 'build', label: '签约与施工', core: '合同', hint: '签合同、备货、给施工队交底' },
   { key: 'after', label: '交付与售后', core: '归档', hint: '移交账号与场景、记录维保' },

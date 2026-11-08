@@ -2,7 +2,11 @@ import type { CollectionConfig } from 'payload'
 
 import { cmsAdminOnly, cmsAdminOrMember, isCmsAdmin } from '@/lib/access'
 import { revalidateTemplatePages } from '@/lib/revalidate-templates'
-import { DECK_SECTIONS, ORCHESTRATION_RULES, PROPOSAL_FRAMEWORKS } from '@/plugins/proposal/framework'
+import {
+  DECK_SECTIONS,
+  ORCHESTRATION_RULES,
+  PROPOSAL_FRAMEWORKS,
+} from '@/plugins/proposal/framework'
 
 const THEMES = [
   { label: '栖序雅致（暖白 · 灰紫 · 色带封面）', value: 'qixu' },
@@ -33,7 +37,12 @@ export const ProposalTemplates: CollectionConfig = {
     components: { beforeListTable: ['@/components/admin/library-banner#TemplatesLibraryBanner'] },
   },
   defaultSort: 'sortOrder',
-  access: { read: cmsAdminOrMember, create: cmsAdminOnly, update: cmsAdminOnly, delete: cmsAdminOnly },
+  access: {
+    read: cmsAdminOrMember,
+    create: cmsAdminOnly,
+    update: cmsAdminOnly,
+    delete: cmsAdminOnly,
+  },
   endpoints: [
     {
       // 方案模板与场景库的内置内容是否齐全（列表页顶部提示用）
@@ -73,20 +82,51 @@ export const ProposalTemplates: CollectionConfig = {
     ],
   },
   fields: [
-    { name: 'livePreview', type: 'ui', admin: { components: { Field: '@/components/admin/template-preview-field#TemplatePreviewField' } } },
+    {
+      name: 'livePreview',
+      type: 'ui',
+      admin: {
+        components: { Field: '@/components/admin/template-preview-field#TemplatePreviewField' },
+      },
+    },
     {
       type: 'row',
       fields: [
         { name: 'name', label: '模板名称', type: 'text', required: true },
-        { name: 'slug', label: '标识', type: 'text', required: true, unique: true, index: true, admin: { description: '只用英文、数字和短横线' } },
+        {
+          name: 'slug',
+          label: '标识',
+          type: 'text',
+          required: true,
+          unique: true,
+          index: true,
+          admin: { description: '只用英文、数字和短横线' },
+        },
       ],
     },
-    { name: 'description', label: '说明', type: 'text', admin: { description: '模板选择器里显示' } },
+    {
+      name: 'description',
+      label: '说明',
+      type: 'text',
+      admin: { description: '模板选择器里显示' },
+    },
     {
       type: 'row',
       fields: [
-        { name: 'audience', label: '适合什么客户', type: 'text', maxLength: 60, admin: { description: '如：别墅、大平层等高净值业主；留空沿用版式框架的默认说明' } },
-        { name: 'occasion', label: '什么时候用', type: 'text', maxLength: 60, admin: { description: '如：首次方案沟通、签约前定稿' } },
+        {
+          name: 'audience',
+          label: '适合什么客户',
+          type: 'text',
+          maxLength: 60,
+          admin: { description: '如：别墅、大平层等高净值业主；留空沿用版式框架的默认说明' },
+        },
+        {
+          name: 'occasion',
+          label: '什么时候用',
+          type: 'text',
+          maxLength: 60,
+          admin: { description: '如：首次方案沟通、签约前定稿' },
+        },
       ],
     },
     {
@@ -100,8 +140,22 @@ export const ProposalTemplates: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'framework', label: '版式框架', type: 'select', required: true, defaultValue: 'full', options: PROPOSAL_FRAMEWORKS.map((f) => ({ label: f.label, value: f.value })) },
-        { name: 'theme', label: '视觉主题', type: 'select', defaultValue: 'qixu', options: THEMES, admin: { description: '施工交底不使用' } },
+        {
+          name: 'framework',
+          label: '版式框架',
+          type: 'select',
+          required: true,
+          defaultValue: 'full',
+          options: PROPOSAL_FRAMEWORKS.map((f) => ({ label: f.label, value: f.value })),
+        },
+        {
+          name: 'theme',
+          label: '视觉主题',
+          type: 'select',
+          defaultValue: 'qixu',
+          options: THEMES,
+          admin: { description: '施工交底不使用' },
+        },
       ],
     },
     {
@@ -110,13 +164,43 @@ export const ProposalTemplates: CollectionConfig = {
       type: 'select',
       hasMany: true,
       options: DECK_SECTIONS.map((s) => ({ label: s.label, value: s.value })),
-      admin: { description: '留空使用版式框架的推荐章节；按编排规范，封面固定第一页，投资明细与服务交付固定在最后' },
+      admin: {
+        description:
+          '留空使用版式框架的推荐章节；按编排规范，封面固定第一页，投资明细与服务交付固定在最后',
+      },
     },
-    { name: 'markers', label: '点位显示', type: 'select', defaultValue: 'symbol', options: [{ label: '设备图标', value: 'symbol' }, { label: '编号', value: 'number' }] },
-    { name: 'accent', label: '强调色', type: 'text', admin: { description: '十六进制颜色，如 #7a5c22；留空沿用主题配色' }, validate: (v: unknown) => !v || /^#[0-9a-f]{6}$/i.test(String(v)) || '请填写 #RRGGBB 格式的颜色' },
-    { name: 'headline', label: '封面主标语', type: 'text', admin: { description: '留空沿用主题标语' } },
+    {
+      name: 'markers',
+      label: '点位显示',
+      type: 'select',
+      defaultValue: 'symbol',
+      options: [
+        { label: '设备图标', value: 'symbol' },
+        { label: '编号', value: 'number' },
+      ],
+    },
+    {
+      name: 'accent',
+      label: '强调色',
+      type: 'text',
+      admin: { description: '十六进制颜色，如 #7a5c22；留空沿用主题配色' },
+      validate: (v: unknown) =>
+        !v || /^#[0-9a-f]{6}$/i.test(String(v)) || '请填写 #RRGGBB 格式的颜色',
+    },
+    {
+      name: 'headline',
+      label: '封面主标语',
+      type: 'text',
+      admin: { description: '留空沿用主题标语' },
+    },
     { name: 'tagline', label: '封面英文标语', type: 'text' },
-    { name: 'coverImage', label: '封面图片', type: 'upload', relationTo: 'media', admin: { description: '请使用自有或已获授权的图片；留空沿用主题封面' } },
+    {
+      name: 'coverImage',
+      label: '封面图片',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: '请使用自有或已获授权的图片；留空沿用主题封面' },
+    },
     {
       type: 'row',
       fields: [

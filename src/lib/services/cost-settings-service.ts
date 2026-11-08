@@ -9,9 +9,17 @@ import type { User } from '@/payload-types'
 export async function loadCostSettings(user: User): Promise<CostSettings> {
   const payload = await getPayloadClient()
   const doc = await payload
-    .findByID({ collection: 'users', id: String(user.id), depth: 0, user, overrideAccess: false, select: { companyProfile: true } as never })
+    .findByID({
+      collection: 'users',
+      id: String(user.id),
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { companyProfile: true } as never,
+    })
     .catch(() => null)
-  const profile = (doc as { companyProfile?: { costSettings?: unknown } | null } | null)?.companyProfile
+  const profile = (doc as { companyProfile?: { costSettings?: unknown } | null } | null)
+    ?.companyProfile
   return parseCostSettings(profile?.costSettings)
 }
 
@@ -23,12 +31,18 @@ export type CostSettingsInput = {
   minMarginPercent: string | number
 }
 
-export type CostSettingsResult = { ok: true; settings: CostSettings } | { ok: false; error: string; fieldErrors?: Record<string, string> }
+export type CostSettingsResult =
+  | { ok: true; settings: CostSettings }
+  | { ok: false; error: string; fieldErrors?: Record<string, string> }
 
-const num = (v: unknown) => (typeof v === 'number' ? v : typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN)
+const num = (v: unknown) =>
+  typeof v === 'number' ? v : typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN
 
 /** 校验表单（品牌只接受产品库里存在的品牌），再写回当前账号 */
-export async function saveCostSettingsFor(user: User, input: CostSettingsInput): Promise<CostSettingsResult> {
+export async function saveCostSettingsFor(
+  user: User,
+  input: CostSettingsInput,
+): Promise<CostSettingsResult> {
   const fieldErrors: Record<string, string> = {}
   const brands = new Set((await getBrands()).map((b) => b.slug))
   const brandRates: { brand: string; rate: number }[] = []
@@ -44,22 +58,43 @@ export async function saveCostSettingsFor(user: User, input: CostSettingsInput):
     brandRates.push({ brand, rate: d / 10 })
   }
   let defaultRate: number | null = null
-  if (input?.defaultDiscount !== null && input?.defaultDiscount !== undefined && input.defaultDiscount !== '') {
+  if (
+    input?.defaultDiscount !== null &&
+    input?.defaultDiscount !== undefined &&
+    input.defaultDiscount !== ''
+  ) {
     const d = num(input.defaultDiscount)
-    if (!Number.isFinite(d) || d < RATE_MIN * 10 || d > RATE_MAX * 10) fieldErrors.defaultDiscount = '折扣需在 0.5–10 折之间'
+    if (!Number.isFinite(d) || d < RATE_MIN * 10 || d > RATE_MAX * 10)
+      fieldErrors.defaultDiscount = '折扣需在 0.5–10 折之间'
     else defaultRate = d / 10
   }
   const fee = num(input?.feeCostPercent)
-  if (!Number.isFinite(fee) || fee < 0 || fee > 100) fieldErrors.feeCostPercent = '请输入 0–100 之间的百分比'
+  if (!Number.isFinite(fee) || fee < 0 || fee > 100)
+    fieldErrors.feeCostPercent = '请输入 0–100 之间的百分比'
   const min = num(input?.minMarginPercent)
-  if (!Number.isFinite(min) || min < 0 || min > 90) fieldErrors.minMarginPercent = '请输入 0–90 之间的百分比'
-  if (Object.keys(fieldErrors).length) return { ok: false, error: Object.values(fieldErrors)[0]!, fieldErrors }
+  if (!Number.isFinite(min) || min < 0 || min > 90)
+    fieldErrors.minMarginPercent = '请输入 0–90 之间的百分比'
+  if (Object.keys(fieldErrors).length)
+    return { ok: false, error: Object.values(fieldErrors)[0]!, fieldErrors }
 
-  const settings = parseCostSettings({ brandRates, defaultRate, feeCostPercent: fee, minMarginPercent: min })
+  const settings = parseCostSettings({
+    brandRates,
+    defaultRate,
+    feeCostPercent: fee,
+    minMarginPercent: min,
+  })
   try {
     const payload = await getPayloadClient()
-    const existing = await payload.findByID({ collection: 'users', id: user.id, depth: 0, user, overrideAccess: false, select: { companyProfile: true } as never })
-    const prev = ((existing as { companyProfile?: Record<string, unknown> | null }).companyProfile ?? {}) as Record<string, unknown>
+    const existing = await payload.findByID({
+      collection: 'users',
+      id: user.id,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { companyProfile: true } as never,
+    })
+    const prev = ((existing as { companyProfile?: Record<string, unknown> | null })
+      .companyProfile ?? {}) as Record<string, unknown>
     await payload.update({
       collection: 'users',
       id: user.id,

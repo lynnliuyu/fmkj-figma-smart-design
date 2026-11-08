@@ -18,7 +18,10 @@ const failed = []
 for (const m of media) {
   const ext = path.extname(m.filename || '') || '.bin'
   const dest = path.join(dir, 'files', `${m.id}${ext}`)
-  if (fs.existsSync(dest)) { ok++; continue }
+  if (fs.existsSync(dest)) {
+    ok++
+    continue
+  }
   const url = new URL(m.url || `/api/media/file/${encodeURIComponent(m.filename)}`, site).toString()
   try {
     const res = await fetch(url)

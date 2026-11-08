@@ -3,7 +3,13 @@
  * 每个模板回答：长什么样（缩略图 / 色板 / 封面版式）、适合谁、什么时候用、有哪些章节。
  */
 import { DECK_THEMES, isDeckTheme } from './deck/themes'
-import { DECK_SECTIONS, frameworkLabel, type DeckSection, type ProposalFrameworkId, type ProposalKind } from './framework'
+import {
+  DECK_SECTIONS,
+  frameworkLabel,
+  type DeckSection,
+  type ProposalFrameworkId,
+  type ProposalKind,
+} from './framework'
 import type { ProposalTemplateDef } from './templates'
 
 export type PickerTemplate = {
@@ -35,7 +41,10 @@ export const COVER_STYLE_LABEL: Record<string, string> = {
 
 const HEX = /^#[0-9a-f]{6}$/i
 
-export function toPickerTemplate(t: ProposalTemplateDef, opts: { pages?: number | null } = {}): PickerTemplate {
+export function toPickerTemplate(
+  t: ProposalTemplateDef,
+  opts: { pages?: number | null } = {},
+): PickerTemplate {
   const theme = DECK_THEMES[isDeckTheme(t.theme) ? t.theme : 'qixu']
   const construction = t.kind === 'construction'
   const c = theme.style.colors
@@ -55,9 +64,12 @@ export function toPickerTemplate(t: ProposalTemplateDef, opts: { pages?: number 
     frameworkLabel: frameworkLabel(t.framework),
     sections,
     pages: opts.pages ?? null,
-    priceShown: !construction && t.sections.some((s) => DECK_SECTIONS.find((x) => x.value === s)?.price),
+    priceShown:
+      !construction && t.sections.some((s) => DECK_SECTIONS.find((x) => x.value === s)?.price),
     coverStyle: construction ? '项目信息封面' : (COVER_STYLE_LABEL[theme.cover] ?? '照片封面'),
     mood: !construction && theme.mood === 'dark' ? '深色画面' : '浅色画面',
-    swatches: construction ? ['#ffffff', '#171717', '#737373', '#f5f5f5'] : [c.paper, c.ink, t.accent && HEX.test(t.accent) ? t.accent : c.accent, c.soft],
+    swatches: construction
+      ? ['#ffffff', '#171717', '#737373', '#f5f5f5']
+      : [c.paper, c.ink, t.accent && HEX.test(t.accent) ? t.accent : c.accent, c.soft],
   }
 }

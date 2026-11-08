@@ -15,7 +15,8 @@ export function CopyClientLinkButton({ token }: { token: string }) {
       await navigator.clipboard.writeText(url)
       setCopied(true)
       toast.success('已复制业主预览链接，可直接发给客户微信', {
-        description: '「已发送 / 已确认」的报价会出现在方案对比里，业主可勾选暂缓的设备并签名确认意向，反馈显示在项目「报价」页。',
+        description:
+          '「已发送 / 已确认」的报价会出现在方案对比里，业主可勾选暂缓的设备并签名确认意向，反馈显示在项目「报价」页。',
       })
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -24,7 +25,13 @@ export function CopyClientLinkButton({ token }: { token: string }) {
   }
 
   return (
-    <Button type="button" variant="outline" size="sm" onClick={() => void handleCopy()} title="业主可在链接里对比方案、勾选暂缓设备并签名确认意向">
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={() => void handleCopy()}
+      title="业主可在链接里对比方案、勾选暂缓设备并签名确认意向"
+    >
       {copied ? <Check className="size-4 text-success" /> : <Share2 className="size-4" />}
       {copied ? '已复制业主预览链接' : '复制业主预览链接'}
     </Button>

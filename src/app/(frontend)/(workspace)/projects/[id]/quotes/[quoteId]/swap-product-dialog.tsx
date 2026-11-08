@@ -9,7 +9,14 @@ import { DeviceSymbol } from '@/components/device-symbol'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -49,7 +56,10 @@ export function SwapProductDialog({
   const [setDefault, setSetDefault] = useState(true)
 
   const candidates = useMemo(
-    () => products.filter((p) => p.status === 'active' && line?.deviceType && p.deviceType === line.deviceType),
+    () =>
+      products.filter(
+        (p) => p.status === 'active' && line?.deviceType && p.deviceType === line.deviceType,
+      ),
     [products, line?.deviceType],
   )
   const current = line?.product ? products.find((p) => p.id === line.product) : undefined
@@ -58,10 +68,17 @@ export function SwapProductDialog({
     for (const p of candidates) if (p.brand) map.set(p.brand.slug, p.brand)
     return [...map.values()]
   }, [candidates])
-  const platforms = useMemo(() => [...new Set(candidates.flatMap((p) => p.platforms))], [candidates])
+  const platforms = useMemo(
+    () => [...new Set(candidates.flatMap((p) => p.platforms))],
+    [candidates],
+  )
   const filtered = candidates.filter((p) => {
     const q = query.trim().toLowerCase()
-    return (!q || `${p.name} ${p.sku} ${p.brand?.name ?? ''}`.toLowerCase().includes(q)) && (!brand || p.brand?.slug === brand) && (!platform || p.platforms.includes(platform))
+    return (
+      (!q || `${p.name} ${p.sku} ${p.brand?.name ?? ''}`.toLowerCase().includes(q)) &&
+      (!brand || p.brand?.slug === brand) &&
+      (!platform || p.platforms.includes(platform))
+    )
   })
   const groups = useMemo(() => {
     const map = new Map<string, { brand: ProductOption['brand']; items: ProductOption[] }>()
@@ -86,13 +103,21 @@ export function SwapProductDialog({
     onOpenChange(o)
   }
 
-  const filterChip = (label: React.ReactNode, active: boolean, onClick: () => void, key: string) => (
+  const filterChip = (
+    label: React.ReactNode,
+    active: boolean,
+    onClick: () => void,
+    key: string,
+  ) => (
     <button
       key={key}
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={cn('flex h-7 items-center gap-1.5 rounded-md border bg-background px-2 text-xs transition-colors hover:bg-accent', active && 'border-primary bg-primary/5 ring-1 ring-primary')}
+      className={cn(
+        'flex h-7 items-center gap-1.5 rounded-md border bg-background px-2 text-xs transition-colors hover:bg-accent',
+        active && 'border-primary bg-primary/5 ring-1 ring-primary',
+      )}
     >
       {label}
     </button>
@@ -103,29 +128,56 @@ export function SwapProductDialog({
       <DialogContent className="flex max-h-[85svh] flex-col gap-4 sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {line?.deviceType ? <span className="size-5"><DeviceSymbol type={line.deviceType} /></span> : null}
+            {line?.deviceType ? (
+              <span className="size-5">
+                <DeviceSymbol type={line.deviceType} />
+              </span>
+            ) : null}
             更换型号
           </DialogTitle>
           <DialogDescription>
-            {line ? <>当前：{line.name} · {yuan(line.price)}。只列出「{deviceTypeLabel(line.deviceType)}」的在售产品。</> : null}
+            {line ? (
+              <>
+                当前：{line.name} · {yuan(line.price)}。只列出「{deviceTypeLabel(line.deviceType)}
+                」的在售产品。
+              </>
+            ) : null}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索名称、型号或品牌" aria-label="搜索产品" className="pl-9" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="搜索名称、型号或品牌"
+              aria-label="搜索产品"
+              className="pl-9"
+            />
           </div>
           {brands.length > 1 ? (
             <div className="flex flex-wrap gap-1.5">
               {filterChip('全部品牌', !brand, () => setBrand(''), 'all')}
-              {brands.map((b) => filterChip(<><BrandLogo name={b.name} logo={b.logo} className="h-3.5" />{b.name}</>, brand === b.slug, () => setBrand(brand === b.slug ? '' : b.slug), b.slug))}
+              {brands.map((b) =>
+                filterChip(
+                  <>
+                    <BrandLogo name={b.name} logo={b.logo} className="h-3.5" />
+                    {b.name}
+                  </>,
+                  brand === b.slug,
+                  () => setBrand(brand === b.slug ? '' : b.slug),
+                  b.slug,
+                ),
+              )}
             </div>
           ) : null}
           {platforms.length > 1 ? (
             <div className="flex flex-wrap gap-1.5">
               {filterChip('全部平台', !platform, () => setPlatform(''), 'all')}
-              {platforms.map((pl) => filterChip(pl, platform === pl, () => setPlatform(platform === pl ? '' : pl), pl))}
+              {platforms.map((pl) =>
+                filterChip(pl, platform === pl, () => setPlatform(platform === pl ? '' : pl), pl),
+              )}
             </div>
           ) : null}
         </div>
@@ -156,7 +208,13 @@ export function SwapProductDialog({
                         >
                           <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
                             {p.image ? (
-                              <Image src={p.image} alt="" width={48} height={48} className="size-full bg-white object-contain" />
+                              <Image
+                                src={p.image}
+                                alt=""
+                                width={48}
+                                height={48}
+                                className="size-full bg-white object-contain"
+                              />
                             ) : (
                               <ImageIcon className="size-5 text-muted-foreground/50" />
                             )}
@@ -165,16 +223,33 @@ export function SwapProductDialog({
                             <span className="block truncate text-sm font-medium">{p.name}</span>
                             <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
                               <span>{p.sku}</span>
-                              {p.platforms.map((pl) => <Badge key={pl} variant="outline" className="h-4 px-1 text-xs">{pl}</Badge>)}
+                              {p.platforms.map((pl) => (
+                                <Badge key={pl} variant="outline" className="h-4 px-1 text-xs">
+                                  {pl}
+                                </Badge>
+                              ))}
                             </span>
                           </span>
                           <span className="shrink-0 text-right">
-                            <span className="block text-sm font-semibold tabular-nums">{yuan(p.price)}</span>
+                            <span className="block text-sm font-semibold tabular-nums">
+                              {yuan(p.price)}
+                            </span>
                             {isCurrent ? (
                               <span className="text-xs text-muted-foreground">当前型号</span>
                             ) : (
-                              <span className={cn('text-xs tabular-nums', diff > 0 ? 'text-destructive-strong' : diff < 0 ? 'text-success' : 'text-muted-foreground')}>
-                                {diff === 0 ? '同价' : `${diff > 0 ? '+' : '-'}${yuan(Math.abs(diff))}`}
+                              <span
+                                className={cn(
+                                  'text-xs tabular-nums',
+                                  diff > 0
+                                    ? 'text-destructive-strong'
+                                    : diff < 0
+                                      ? 'text-success'
+                                      : 'text-muted-foreground',
+                                )}
+                              >
+                                {diff === 0
+                                  ? '同价'
+                                  : `${diff > 0 ? '+' : '-'}${yuan(Math.abs(diff))}`}
                               </span>
                             )}
                           </span>
@@ -187,16 +262,28 @@ export function SwapProductDialog({
               </section>
             ))}
             {groups.length === 0 ? (
-              <p className="py-10 text-center text-sm text-muted-foreground">{candidates.length ? '没有匹配的产品' : '产品库里没有同类型的其他在售产品'}</p>
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                {candidates.length ? '没有匹配的产品' : '产品库里没有同类型的其他在售产品'}
+              </p>
             ) : null}
           </div>
         </ScrollArea>
 
         <div className="space-y-3 border-t pt-3">
           {sameTypeLines > 1 ? (
-            <RadioGroup value={scope} onValueChange={(v) => setScope(v as SwapScope)} className="flex flex-wrap gap-4">
-              <Label className="flex items-center gap-2 font-normal"><RadioGroupItem value="line" />只换这一行</Label>
-              <Label className="flex items-center gap-2 font-normal"><RadioGroupItem value="type" />同类全部更换（{sameTypeLines} 行）</Label>
+            <RadioGroup
+              value={scope}
+              onValueChange={(v) => setScope(v as SwapScope)}
+              className="flex flex-wrap gap-4"
+            >
+              <Label className="flex items-center gap-2 font-normal">
+                <RadioGroupItem value="line" />
+                只换这一行
+              </Label>
+              <Label className="flex items-center gap-2 font-normal">
+                <RadioGroupItem value="type" />
+                同类全部更换（{sameTypeLines} 行）
+              </Label>
             </RadioGroup>
           ) : null}
           {canSetDefault ? (
@@ -205,11 +292,17 @@ export function SwapProductDialog({
               同时设为项目默认型号（之后从点位图生成报价也用这个型号）
             </Label>
           ) : null}
-          {manualPrice ? <p className="text-xs text-warning">当前单价是手动修改过的，更换后将改为新产品的售价。</p> : null}
+          {manualPrice ? (
+            <p className="text-xs text-warning">
+              当前单价是手动修改过的，更换后将改为新产品的售价。
+            </p>
+          ) : null}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => reset(false)}>取消</Button>
+          <Button variant="outline" onClick={() => reset(false)}>
+            取消
+          </Button>
           <Button
             disabled={!chosen}
             onClick={() => {

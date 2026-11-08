@@ -21,13 +21,24 @@ export type PluginViewItem = {
 }
 
 /** 能力中心的一段（AI 能力 / 模板 / 工具） */
-export type PluginViewSection = { key: string; label: string; hint: string; items: PluginViewItem[] }
+export type PluginViewSection = {
+  key: string
+  label: string
+  hint: string
+  items: PluginViewItem[]
+}
 
 /**
  * 能力中心列表：按分类分段展示，卡片只展示信息并点进详情页。
  * 普通用户不安装、不启停，因此这里没有任何开关。
  */
-export function PluginList({ sections, selectedId }: { sections: PluginViewSection[]; selectedId: string | null }) {
+export function PluginList({
+  sections,
+  selectedId,
+}: {
+  sections: PluginViewSection[]
+  selectedId: string | null
+}) {
   const renderCard = (p: PluginViewItem) => {
     const pending = p.status === 'coming-soon'
     const selected = selectedId === p.id
@@ -57,7 +68,10 @@ export function PluginList({ sections, selectedId }: { sections: PluginViewSecti
             <CardTitle className="min-w-0 truncate text-base leading-snug">
               <Link
                 href={`/plugins/${p.id}`}
-                className={cn('underline-offset-4 hover:underline', pending && 'text-muted-foreground')}
+                className={cn(
+                  'underline-offset-4 hover:underline',
+                  pending && 'text-muted-foreground',
+                )}
               >
                 {p.name}
               </Link>
@@ -76,7 +90,12 @@ export function PluginList({ sections, selectedId }: { sections: PluginViewSecti
 
         <CardFooter className="flex items-center justify-between gap-2 border-t pt-3 pb-0 text-xs text-muted-foreground">
           <span className="truncate">{p.entry ? `入口：${p.entry}` : null}</span>
-          <Button asChild variant="ghost" size="xs" className="-mr-2 shrink-0 text-muted-foreground hover:text-foreground">
+          <Button
+            asChild
+            variant="ghost"
+            size="xs"
+            className="-mr-2 shrink-0 text-muted-foreground hover:text-foreground"
+          >
             <Link href={`/plugins/${p.id}`}>
               详情
               <ChevronRight className="size-3.5" />
@@ -95,7 +114,9 @@ export function PluginList({ sections, selectedId }: { sections: PluginViewSecti
             <h2 className="text-sm font-medium text-foreground">{section.label}</h2>
             {section.hint ? <p className="text-xs text-muted-foreground">{section.hint}</p> : null}
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{section.items.map(renderCard)}</div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {section.items.map(renderCard)}
+          </div>
         </section>
       ))}
     </div>

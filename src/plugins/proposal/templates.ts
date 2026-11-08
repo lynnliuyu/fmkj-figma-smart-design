@@ -6,11 +6,18 @@
  * - audience：适合什么客户；occasion：什么时候用；highlights：一眼能看出的 2–3 个外观特点。
  */
 import type { DeckThemeId } from './deck/themes'
-import { frameworkSections, kindOfFramework, type DeckSection, type ProposalFrameworkId, type ProposalKind } from './framework'
+import {
+  frameworkSections,
+  kindOfFramework,
+  type DeckSection,
+  type ProposalFrameworkId,
+  type ProposalKind,
+} from './framework'
 
 /** 方案点位的显示方式：number = 设计稿的编号圆点；symbol / product = 设备图标 / 产品图 */
 export type ProposalMarkers = 'number' | 'symbol' | 'product'
-export const isProposalMarkers = (v: unknown): v is ProposalMarkers => v === 'number' || v === 'symbol' || v === 'product'
+export const isProposalMarkers = (v: unknown): v is ProposalMarkers =>
+  v === 'number' || v === 'symbol' || v === 'product'
 
 export type ProposalTemplateDef = {
   /** 模板标识（网址参数、项目里保存的模板） */
@@ -39,8 +46,23 @@ export type ProposalTemplateDef = {
 
 type BuiltinCopy = { description: string; audience: string; occasion: string; highlights: string[] }
 
-function builtin(value: string, label: string, framework: ProposalFrameworkId, theme: DeckThemeId, copy: BuiltinCopy): ProposalTemplateDef {
-  return { value, label, ...copy, kind: kindOfFramework(framework), framework, theme, sections: frameworkSections(framework), markers: 'symbol' }
+function builtin(
+  value: string,
+  label: string,
+  framework: ProposalFrameworkId,
+  theme: DeckThemeId,
+  copy: BuiltinCopy,
+): ProposalTemplateDef {
+  return {
+    value,
+    label,
+    ...copy,
+    kind: kindOfFramework(framework),
+    framework,
+    theme,
+    sections: frameworkSections(framework),
+    markers: 'symbol',
+  }
 }
 
 export const BUILTIN_PROPOSAL_TEMPLATES: ProposalTemplateDef[] = [
@@ -127,26 +149,51 @@ export const CONSTRUCTION_TEMPLATE = 'construction'
 const LEGACY_PROPOSAL_TEMPLATES: Record<string, string> = { modern: 'qixu', premium: 'noir' }
 
 /** 在模板清单里找模板（支持旧编号），找不到返回 null */
-export function resolveProposalTemplate(v: unknown, list: ProposalTemplateDef[] = BUILTIN_PROPOSAL_TEMPLATES): ProposalTemplateDef | null {
+export function resolveProposalTemplate(
+  v: unknown,
+  list: ProposalTemplateDef[] = BUILTIN_PROPOSAL_TEMPLATES,
+): ProposalTemplateDef | null {
   if (typeof v !== 'string' || !v) return null
   const key = LEGACY_PROPOSAL_TEMPLATES[v] ?? v
   return list.find((t) => t.value === key) ?? null
 }
 
 /** 业主方案在前、施工交底在后（选择器、模板库、知识库都按这个顺序） */
-export const ownerTemplates = (list: ProposalTemplateDef[]) => list.filter((t) => t.kind === 'owner')
-export const constructionTemplates = (list: ProposalTemplateDef[]) => list.filter((t) => t.kind === 'construction')
+export const ownerTemplates = (list: ProposalTemplateDef[]) =>
+  list.filter((t) => t.kind === 'owner')
+export const constructionTemplates = (list: ProposalTemplateDef[]) =>
+  list.filter((t) => t.kind === 'construction')
 
-export type TemplateQuery = { audience?: string | null; occasion?: string | null; style?: string | null; budgetSensitive?: boolean | null }
+export type TemplateQuery = {
+  audience?: string | null
+  occasion?: string | null
+  style?: string | null
+  budgetSensitive?: boolean | null
+}
 
 /** 几乎每个模板都会出现的词，不参与打分 */
-const STOP_WORDS = new Set(['业主', '客户', '方案', '适合', '项目', '家庭', '住宅', '模板', '一起', '需要'])
+const STOP_WORDS = new Set([
+  '业主',
+  '客户',
+  '方案',
+  '适合',
+  '项目',
+  '家庭',
+  '住宅',
+  '模板',
+  '一起',
+  '需要',
+])
 
 const tokens = (s: string) =>
   s
     .toLowerCase()
     .split(/[\s,，、/·;；。()（）]+/)
-    .flatMap((w) => (w.length > 2 && /[\u4e00-\u9fff]/.test(w) ? Array.from({ length: w.length - 1 }, (_, i) => w.slice(i, i + 2)) : [w]))
+    .flatMap((w) =>
+      w.length > 2 && /[\u4e00-\u9fff]/.test(w)
+        ? Array.from({ length: w.length - 1 }, (_, i) => w.slice(i, i + 2))
+        : [w],
+    )
     .filter((w) => w.length >= 2 && !STOP_WORDS.has(w))
 
 /**
@@ -155,7 +202,9 @@ const tokens = (s: string) =>
  */
 export function recommendTemplates(list: ProposalTemplateDef[], q: TemplateQuery, limit = 3) {
   const owner = ownerTemplates(list)
-  const queryWords = [...new Set(tokens([q.audience, q.occasion, q.style].filter(Boolean).join(' ')))]
+  const queryWords = [
+    ...new Set(tokens([q.audience, q.occasion, q.style].filter(Boolean).join(' '))),
+  ]
   const scored = owner.map((t, index) => {
     const fields = [
       { text: t.audience, weight: 3, reason: `适合：${t.audience}` },

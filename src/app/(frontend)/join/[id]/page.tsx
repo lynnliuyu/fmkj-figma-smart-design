@@ -40,7 +40,9 @@ export default async function JoinProjectPage({
 
   const rawProj = project as unknown as { shareConfig?: unknown } | null
   const shareConfig = rawProj ? parseShareConfig(rawProj.shareConfig) : null
-  const valid = Boolean(project && shareConfig && shareConfig.enabled && token && shareConfig.token === token)
+  const valid = Boolean(
+    project && shareConfig && shareConfig.enabled && token && shareConfig.token === token,
+  )
 
   if (!valid || !project || !shareConfig) {
     return (
@@ -54,7 +56,9 @@ export default async function JoinProjectPage({
               <AlertTriangle className="size-5" />
             </div>
             <CardTitle className="mt-2 text-lg">协作链接已失效</CardTitle>
-            <CardDescription>该项目的协作链接可能已被项目管理员关闭或重置，请联系项目创建者获取最新链接。</CardDescription>
+            <CardDescription>
+              该项目的协作链接可能已被项目管理员关闭或重置，请联系项目创建者获取最新链接。
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Button asChild variant="outline" size="sm">
@@ -90,7 +94,10 @@ export default async function JoinProjectPage({
             <CardTitle className="text-xl">{project.name}</CardTitle>
             <CardDescription>
               {owner?.name ? `${owner.name} 邀请你加入该项目协作` : '邀请你加入该项目协作'}（
-              {canEdit ? '可共同编辑点位图、报价单与合同' : '只读查看项目点位、报价、合同与导出资料'}）
+              {canEdit
+                ? '可共同编辑点位图、报价单与合同'
+                : '只读查看项目点位、报价、合同与导出资料'}
+              ）
             </CardDescription>
           </div>
         </CardHeader>

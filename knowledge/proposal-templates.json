@@ -80,16 +80,7 @@
       "description": "8 章完整提案：平面 → 系统 → 空间 → 场景 → 投资 → 交付，适合正式汇报",
       "audience": "已经确认需求、准备签约的业主",
       "occasion": "方案深化后的正式汇报、签约前定稿",
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "value": "story",
@@ -97,15 +88,7 @@
       "description": "先讲生活场景，再落到空间、平面与预算，适合首次沟通打动业主",
       "audience": "还在了解全屋智能、需要被打动的业主",
       "occasion": "首次方案沟通、家庭成员一起看方案",
-      "sections": [
-        "cover",
-        "scenes",
-        "zones",
-        "plans",
-        "system",
-        "investment",
-        "service"
-      ]
+      "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
     },
     {
       "value": "budget",
@@ -113,12 +96,7 @@
       "description": "封面 + 系统 + 投资 + 交付，几页讲清预算，适合快速报价",
       "audience": "预算敏感、正在比价的业主",
       "occasion": "首次咨询后的快速报价、比价阶段",
-      "sections": [
-        "cover",
-        "system",
-        "investment",
-        "service"
-      ]
+      "sections": ["cover", "system", "investment", "service"]
     },
     {
       "value": "construction",
@@ -391,21 +369,8 @@
       "description": "暖白纸色、灰紫强调、细体大编号，忠于设计稿的 8 章完整提案",
       "audience": "大多数改善型住宅业主（三房到大平层）",
       "occasion": "方案深化后的正式汇报、签约前定稿",
-      "highlights": [
-        "暖白纸面",
-        "照片色带封面",
-        "8 章完整"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["暖白纸面", "照片色带封面", "8 章完整"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "noir",
@@ -416,21 +381,8 @@
       "description": "深色画面、香槟金与衬线标题，屏幕演示质感最强",
       "audience": "别墅、大平层等高净值业主",
       "occasion": "大屏投影或平板现场演示、高端项目提案",
-      "highlights": [
-        "深色画面",
-        "整幅照片封面",
-        "金线表头"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["深色画面", "整幅照片封面", "金线表头"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "grove",
@@ -441,21 +393,8 @@
       "description": "燕麦纸色、橄榄绿、左文右图封面与圆角卡片",
       "audience": "原木、日式、侘寂等自然风格的家庭",
       "occasion": "与室内设计师联合提案、软装偏自然的项目",
-      "highlights": [
-        "燕麦纸面",
-        "分栏封面",
-        "圆角卡片"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["燕麦纸面", "分栏封面", "圆角卡片"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "quick",
@@ -466,17 +405,8 @@
       "description": "封面、系统、投资与交付 4 章，几页讲清预算",
       "audience": "预算敏感、第一次咨询的业主",
       "occasion": "首次沟通后当天出报价、比价阶段",
-      "highlights": [
-        "4 章精简",
-        "先讲预算",
-        "约 5 页"
-      ],
-      "sections": [
-        "cover",
-        "system",
-        "investment",
-        "service"
-      ]
+      "highlights": ["4 章精简", "先讲预算", "约 5 页"],
+      "sections": ["cover", "system", "investment", "service"]
     },
     {
       "slug": "azure",
@@ -487,20 +417,8 @@
       "description": "冷白纸面、深海蓝强调与细线卡片，先讲生活场景再落到预算",
       "audience": "年轻业主、数码爱好者与偏好科技感的家庭",
       "occasion": "首次方案沟通，用场景打动业主",
-      "highlights": [
-        "场景先行",
-        "深海蓝细线",
-        "现代简约"
-      ],
-      "sections": [
-        "cover",
-        "scenes",
-        "zones",
-        "plans",
-        "system",
-        "investment",
-        "service"
-      ]
+      "highlights": ["场景先行", "深海蓝细线", "现代简约"],
+      "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
     },
     {
       "slug": "mono",
@@ -511,21 +429,8 @@
       "description": "纯白纸面与黑色粗体，纯文字大字封面，克制高级",
       "audience": "设计师工作室、极简风业主与商务客户",
       "occasion": "与设计公司合作提案、需要打印装订的正式文本",
-      "highlights": [
-        "纯文字封面",
-        "黑白克制",
-        "打印友好"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["纯文字封面", "黑白克制", "打印友好"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "dawn",
@@ -536,20 +441,8 @@
       "description": "奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户",
       "audience": "有老人和孩子的家庭、偏爱温馨风格的业主",
       "occasion": "首次方案沟通、全家一起看方案",
-      "highlights": [
-        "场景先行",
-        "陶土暖色",
-        "竖幅照片"
-      ],
-      "sections": [
-        "cover",
-        "scenes",
-        "zones",
-        "plans",
-        "system",
-        "investment",
-        "service"
-      ]
+      "highlights": ["场景先行", "陶土暖色", "竖幅照片"],
+      "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
     },
     {
       "slug": "jade",
@@ -560,21 +453,8 @@
       "description": "宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅",
       "audience": "新中式、东方风别墅与高端住宅业主",
       "occasion": "顶奢项目正式提案、需要文化调性的汇报",
-      "highlights": [
-        "宣纸青瓷",
-        "衬线标题",
-        "东方意境"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["宣纸青瓷", "衬线标题", "东方意境"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "terra",
@@ -585,21 +465,8 @@
       "description": "羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感",
       "audience": "中古、复古与胡桃木风格住宅的业主",
       "occasion": "设计深化汇报、软装与全屋智能联合提案",
-      "highlights": [
-        "画廊式封面",
-        "羊皮纸赤陶棕",
-        "8 章完整"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["画廊式封面", "羊皮纸赤陶棕", "8 章完整"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "linen",
@@ -610,21 +477,8 @@
       "description": "海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案",
       "audience": "法式、轻复古与浅色自然风住宅的家庭",
       "occasion": "家庭方案沟通、与室内设计师联合汇报",
-      "highlights": [
-        "拱窗照片封面",
-        "海盐蓝灰",
-        "8 章完整"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["拱窗照片封面", "海盐蓝灰", "8 章完整"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "slate",
@@ -635,21 +489,8 @@
       "description": "冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面",
       "audience": "现代建筑、清水混凝土与工业风住宅的业主",
       "occasion": "建筑师联合提案、需要清楚核对点位与预算的正式汇报",
-      "highlights": [
-        "建筑目录封面",
-        "石墨直角线框",
-        "8 章完整"
-      ],
-      "sections": [
-        "cover",
-        "plans",
-        "system",
-        "zones",
-        "scenes",
-        "rooms",
-        "investment",
-        "service"
-      ]
+      "highlights": ["建筑目录封面", "石墨直角线框", "8 章完整"],
+      "sections": ["cover", "plans", "system", "zones", "scenes", "rooms", "investment", "service"]
     },
     {
       "slug": "construction",
@@ -660,11 +501,7 @@
       "description": "点位代号、安装位置、房间配置与逐点核对表，不含任何价格",
       "audience": "安装团队、水电工与项目经理",
       "occasion": "进场施工前交底、现场安装与验收核对",
-      "highlights": [
-        "不含价格",
-        "点位代号",
-        "逐点核对"
-      ],
+      "highlights": ["不含价格", "点位代号", "逐点核对"],
       "sections": []
     }
   ],
@@ -699,19 +536,9 @@
       "tagline": "ARRIVE",
       "scope": "house",
       "chapter": "arrive",
-      "roomTypes": [
-        "entrance",
-        "living"
-      ],
+      "roomTypes": ["entrance", "living"],
       "requiredDevices": [],
-      "anyDevices": [
-        "smart-lock",
-        "touch-panel",
-        "switch-1",
-        "switch-2",
-        "switch-3",
-        "switch-4"
-      ],
+      "anyDevices": ["smart-lock", "touch-panel", "switch-1", "switch-2", "switch-3", "switch-4"],
       "steps": [
         "指纹 / 人脸开锁，或在玄关面板按「回家」",
         "玄关灯先亮，客厅主灯随后亮起",
@@ -728,24 +555,10 @@
       "tagline": "LEAVE",
       "scope": "house",
       "chapter": "arrive",
-      "roomTypes": [
-        "entrance",
-        "living"
-      ],
+      "roomTypes": ["entrance", "living"],
       "requiredDevices": [],
-      "anyDevices": [
-        "touch-panel",
-        "switch-1",
-        "switch-2",
-        "switch-3",
-        "switch-4",
-        "smart-lock"
-      ],
-      "steps": [
-        "玄关面板或手机按「离家」",
-        "全屋灯光、窗帘关闭",
-        "摄像头、门磁进入布防状态"
-      ],
+      "anyDevices": ["touch-panel", "switch-1", "switch-2", "switch-3", "switch-4", "smart-lock"],
+      "steps": ["玄关面板或手机按「离家」", "全屋灯光、窗帘关闭", "摄像头、门磁进入布防状态"],
       "photo": "/proposal/photos/scenes/leave-home.jpg",
       "credit": "Felix Mulderrig / Unsplash"
     },
@@ -757,23 +570,10 @@
       "tagline": "WELCOME",
       "scope": "room",
       "chapter": "focus",
-      "roomTypes": [
-        "living",
-        "dining"
-      ],
+      "roomTypes": ["living", "dining"],
       "requiredDevices": [],
-      "anyDevices": [
-        "downlight",
-        "ceiling-light",
-        "pendant-light",
-        "spotlight",
-        "panel-light"
-      ],
-      "steps": [
-        "客厅面板按「会客」",
-        "主灯、筒灯全亮",
-        "窗帘打开"
-      ],
+      "anyDevices": ["downlight", "ceiling-light", "pendant-light", "spotlight", "panel-light"],
+      "steps": ["客厅面板按「会客」", "主灯、筒灯全亮", "窗帘打开"],
       "photo": "/proposal/photos/scenes/guest.jpg",
       "credit": "Zac Gudakov / Unsplash"
     },
@@ -785,21 +585,10 @@
       "tagline": "MOVIE",
       "scope": "room",
       "chapter": "focus",
-      "roomTypes": [
-        "living",
-        "theater",
-        "leisure"
-      ],
+      "roomTypes": ["living", "theater", "leisure"],
       "requiredDevices": [],
-      "anyDevices": [
-        "light-strip",
-        "curtain-track"
-      ],
-      "steps": [
-        "按「观影」或语音开启",
-        "主灯关闭，灯带 30% 暖光",
-        "窗帘闭合"
-      ],
+      "anyDevices": ["light-strip", "curtain-track"],
+      "steps": ["按「观影」或语音开启", "主灯关闭，灯带 30% 暖光", "窗帘闭合"],
       "photo": "/proposal/scenes/11-movie-night.jpg",
       "credit": "AI 夜间场景意向图 / image_gen"
     },
@@ -811,26 +600,10 @@
       "tagline": "NIGHT",
       "scope": "room",
       "chapter": "rest",
-      "roomTypes": [
-        "bedroom",
-        "kids",
-        "corridor",
-        "bathroom"
-      ],
-      "requiredDevices": [
-        "motion-sensor"
-      ],
-      "anyDevices": [
-        "light-strip",
-        "downlight",
-        "other-light",
-        "wall-light"
-      ],
-      "steps": [
-        "夜间人体传感器感应到有人",
-        "夜灯 / 灯带 10% 亮起，不刺眼",
-        "无人后自动关闭"
-      ],
+      "roomTypes": ["bedroom", "kids", "corridor", "bathroom"],
+      "requiredDevices": ["motion-sensor"],
+      "anyDevices": ["light-strip", "downlight", "other-light", "wall-light"],
+      "steps": ["夜间人体传感器感应到有人", "夜灯 / 灯带 10% 亮起，不刺眼", "无人后自动关闭"],
       "photo": "/proposal/scenes/13-corridor-night.jpg",
       "credit": "AI 夜间场景意向图 / image_gen"
     },
@@ -842,10 +615,7 @@
       "tagline": "SLEEP",
       "scope": "room",
       "chapter": "rest",
-      "roomTypes": [
-        "bedroom",
-        "kids"
-      ],
+      "roomTypes": ["bedroom", "kids"],
       "requiredDevices": [],
       "anyDevices": [
         "switch-1",
@@ -855,11 +625,7 @@
         "touch-panel",
         "curtain-track"
       ],
-      "steps": [
-        "床头开关按「睡眠」",
-        "灯光渐暗后关闭",
-        "窗帘闭合"
-      ],
+      "steps": ["床头开关按「睡眠」", "灯光渐暗后关闭", "窗帘闭合"],
       "photo": "/proposal/scenes/12-bedroom-night.jpg",
       "credit": "AI 夜间场景意向图 / image_gen"
     },
@@ -871,19 +637,10 @@
       "tagline": "SAFETY",
       "scope": "room",
       "chapter": "care",
-      "roomTypes": [
-        "kitchen",
-        "dining"
-      ],
+      "roomTypes": ["kitchen", "dining"],
       "requiredDevices": [],
-      "anyDevices": [
-        "smoke-sensor"
-      ],
-      "steps": [
-        "烟感检测到异常",
-        "本地声光报警",
-        "手机收到推送"
-      ],
+      "anyDevices": ["smoke-sensor"],
+      "steps": ["烟感检测到异常", "本地声光报警", "手机收到推送"],
       "photo": "/proposal/photos/scenes/kitchen-safety.jpg",
       "credit": "Lotus Design N Print / Unsplash"
     },
@@ -895,20 +652,10 @@
       "tagline": "LEAK",
       "scope": "room",
       "chapter": "care",
-      "roomTypes": [
-        "bathroom",
-        "kitchen",
-        "balcony",
-        "utility"
-      ],
-      "requiredDevices": [
-        "water-sensor"
-      ],
+      "roomTypes": ["bathroom", "kitchen", "balcony", "utility"],
+      "requiredDevices": ["water-sensor"],
       "anyDevices": [],
-      "steps": [
-        "水浸探头检测到积水",
-        "手机立即收到推送"
-      ],
+      "steps": ["水浸探头检测到积水", "手机立即收到推送"],
       "photo": "/proposal/photos/scenes/bathroom-leak.jpg",
       "credit": "Murad Kerimli / Unsplash"
     },
@@ -920,19 +667,10 @@
       "tagline": "CARE",
       "scope": "house",
       "chapter": "care",
-      "roomTypes": [
-        "bedroom",
-        "bathroom",
-        "corridor"
-      ],
-      "requiredDevices": [
-        "motion-sensor"
-      ],
+      "roomTypes": ["bedroom", "bathroom", "corridor"],
+      "requiredDevices": ["motion-sensor"],
       "anyDevices": [],
-      "steps": [
-        "人体传感器持续记录活动",
-        "设定时间内无活动时提醒家人"
-      ],
+      "steps": ["人体传感器持续记录活动", "设定时间内无活动时提醒家人"],
       "photo": "/proposal/photos/scenes/elder-care.jpg",
       "credit": "Keith Tanner / Unsplash"
     },
@@ -946,17 +684,8 @@
       "chapter": "care",
       "roomTypes": [],
       "requiredDevices": [],
-      "anyDevices": [
-        "camera",
-        "contact-sensor",
-        "doorbell",
-        "smart-lock"
-      ],
-      "steps": [
-        "离家后自动布防",
-        "门磁 / 摄像头发现异常",
-        "推送提醒并保存录像"
-      ],
+      "anyDevices": ["camera", "contact-sensor", "doorbell", "smart-lock"],
+      "steps": ["离家后自动布防", "门磁 / 摄像头发现异常", "推送提醒并保存录像"],
       "photo": "/proposal/photos/scenes/security-alarm.jpg",
       "credit": "Alan J. Hendry / Unsplash"
     },
@@ -970,15 +699,8 @@
       "chapter": "network",
       "roomTypes": [],
       "requiredDevices": [],
-      "anyDevices": [
-        "ap-node",
-        "ceiling-ap",
-        "ac-router"
-      ],
-      "steps": [
-        "AC 路由统一管理",
-        "各房间 AP 覆盖，自动漫游"
-      ],
+      "anyDevices": ["ap-node", "ceiling-ap", "ac-router"],
+      "steps": ["AC 路由统一管理", "各房间 AP 覆盖，自动漫游"],
       "photo": "/proposal/photos/scenes/whole-wifi.jpg",
       "credit": "User_Pascal / Unsplash"
     },
@@ -990,23 +712,10 @@
       "tagline": "AUTO ON",
       "scope": "room",
       "chapter": "arrive",
-      "roomTypes": [
-        "entrance",
-        "corridor",
-        "stairs",
-        "bathroom",
-        "closet",
-        "garage",
-        "utility"
-      ],
-      "requiredDevices": [
-        "motion-sensor"
-      ],
+      "roomTypes": ["entrance", "corridor", "stairs", "bathroom", "closet", "garage", "utility"],
+      "requiredDevices": ["motion-sensor"],
       "anyDevices": [],
-      "steps": [
-        "人体传感器感应到有人",
-        "灯光自动亮起，夜间自动降低亮度"
-      ],
+      "steps": ["人体传感器感应到有人", "灯光自动亮起，夜间自动降低亮度"],
       "photo": "/proposal/photos/scenes/motion-on.jpg",
       "credit": "Franco Debartolo / Unsplash"
     },
@@ -1018,23 +727,10 @@
       "tagline": "AUTO OFF",
       "scope": "room",
       "chapter": "arrive",
-      "roomTypes": [
-        "entrance",
-        "corridor",
-        "stairs",
-        "bathroom",
-        "closet",
-        "garage",
-        "utility"
-      ],
-      "requiredDevices": [
-        "motion-sensor"
-      ],
+      "roomTypes": ["entrance", "corridor", "stairs", "bathroom", "closet", "garage", "utility"],
+      "requiredDevices": ["motion-sensor"],
       "anyDevices": [],
-      "steps": [
-        "持续无人 3 分钟",
-        "灯光自动关闭"
-      ],
+      "steps": ["持续无人 3 分钟", "灯光自动关闭"],
       "photo": "/proposal/photos/scenes/motion-off.jpg",
       "credit": "Spencer Plouzek / Unsplash"
     },
@@ -1047,14 +743,9 @@
       "scope": "house",
       "chapter": "focus",
       "roomTypes": [],
-      "requiredDevices": [
-        "speaker"
-      ],
+      "requiredDevices": ["speaker"],
       "anyDevices": [],
-      "steps": [
-        "对音箱说「广播：开饭了」",
-        "其他房间音箱同步播放"
-      ],
+      "steps": ["对音箱说「广播：开饭了」", "其他房间音箱同步播放"],
       "photo": "/proposal/photos/scenes/intercom.jpg",
       "credit": "Tim Schmidbauer / Unsplash"
     }

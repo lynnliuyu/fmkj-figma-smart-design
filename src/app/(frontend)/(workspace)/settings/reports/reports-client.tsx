@@ -46,19 +46,34 @@ function formatDateTime(iso: string) {
 function methodLabel(m?: string) {
   switch (m) {
     case 'dxf-vector':
-      return { text: 'DXF 矢量提取', cls: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' }
+      return {
+        text: 'DXF 矢量提取',
+        cls: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+      }
     case 'vision-snap':
       return { text: '视觉模型 + 磁吸', cls: 'border-primary/30 bg-primary/10 text-primary' }
     case 'vision-fusion':
       return { text: '本地识别 + 视觉复核', cls: 'border-primary/30 bg-primary/10 text-primary' }
     case 'non-plan':
-      return { text: '非图纸图片（仅看图）', cls: 'border-border bg-muted/60 text-muted-foreground' }
+      return {
+        text: '非图纸图片（仅看图）',
+        cls: 'border-border bg-muted/60 text-muted-foreground',
+      }
     case 'cad-color':
-      return { text: 'CAD 彩色图层', cls: 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400' }
+      return {
+        text: 'CAD 彩色图层',
+        cls: 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400',
+      }
     case 'cad-bw':
-      return { text: 'CAD 黑白几何', cls: 'border-muted-foreground/30 bg-muted text-muted-foreground' }
+      return {
+        text: 'CAD 黑白几何',
+        cls: 'border-muted-foreground/30 bg-muted text-muted-foreground',
+      }
     case 'empty':
-      return { text: '0 点位（无符号）', cls: 'border-amber-500/40 bg-amber-500/12 text-amber-800 dark:text-amber-400' }
+      return {
+        text: '0 点位（无符号）',
+        cls: 'border-amber-500/40 bg-amber-500/12 text-amber-800 dark:text-amber-400',
+      }
     default:
       return { text: '标准识别', cls: 'border-border bg-muted/60 text-muted-foreground' }
   }
@@ -75,7 +90,9 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
   const filteredCustomers = useMemo(() => {
     const q = customerQuery.trim().toLowerCase()
     if (!q) return report.customers
-    return report.customers.filter((c) => `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q))
+    return report.customers.filter((c) =>
+      `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q),
+    )
   }, [report.customers, customerQuery])
 
   const filteredSheets = useMemo(() => {
@@ -90,7 +107,21 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
   }
 
   function exportCsv() {
-    const headers = ['客户姓名', '邮箱', '电话', '剩余积分', '已消耗积分', '创建项目数', '上传图纸数', '识别点位数', '生成报价数', '生成合同数', 'AI对话数', 'AI消息数', '最近活跃时间']
+    const headers = [
+      '客户姓名',
+      '邮箱',
+      '电话',
+      '剩余积分',
+      '已消耗积分',
+      '创建项目数',
+      '上传图纸数',
+      '识别点位数',
+      '生成报价数',
+      '生成合同数',
+      'AI对话数',
+      'AI消息数',
+      '最近活跃时间',
+    ]
     const rows = report.customers.map((c) => [
       c.name,
       c.email,
@@ -131,19 +162,30 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
       '',
       '## 模型调用分布',
       ...(report.modelStats.length
-        ? report.modelStats.map((m) => `- ${m.model}：调用 ${m.calls} 次（其中 Auto 自动路由 ${m.autoRoutedCount} 次），消耗 ${m.credits} 积分`)
+        ? report.modelStats.map(
+            (m) =>
+              `- ${m.model}：调用 ${m.calls} 次（其中 Auto 自动路由 ${m.autoRoutedCount} 次），消耗 ${m.credits} 积分`,
+          )
         : ['- 暂无记录']),
       '',
       '## 最近活跃客户 Top 5',
-      ...report.customers.slice(0, 5).map(
-        (c) => `- ${c.name}：项目 ${c.projectCount} / 图纸 ${c.sheetCount} / 报价 ${c.quoteCount} / 剩余积分 ${c.aiCredits}（最后活跃：${formatDateTime(c.lastActiveAt)}）`,
-      ),
+      ...report.customers
+        .slice(0, 5)
+        .map(
+          (c) =>
+            `- ${c.name}：项目 ${c.projectCount} / 图纸 ${c.sheetCount} / 报价 ${c.quoteCount} / 剩余积分 ${c.aiCredits}（最后活跃：${formatDateTime(c.lastActiveAt)}）`,
+        ),
     ]
     if (report.errorLogs.length > 0) {
       lines.push(
         '',
         '## 最近 AI 报错记录',
-        ...report.errorLogs.slice(0, 5).map((e) => `- [${formatDateTime(e.createdAt)}] ${e.userName} (${e.modelName})：${e.errorMessage} | 指令：${e.promptPreview}`),
+        ...report.errorLogs
+          .slice(0, 5)
+          .map(
+            (e) =>
+              `- [${formatDateTime(e.createdAt)}] ${e.userName} (${e.modelName})：${e.errorMessage} | 指令：${e.promptPreview}`,
+          ),
       )
     }
     void navigator.clipboard?.writeText(lines.join('\n'))
@@ -164,7 +206,9 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               返回设置
             </Link>
           </Button>
-          <span className="text-xs text-muted-foreground">数据生成于 {formatDateTime(report.generatedAt)}</span>
+          <span className="text-xs text-muted-foreground">
+            数据生成于 {formatDateTime(report.generatedAt)}
+          </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
@@ -191,11 +235,16 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               <Users className="size-4 text-muted-foreground" />
             </CardDescription>
             <CardTitle className="text-2xl tabular-nums">
-              {kpis.totalCustomers} <span className="text-sm font-normal text-muted-foreground">人</span>
+              {kpis.totalCustomers}{' '}
+              <span className="text-sm font-normal text-muted-foreground">人</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 text-xs text-muted-foreground">
-            近 7 日活跃客户：<span className="font-medium text-foreground tabular-nums">{kpis.activeCustomers7d}</span> 人
+            近 7 日活跃客户：
+            <span className="font-medium text-foreground tabular-nums">
+              {kpis.activeCustomers7d}
+            </span>{' '}
+            人
           </CardContent>
         </Card>
 
@@ -206,13 +255,20 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               <FileImage className="size-4 text-muted-foreground" />
             </CardDescription>
             <CardTitle className="text-2xl tabular-nums">
-              {kpis.totalProjects} <span className="text-sm font-normal text-muted-foreground">项目</span> · {kpis.totalSheets}{' '}
+              {kpis.totalProjects}{' '}
+              <span className="text-sm font-normal text-muted-foreground">项目</span> ·{' '}
+              {kpis.totalSheets}{' '}
               <span className="text-sm font-normal text-muted-foreground">图纸</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 text-xs text-muted-foreground">
             0 点位图纸预警：
-            <span className={cn('ml-1 font-medium tabular-nums', kpis.zeroPointSheets > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground')}>
+            <span
+              className={cn(
+                'ml-1 font-medium tabular-nums',
+                kpis.zeroPointSheets > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground',
+              )}
+            >
               {kpis.zeroPointSheets} 张
             </span>
           </CardContent>
@@ -225,14 +281,18 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               <FolderKanban className="size-4 text-muted-foreground" />
             </CardDescription>
             <CardTitle className="text-2xl tabular-nums">
-              {kpis.totalQuotes} <span className="text-sm font-normal text-muted-foreground">报价</span> · {kpis.totalContracts}{' '}
+              {kpis.totalQuotes}{' '}
+              <span className="text-sm font-normal text-muted-foreground">报价</span> ·{' '}
+              {kpis.totalContracts}{' '}
               <span className="text-sm font-normal text-muted-foreground">合同</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 text-xs text-muted-foreground">
             项目出单转化率：
             <span className="ml-1 font-medium text-foreground tabular-nums">
-              {kpis.totalProjects > 0 ? `${Math.min(100, Math.round((kpis.totalQuotes / kpis.totalProjects) * 100))}%` : '0%'}
+              {kpis.totalProjects > 0
+                ? `${Math.min(100, Math.round((kpis.totalQuotes / kpis.totalProjects) * 100))}%`
+                : '0%'}
             </span>
           </CardContent>
         </Card>
@@ -244,14 +304,26 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               <Bot className="size-4 text-muted-foreground" />
             </CardDescription>
             <CardTitle className="text-2xl tabular-nums">
-              {kpis.totalAiMessages} <span className="text-sm font-normal text-muted-foreground">条消息</span>
+              {kpis.totalAiMessages}{' '}
+              <span className="text-sm font-normal text-muted-foreground">条消息</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between pt-0 text-xs text-muted-foreground">
             <span>
-              累计扣减：<strong className="font-medium text-foreground tabular-nums">{kpis.totalCreditsConsumed}</strong> 积分
+              累计扣减：
+              <strong className="font-medium text-foreground tabular-nums">
+                {kpis.totalCreditsConsumed}
+              </strong>{' '}
+              积分
             </span>
-            <span className={cn('font-medium tabular-nums', kpis.aiErrorCount > 0 ? 'text-destructive' : 'text-emerald-600 dark:text-emerald-400')}>
+            <span
+              className={cn(
+                'font-medium tabular-nums',
+                kpis.aiErrorCount > 0
+                  ? 'text-destructive'
+                  : 'text-emerald-600 dark:text-emerald-400',
+              )}
+            >
               {kpis.aiErrorCount > 0 ? `${kpis.aiErrorCount} 条异常` : '运行正常'}
             </span>
           </CardContent>
@@ -269,7 +341,9 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               </span>
             ) : null}
           </TabsTrigger>
-          <TabsTrigger value="ai">AI 模型与对话追踪 ({report.recentConversations.length})</TabsTrigger>
+          <TabsTrigger value="ai">
+            AI 模型与对话追踪 ({report.recentConversations.length})
+          </TabsTrigger>
           <TabsTrigger value="errors">
             异常与排障日志 ({report.errorLogs.length})
             {report.errorLogs.length > 0 ? (
@@ -286,7 +360,10 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-3">
               <div>
                 <CardTitle className="text-base">客户全链路使用统计</CardTitle>
-                <CardDescription>按最近活跃时间排序，快速定位每位客户在「建项目 → 传图纸 → 落点位 → 出报价 → 签合同」各环节的使用深度</CardDescription>
+                <CardDescription>
+                  按最近活跃时间排序，快速定位每位客户在「建项目 → 传图纸 → 落点位 → 出报价 →
+                  签合同」各环节的使用深度
+                </CardDescription>
               </div>
               <div className="relative w-full sm:w-64">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -330,20 +407,31 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                             </div>
                           </td>
                           <td className="px-3 py-2.5 text-right tabular-nums">
-                            <span className={cn('font-medium', c.aiCredits < 5 && 'text-destructive')}>{c.aiCredits}</span>
+                            <span
+                              className={cn('font-medium', c.aiCredits < 5 && 'text-destructive')}
+                            >
+                              {c.aiCredits}
+                            </span>
                             <span className="text-muted-foreground"> / {c.creditsConsumed}</span>
                           </td>
-                          <td className="px-3 py-2.5 text-right font-medium tabular-nums">{c.projectCount}</td>
-                          <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.sheetCount} 张 <span className="text-muted-foreground">({c.pointCount} 点)</span>
+                          <td className="px-3 py-2.5 text-right font-medium tabular-nums">
+                            {c.projectCount}
                           </td>
                           <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.quoteCount} <span className="text-muted-foreground">/ {c.contractCount}</span>
+                            {c.sheetCount} 张{' '}
+                            <span className="text-muted-foreground">({c.pointCount} 点)</span>
                           </td>
                           <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.conversationCount} <span className="text-muted-foreground">({c.messageCount} 条)</span>
+                            {c.quoteCount}{' '}
+                            <span className="text-muted-foreground">/ {c.contractCount}</span>
                           </td>
-                          <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">{formatDateTime(c.lastActiveAt)}</td>
+                          <td className="px-3 py-2.5 text-right tabular-nums">
+                            {c.conversationCount}{' '}
+                            <span className="text-muted-foreground">({c.messageCount} 条)</span>
+                          </td>
+                          <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
+                            {formatDateTime(c.lastActiveAt)}
+                          </td>
                         </tr>
                       ))
                     )}
@@ -376,27 +464,48 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             </CardHeader>
             <CardContent>
               {filteredSheets.length === 0 ? (
-                <div className="py-10 text-center text-xs text-muted-foreground">暂无符合条件的图纸记录</div>
+                <div className="py-10 text-center text-xs text-muted-foreground">
+                  暂无符合条件的图纸记录
+                </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredSheets.map((sh) => {
                     const mBadge = methodLabel(sh.method)
                     return (
-                      <div key={sh.id} className="flex flex-col justify-between rounded-xl border bg-card p-3 shadow-2xs">
+                      <div
+                        key={sh.id}
+                        className="flex flex-col justify-between rounded-xl border bg-card p-3 shadow-2xs"
+                      >
                         <div className="flex gap-3">
                           <button
                             type="button"
-                            onClick={() => setPreviewImg({ url: sh.url, title: `${sh.projectName} · ${sh.sheetName}` })}
+                            onClick={() =>
+                              setPreviewImg({
+                                url: sh.url,
+                                title: `${sh.projectName} · ${sh.sheetName}`,
+                              })
+                            }
                             className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border bg-muted"
                             title="点击放大查看客户上传的原图"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={sh.url} alt={sh.sheetName} className="size-full object-cover transition-transform group-hover:scale-105" />
+                            <img
+                              src={sh.url}
+                              alt={sh.sheetName}
+                              className="size-full object-cover transition-transform group-hover:scale-105"
+                            />
                           </button>
                           <div className="min-w-0 flex-1 space-y-1">
                             <div className="flex items-center justify-between gap-1">
-                              <span className="truncate text-xs font-semibold text-foreground">{sh.sheetName}</span>
-                              <span className={cn('shrink-0 rounded border px-1.5 py-0.2 text-[10px] font-medium', mBadge.cls)}>
+                              <span className="truncate text-xs font-semibold text-foreground">
+                                {sh.sheetName}
+                              </span>
+                              <span
+                                className={cn(
+                                  'shrink-0 rounded border px-1.5 py-0.2 text-[10px] font-medium',
+                                  mBadge.cls,
+                                )}
+                              >
                                 {mBadge.text}
                               </span>
                             </div>
@@ -404,7 +513,14 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               项目：{sh.projectName}（{sh.ownerName}）
                             </div>
                             <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs tabular-nums">
-                              <span className={cn('font-medium', sh.pointCount === 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground')}>
+                              <span
+                                className={cn(
+                                  'font-medium',
+                                  sh.pointCount === 0
+                                    ? 'text-amber-600 dark:text-amber-400'
+                                    : 'text-foreground',
+                                )}
+                              >
                                 总点位 {sh.pointCount}
                               </span>
                               <span className="text-muted-foreground">开关 {sh.switchCount}</span>
@@ -452,15 +568,23 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                         const mb = methodLabel(u.method)
                         return (
                           <tr key={u.id}>
-                            <td className="px-4 py-2 text-muted-foreground tabular-nums">{formatDateTime(u.createdAt)}</td>
+                            <td className="px-4 py-2 text-muted-foreground tabular-nums">
+                              {formatDateTime(u.createdAt)}
+                            </td>
                             <td className="px-3 py-2 font-medium">{u.fileName}</td>
                             <td className="px-3 py-2">
-                              <span className={cn('rounded border px-1.5 py-0.2 text-[10px]', mb.cls)}>{mb.text}</span>
+                              <span
+                                className={cn('rounded border px-1.5 py-0.2 text-[10px]', mb.cls)}
+                              >
+                                {mb.text}
+                              </span>
                             </td>
                             <td className="px-3 py-2 text-right tabular-nums">
                               开关 {u.switches} · 灯具 {u.lights} · 区域 {u.areas}
                             </td>
-                            <td className="px-4 py-2 text-right text-muted-foreground tabular-nums">{u.durationMs} ms</td>
+                            <td className="px-4 py-2 text-right text-muted-foreground tabular-nums">
+                              {u.durationMs} ms
+                            </td>
                           </tr>
                         )
                       })}
@@ -478,14 +602,21 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">模型调用与 Auto 路由分布</CardTitle>
-                <CardDescription className="text-xs">统计各底层模型的实际调用次数、Auto 自动路由命中次数与消耗积分</CardDescription>
+                <CardDescription className="text-xs">
+                  统计各底层模型的实际调用次数、Auto 自动路由命中次数与消耗积分
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 {report.modelStats.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-muted-foreground">暂无模型调用记录</div>
+                  <div className="py-6 text-center text-xs text-muted-foreground">
+                    暂无模型调用记录
+                  </div>
                 ) : (
                   report.modelStats.map((m) => (
-                    <div key={m.model} className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs">
+                    <div
+                      key={m.model}
+                      className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
+                    >
                       <div>
                         <span className="font-medium text-foreground">{m.model}</span>
                         {m.autoRoutedCount > 0 ? (
@@ -507,14 +638,21 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">系统工具调用排行榜</CardTitle>
-                <CardDescription className="text-xs">客户在 AI 对话中最常触发的自动化工具</CardDescription>
+                <CardDescription className="text-xs">
+                  客户在 AI 对话中最常触发的自动化工具
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 {report.toolStats.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-muted-foreground">暂无工具调用记录</div>
+                  <div className="py-6 text-center text-xs text-muted-foreground">
+                    暂无工具调用记录
+                  </div>
                 ) : (
                   report.toolStats.map((t) => (
-                    <div key={t.toolName} className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs">
+                    <div
+                      key={t.toolName}
+                      className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
+                    >
                       <span className="font-medium text-foreground">{t.toolName}</span>
                       <span className="font-medium tabular-nums">{t.calls} 次</span>
                     </div>
@@ -527,7 +665,9 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">最近客户 AI 对话会话追踪</CardTitle>
-              <CardDescription className="text-xs">查看客户最近在用 AI 处理什么项目、调用了几个工具以及最后回复摘要</CardDescription>
+              <CardDescription className="text-xs">
+                查看客户最近在用 AI 处理什么项目、调用了几个工具以及最后回复摘要
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -552,19 +692,31 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                     ) : (
                       report.recentConversations.map((c) => (
                         <tr key={c.id} className="hover:bg-muted/35">
-                          <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground tabular-nums">{formatDateTime(c.updatedAt)}</td>
-                          <td className="px-3 py-2.5 font-medium whitespace-nowrap">{c.userName}</td>
+                          <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground tabular-nums">
+                            {formatDateTime(c.updatedAt)}
+                          </td>
+                          <td className="px-3 py-2.5 font-medium whitespace-nowrap">
+                            {c.userName}
+                          </td>
                           <td className="px-3 py-2.5">
                             <div className="max-w-48 truncate font-medium">{c.title}</div>
-                            {c.projectName ? <div className="max-w-48 truncate text-[11px] text-muted-foreground">项目：{c.projectName}</div> : null}
+                            {c.projectName ? (
+                              <div className="max-w-48 truncate text-[11px] text-muted-foreground">
+                                项目：{c.projectName}
+                              </div>
+                            ) : null}
                           </td>
                           <td className="px-3 py-2.5 whitespace-nowrap">
-                            <span className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{c.model}</span>
+                            <span className="rounded bg-muted px-1.5 py-0.5 text-[11px]">
+                              {c.model}
+                            </span>
                           </td>
                           <td className="px-3 py-2.5 text-right whitespace-nowrap tabular-nums">
                             {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
                           </td>
-                          <td className="max-w-xs truncate px-4 py-2.5 text-muted-foreground">{c.lastAssistantPreview || '—'}</td>
+                          <td className="max-w-xs truncate px-4 py-2.5 text-muted-foreground">
+                            {c.lastAssistantPreview || '—'}
+                          </td>
                         </tr>
                       ))
                     )}
@@ -584,7 +736,8 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                 AI 与接口异常排障中心
               </CardTitle>
               <CardDescription>
-                自动捕获 AI 密钥失效（401）、余额不足（402）、网关拦截（403）、限流（429）或超时等异常。点击右侧复制按钮即可将完整排障上下文复制出来定位问题。
+                自动捕获 AI
+                密钥失效（401）、余额不足（402）、网关拦截（403）、限流（429）或超时等异常。点击右侧复制按钮即可将完整排障上下文复制出来定位问题。
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -595,7 +748,10 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               ) : (
                 <div className="space-y-2.5">
                   {report.errorLogs.map((err) => (
-                    <div key={err.id} className="flex flex-col gap-1.5 rounded-xl border border-destructive/25 bg-destructive/5 p-3 text-xs">
+                    <div
+                      key={err.id}
+                      className="flex flex-col gap-1.5 rounded-xl border border-destructive/25 bg-destructive/5 p-3 text-xs"
+                    >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
@@ -654,7 +810,11 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
             </div>
             <div className="overflow-auto bg-muted/40 p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={previewImg.url} alt={previewImg.title} className="max-h-[78vh] w-auto rounded border bg-white object-contain" />
+              <img
+                src={previewImg.url}
+                alt={previewImg.title}
+                className="max-h-[78vh] w-auto rounded border bg-white object-contain"
+              />
             </div>
           </div>
         </div>

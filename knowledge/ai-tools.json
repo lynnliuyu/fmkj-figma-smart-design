@@ -101,9 +101,7 @@
       "cost": 0.2,
       "scope": "workspace",
       "mutates": false,
-      "permissions": [
-        "projects:read"
-      ],
+      "permissions": ["projects:read"],
       "description": "查询或搜索项目列表（可按关键词、状态、主平台筛选），也可用来把某个已有项目设为当前操作项目。",
       "parameters": {
         "type": "object",
@@ -114,11 +112,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "active",
-              "archived",
-              "all"
-            ],
+            "enum": ["active", "archived", "all"],
             "description": "进行中 active / 已归档 archived / 全部 all（默认 active）"
           },
           "switchToProjectId": {
@@ -135,9 +129,7 @@
       "cost": 0.5,
       "scope": "workspace",
       "mutates": true,
-      "permissions": [
-        "projects:write"
-      ],
+      "permissions": ["projects:write"],
       "description": "创建一个新的全屋智能项目。项目名称留空时会按「小区 + 房号」或客户姓名自动生成。创建成功后会自动将当前会话关联到该新项目。",
       "parameters": {
         "type": "object",
@@ -194,9 +186,7 @@
       "cost": 0.5,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "projects:write"
-      ],
+      "permissions": ["projects:write"],
       "description": "修改当前关联项目（或指定 projectId）的基本信息、主平台、预算、备注，或将项目归档/恢复。",
       "parameters": {
         "type": "object",
@@ -249,10 +239,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "active",
-              "archived"
-            ],
+            "enum": ["active", "archived"],
             "description": "状态：active 进行中 / archived 已归档"
           }
         }
@@ -265,9 +252,7 @@
       "cost": 1,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "point-map:write"
-      ],
+      "permissions": ["point-map:write"],
       "description": "将户型图纸添加或更新到当前关联项目的点位图中。当用户说「重新生成点位 / 重新识别刚才的图纸 / 改成导入全部点位」时，绝不要让用户重新上传图片！直接调用本工具（可省略 url 和 mediaId，服务端会自动复用当前项目已有的图纸或历史上传图纸），并设置 replaceExisting=true（及按需设置 redetect=true）即可原地重新识别并替换点位。",
       "parameters": {
         "type": "object",
@@ -286,11 +271,7 @@
           },
           "importMode": {
             "type": "string",
-            "enum": [
-              "switches",
-              "all",
-              "none"
-            ],
+            "enum": ["switches", "all", "none"],
             "description": "点位导入范围：switches 仅导入开关（默认，避免将灯具圆圈混入开关图）；all 导入开关+筒灯/射灯全部识别点位；none 仅添加干净图纸不生成点位"
           },
           "replaceExisting": {
@@ -320,11 +301,7 @@
                   "description": "0-1 垂直比例坐标"
                 }
               },
-              "required": [
-                "type",
-                "x",
-                "y"
-              ]
+              "required": ["type", "x", "y"]
             }
           }
         }
@@ -337,9 +314,7 @@
       "cost": 1,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "point-map:write"
-      ],
+      "permissions": ["point-map:write"],
       "description": "将用户拖入上传或粘贴的 fmkj-points 格式点位识别 JSON（含 sheets / areas / points）直接导入到当前关联项目的点位图中。",
       "parameters": {
         "type": "object",
@@ -349,9 +324,7 @@
             "description": "完整的点位 JSON 字符串"
           }
         },
-        "required": [
-          "jsonText"
-        ]
+        "required": ["jsonText"]
       }
     },
     {
@@ -361,9 +334,7 @@
       "cost": 2,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "point-map:write"
-      ],
+      "permissions": ["point-map:write"],
       "description": "仅用于【没有上传户型图】的纯文字需求项目，在空白示意图上创建房间框和设备点位。只布置 WiFi AP、网络面板、窗帘电轨、网关、中控屏、VRF 控制器、人体传感器、音箱、摄像头；开关、插座、灯具没有图纸准确点位时不生成。如果项目已经上传了真实户型图（非空白图），严禁调用此工具生成网格默认点位！",
       "parameters": {
         "type": "object",
@@ -374,10 +345,7 @@
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "append",
-              "replace"
-            ],
+            "enum": ["append", "replace"],
             "description": "append 在现有基础上追加（默认）；replace 清空当前图纸后重新生成"
           },
           "rooms": {
@@ -409,23 +377,15 @@
                         "description": "数量（1–20）"
                       }
                     },
-                    "required": [
-                      "deviceType",
-                      "count"
-                    ]
+                    "required": ["deviceType", "count"]
                   }
                 }
               },
-              "required": [
-                "name",
-                "devices"
-              ]
+              "required": ["name", "devices"]
             }
           }
         },
-        "required": [
-          "rooms"
-        ]
+        "required": ["rooms"]
       }
     },
     {
@@ -435,9 +395,7 @@
       "cost": 0.3,
       "scope": "workspace",
       "mutates": false,
-      "permissions": [
-        "catalog:read"
-      ],
+      "permissions": ["catalog:read"],
       "description": "搜索平台产品库（728 款在售产品）：可按关键词、设备类型、品牌名称、生态平台、最高价格筛选，返回产品 ID、型号、SKU、品牌、售价与成本。",
       "parameters": {
         "type": "object",
@@ -472,9 +430,7 @@
       "cost": 0.5,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "defaults:write"
-      ],
+      "permissions": ["defaults:write"],
       "description": "为当前关联项目的指定设备类型设置具体的默认产品型号（传入设备类型与对应的产品 ID）。",
       "parameters": {
         "type": "object",
@@ -493,16 +449,11 @@
                   "description": "产品 ID（可通过 search_products 获取）"
                 }
               },
-              "required": [
-                "deviceType",
-                "productId"
-              ]
+              "required": ["deviceType", "productId"]
             }
           }
         },
-        "required": [
-          "items"
-        ]
+        "required": ["items"]
       }
     },
     {
@@ -512,12 +463,7 @@
       "cost": 0.2,
       "scope": "project",
       "mutates": false,
-      "permissions": [
-        "projects:read",
-        "point-map:read",
-        "quotes:read",
-        "contracts:read"
-      ],
+      "permissions": ["projects:read", "point-map:read", "quotes:read", "contracts:read"],
       "description": "读取当前关联项目的详细点位清单、已汇总的产品金额、以及项目下所有报价单和合同信息。",
       "parameters": {
         "type": "object",
@@ -531,9 +477,7 @@
       "cost": 1,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "quotes:write"
-      ],
+      "permissions": ["quotes:write"],
       "description": "为当前关联项目生成一份新的报价单（根据点位图和默认型号汇总），或修改已有的报价单（传入 quoteId 可修改标题、状态 draft/sent/accepted、优惠金额 discount、附加费用 fees 如安装调试费、备注 notes）。",
       "parameters": {
         "type": "object",
@@ -548,11 +492,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "draft",
-              "sent",
-              "accepted"
-            ],
+            "enum": ["draft", "sent", "accepted"],
             "description": "报价单状态：draft 草稿 / sent 已发送 / accepted 已确认"
           },
           "discount": {
@@ -574,10 +514,7 @@
                   "description": "金额（元）"
                 }
               },
-              "required": [
-                "name",
-                "amount"
-              ]
+              "required": ["name", "amount"]
             }
           },
           "notes": {
@@ -594,10 +531,7 @@
       "cost": 2,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "catalog:read",
-        "quotes:write"
-      ],
+      "permissions": ["catalog:read", "quotes:write"],
       "description": "把客户提供的外店报价单（识图结果或粘贴的 Excel 表格）逐行匹配到本平台产品库的同级型号，在当前关联项目生成一份对比报价单（草稿）。传入每行的品名、品牌、型号、数量和外店单价；返回逐行匹配结果、本店合计、外店合计与差价。安装调试等服务项请放在 fees。",
       "parameters": {
         "type": "object",
@@ -649,10 +583,7 @@
                   "description": "外店单价（元，可选）"
                 }
               },
-              "required": [
-                "name",
-                "quantity"
-              ]
+              "required": ["name", "quantity"]
             }
           },
           "fees": {
@@ -670,16 +601,11 @@
                   "description": "金额（元）"
                 }
               },
-              "required": [
-                "name",
-                "amount"
-              ]
+              "required": ["name", "amount"]
             }
           }
         },
-        "required": [
-          "items"
-        ]
+        "required": ["items"]
       }
     },
     {
@@ -689,9 +615,7 @@
       "cost": 1,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "contracts:write"
-      ],
+      "permissions": ["contracts:write"],
       "description": "为当前关联项目生成合同（若尚无合同则基于最新报价单自动创建），或修改已有合同的金额、工期、质保期、付款分期比例（合计需 100%）、合同条款、签订状态（draft/signed）及各期收款登记。",
       "parameters": {
         "type": "object",
@@ -731,10 +655,7 @@
                   "description": "是否已收款"
                 }
               },
-              "required": [
-                "name",
-                "percent"
-              ]
+              "required": ["name", "percent"]
             }
           },
           "terms": {
@@ -743,10 +664,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "draft",
-              "signed"
-            ],
+            "enum": ["draft", "signed"],
             "description": "合同状态：draft 草稿 / signed 已签订"
           }
         }
@@ -759,24 +677,14 @@
       "cost": 0.2,
       "scope": "project",
       "mutates": false,
-      "permissions": [
-        "documents:read"
-      ],
+      "permissions": ["documents:read"],
       "description": "获取当前项目所有可打印/导出 PDF 文档的直达链接（点位图、点位交底清单、报价单、合同、方案演示与已启用插件的工程单据），支持指定风格与模板。",
       "parameters": {
         "type": "object",
         "properties": {
           "style": {
             "type": "string",
-            "enum": [
-              "qixu",
-              "business",
-              "oriental",
-              "tech",
-              "noir",
-              "grove",
-              "minimal"
-            ],
+            "enum": ["qixu", "business", "oriental", "tech", "noir", "grove", "minimal"],
             "description": "文档风格：qixu 栖序雅致 / business 商务蓝 / oriental 东方雅韵 / tech 科技 / noir 墨金臻选 / grove 原木自然 / minimal 简约"
           },
           "template": {
@@ -793,9 +701,7 @@
       "cost": 2,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "point-map:write"
-      ],
+      "permissions": ["point-map:write"],
       "description": "对当前项目已上传的户型图，调用视觉大模型看图，并按平台设计规范规划智能设备点位：全屋 WiFi（ap-node / ceiling-ap / network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、中控屏 touch-panel、摄像头 camera，以及门磁 contact-sensor、水浸 water-sensor、烟感 smoke-sensor。开关、插座、灯具只照图识别，本工具不会生成。用户说「帮我规划/补齐/布置 AP、窗帘、传感器、摄像头」「按户型把智能设备点位布好」时调用；重复调用会先替换上次规划的点位。",
       "parameters": {
         "type": "object",
@@ -836,9 +742,7 @@
       "cost": 0,
       "scope": "workspace",
       "mutates": false,
-      "permissions": [
-        "images:generate"
-      ],
+      "permissions": ["images:generate"],
       "description": "根据文字描述生成智能家居场景图、方案配图、效果图或材质意向图。用户说“画一张”“生成图片”“出个效果图”时调用。用户上传了参考图并希望据此出图时设 useAttachedImage=true：平台会先由视觉模型理解参考图再写提示词生成，生成后再由视觉模型质检。",
       "parameters": {
         "type": "object",
@@ -849,11 +753,7 @@
           },
           "size": {
             "type": "string",
-            "enum": [
-              "1024*1024",
-              "1536*1024",
-              "1024*1536"
-            ],
+            "enum": ["1024*1024", "1536*1024", "1024*1536"],
             "description": "输出尺寸，默认 1024*1024；横版效果图用 1536*1024"
           },
           "useAttachedImage": {
@@ -861,9 +761,7 @@
             "description": "是否参考本轮对话里用户上传的图片（户型图 / 实景照片 / 效果图）"
           }
         },
-        "required": [
-          "prompt"
-        ]
+        "required": ["prompt"]
       }
     },
     {
@@ -873,9 +771,7 @@
       "cost": 0.5,
       "scope": "project",
       "mutates": false,
-      "permissions": [
-        "point-map:read"
-      ],
+      "permissions": ["point-map:read"],
       "description": "读取当前关联项目的房间点位配置：每个房间的设备、配置完整度评分、缺少的必备/推荐设备和推荐联动场景。",
       "parameters": {
         "type": "object",
@@ -889,21 +785,14 @@
       "cost": 2,
       "scope": "project",
       "mutates": true,
-      "permissions": [
-        "catalog:read",
-        "defaults:write"
-      ],
+      "permissions": ["catalog:read", "defaults:write"],
       "description": "按项目主平台和档次（economy 经济 / standard 标准 / premium 高端），为当前关联项目点位图里用到的设备类型匹配默认型号。当 apply=true 时，会直接把选型结果写入该项目的默认型号。",
       "parameters": {
         "type": "object",
         "properties": {
           "tier": {
             "type": "string",
-            "enum": [
-              "economy",
-              "standard",
-              "premium"
-            ],
+            "enum": ["economy", "standard", "premium"],
             "description": "economy 经济 / standard 标准 / premium 高端"
           },
           "apply": {
@@ -911,9 +800,7 @@
             "description": "是否直接写入当前项目的默认型号（默认 true）"
           }
         },
-        "required": [
-          "tier"
-        ]
+        "required": ["tier"]
       }
     },
     {
@@ -923,10 +810,7 @@
       "cost": 0.2,
       "scope": "workspace",
       "mutates": false,
-      "permissions": [
-        "templates:read",
-        "documents:read"
-      ],
+      "permissions": ["templates:read", "documents:read"],
       "description": "根据业主画像（如别墅高净值、年轻数码家庭、原木风、新中式）、沟通时机（首次沟通、比价阶段、签约汇报）推荐最匹配的方案模板，并返回项目方案预览链接。",
       "parameters": {
         "type": "object",
@@ -961,24 +845,13 @@
           "key": "strategy",
           "label": "匹配策略",
           "defaultValue": "同级优先",
-          "options": [
-            "同级优先",
-            "同品牌优先",
-            "性价比优先"
-          ]
+          "options": ["同级优先", "同品牌优先", "性价比优先"]
         },
         {
           "key": "brand",
           "label": "优先品牌",
           "defaultValue": "不限",
-          "options": [
-            "不限",
-            "Aqara",
-            "小米",
-            "领普",
-            "易来",
-            "华为"
-          ]
+          "options": ["不限", "Aqara", "小米", "领普", "易来", "华为"]
         }
       ],
       "promptTemplate": "我上传了客户从别家拿来的报价单（截图或粘贴的表格）。请先逐行识别品名、品牌、型号、数量和单价，安装调试、线材辅材等服务项单独列为费用；然后按【{strategy}】策略（优先品牌：{brand}）调用「竞品报价单转配单」工具，在当前项目生成对比报价单。最后用表格列出每行匹配到的型号、单价差和整单差价，并给出 3 条向业主解释我们方案优势的话术。"
@@ -990,31 +863,19 @@
       "description": "调用「房间智能分析」插件，按户型逐间检查必配点位、安防传感器与双控遗漏",
       "modelHint": "fast",
       "recommendedModelId": "deepseek-flash",
-      "requiredPlugins": [
-        "room-insights"
-      ],
+      "requiredPlugins": ["room-insights"],
       "variables": [
         {
           "key": "layout",
           "label": "户型结构",
           "defaultValue": "三室两厅两卫",
-          "options": [
-            "两室两厅一卫",
-            "三室两厅两卫",
-            "四室两厅三卫",
-            "复式 / 别墅"
-          ]
+          "options": ["两室两厅一卫", "三室两厅两卫", "四室两厅三卫", "复式 / 别墅"]
         },
         {
           "key": "focus",
           "label": "审查重点",
           "defaultValue": "照明回路与安防传感器",
-          "options": [
-            "照明回路与安防传感器",
-            "全屋无主灯调光",
-            "老人与儿童看护",
-            "精装房后装改造"
-          ]
+          "options": ["照明回路与安防传感器", "全屋无主灯调光", "老人与儿童看护", "精装房后装改造"]
         }
       ],
       "promptTemplate": "请按【{layout}】户型标准，调用「房间智能分析」插件审查当前项目的点位配置（重点关注：{focus}），列出缺失点位、原因及推荐联动场景。"
@@ -1026,20 +887,13 @@
       "description": "针对现场水电施工交底，按点位汇总零火线、窗帘盒电源、网口与网关位置要求",
       "modelHint": "fast",
       "recommendedModelId": "deepseek-flash",
-      "requiredPlugins": [
-        "room-insights",
-        "proposal"
-      ],
+      "requiredPlugins": ["room-insights", "proposal"],
       "variables": [
         {
           "key": "stage",
           "label": "施工阶段",
           "defaultValue": "水电开槽布管前",
-          "options": [
-            "水电开槽布管前",
-            "吊顶木工封板前",
-            "油漆完工安装前"
-          ]
+          "options": ["水电开槽布管前", "吊顶木工封板前", "油漆完工安装前"]
         }
       ],
       "promptTemplate": "当前项目处于【{stage}】阶段，请结合项目点位生成一份给水电工与项目经理的强弱电预留交底注意事项（含零火线、底盒深度、窗帘电源与网关网口要求）。"
@@ -1051,32 +905,19 @@
       "description": "调用「智能选型」插件，按指定生态平台和预算档次匹配全屋默认设备型号",
       "modelHint": "fast",
       "recommendedModelId": "deepseek-flash",
-      "requiredPlugins": [
-        "smart-select",
-        "room-insights"
-      ],
+      "requiredPlugins": ["smart-select", "room-insights"],
       "variables": [
         {
           "key": "platform",
           "label": "主平台",
           "defaultValue": "米家",
-          "options": [
-            "米家",
-            "Aqara Home",
-            "Apple Home",
-            "华为鸿蒙智家",
-            "KNX"
-          ]
+          "options": ["米家", "Aqara Home", "Apple Home", "华为鸿蒙智家", "KNX"]
         },
         {
           "key": "tier",
           "label": "配置档次",
           "defaultValue": "标准档",
-          "options": [
-            "经济档",
-            "标准档",
-            "高端档"
-          ]
+          "options": ["经济档", "标准档", "高端档"]
         }
       ],
       "promptTemplate": "请调用「智能选型」插件，以【{platform}】为主平台、按【{tier}】预算标准，为当前项目的开关、窗帘、门锁、传感器与网关推荐默认型号组合，并说明选型理由。"
@@ -1088,29 +929,19 @@
       "description": "结合「方案演示」与「文档风格包」，生成客户汇报话术、三阶段付款说明与共同验收清单",
       "modelHint": "fast",
       "recommendedModelId": "deepseek-flash",
-      "requiredPlugins": [
-        "proposal",
-        "doc-styles"
-      ],
+      "requiredPlugins": ["proposal", "doc-styles"],
       "variables": [
         {
           "key": "paymentSplit",
           "label": "付款比例",
           "defaultValue": "40% / 50% / 10%",
-          "options": [
-            "40% / 50% / 10%",
-            "30% / 60% / 10%",
-            "50% / 40% / 10%"
-          ]
+          "options": ["40% / 50% / 10%", "30% / 60% / 10%", "50% / 40% / 10%"]
         },
         {
           "key": "warranty",
           "label": "质保与维护",
           "defaultValue": "设备质保 12 个月，含 1 年上门联调",
-          "options": [
-            "设备质保 12 个月，含 1 年上门联调",
-            "设备质保 24 个月，含季度巡检"
-          ]
+          "options": ["设备质保 12 个月，含 1 年上门联调", "设备质保 24 个月，含季度巡检"]
         }
       ],
       "promptTemplate": "请调用「方案演示」与「文档风格包」插件，按栖序提案「08 服务交付 · 付款与确认」结构，采用【{paymentSplit}】付款节点与【{warranty}】条款，生成给客户的方案汇报话术与现场验收确认要点。"
@@ -1122,9 +953,7 @@
       "description": "根据业主装修风格与沟通阶段，从方案模板库中挑选最合适的提案模板并生成开场汇报要点",
       "modelHint": "fast",
       "recommendedModelId": "deepseek-flash",
-      "requiredPlugins": [
-        "proposal"
-      ],
+      "requiredPlugins": ["proposal"],
       "variables": [
         {
           "key": "clientProfile",
@@ -1141,11 +970,7 @@
           "key": "meetingStage",
           "label": "汇报时机",
           "defaultValue": "首次方案沟通",
-          "options": [
-            "首次方案沟通",
-            "比价与预算速览",
-            "深化定稿与签约汇报"
-          ]
+          "options": ["首次方案沟通", "比价与预算速览", "深化定稿与签约汇报"]
         }
       ],
       "promptTemplate": "当前客户属于【{clientProfile}】，处于【{meetingStage}】阶段。请调用 recommend_proposal_template 工具推荐最合适的方案模板，并给出 3 条针对该客户的提案讲解建议。"
@@ -1157,18 +982,13 @@
       "description": "按视觉直读模式识别开关面板与智能屏，读取图例和插座数量，但不生成插座点位",
       "modelHint": "vision",
       "recommendedModelId": "qwen3.7-plus",
-      "requiredPlugins": [
-        "ai-import"
-      ],
+      "requiredPlugins": ["ai-import"],
       "variables": [
         {
           "key": "scope",
           "label": "识别范围",
           "defaultValue": "仅开关面板与智能屏",
-          "options": [
-            "仅开关面板与智能屏",
-            "开关面板 + 灯具"
-          ]
+          "options": ["仅开关面板与智能屏", "开关面板 + 灯具"]
         }
       ],
       "promptTemplate": "请按【{scope}】重新识别当前图纸：先读图例和房间文字统计，再让视觉模型直读开关面板/智能屏点位；本地几何识别只做坐标吸附与补缺。插座只统计数量，不生成点位。"
@@ -1180,30 +1000,19 @@
       "description": "调用「AI 识别导入」插件，生成标准 3:2 户型图的房间与点位比例坐标识别指令",
       "modelHint": "vision",
       "recommendedModelId": "qwen-vl-plus",
-      "requiredPlugins": [
-        "ai-import"
-      ],
+      "requiredPlugins": ["ai-import"],
       "variables": [
         {
           "key": "sheetName",
           "label": "图纸楼层",
           "defaultValue": "一层平面图",
-          "options": [
-            "一层平面图",
-            "二层平面图",
-            "地下室平面图",
-            "全套标准图"
-          ]
+          "options": ["一层平面图", "二层平面图", "地下室平面图", "全套标准图"]
         },
         {
           "key": "scope",
           "label": "布点范围",
           "defaultValue": "全屋点位（含灯光开关与传感）",
-          "options": [
-            "全屋点位（含灯光开关与传感）",
-            "仅智能开关与插座",
-            "不含灯具（后装改造）"
-          ]
+          "options": ["全屋点位（含灯光开关与传感）", "仅智能开关与插座", "不含灯具（后装改造）"]
         }
       ],
       "promptTemplate": "请按「AI 识别导入」插件规范，针对【{sheetName}】按【{scope}】生成 fmkj-points JSON 识图提示词与导入校验清单。"

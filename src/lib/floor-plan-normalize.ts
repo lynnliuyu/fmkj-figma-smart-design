@@ -9,27 +9,52 @@ import { SHEET } from './sheet-spec'
 export async function normalizeFloorPlan(input: Buffer, opts: { crop?: boolean } = {}) {
   const sharp = (await import('sharp')).default
   const meta = await sharp(input, { failOn: 'none' }).metadata()
-  if (!meta.format || !['png', 'jpeg', 'jpg', 'webp', 'gif', 'heif', 'tiff'].includes(meta.format)) {
+  if (
+    !meta.format ||
+    !['png', 'jpeg', 'jpg', 'webp', 'gif', 'heif', 'tiff'].includes(meta.format)
+  ) {
     throw new Error('UNSUPPORTED_IMAGE')
   }
-  const { data, info } = await sharp(input, { failOn: 'none' }).rotate().flatten({ background: '#ffffff' }).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const { data, info } = await sharp(input, { failOn: 'none' })
+    .rotate()
+    .flatten({ background: '#ffffff' })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
   const source: Pixels = { data, width: info.width, height: info.height, channels: info.channels }
-  const crop = opts.crop === false ? { x: 0, y: 0, width: info.width, height: info.height } : detectPlanBounds(source)
+  const crop =
+    opts.crop === false
+      ? { x: 0, y: 0, width: info.width, height: info.height }
+      : detectPlanBounds(source)
   const { target } = fitIntoSheet(crop, SHEET.pixelWidth, SHEET.pixelHeight, SHEET.padding)
 
-  const plan = await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+  const plan = await sharp(data, {
+    raw: { width: info.width, height: info.height, channels: info.channels },
+  })
     .extract({ left: crop.x, top: crop.y, width: crop.width, height: crop.height })
     .resize(target.width, target.height, { fit: 'fill' })
     .png()
     .toBuffer()
-  const png = await sharp({ create: { width: SHEET.pixelWidth, height: SHEET.pixelHeight, channels: 3, background: '#ffffff' } })
+  const png = await sharp({
+    create: {
+      width: SHEET.pixelWidth,
+      height: SHEET.pixelHeight,
+      channels: 3,
+      background: '#ffffff',
+    },
+  })
     .composite([{ input: plan, left: target.x, top: target.y }])
     .png({ compressionLevel: 9 })
     .toBuffer()
   const raw = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
   return {
     png,
-    pixels: { data: raw.data, width: raw.info.width, height: raw.info.height, channels: raw.info.channels } as Pixels,
+    pixels: {
+      data: raw.data,
+      width: raw.info.width,
+      height: raw.info.height,
+      channels: raw.info.channels,
+    } as Pixels,
     cropped: opts.crop !== false && (crop.width < info.width || crop.height < info.height),
   }
 }

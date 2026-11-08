@@ -1,4 +1,10 @@
-import { APIError, type Access, type CollectionConfig, type PayloadRequest, type Where } from 'payload'
+import {
+  APIError,
+  type Access,
+  type CollectionConfig,
+  type PayloadRequest,
+  type Where,
+} from 'payload'
 
 import { cmsAdminOrMember, isCmsAdmin, isMember, relId } from '@/lib/access'
 import { CONTRACT_STATUSES, contractNumberPrefix, paymentPercentTotal } from '@/lib/contracts'
@@ -36,8 +42,19 @@ async function nextContractNumber(req: PayloadRequest) {
 }
 
 /** 签订后锁定的内容（收款登记除外）。 */
-const LOCKED_WHEN_SIGNED = ['number', 'quote', 'amount', 'customerName', 'customerPhone', 'address', 'durationDays', 'warrantyMonths', 'terms'] as const
-const norm = (v: unknown) => (v && typeof v === 'object' ? relId(v) : v === '' || v === undefined ? null : v)
+const LOCKED_WHEN_SIGNED = [
+  'number',
+  'quote',
+  'amount',
+  'customerName',
+  'customerPhone',
+  'address',
+  'durationDays',
+  'warrantyMonths',
+  'terms',
+] as const
+const norm = (v: unknown) =>
+  v && typeof v === 'object' ? relId(v) : v === '' || v === undefined ? null : v
 type Payment = { name?: string | null; percent?: number | null; received?: boolean | null }
 
 /**
@@ -63,7 +80,8 @@ export const Contracts: CollectionConfig = {
   hooks: {
     beforeValidate: [
       async ({ data, operation, req }) => {
-        if (data && operation === 'create' && !String(data.number ?? '').trim()) data.number = await nextContractNumber(req)
+        if (data && operation === 'create' && !String(data.number ?? '').trim())
+          data.number = await nextContractNumber(req)
         return data
       },
     ],
@@ -72,17 +90,33 @@ export const Contracts: CollectionConfig = {
         const projectId = relId(data.project)
         const quoteId = relId(data.quote)
         if (!projectId || !quoteId) throw new APIError('合同需要关联项目和报价', 400)
-        if (operation === 'update' && relId(originalDoc?.project) !== projectId) throw new APIError('合同不能改到其他项目', 400)
+        if (operation === 'update' && relId(originalDoc?.project) !== projectId)
+          throw new APIError('合同不能改到其他项目', 400)
         await assertProjectEditable(req, projectId)
 
         if (operation === 'create') {
-          const existing = await req.payload.count({ collection: 'contracts', where: { project: { equals: projectId } }, req, overrideAccess: true })
+          const existing = await req.payload.count({
+            collection: 'contracts',
+            where: { project: { equals: projectId } },
+            req,
+            overrideAccess: true,
+          })
           if (existing.totalDocs) throw new APIError('这个项目已经有合同了', 400)
         }
         // 依据的报价必须属于同一个项目
         if (operation === 'create' || quoteId !== relId(originalDoc?.quote)) {
-          const quote = await req.payload.findByID({ collection: 'quotes', id: quoteId, depth: 0, req, overrideAccess: true, select: { project: true } }).catch(() => null)
-          if (!quote || relId(quote.project) !== projectId) throw new APIError('所选报价不属于这个项目', 400)
+          const quote = await req.payload
+            .findByID({
+              collection: 'quotes',
+              id: quoteId,
+              depth: 0,
+              req,
+              overrideAccess: true,
+              select: { project: true },
+            })
+            .catch(() => null)
+          if (!quote || relId(quote.project) !== projectId)
+            throw new APIError('所选报价不属于这个项目', 400)
         }
 
         const payments = (data.payments ?? []) as Payment[]
@@ -94,9 +128,16 @@ export const Contracts: CollectionConfig = {
         const after = data.status === 'signed' ? 'signed' : 'draft'
         if (isMember(req) && before === 'signed' && after === 'signed' && originalDoc) {
           const old = (originalDoc.payments ?? []) as Payment[]
-          const fieldChanged = LOCKED_WHEN_SIGNED.some((k) => JSON.stringify(norm(data[k])) !== JSON.stringify(norm(originalDoc[k])))
-          const termsChanged = old.length !== payments.length || payments.some((p, i) => p.name !== old[i]?.name || Number(p.percent) !== Number(old[i]?.percent))
-          if (fieldChanged || termsChanged) throw new APIError('合同已签订，只能登记收款；如需修改请先撤销签订', 403)
+          const fieldChanged = LOCKED_WHEN_SIGNED.some(
+            (k) => JSON.stringify(norm(data[k])) !== JSON.stringify(norm(originalDoc[k])),
+          )
+          const termsChanged =
+            old.length !== payments.length ||
+            payments.some(
+              (p, i) => p.name !== old[i]?.name || Number(p.percent) !== Number(old[i]?.percent),
+            )
+          if (fieldChanged || termsChanged)
+            throw new APIError('合同已签订，只能登记收款；如需修改请先撤销签订', 403)
         }
         // 签订日期跟随状态：签订时默认当天，撤销签订时清空
         if (after === 'signed' && !data.signedAt) data.signedAt = new Date().toISOString()
@@ -107,7 +148,16 @@ export const Contracts: CollectionConfig = {
     beforeDelete: [
       async ({ id, req }) => {
         if (!isMember(req)) return
-        const doc = await req.payload.findByID({ collection: 'contracts', id, depth: 0, req, overrideAccess: true, select: { status: true, project: true } }).catch(() => null)
+        const doc = await req.payload
+          .findByID({
+            collection: 'contracts',
+            id,
+            depth: 0,
+            req,
+            overrideAccess: true,
+            select: { status: true, project: true },
+          })
+          .catch(() => null)
         if (!doc) return
         await assertProjectEditable(req, relId(doc.project))
         if (doc.status === 'signed') throw new APIError('已签订的合同不能删除，请先撤销签订', 403)
@@ -118,7 +168,16 @@ export const Contracts: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'number', label: '合同编号', type: 'text', required: true, unique: true, index: true, maxLength: 40, admin: { description: '留空自动生成' } },
+        {
+          name: 'number',
+          label: '合同编号',
+          type: 'text',
+          required: true,
+          unique: true,
+          index: true,
+          maxLength: 40,
+          admin: { description: '留空自动生成' },
+        },
         {
           name: 'status',
           label: '状态',
@@ -127,14 +186,33 @@ export const Contracts: CollectionConfig = {
           defaultValue: 'draft',
           options: CONTRACT_STATUSES.map(({ value, label }) => ({ value, label })),
         },
-        { name: 'signedAt', label: '签订日期', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
+        {
+          name: 'signedAt',
+          label: '签订日期',
+          type: 'date',
+          admin: { date: { pickerAppearance: 'dayOnly' } },
+        },
       ],
     },
     {
       type: 'row',
       fields: [
-        { name: 'project', label: '项目', type: 'relationship', relationTo: 'projects', required: true, unique: true, index: true },
-        { name: 'quote', label: '依据报价', type: 'relationship', relationTo: 'quotes', required: true },
+        {
+          name: 'project',
+          label: '项目',
+          type: 'relationship',
+          relationTo: 'projects',
+          required: true,
+          unique: true,
+          index: true,
+        },
+        {
+          name: 'quote',
+          label: '依据报价',
+          type: 'relationship',
+          relationTo: 'quotes',
+          required: true,
+        },
       ],
     },
     { name: 'amount', label: '合同金额（元）', type: 'number', required: true, min: 0 },
@@ -164,7 +242,14 @@ export const Contracts: CollectionConfig = {
           type: 'row',
           fields: [
             { name: 'name', label: '款项', type: 'text', required: true, maxLength: 40 },
-            { name: 'percent', label: '比例（%）', type: 'number', required: true, min: 0, max: 100 },
+            {
+              name: 'percent',
+              label: '比例（%）',
+              type: 'number',
+              required: true,
+              min: 0,
+              max: 100,
+            },
             { name: 'received', label: '已收款', type: 'checkbox', defaultValue: false },
           ],
         },

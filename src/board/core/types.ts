@@ -78,7 +78,16 @@ export type SheetObj = {
 }
 
 /** 引擎不认识的元素：沿用场景 JSON 的元素结构（x / y / width / height / angle / points / text / fileId …） */
-export type RawEl = { id: string; type: string; x: number; y: number; width: number; height: number; angle?: number; [key: string]: unknown }
+export type RawEl = {
+  id: string
+  type: string
+  x: number
+  y: number
+  width: number
+  height: number
+  angle?: number
+  [key: string]: unknown
+}
 export type RawObj = { kind: 'raw'; id: string; el: RawEl }
 
 export type BoardObj = SymbolObj | AreaObj | SheetObj | RawObj
@@ -119,4 +128,6 @@ export type ViewSettings = {
 }
 
 /** 放置中的符号（点击 / 拖入画布时生成对象用的模板） */
-export type SymbolTemplate = Pick<SymbolObj, 'symbolId' | 'sizeCm' | 'real' | 'data'> & { angle?: number }
+export type SymbolTemplate = Pick<SymbolObj, 'symbolId' | 'sizeCm' | 'real' | 'data'> & {
+  angle?: number
+}

@@ -14,18 +14,49 @@
  * 只给一张图纸时可以省略 sheets，直接写 { "points": [...] }，导入到当前图纸。
  */
 import { AREA_TYPES, inferAreaType, isAreaType, type AreaType } from '@/lib/area-types'
-import { categoryOf, categoryOfType, DEVICE_TYPES, deviceTypeOf, inferDeviceType, isDeviceType } from '@/lib/device-types'
-import { buildAreaElements, buildPointElements, nextPointCode, type AreaInfo, type PointInfo, type SceneEl, type SheetInfo } from '@/lib/point-scene'
+import {
+  categoryOf,
+  categoryOfType,
+  DEVICE_TYPES,
+  deviceTypeOf,
+  inferDeviceType,
+  isDeviceType,
+} from '@/lib/device-types'
+import {
+  buildAreaElements,
+  buildPointElements,
+  nextPointCode,
+  type AreaInfo,
+  type PointInfo,
+  type SceneEl,
+  type SheetInfo,
+} from '@/lib/point-scene'
 import { DESIGN_RULE_TEXT, isDrawingOnlyType, NEEDS_SWITCH_TYPES } from '@/lib/design-rules'
 import { SHEET } from '@/lib/sheet-spec'
 
 export const IMPORT_FORMAT = 'fmkj-points'
 
-type PlanPoint = { deviceType: string; rx: number; ry: number; note: string | null; fromDesign?: boolean }
+type PlanPoint = {
+  deviceType: string
+  rx: number
+  ry: number
+  note: string | null
+  fromDesign?: boolean
+}
 type PlanArea = { name: string; areaType: AreaType; rect: [number, number, number, number] }
-export type ImportPlan = { sheets: { sheet: SheetInfo; points: PlanPoint[]; areas: PlanArea[] }[]; warnings: string[]; pointCount: number; areaCount: number }
+export type ImportPlan = {
+  sheets: { sheet: SheetInfo; points: PlanPoint[]; areas: PlanArea[] }[]
+  warnings: string[]
+  pointCount: number
+  areaCount: number
+}
 
-const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v)) ? Number(v) : null)
+const num = (v: unknown) =>
+  typeof v === 'number' && Number.isFinite(v)
+    ? v
+    : typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v))
+      ? Number(v)
+      : null
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 
 /** AI 常把 JSON 包在说明文字或 ```json 代码块里，这里取出第一个完整的 JSON。 */
@@ -62,10 +93,21 @@ export function resolveDeviceType(raw: unknown): string | null {
   return inferred === 'other' ? null : inferred
 }
 
-function pickSheet(raw: Record<string, unknown>, sheets: SheetInfo[], fallback: SheetInfo): SheetInfo | null {
-  const name = typeof raw.name === 'string' ? raw.name.trim() : typeof raw.sheet === 'string' ? raw.sheet.trim() : ''
+function pickSheet(
+  raw: Record<string, unknown>,
+  sheets: SheetInfo[],
+  fallback: SheetInfo,
+): SheetInfo | null {
+  const name =
+    typeof raw.name === 'string'
+      ? raw.name.trim()
+      : typeof raw.sheet === 'string'
+        ? raw.sheet.trim()
+        : ''
   if (name) {
-    const hit = sheets.find((s) => s.name === name) ?? sheets.find((s) => s.name.includes(name) || name.includes(s.name))
+    const hit =
+      sheets.find((s) => s.name === name) ??
+      sheets.find((s) => s.name.includes(name) || name.includes(s.name))
     if (hit) return hit
   }
   const index = num(raw.index ?? (typeof raw.sheet === 'number' ? raw.sheet : null))
@@ -74,7 +116,11 @@ function pickSheet(raw: Record<string, unknown>, sheets: SheetInfo[], fallback: 
 }
 
 /** 解析 AI 返回的内容，得到导入计划（还没有修改画布）。 */
-export function parsePointImport(input: unknown, sheets: SheetInfo[], activeSheetId?: string | null): { ok: true; plan: ImportPlan } | { ok: false; error: string } {
+export function parsePointImport(
+  input: unknown,
+  sheets: SheetInfo[],
+  activeSheetId?: string | null,
+): { ok: true; plan: ImportPlan } | { ok: false; error: string } {
   if (!sheets.length) return { ok: false, error: '请先添加图纸，再导入识别结果' }
   let data: unknown = input
   if (typeof input === 'string') {
@@ -87,8 +133,15 @@ export function parsePointImport(input: unknown, sheets: SheetInfo[], activeShee
   const fallback = sheets.find((s) => s.id === activeSheetId) ?? sheets[0]
   let rawSheets: Record<string, unknown>[]
   if (Array.isArray(data)) rawSheets = [{ points: data }]
-  else if (data && typeof data === 'object' && Array.isArray((data as { sheets?: unknown }).sheets)) rawSheets = (data as { sheets: Record<string, unknown>[] }).sheets
-  else if (data && typeof data === 'object' && (Array.isArray((data as { points?: unknown }).points) || Array.isArray((data as { areas?: unknown }).areas))) rawSheets = [data as Record<string, unknown>]
+  else if (data && typeof data === 'object' && Array.isArray((data as { sheets?: unknown }).sheets))
+    rawSheets = (data as { sheets: Record<string, unknown>[] }).sheets
+  else if (
+    data &&
+    typeof data === 'object' &&
+    (Array.isArray((data as { points?: unknown }).points) ||
+      Array.isArray((data as { areas?: unknown }).areas))
+  )
+    rawSheets = [data as Record<string, unknown>]
   else return { ok: false, error: 'JSON 里没有 points（点位）或 sheets（图纸）' }
 
   const warnings: string[] = []
@@ -106,7 +159,10 @@ export function parsePointImport(input: unknown, sheets: SheetInfo[], activeShee
     const points = Array.isArray(raw.points) ? (raw.points as Record<string, unknown>[]) : []
     const areas = Array.isArray(raw.areas) ? (raw.areas as Record<string, unknown>[]) : []
     // 没写单位时自动判断：出现大于 1.5 的坐标就是像素
-    const coords = [...points.flatMap((p) => [num(p?.x), num(p?.y)]), ...areas.flatMap((a) => (Array.isArray(a?.rect) ? a.rect.map(num) : []))].filter((n): n is number => n !== null)
+    const coords = [
+      ...points.flatMap((p) => [num(p?.x), num(p?.y)]),
+      ...areas.flatMap((a) => (Array.isArray(a?.rect) ? a.rect.map(num) : [])),
+    ].filter((n): n is number => n !== null)
     const px = raw.unit === 'px' || (raw.unit !== 'ratio' && coords.some((n) => n > 1.5))
     const sx = (n: number) => clamp01(px ? n / SHEET.pixelWidth : n)
     const sy = (n: number) => clamp01(px ? n / SHEET.pixelHeight : n)
@@ -124,14 +180,27 @@ export function parsePointImport(input: unknown, sheets: SheetInfo[], activeShee
         ruleSkipped++
         continue
       }
-      if (!resolved) unknownTypes.set(String(p.type ?? p.name ?? '未写类型'), (unknownTypes.get(String(p.type ?? p.name ?? '未写类型')) ?? 0) + 1)
-      entry.points.push({ deviceType: resolved ?? 'other', rx: sx(x), ry: sy(y), note: typeof p.note === 'string' ? p.note.slice(0, 60) : null, fromDesign: p.source === 'design' })
+      if (!resolved)
+        unknownTypes.set(
+          String(p.type ?? p.name ?? '未写类型'),
+          (unknownTypes.get(String(p.type ?? p.name ?? '未写类型')) ?? 0) + 1,
+        )
+      entry.points.push({
+        deviceType: resolved ?? 'other',
+        rx: sx(x),
+        ry: sy(y),
+        note: typeof p.note === 'string' ? p.note.slice(0, 60) : null,
+        fromDesign: p.source === 'design',
+      })
     }
     for (const a of areas) {
       const name = typeof a?.name === 'string' ? a.name.trim().slice(0, 30) : ''
       let r = Array.isArray(a?.rect) ? a.rect.map(num) : null
       if (!r && a && typeof a === 'object') {
-        const x = num(a.x), y = num(a.y), w = num(a.width), h = num(a.height)
+        const x = num(a.x),
+          y = num(a.y),
+          w = num(a.width),
+          h = num(a.height)
         if (x !== null && y !== null && w !== null && h !== null) r = [x, y, x + w, y + h]
       }
       if (!name || !r || r.length !== 4 || r.some((n) => n === null)) {
@@ -139,7 +208,12 @@ export function parsePointImport(input: unknown, sheets: SheetInfo[], activeShee
         continue
       }
       const [x0, y0, x1, y1] = r as number[]
-      const rect: [number, number, number, number] = [sx(Math.min(x0, x1)), sy(Math.min(y0, y1)), sx(Math.max(x0, x1)), sy(Math.max(y0, y1))]
+      const rect: [number, number, number, number] = [
+        sx(Math.min(x0, x1)),
+        sy(Math.min(y0, y1)),
+        sx(Math.max(x0, x1)),
+        sy(Math.max(y0, y1)),
+      ]
       if (rect[2] - rect[0] < 0.01 || rect[3] - rect[1] < 0.01) {
         skipped++
         continue
@@ -151,15 +225,24 @@ export function parsePointImport(input: unknown, sheets: SheetInfo[], activeShee
     // 设计规范：中控屏对照开关点位布置，这张图纸没有开关点位时，AI 设计的中控屏不导入
     if (!entry.points.some((p) => categoryOfType(p.deviceType)?.slug === 'switch')) {
       const before = entry.points.length
-      entry.points = entry.points.filter((p) => !(p.fromDesign && NEEDS_SWITCH_TYPES.has(p.deviceType)))
+      entry.points = entry.points.filter(
+        (p) => !(p.fromDesign && NEEDS_SWITCH_TYPES.has(p.deviceType)),
+      )
       ruleSkipped += before - entry.points.length
     }
     if (entry.points.length || entry.areas.length) plan.sheets.push(entry)
   }
-  if (unknownTypes.size) warnings.push(`${[...unknownTypes.entries()].map(([t, n]) => `「${t}」${n} 个`).join('、')}无法识别设备类型，已记为「其他设备」`)
-  if (ruleSkipped) warnings.push(`按设计规范，${ruleSkipped} 个 AI 推测的点位未导入（开关 / 插座 / 灯具只照图生成；没有开关点位时不加中控屏）`)
+  if (unknownTypes.size)
+    warnings.push(
+      `${[...unknownTypes.entries()].map(([t, n]) => `「${t}」${n} 个`).join('、')}无法识别设备类型，已记为「其他设备」`,
+    )
+  if (ruleSkipped)
+    warnings.push(
+      `按设计规范，${ruleSkipped} 个 AI 推测的点位未导入（开关 / 插座 / 灯具只照图生成；没有开关点位时不加中控屏）`,
+    )
   if (skipped) warnings.push(`${skipped} 条数据缺少坐标或名称，已跳过`)
-  if (!plan.pointCount && !plan.areaCount) return { ok: false, error: warnings[0] ?? '没有可导入的点位或区域' }
+  if (!plan.pointCount && !plan.areaCount)
+    return { ok: false, error: warnings[0] ?? '没有可导入的点位或区域' }
   return { ok: true, plan }
 }
 
@@ -170,14 +253,32 @@ export function planToElements(plan: ImportPlan, usedCodes: Iterable<string>) {
   const points: SceneEl[] = []
   for (const { sheet, points: pts, areas: ars } of plan.sheets) {
     for (const a of ars) {
-      areas.push(...buildAreaElements({ name: a.name, areaType: a.areaType, x: sheet.x + a.rect[0] * sheet.width, y: sheet.y + a.rect[1] * sheet.height, width: (a.rect[2] - a.rect[0]) * sheet.width, height: (a.rect[3] - a.rect[1]) * sheet.height }))
+      areas.push(
+        ...buildAreaElements({
+          name: a.name,
+          areaType: a.areaType,
+          x: sheet.x + a.rect[0] * sheet.width,
+          y: sheet.y + a.rect[1] * sheet.height,
+          width: (a.rect[2] - a.rect[0]) * sheet.width,
+          height: (a.rect[3] - a.rect[1]) * sheet.height,
+        }),
+      )
     }
     // 从上到下、从左到右编号，方便现场按顺序找点位
-    const ordered = pts.slice().sort((a, b) => Math.round(a.ry * 20) - Math.round(b.ry * 20) || a.rx - b.rx)
+    const ordered = pts
+      .slice()
+      .sort((a, b) => Math.round(a.ry * 20) - Math.round(b.ry * 20) || a.rx - b.rx)
     for (const p of ordered) {
       const code = nextPointCode(p.deviceType, used)
       used.add(code)
-      points.push(...buildPointElements({ deviceType: p.deviceType, cx: sheet.x + p.rx * sheet.width, cy: sheet.y + p.ry * sheet.height, code }))
+      points.push(
+        ...buildPointElements({
+          deviceType: p.deviceType,
+          cx: sheet.x + p.rx * sheet.width,
+          cy: sheet.y + p.ry * sheet.height,
+          code,
+        }),
+      )
     }
   }
   return { areas, points }
@@ -196,16 +297,31 @@ export function exportPoints(sheets: SheetInfo[], areas: AreaInfo[], points: Poi
       unit: 'ratio',
       areas: areas
         .filter((a) => a.sheetId === s.id)
-        .map((a) => ({ name: a.name, type: a.areaType, rect: [r3((a.x - s.x) / s.width), r3((a.y - s.y) / s.height), r3((a.x + a.width - s.x) / s.width), r3((a.y + a.height - s.y) / s.height)] })),
-      points: points.filter((p) => p.sheetId === s.id).map((p) => ({ type: p.deviceType, x: r3(p.rx), y: r3(p.ry), code: p.code })),
+        .map((a) => ({
+          name: a.name,
+          type: a.areaType,
+          rect: [
+            r3((a.x - s.x) / s.width),
+            r3((a.y - s.y) / s.height),
+            r3((a.x + a.width - s.x) / s.width),
+            r3((a.y + a.height - s.y) / s.height),
+          ],
+        })),
+      points: points
+        .filter((p) => p.sheetId === s.id)
+        .map((p) => ({ type: p.deviceType, x: r3(p.rx), y: r3(p.ry), code: p.code })),
     })),
   }
 }
 
 /** 给 AI 的识别提示词：附上标准图纸图片一起发送。 */
 export function recognitionPrompt(sheetName: string) {
-  const types = DEVICE_TYPES.map((t) => `- ${t.value}：${categoryOf(t.category)?.name}·${t.name}`).join('\n')
-  const areas = AREA_TYPES.filter((a) => a.value !== 'other').map((a) => `${a.value}（${a.label}）`).join('、')
+  const types = DEVICE_TYPES.map(
+    (t) => `- ${t.value}：${categoryOf(t.category)?.name}·${t.name}`,
+  ).join('\n')
+  const areas = AREA_TYPES.filter((a) => a.value !== 'other')
+    .map((a) => `${a.value}（${a.label}）`)
+    .join('、')
   return `你是全屋智能设计助手。附图是一张已经裁掉图框和标题栏的户型图（标准图纸，宽高比 3:2，图名「${sheetName}」）。
 请划分房间区域并输出点位，只输出 JSON，不要其他文字。
 

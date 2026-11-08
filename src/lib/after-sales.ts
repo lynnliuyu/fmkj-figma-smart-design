@@ -13,8 +13,10 @@ export const SERVICE_RECORD_TYPES = [
   { value: 'backup', label: '配置备份', hint: '留存当时的全屋设备台账，作为维保基准' },
 ] as const
 export type ServiceRecordType = (typeof SERVICE_RECORD_TYPES)[number]['value']
-export const isServiceRecordType = (v: unknown): v is ServiceRecordType => SERVICE_RECORD_TYPES.some((t) => t.value === v)
-export const serviceTypeLabel = (v?: string | null) => SERVICE_RECORD_TYPES.find((t) => t.value === v)?.label ?? '维保记录'
+export const isServiceRecordType = (v: unknown): v is ServiceRecordType =>
+  SERVICE_RECORD_TYPES.some((t) => t.value === v)
+export const serviceTypeLabel = (v?: string | null) =>
+  SERVICE_RECORD_TYPES.find((t) => t.value === v)?.label ?? '维保记录'
 
 export const SERVICE_RECORD_STATUSES = [
   { value: 'open', label: '待处理' },
@@ -22,8 +24,10 @@ export const SERVICE_RECORD_STATUSES = [
   { value: 'done', label: '已完成' },
 ] as const
 export type ServiceRecordStatus = (typeof SERVICE_RECORD_STATUSES)[number]['value']
-export const isServiceRecordStatus = (v: unknown): v is ServiceRecordStatus => SERVICE_RECORD_STATUSES.some((s) => s.value === v)
-export const serviceStatusLabel = (v?: string | null) => SERVICE_RECORD_STATUSES.find((s) => s.value === v)?.label ?? '已完成'
+export const isServiceRecordStatus = (v: unknown): v is ServiceRecordStatus =>
+  SERVICE_RECORD_STATUSES.some((s) => s.value === v)
+export const serviceStatusLabel = (v?: string | null) =>
+  SERVICE_RECORD_STATUSES.find((s) => s.value === v)?.label ?? '已完成'
 
 export const SERVICE_BILLING = [
   { value: 'warranty', label: '质保内免费' },
@@ -31,8 +35,10 @@ export const SERVICE_BILLING = [
   { value: 'free', label: '赠送服务' },
 ] as const
 export type ServiceBilling = (typeof SERVICE_BILLING)[number]['value']
-export const isServiceBilling = (v: unknown): v is ServiceBilling => SERVICE_BILLING.some((b) => b.value === v)
-export const serviceBillingLabel = (v?: string | null) => SERVICE_BILLING.find((b) => b.value === v)?.label ?? '质保内免费'
+export const isServiceBilling = (v: unknown): v is ServiceBilling =>
+  SERVICE_BILLING.some((b) => b.value === v)
+export const serviceBillingLabel = (v?: string | null) =>
+  SERVICE_BILLING.find((b) => b.value === v)?.label ?? '质保内免费'
 
 /** 质保期即将到期的提醒阈值（天） */
 export const WARRANTY_EXPIRING_DAYS = 30
@@ -113,7 +119,8 @@ export function addMonthsToDay(day: string, months: number) {
   target.setUTCDate(Math.min(d, last))
   return target.toISOString().slice(0, 10)
 }
-export const daysBetween = (from: string, to: string) => Math.round((utcOf(to) - utcOf(from)) / DAY_MS)
+export const daysBetween = (from: string, to: string) =>
+  Math.round((utcOf(to) - utcOf(from)) / DAY_MS)
 
 export type WarrantyInfo = {
   /** none：还没有起算日期（未签合同、也没有登记交付验收） */
@@ -132,20 +139,47 @@ export type WarrantyInfo = {
  * 质保期：起算日优先取「交付验收」记录的日期，没有时取合同签订日期；质保月数取合同（未填写按默认 12 个月）。
  */
 export function warrantyInfo(
-  contract: { status?: string | null; signedAt?: string | null; warrantyMonths?: number | null } | null,
+  contract: {
+    status?: string | null
+    signedAt?: string | null
+    warrantyMonths?: number | null
+  } | null,
   acceptanceDay: string | null,
   today: string = shanghaiDate(),
 ): WarrantyInfo {
-  const months = contract?.warrantyMonths != null && Number.isFinite(contract.warrantyMonths) ? Math.max(0, Math.round(contract.warrantyMonths)) : DEFAULT_WARRANTY_MONTHS
+  const months =
+    contract?.warrantyMonths != null && Number.isFinite(contract.warrantyMonths)
+      ? Math.max(0, Math.round(contract.warrantyMonths))
+      : DEFAULT_WARRANTY_MONTHS
   const signedDay = contract?.status === 'signed' ? toShanghaiDay(contract.signedAt) : null
   const start = acceptanceDay ?? signedDay
-  if (!start) return { status: 'none', start: null, end: null, months, daysLeft: null, totalDays: null, elapsed: 0, startSource: null }
+  if (!start)
+    return {
+      status: 'none',
+      start: null,
+      end: null,
+      months,
+      daysLeft: null,
+      totalDays: null,
+      elapsed: 0,
+      startSource: null,
+    }
   const end = addMonthsToDay(start, months)
   const totalDays = Math.max(1, daysBetween(start, end))
   const daysLeft = daysBetween(today, end)
   const elapsed = Math.min(1, Math.max(0, daysBetween(start, today) / totalDays))
-  const status = daysLeft < 0 ? 'expired' : daysLeft <= WARRANTY_EXPIRING_DAYS ? 'expiring' : 'active'
-  return { status, start, end, months, daysLeft, totalDays, elapsed, startSource: acceptanceDay ? 'acceptance' : 'contract' }
+  const status =
+    daysLeft < 0 ? 'expired' : daysLeft <= WARRANTY_EXPIRING_DAYS ? 'expiring' : 'active'
+  return {
+    status,
+    start,
+    end,
+    months,
+    daysLeft,
+    totalDays,
+    elapsed,
+    startSource: acceptanceDay ? 'acceptance' : 'contract',
+  }
 }
 
 export const WARRANTY_STATUS_LABEL: Record<WarrantyInfo['status'], string> = {
@@ -156,7 +190,8 @@ export const WARRANTY_STATUS_LABEL: Record<WarrantyInfo['status'], string> = {
 }
 
 /** 给定日期在质保期内吗（用于新记录默认收费方式） */
-export const inWarranty = (w: WarrantyInfo, day: string) => Boolean(w.start && w.end && day >= w.start && day <= w.end)
+export const inWarranty = (w: WarrantyInfo, day: string) =>
+  Boolean(w.start && w.end && day >= w.start && day <= w.end)
 
 /** 中文长日期：2026 年 11 月 3 日 */
 export const longDay = (day: string | null | undefined) => {

@@ -16,8 +16,11 @@ export const GET = mpRoute<{ id: string }>(async ({ user, params }) => {
       select: { model: true, project: true },
       populate: { projects: { name: true } },
     })
-.catch(() => null)
-  const proj = conv?.project && typeof conv.project === 'object' ? { id: String(conv.project.id), name: conv.project.name } : null
+    .catch(() => null)
+  const proj =
+    conv?.project && typeof conv.project === 'object'
+      ? { id: String(conv.project.id), name: conv.project.name }
+      : null
   return ok({ messages, model: conv?.model ?? null, project: proj })
 })
 

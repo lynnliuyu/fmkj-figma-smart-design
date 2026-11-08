@@ -7,19 +7,43 @@ import type { BoardDoc, LayerId, SymbolObj, Vec } from './types'
 export type CheckLevel = 'error' | 'warning' | 'info'
 
 /** 检查结果：点击可定位到 targets（对象 ID） */
-export type CheckIssue = { id: string; level: CheckLevel; title: string; detail?: string; targets: string[] }
+export type CheckIssue = {
+  id: string
+  level: CheckLevel
+  title: string
+  detail?: string
+  targets: string[]
+}
 
 export type LegendRow = { key: string; label: string; count: number; look: SymbolLook }
 
 /** 辅助图层的通用图形（场景坐标）：引擎只负责画，含义由系统包决定 */
-export type OverlayCircle = { id: string; x: number; y: number; r: number; color: string; label?: string; estimated?: boolean }
+export type OverlayCircle = {
+  id: string
+  x: number
+  y: number
+  r: number
+  color: string
+  label?: string
+  estimated?: boolean
+}
 export type OverlayLink = { id: string; from: Vec; to: Vec; color: string }
 /** 需要关注的点（例如没有开关控制的灯具）：画一个醒目的提示圈 */
 export type OverlayMark = { id: string; x: number; y: number; color: string; title?: string }
-export type OverlayShapes = { circles?: OverlayCircle[]; links?: OverlayLink[]; marks?: OverlayMark[]; effects?: PointDisplayEffect[] }
+export type OverlayShapes = {
+  circles?: OverlayCircle[]
+  links?: OverlayLink[]
+  marks?: OverlayMark[]
+  effects?: PointDisplayEffect[]
+}
 
 /** 系统包提供的智能辅助图层（只影响显示，不写进图纸；在「显示与隐藏」里开关） */
-export type PackOverlay = { id: string; name: string; hint: string; build: (doc: BoardDoc) => OverlayShapes }
+export type PackOverlay = {
+  id: string
+  name: string
+  hint: string
+  build: (doc: BoardDoc) => OverlayShapes
+}
 
 /**
  * 系统包：一个专业（智能家居点位、灯光、平面家居、暖通、给排水……）的全部业务知识。

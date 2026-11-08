@@ -2,7 +2,12 @@ import { execFileSync } from 'node:child_process'
 import type { Endpoint, PayloadRequest } from 'payload'
 
 import { isCmsAdmin } from '@/lib/access'
-import { AI_PROVIDER_CHANNELS, AI_PROVIDER_PRESETS, isAiProviderChannelId, parseCustomChannels } from '@/plugins/ai-copilot/templates'
+import {
+  AI_PROVIDER_CHANNELS,
+  AI_PROVIDER_PRESETS,
+  isAiProviderChannelId,
+  parseCustomChannels,
+} from '@/plugins/ai-copilot/templates'
 import { resolveModelEndpoint } from '@/plugins/ai-copilot/server'
 
 type Body = {
@@ -28,9 +33,15 @@ async function readBody(req: PayloadRequest): Promise<Body> {
 async function resolveChannel(req: PayloadRequest, body: Body) {
   if (body.channelId === 'custom') {
     const g = await req.payload.findGlobal({ slug: 'ai-settings', depth: 0, overrideAccess: true })
-    const ch = parseCustomChannels((g as { customChannels?: unknown }).customChannels).find((c) => c.key === body.customChannel)
+    const ch = parseCustomChannels((g as { customChannels?: unknown }).customChannels).find(
+      (c) => c.key === body.customChannel,
+    )
     if (!ch) return { error: '找不到这个自定义渠道：请先在上方填写并保存渠道' }
-    const ep = resolveModelEndpoint({ channelId: 'custom', baseUrl: ch.baseUrl, apiKeyEnv: ch.apiKeyEnv })
+    const ep = resolveModelEndpoint({
+      channelId: 'custom',
+      baseUrl: ch.baseUrl,
+      apiKeyEnv: ch.apiKeyEnv,
+    })
     return { ...ep, label: ch.label, customChannel: ch.key }
   }
   if (!isAiProviderChannelId(body.channelId)) return { error: '请选择渠道' }
@@ -56,14 +67,26 @@ export const aiSettingsEndpoints: Endpoint[] = [
       }
       try {
         const helper = `!f() { echo "username=x-access-token"; echo "password=${token}"; }; f`
-        const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim()
-        const subj = execFileSync('git', ['log', '-1', '--pretty=%s', 'HEAD'], { encoding: 'utf8' }).trim()
+        const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+          encoding: 'utf8',
+        }).trim()
+        const subj = execFileSync('git', ['log', '-1', '--pretty=%s', 'HEAD'], {
+          encoding: 'utf8',
+        }).trim()
         execFileSync(
           'git',
-          ['-c', `credential.helper=${helper}`, 'fetch', 'https://github.com/lynnliuyu/fmkj-figma-smart-design.git', '+refs/heads/main:refs/remotes/github/main'],
+          [
+            '-c',
+            `credential.helper=${helper}`,
+            'fetch',
+            'https://github.com/lynnliuyu/fmkj-figma-smart-design.git',
+            '+refs/heads/main:refs/remotes/github/main',
+          ],
           { stdio: 'pipe', timeout: 60_000 },
         )
-        const ghTree = execFileSync('git', ['rev-parse', 'refs/remotes/github/main^{tree}'], { encoding: 'utf8' }).trim()
+        const ghTree = execFileSync('git', ['rev-parse', 'refs/remotes/github/main^{tree}'], {
+          encoding: 'utf8',
+        }).trim()
         // 使用临时索引构建推送到 GitHub 的树：剔除 Figma Make 沙盒专用的 .figma 内部脚本（仅保留 .figma/make/site.json）及任何临时目录
         const tmpIdx = `/tmp/git-gh-index-${Date.now()}`
         const envWithIdx = { ...process.env, GIT_INDEX_FILE: tmpIdx }
@@ -92,33 +115,71 @@ export const aiSettingsEndpoints: Endpoint[] = [
           ],
           { env: envWithIdx, stdio: 'pipe' },
         )
-        const headTree = execFileSync('git', ['write-tree'], { env: envWithIdx, encoding: 'utf8' }).trim()
+        const headTree = execFileSync('git', ['write-tree'], {
+          env: envWithIdx,
+          encoding: 'utf8',
+        }).trim()
         execFileSync('rm', ['-f', tmpIdx], { stdio: 'pipe' })
         if (ghTree === headTree) {
-          return json({ ok: true, commit: head, repo: 'lynnliuyu/fmkj-figma-smart-design', branch: 'main', note: 'GitHub 已是最新代码' })
+          return json({
+            ok: true,
+            commit: head,
+            repo: 'lynnliuyu/fmkj-figma-smart-design',
+            branch: 'main',
+            note: 'GitHub 已是最新代码',
+          })
         }
         const syncCommit = execFileSync(
           'git',
-          ['commit-tree', headTree, '-p', 'refs/remotes/github/main', '-m', `sync: Figma Make 最新代码（${subj} · ${head}）`],
+          [
+            'commit-tree',
+            headTree,
+            '-p',
+            'refs/remotes/github/main',
+            '-m',
+            `sync: Figma Make 最新代码（${subj} · ${head}）`,
+          ],
           { encoding: 'utf8' },
         ).trim()
         execFileSync(
           'git',
-          ['-c', `credential.helper=${helper}`, 'push', 'https://github.com/lynnliuyu/fmkj-figma-smart-design.git', `${syncCommit}:refs/heads/main`],
+          [
+            '-c',
+            `credential.helper=${helper}`,
+            'push',
+            'https://github.com/lynnliuyu/fmkj-figma-smart-design.git',
+            `${syncCommit}:refs/heads/main`,
+          ],
           { stdio: 'pipe', timeout: 60_000 },
         )
         const headsRaw = execFileSync(
           'git',
-          ['-c', `credential.helper=${helper}`, 'ls-remote', '--heads', 'https://github.com/lynnliuyu/fmkj-figma-smart-design.git'],
+          [
+            '-c',
+            `credential.helper=${helper}`,
+            'ls-remote',
+            '--heads',
+            'https://github.com/lynnliuyu/fmkj-figma-smart-design.git',
+          ],
           { encoding: 'utf8', timeout: 30_000 },
         ).trim()
         const branches = headsRaw
           .split('\n')
           .filter(Boolean)
           .map((line) => line.split('\t')[1]?.replace('refs/heads/', '') ?? line)
-        return json({ ok: true, commit: syncCommit.slice(0, 7), sourceCommit: head, repo: 'lynnliuyu/fmkj-figma-smart-design', branch: 'main', branches })
+        return json({
+          ok: true,
+          commit: syncCommit.slice(0, 7),
+          sourceCommit: head,
+          repo: 'lynnliuyu/fmkj-figma-smart-design',
+          branch: 'main',
+          branches,
+        })
       } catch (e) {
-        const msg = (e as { stderr?: Buffer; message?: string })?.stderr?.toString() || (e as Error)?.message || 'git push failed'
+        const msg =
+          (e as { stderr?: Buffer; message?: string })?.stderr?.toString() ||
+          (e as Error)?.message ||
+          'git push failed'
         const scrubbed = msg.replace(token, '***')
         return json({ ok: false, error: scrubbed.slice(0, 300) }, 500)
       }
@@ -150,8 +211,13 @@ export const aiSettingsEndpoints: Endpoint[] = [
       const PROTECTED = new Set(['main', 'desktop-release'])
       const helper = `!f() { echo "username=x-access-token"; echo "password=${token}"; }; f`
       const git = (args: string[], timeout = 60_000) =>
-        execFileSync('git', ['-c', `credential.helper=${helper}`, ...args], { encoding: 'utf8', stdio: 'pipe', timeout }).trim()
-      const local = (args: string[]) => execFileSync('git', args, { encoding: 'utf8', stdio: 'pipe' }).trim()
+        execFileSync('git', ['-c', `credential.helper=${helper}`, ...args], {
+          encoding: 'utf8',
+          stdio: 'pipe',
+          timeout,
+        }).trim()
+      const local = (args: string[]) =>
+        execFileSync('git', args, { encoding: 'utf8', stdio: 'pipe' }).trim()
       const listHeads = () =>
         git(['ls-remote', '--heads', repo], 30_000)
           .split('\n')
@@ -160,11 +226,23 @@ export const aiSettingsEndpoints: Endpoint[] = [
             const [sha, ref] = line.split('\t')
             return { sha: sha ?? '', branch: (ref ?? '').replace('refs/heads/', '') }
           })
-      const wanted = new Set(Array.isArray(body.delete) ? body.delete.filter((b): b is string => typeof b === 'string') : [])
+      const wanted = new Set(
+        Array.isArray(body.delete)
+          ? body.delete.filter((b): b is string => typeof b === 'string')
+          : [],
+      )
       const dryRun = body.dryRun === true || wanted.size === 0
       try {
         git(['fetch', '--no-tags', repo, '+refs/heads/main:refs/remotes/github/main'])
-        const results: { branch: string; sha?: string; protected?: boolean; merged?: boolean; ahead?: number; archivedTag?: string | null; deleted?: boolean }[] = []
+        const results: {
+          branch: string
+          sha?: string
+          protected?: boolean
+          merged?: boolean
+          ahead?: number
+          archivedTag?: string | null
+          deleted?: boolean
+        }[] = []
         for (const h of listHeads()) {
           if (PROTECTED.has(h.branch)) {
             results.push({ branch: h.branch, sha: h.sha.slice(0, 7), protected: true })
@@ -174,7 +252,12 @@ export const aiSettingsEndpoints: Endpoint[] = [
             results.push({ branch: h.branch, sha: h.sha.slice(0, 7), deleted: false })
             continue
           }
-          git(['fetch', '--no-tags', repo, `+refs/heads/${h.branch}:refs/remotes/github-cleanup/${h.branch}`])
+          git([
+            'fetch',
+            '--no-tags',
+            repo,
+            `+refs/heads/${h.branch}:refs/remotes/github-cleanup/${h.branch}`,
+          ])
           let merged = false
           try {
             local(['merge-base', '--is-ancestor', h.sha, 'refs/remotes/github/main'])
@@ -182,8 +265,16 @@ export const aiSettingsEndpoints: Endpoint[] = [
           } catch {
             merged = false
           }
-          const ahead = Number(local(['rev-list', '--count', `refs/remotes/github/main..${h.sha}`])) || 0
-          const entry = { branch: h.branch, sha: h.sha.slice(0, 7), merged, ahead, archivedTag: null as string | null, deleted: false }
+          const ahead =
+            Number(local(['rev-list', '--count', `refs/remotes/github/main..${h.sha}`])) || 0
+          const entry = {
+            branch: h.branch,
+            sha: h.sha.slice(0, 7),
+            merged,
+            ahead,
+            archivedTag: null as string | null,
+            deleted: false,
+          }
           if (!dryRun && wanted.has(h.branch)) {
             if (!merged) {
               const tag = `archive/${h.branch.replace(/\//g, '-')}`
@@ -202,7 +293,10 @@ export const aiSettingsEndpoints: Endpoint[] = [
         }
         return json({ ok: true, dryRun, results, remaining: listHeads().map((h) => h.branch) })
       } catch (e) {
-        const msg = (e as { stderr?: Buffer | string; message?: string })?.stderr?.toString() || (e as Error)?.message || 'git failed'
+        const msg =
+          (e as { stderr?: Buffer | string; message?: string })?.stderr?.toString() ||
+          (e as Error)?.message ||
+          'git failed'
         return json({ ok: false, error: msg.split(token).join('***').slice(0, 300) }, 500)
       }
     },
@@ -213,11 +307,22 @@ export const aiSettingsEndpoints: Endpoint[] = [
     method: 'get',
     handler: async (req) => {
       if (!isCmsAdmin(req)) return json({ error: '无权限' }, 403)
-      const g = await req.payload.findGlobal({ slug: 'ai-settings', depth: 0, overrideAccess: true })
+      const g = await req.payload.findGlobal({
+        slug: 'ai-settings',
+        depth: 0,
+        overrideAccess: true,
+      })
       const customs = parseCustomChannels((g as { customChannels?: unknown }).customChannels)
-      const rows = (((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? [])
+      const rows =
+        ((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []
 
-      const channels: { id: string; label: string; envKey: string; configured: boolean; isCustom: boolean }[] = Object.values(AI_PROVIDER_CHANNELS).map((ch) => {
+      const channels: {
+        id: string
+        label: string
+        envKey: string
+        configured: boolean
+        isCustom: boolean
+      }[] = Object.values(AI_PROVIDER_CHANNELS).map((ch) => {
         const ep = resolveModelEndpoint({ channelId: ch.id })
         return {
           id: ch.id,
@@ -228,7 +333,11 @@ export const aiSettingsEndpoints: Endpoint[] = [
         }
       })
       for (const c of customs) {
-        const ep = resolveModelEndpoint({ channelId: 'custom', baseUrl: c.baseUrl, apiKeyEnv: c.apiKeyEnv })
+        const ep = resolveModelEndpoint({
+          channelId: 'custom',
+          baseUrl: c.baseUrl,
+          apiKeyEnv: c.apiKeyEnv,
+        })
         channels.push({
           id: `custom:${c.key}`,
           label: `自定义 · ${c.label || c.key}`,
@@ -259,19 +368,37 @@ export const aiSettingsEndpoints: Endpoint[] = [
     handler: async (req) => {
       if (!isCmsAdmin(req)) return json({ error: '无权限' }, 403)
       const body = await readBody(req)
-      const g = await req.payload.findGlobal({ slug: 'ai-settings', depth: 0, overrideAccess: true })
-      const rows = (((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []).map(({ id: _id, ...r }) => ({ ...r }))
+      const g = await req.payload.findGlobal({
+        slug: 'ai-settings',
+        depth: 0,
+        overrideAccess: true,
+      })
+      const rows = (
+        ((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []
+      ).map(({ id: _id, ...r }) => ({ ...r }))
 
-      if (typeof body.deleteIndex === 'number' && body.deleteIndex >= 0 && body.deleteIndex < rows.length) {
+      if (
+        typeof body.deleteIndex === 'number' &&
+        body.deleteIndex >= 0 &&
+        body.deleteIndex < rows.length
+      ) {
         rows.splice(body.deleteIndex, 1)
-      } else if (typeof body.index === 'number' && body.index >= 0 && body.index < rows.length && body.patch && typeof body.patch === 'object') {
+      } else if (
+        typeof body.index === 'number' &&
+        body.index >= 0 &&
+        body.index < rows.length &&
+        body.patch &&
+        typeof body.patch === 'object'
+      ) {
         const p = body.patch
         if (p.isDefault === true) {
           for (const r of rows) r.isDefault = false
         }
         const target = rows[body.index]
-        if (typeof p.minTier === 'string' && ['auto', 'free', 'pro', 'team'].includes(p.minTier)) target.minTier = p.minTier
-        if (typeof p.cost === 'number' && Number.isFinite(p.cost) && p.cost >= 0 && p.cost <= 100) target.cost = Math.round(p.cost)
+        if (typeof p.minTier === 'string' && ['auto', 'free', 'pro', 'team'].includes(p.minTier))
+          target.minTier = p.minTier
+        if (typeof p.cost === 'number' && Number.isFinite(p.cost) && p.cost >= 0 && p.cost <= 100)
+          target.cost = Math.round(p.cost)
         if (typeof p.enabled === 'boolean') target.enabled = p.enabled
         if (typeof p.isDefault === 'boolean') {
           target.isDefault = p.isDefault
@@ -282,7 +409,13 @@ export const aiSettingsEndpoints: Endpoint[] = [
         return json({ error: '参数无效' }, 400)
       }
 
-      await req.payload.updateGlobal({ slug: 'ai-settings', data: { aiModels: rows } as never, overrideAccess: false, user: req.user, req })
+      await req.payload.updateGlobal({
+        slug: 'ai-settings',
+        data: { aiModels: rows } as never,
+        overrideAccess: false,
+        user: req.user,
+        req,
+      })
       return json({ ok: true })
     },
   },
@@ -300,8 +433,14 @@ export const aiSettingsEndpoints: Endpoint[] = [
 
       if (!selectedPresets.length) return json({ error: '未找到匹配的预设模型' }, 400)
 
-      const g = await req.payload.findGlobal({ slug: 'ai-settings', depth: 0, overrideAccess: true })
-      const rows = (((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []).map(({ id: _id, ...r }) => r)
+      const g = await req.payload.findGlobal({
+        slug: 'ai-settings',
+        depth: 0,
+        overrideAccess: true,
+      })
+      const rows = (
+        ((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []
+      ).map(({ id: _id, ...r }) => r)
       const hasDefault = rows.some((r) => Boolean(r.isDefault))
 
       let added = 0
@@ -327,7 +466,13 @@ export const aiSettingsEndpoints: Endpoint[] = [
         added++
       }
 
-      await req.payload.updateGlobal({ slug: 'ai-settings', data: { aiModels: rows } as never, overrideAccess: false, user: req.user, req })
+      await req.payload.updateGlobal({
+        slug: 'ai-settings',
+        data: { aiModels: rows } as never,
+        overrideAccess: false,
+        user: req.user,
+        req,
+      })
       return json({ added, skipped })
     },
   },
@@ -343,7 +488,8 @@ export const aiSettingsEndpoints: Endpoint[] = [
       if (!ch.url) return json({ error: '接口地址未配置或不是公网 HTTPS' }, 400)
       if (!ch.apiKey) return json({ error: `尚未配置密钥环境变量 ${ch.envKey}` }, 400)
 
-      const testModel = (typeof body.testModel === 'string' && body.testModel.trim()) || 'deepseek-chat'
+      const testModel =
+        (typeof body.testModel === 'string' && body.testModel.trim()) || 'deepseek-chat'
       const t0 = Date.now()
       try {
         const res = await fetch(ch.url, {
@@ -370,7 +516,11 @@ export const aiSettingsEndpoints: Endpoint[] = [
         const reply = data?.choices?.[0]?.message?.content?.trim() || 'OK'
         return json({ ok: true, latencyMs, reply: reply.slice(0, 40) })
       } catch {
-        return json({ ok: false, error: '连接超时或网络不可达（在预览沙盒中部分外部接口受限，可在正式站点或自建服务器测试）' })
+        return json({
+          ok: false,
+          error:
+            '连接超时或网络不可达（在预览沙盒中部分外部接口受限，可在正式站点或自建服务器测试）',
+        })
       }
     },
   },
@@ -384,13 +534,29 @@ export const aiSettingsEndpoints: Endpoint[] = [
       const ch = await resolveChannel(req, body)
       if ('error' in ch) return json({ error: ch.error }, 400)
       if (!ch.url) return json({ error: '接口地址未配置或不是公网 HTTPS' }, 400)
-      if (!ch.apiKey) return json({ error: `没有读到密钥：请在 Figma Make「设置 → Secrets」中添加 ${ch.envKey}` }, 400)
+      if (!ch.apiKey)
+        return json(
+          { error: `没有读到密钥：请在 Figma Make「设置 → Secrets」中添加 ${ch.envKey}` },
+          400,
+        )
       const url = ch.url.replace(/\/chat\/completions$/, '/models')
       try {
-        const res = await fetch(url, { headers: { Authorization: `Bearer ${ch.apiKey}` }, signal: AbortSignal.timeout(15000) })
-        if (!res.ok) return json({ error: `接口返回 ${res.status}：该服务可能不支持 /models，可直接手动添加模型名` }, 502)
-        const data = (await res.json()) as { data?: { id?: unknown }[]; models?: { id?: unknown; name?: unknown }[] }
-        const list = (data.data ?? data.models ?? []).map((m) => String(m.id ?? (m as { name?: unknown }).name ?? '')).filter(Boolean)
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${ch.apiKey}` },
+          signal: AbortSignal.timeout(15000),
+        })
+        if (!res.ok)
+          return json(
+            { error: `接口返回 ${res.status}：该服务可能不支持 /models，可直接手动添加模型名` },
+            502,
+          )
+        const data = (await res.json()) as {
+          data?: { id?: unknown }[]
+          models?: { id?: unknown; name?: unknown }[]
+        }
+        const list = (data.data ?? data.models ?? [])
+          .map((m) => String(m.id ?? (m as { name?: unknown }).name ?? ''))
+          .filter(Boolean)
         return json({ models: [...new Set(list)].sort() })
       } catch {
         return json({ error: '请求超时或无法连接该地址' }, 502)
@@ -406,11 +572,26 @@ export const aiSettingsEndpoints: Endpoint[] = [
       const body = await readBody(req)
       const ch = await resolveChannel(req, body)
       if ('error' in ch) return json({ error: ch.error }, 400)
-      const picks = (Array.isArray(body.models) ? body.models : []).map((m) => String(m).trim().slice(0, 120)).filter(Boolean).slice(0, 50)
+      const picks = (Array.isArray(body.models) ? body.models : [])
+        .map((m) => String(m).trim().slice(0, 120))
+        .filter(Boolean)
+        .slice(0, 50)
       if (!picks.length) return json({ error: '请至少勾选一个模型' }, 400)
-      const g = await req.payload.findGlobal({ slug: 'ai-settings', depth: 0, overrideAccess: true })
-      const rows = (((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []).map(({ id: _id, ...r }) => r)
-      const exists = (m: string) => rows.some((r) => r.apiModel === m && r.channelId === body.channelId && (body.channelId !== 'custom' || r.customChannel === ch.customChannel))
+      const g = await req.payload.findGlobal({
+        slug: 'ai-settings',
+        depth: 0,
+        overrideAccess: true,
+      })
+      const rows = (
+        ((g as { aiModels?: unknown }).aiModels as Record<string, unknown>[] | null) ?? []
+      ).map(({ id: _id, ...r }) => r)
+      const exists = (m: string) =>
+        rows.some(
+          (r) =>
+            r.apiModel === m &&
+            r.channelId === body.channelId &&
+            (body.channelId !== 'custom' || r.customChannel === ch.customChannel),
+        )
       const added = picks.filter((m) => !exists(m))
       for (const m of added) {
         const isPro = /reason|r1|qwq|qvq|think/i.test(m)
@@ -428,7 +609,13 @@ export const aiSettingsEndpoints: Endpoint[] = [
           reasoning: isPro,
         })
       }
-      await req.payload.updateGlobal({ slug: 'ai-settings', data: { aiModels: rows } as never, overrideAccess: false, user: req.user, req })
+      await req.payload.updateGlobal({
+        slug: 'ai-settings',
+        data: { aiModels: rows } as never,
+        overrideAccess: false,
+        user: req.user,
+        req,
+      })
       return json({ added: added.length, skipped: picks.length - added.length })
     },
   },

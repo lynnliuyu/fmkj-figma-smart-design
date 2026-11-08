@@ -1,6 +1,9 @@
 import { fail, mpRoute, ok } from '@/lib/mp/http'
 import { addSheetImage } from '@/lib/services/point-map-service'
-import { getCachedDetectedBundle, prepareFloorPlanUpload } from '@/plugins/ai-copilot/upload-handler'
+import {
+  getCachedDetectedBundle,
+  prepareFloorPlanUpload,
+} from '@/plugins/ai-copilot/upload-handler'
 
 /**
  * 上传户型图（wx.uploadFile，字段 file，可带 name、mode=switches|all|none 或 recognize=1）：
@@ -16,7 +19,10 @@ export const POST = mpRoute<{ id: string }>(async ({ request, user, params }) =>
   const recognize = sp.get('recognize') === '1'
   const mode: 'switches' | 'all' | 'none' =
     rawMode === 'all' ? 'all' : rawMode === 'switches' || recognize ? 'switches' : 'none'
-  const prepared = await prepareFloorPlanUpload(request, { awaitVision: mode !== 'none', forceKind: 'floor-plan' })
+  const prepared = await prepareFloorPlanUpload(request, {
+    awaitVision: mode !== 'none',
+    forceKind: 'floor-plan',
+  })
   if (prepared.error) return prepared.error
   const up = prepared.upload!
   const bundle = getCachedDetectedBundle(up.mediaId, up.url)
@@ -24,7 +30,8 @@ export const POST = mpRoute<{ id: string }>(async ({ request, user, params }) =>
     mode === 'none'
       ? []
       : mode === 'switches'
-        ? (bundle?.switchPoints ?? up.detectedPoints.filter((p) => p.type.startsWith('switch-') || p.type === 'touch-panel'))
+        ? (bundle?.switchPoints ??
+          up.detectedPoints.filter((p) => p.type.startsWith('switch-') || p.type === 'touch-panel'))
         : (bundle?.points ?? up.detectedPoints)
   const areasToImport = mode === 'none' ? [] : (bundle?.areas ?? up.detectedAreas ?? [])
   const r = await addSheetImage(user, params.id, {

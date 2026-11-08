@@ -6,34 +6,52 @@
 import { paymentAmounts } from '@/lib/contracts'
 import { relId } from '@/lib/access'
 import { categoryOfType, DEVICE_TYPE_ORDER, deviceTypeOf } from '@/lib/device-types'
-import { acceptanceChecks, docNumber, type DocPoint, type ProjectDocsData, type Room } from '@/lib/project-docs'
+import {
+  acceptanceChecks,
+  docNumber,
+  type DocPoint,
+  type ProjectDocsData,
+  type Room,
+} from '@/lib/project-docs'
 import type { AreaInfo, SheetInfo } from '@/lib/point-scene'
 import { quoteTotals } from '@/lib/quotes'
 
 export const pad = (n: number) => String(n).padStart(2, '0')
-export const money = (n: number) => n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+export const money = (n: number) =>
+  n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 /** ¥1,759 / ¥5,327.50：整数不带小数 */
-export const yuanShort = (n: number) => `¥${n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}`
-export const chunk = <T,>(list: T[], n: number) => Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n))
+export const yuanShort = (n: number) =>
+  `¥${n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}`
+export const chunk = <T>(list: T[], n: number) =>
+  Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n))
 const byCode = (a: string, b: string) => a.localeCompare(b, 'en', { numeric: true })
 const typeOrder = (t: string) => DEVICE_TYPE_ORDER.indexOf(t)
 const CN = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十']
 /** 户型数字：1 → 一，2 → 两 */
 export const cnCount = (n: number) => (n <= 10 ? CN[n] : String(n))
 const typeName = (t: string) => deviceTypeOf(t)?.name ?? '设备'
-const join = (list: string[], max = 2) => (list.length > max ? `${list.slice(0, max).join('、')}等${list.length}处` : list.join('、'))
+const join = (list: string[], max = 2) =>
+  list.length > max ? `${list.slice(0, max).join('、')}等${list.length}处` : list.join('、')
 
 /** 代号区间：编号连续时写成 K1～K12；不连续时列出前几个再写「等 N 个」，不让区间暗含没有的点位 */
 export function codeRange(codes: string[]) {
   const c = [...new Set(codes.filter(Boolean))].sort(byCode)
   if (c.length <= 2) return c.join(' / ')
   const parts = c.map((x) => /^(\D*)(\d+)$/.exec(x))
-  const contiguous = parts.every((m, i) => m && m[1] === parts[0]![1] && (i === 0 || Number(m[2]) === Number(parts[i - 1]![2]) + 1))
+  const contiguous = parts.every(
+    (m, i) =>
+      m && m[1] === parts[0]![1] && (i === 0 || Number(m[2]) === Number(parts[i - 1]![2]) + 1),
+  )
   if (contiguous) return `${c[0]}～${c[c.length - 1]}`
   return c.length <= 3 ? c.join(' / ') : `${c.slice(0, 3).join(' / ')} 等${c.length}个`
 }
 
-export type DeckPoint = DocPoint & { no: number; room: string; typeName: string; ref: string | null }
+export type DeckPoint = DocPoint & {
+  no: number
+  room: string
+  typeName: string
+  ref: string | null
+}
 export type DeckItem = {
   ref: string
   deviceType: string
@@ -51,11 +69,31 @@ export type DeckItem = {
 }
 export type DeckFee = { ref: string; name: string; amount: number }
 export type DeckGroup = { key: string; name: string; points: DeckPoint[] }
-export type DeckSheet = { sheet: SheetInfo; floorName: string; points: DeckPoint[]; groups: DeckGroup[]; areas: AreaInfo[]; subtotal: number; types: number }
+export type DeckSheet = {
+  sheet: SheetInfo
+  floorName: string
+  points: DeckPoint[]
+  groups: DeckGroup[]
+  areas: AreaInfo[]
+  subtotal: number
+  types: number
+}
 export type ZoneKey = 'arrive' | 'rest' | 'care' | 'focus'
-export type DeckZone = { key: ZoneKey; rooms: Room[]; photo: string; subtotal: number; points: DeckPoint[] }
+export type DeckZone = {
+  key: ZoneKey
+  rooms: Room[]
+  photo: string
+  subtotal: number
+  points: DeckPoint[]
+}
 export type TopoBox = { title: string; sub: string; badge?: string }
-export type TopoAcNode = { title: string; sub: string; badge: string; codes: string; configured: boolean }
+export type TopoAcNode = {
+  title: string
+  sub: string
+  badge: string
+  codes: string
+  configured: boolean
+}
 export type TopoApRoom = { room: string; codes: string; sub: string; count: number }
 export type PayNode = { name: string; percent: number; amount: number }
 export type SceneItem = { name: string; action: string }
@@ -106,10 +144,26 @@ const ZONE_ORDER: ZoneKey[] = ['arrive', 'rest', 'care', 'focus']
 const ZONE_ROOMS = 2
 
 export const ZONE_COPY: Record<ZoneKey, { title: string; subtitle: string; tag: string }> = {
-  arrive: { title: '进门的那一刻，生活开始切换。', subtitle: '以明确的触发方式，连接照明、窗帘与门窗状态', tag: 'ARRIVE & LEAVE' },
-  rest: { title: '把一天的忙碌，留在灯光之外。', subtitle: '为睡眠保留简单、可靠的关灯方式', tag: 'REST & RESET' },
-  care: { title: '看不见的角落，也值得被关心。', subtitle: '连接发现、通知与人工处置', tag: 'CARE & PROTECT' },
-  focus: { title: '专注与放松，各有各的光。', subtitle: '书房、影音与休闲空间的灯光和氛围', tag: 'FOCUS & LEISURE' },
+  arrive: {
+    title: '进门的那一刻，生活开始切换。',
+    subtitle: '以明确的触发方式，连接照明、窗帘与门窗状态',
+    tag: 'ARRIVE & LEAVE',
+  },
+  rest: {
+    title: '把一天的忙碌，留在灯光之外。',
+    subtitle: '为睡眠保留简单、可靠的关灯方式',
+    tag: 'REST & RESET',
+  },
+  care: {
+    title: '看不见的角落，也值得被关心。',
+    subtitle: '连接发现、通知与人工处置',
+    tag: 'CARE & PROTECT',
+  },
+  focus: {
+    title: '专注与放松，各有各的光。',
+    subtitle: '书房、影音与休闲空间的灯光和氛围',
+    tag: 'FOCUS & LEISURE',
+  },
 }
 
 const PROTOCOL: Record<string, string> = {
@@ -122,7 +176,17 @@ const PROTOCOL: Record<string, string> = {
   '网络/弱电': 'PoE / 以太网',
 }
 
-const CAT_UNIT: Record<string, string> = { switch: '只', socket: '个', lighting: '盏', sensor: '只', lock: '把', security: '台', curtain: '套', vrf: '台', other: '个' }
+const CAT_UNIT: Record<string, string> = {
+  switch: '只',
+  socket: '个',
+  lighting: '盏',
+  sensor: '只',
+  lock: '把',
+  security: '台',
+  curtain: '套',
+  vrf: '台',
+  other: '个',
+}
 const CAT_DESC: Record<string, string> = {
   switch: '灯具开 / 关',
   socket: '定时与电量',
@@ -159,7 +223,9 @@ const INSTALL_NOTES: [string[], string][] = [
 
 export function installNote(types: string[]) {
   const notes = INSTALL_NOTES.filter(([t]) => t.some((x) => types.includes(x))).map(([, n]) => n)
-  return notes.length ? `安装复核：${notes.slice(0, 3).join('；')}。` : '安装复核：设备位置与供电条件以现场复核为准。'
+  return notes.length
+    ? `安装复核：${notes.slice(0, 3).join('；')}。`
+    : '安装复核：设备位置与供电条件以现场复核为准。'
 }
 
 /** 房间的推荐场景（「回家模式：……」拆成名称与动作），去重 */
@@ -174,10 +240,13 @@ export function roomScenes(rooms: Room[]): SceneItem[] {
 }
 
 export function buildDeck(d: ProjectDocsData) {
-  const date = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }).replaceAll('-', '.')
+  const date = new Date()
+    .toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' })
+    .replaceAll('-', '.')
   const docNo = docNumber(d, 'QX')
   const areaById = new Map(d.areas.map((a) => [a.id, a]))
-  const roomName = (p: DocPoint) => (p.areaId ? (areaById.get(p.areaId)?.name ?? '公共区域') : '公共区域')
+  const roomName = (p: DocPoint) =>
+    p.areaId ? (areaById.get(p.areaId)?.name ?? '公共区域') : '公共区域'
   const has = (...types: string[]) => d.points.some((p) => types.includes(p.deviceType))
   const pointsOf = (...types: string[]) => d.points.filter((p) => types.includes(p.deviceType))
 
@@ -188,7 +257,9 @@ export function buildDeck(d: ProjectDocsData) {
   const refOfPending = new Map<string, string>()
   const refOfPoint = new Map<string, string>()
   if (d.quote) {
-    const roomOfPoint = new Map(d.rooms.flatMap((r) => r.points.map((p) => [p.id, r.displayName] as const)))
+    const roomOfPoint = new Map(
+      d.rooms.flatMap((r) => r.points.map((p) => [p.id, r.displayName] as const)),
+    )
     for (const [index, item] of (d.quote.items ?? []).entries()) {
       const ref = `Q${pad(items.length + 1)}`
       const pid = relId(item.product)
@@ -197,7 +268,10 @@ export function buildDeck(d: ProjectDocsData) {
       const pointProductId = pid ?? `quote-item-${item.id ?? index}`
       // 同一产品可有多行不同单价，每个点位最多关联一行，数量不够时不虚构点位。
       const pts = d.points
-        .filter((p) => !refOfPoint.has(p.id) && p.deviceType === deviceType && p.productId === pointProductId)
+        .filter(
+          (p) =>
+            !refOfPoint.has(p.id) && p.deviceType === deviceType && p.productId === pointProductId,
+        )
         .slice(0, Math.max(0, Math.floor(item.quantity)))
       for (const p of pts) refOfPoint.set(p.id, ref)
       items.push({
@@ -260,9 +334,12 @@ export function buildDeck(d: ProjectDocsData) {
     }
   }
   const itemOf = new Map(items.map((i) => [i.ref, i]))
-  const pointRef = (p: DocPoint) => d.quote
-    ? (refOfPoint.get(p.id) ?? null)
-    : p.productId ? (refOfProduct.get(p.productId) ?? null) : (refOfPending.get(p.deviceType) ?? null)
+  const pointRef = (p: DocPoint) =>
+    d.quote
+      ? (refOfPoint.get(p.id) ?? null)
+      : p.productId
+        ? (refOfProduct.get(p.productId) ?? null)
+        : (refOfPending.get(p.deviceType) ?? null)
 
   // 点位编号：每张图纸按房间（自上而下、从左到右）→ 设备类型 → 代号排序，编号 01…；房间内编号连续
   const sheets: DeckSheet[] = []
@@ -309,13 +386,25 @@ export function buildDeck(d: ProjectDocsData) {
       points: flat,
       groups,
       areas: d.areas.filter((a) => a.sheetId === s.id),
-      subtotal: Math.round(flat.reduce((sum, p) => sum + (p.productId ? (d.productById.get(p.productId)?.price ?? 0) : 0), 0) * 100) / 100,
+      subtotal:
+        Math.round(
+          flat.reduce(
+            (sum, p) => sum + (p.productId ? (d.productById.get(p.productId)?.price ?? 0) : 0),
+            0,
+          ) * 100,
+        ) / 100,
       types: new Set(flat.map((p) => p.deviceType)).size,
     })
   }
   /** 带编号的点位（不在任何图纸上的点位编号为 0） */
   const deckPoint = (p: DocPoint): DeckPoint =>
-    numbered.get(p.id) ?? { ...p, no: 0, room: roomName(p), typeName: typeName(p.deviceType), ref: pointRef(p) }
+    numbered.get(p.id) ?? {
+      ...p,
+      no: 0,
+      room: roomName(p),
+      typeName: typeName(p.deviceType),
+      ref: pointRef(p),
+    }
 
   // 场景章节：每类空间取点位最多的两间（进门章节玄关优先），其余房间进入「其余空间」
   const withPoints = d.rooms.filter((r) => r.total > 0)
@@ -324,11 +413,19 @@ export function buildDeck(d: ProjectDocsData) {
   for (const key of ZONE_ORDER) {
     const rooms = withPoints
       .filter((r) => ZONE_OF[r.areaType] === key)
-      .sort((a, b) => (key === 'arrive' ? Number(b.areaType === 'entrance') - Number(a.areaType === 'entrance') : 0) || b.total - a.total)
+      .sort(
+        (a, b) =>
+          (key === 'arrive'
+            ? Number(b.areaType === 'entrance') - Number(a.areaType === 'entrance')
+            : 0) || b.total - a.total,
+      )
     if (!rooms.length) continue
     const shown = rooms.slice(0, ZONE_ROOMS)
     restRooms.push(...rooms.slice(ZONE_ROOMS))
-    const lead = key === 'arrive' && shown.some((r) => r.areaType === 'entrance') ? 'entrance' : shown[0].areaType
+    const lead =
+      key === 'arrive' && shown.some((r) => r.areaType === 'entrance')
+        ? 'entrance'
+        : shown[0].areaType
     zones.push({
       key,
       rooms: shown,
@@ -345,7 +442,9 @@ export function buildDeck(d: ProjectDocsData) {
   const ting = roomCount(['living', 'dining'])
   const wei = roomCount(['bathroom'])
   const floorCount = new Set(d.floors.map((f) => f.floorName)).size
-  const layoutCore = shi ? `${cnCount(shi)}室${ting ? `${cnCount(ting)}厅` : ''}${wei ? `${cnCount(wei)}卫` : ''}` : `${d.rooms.length}个空间`
+  const layoutCore = shi
+    ? `${cnCount(shi)}室${ting ? `${cnCount(ting)}厅` : ''}${wei ? `${cnCount(wei)}卫` : ''}`
+    : `${d.rooms.length}个空间`
   const layoutText = floorCount > 1 ? `${floorCount}层 · ${layoutCore}` : layoutCore
 
   const place = [d.project.community, d.project.address].filter(Boolean).join('') || d.project.name
@@ -353,10 +452,20 @@ export function buildDeck(d: ProjectDocsData) {
   const platform = d.project.platform && d.project.platform !== '待定' ? d.project.platform : null
   const protocol = (platform && PROTOCOL[platform]) || '无线协议'
   const scopeText =
-    d.scope === 'no-light' ? '智能控制方案（不含灯具）' : d.scope === 'switch' ? '智能开关面板方案' : d.scope === 'switch-light' ? '智能灯光开关方案' : '全屋智能设计方案'
+    d.scope === 'no-light'
+      ? '智能控制方案（不含灯具）'
+      : d.scope === 'switch'
+        ? '智能开关面板方案'
+        : d.scope === 'switch-light'
+          ? '智能灯光开关方案'
+          : '全屋智能设计方案'
 
   // 金额与正式报价使用同一份快照。合同关联报价的已保存总额优先，保留签订时的金额语义。
-  const fees: DeckFee[] = (d.quote?.fees ?? []).map((f, i) => ({ ref: `S${pad(i + 1)}`, name: f.name, amount: f.amount }))
+  const fees: DeckFee[] = (d.quote?.fees ?? []).map((f, i) => ({
+    ref: `S${pad(i + 1)}`,
+    name: f.name,
+    amount: f.amount,
+  }))
   const discount = d.quote?.discount ?? 0
   const totals = quoteTotals(d.quote?.items ?? [], d.quote?.fees ?? [], discount)
   const serviceTotal = totals.feeTotal
@@ -367,8 +476,20 @@ export function buildDeck(d: ProjectDocsData) {
   const waterRoom = pointsOf('water-sensor')[0]
   const bedrooms = roomCount(['bedroom', 'kids'])
   const needs = [
-    { label: '生活需求', value: has('smart-lock', 'contact-sensor', 'doorbell') ? '回家有光，离家少牵挂' : has('curtain-track') ? '灯光窗帘，一键随心' : '常用灯光，触手可及' },
-    { label: '休息需求', value: bedrooms ? `${bedrooms > 1 ? `${cnCount(bedrooms)}卧室` : '卧室'}一键关灯入睡` : '夜间起居更安心' },
+    {
+      label: '生活需求',
+      value: has('smart-lock', 'contact-sensor', 'doorbell')
+        ? '回家有光，离家少牵挂'
+        : has('curtain-track')
+          ? '灯光窗帘，一键随心'
+          : '常用灯光，触手可及',
+    },
+    {
+      label: '休息需求',
+      value: bedrooms
+        ? `${bedrooms > 1 ? `${cnCount(bedrooms)}卧室` : '卧室'}一键关灯入睡`
+        : '夜间起居更安心',
+    },
     {
       label: '安全需求',
       value: waterRoom
@@ -386,8 +507,15 @@ export function buildDeck(d: ProjectDocsData) {
 
   const scenes = roomScenes(d.rooms)
   const indexNote = [
-    scenes.length ? `${scenes.length}个预设场景：${scenes.slice(0, 3).map((s) => s.name.replace(/模式$/, '')).join(' / ')}${scenes.length > 3 ? ' 等' : ''}。` : '',
-    has('contact-sensor') ? '门磁仅识别开合，不判断进出或身份；回家、离家须手动触发或用户确认。' : '场景在交付时与业主逐条确认后启用，可随时调整。',
+    scenes.length
+      ? `${scenes.length}个预设场景：${scenes
+          .slice(0, 3)
+          .map((s) => s.name.replace(/模式$/, ''))
+          .join(' / ')}${scenes.length > 3 ? ' 等' : ''}。`
+      : '',
+    has('contact-sensor')
+      ? '门磁仅识别开合，不判断进出或身份；回家、离家须手动触发或用户确认。'
+      : '场景在交付时与业主逐条确认后启用，可随时调整。',
   ].join('')
 
   // 第 03 章：网络与中控拓扑
@@ -397,7 +525,13 @@ export function buildDeck(d: ProjectDocsData) {
   const netPanels = pointsOf('network-panel')
   const routers = [...acRouters, ...netPanels]
   const ap = pointsOf('ap-node', 'ceiling-ap')
-  const acModels = [...new Set(acRouters.map((p) => (p.productId ? d.productById.get(p.productId)?.name : null)).filter((v): v is string => !!v))]
+  const acModels = [
+    ...new Set(
+      acRouters
+        .map((p) => (p.productId ? d.productById.get(p.productId)?.name : null))
+        .filter((v): v is string => !!v),
+    ),
+  ]
   const acNode: TopoAcNode = acRouters.length
     ? {
         title: `${codesOf(acRouters)} AC 控制器 / PoE 核心交换`,
@@ -457,16 +591,36 @@ export function buildDeck(d: ProjectDocsData) {
     const c = [...new Set(pts.map((p) => p.code).filter(Boolean))].sort(byCode)
     return c.length <= 2 ? c.join(' / ') : `${c[0]}～${c[c.length - 1]}（${c.length}处）`
   }
-  if (gw.length) hubs.push({ title: `${shortCodes(gw)} 智能中枢网关`, badge: `网关 ×${gw.length}`, sub: `${roomsOf(gw)} · LAN 接入 · ${protocol}` })
+  if (gw.length)
+    hubs.push({
+      title: `${shortCodes(gw)} 智能中枢网关`,
+      badge: `网关 ×${gw.length}`,
+      sub: `${roomsOf(gw)} · LAN 接入 · ${protocol}`,
+    })
   const tp = pointsOf('touch-panel')
   const sp = pointsOf('speaker')
   const vrf = pointsOf('vrf-controller')
   const ctrl = [...tp, ...sp, ...vrf]
   if (ctrl.length) {
-    const parts = [tp.length ? `中控屏×${tp.length}` : '', sp.length ? `音箱×${sp.length}` : '', vrf.length ? `空调网关×${vrf.length}` : ''].filter(Boolean).join(' / ')
-    hubs.push({ title: `${shortCodes(ctrl)} 中控与语音交互`, badge: parts, sub: `${roomsOf(ctrl)} · 场景触控与语音控制` })
+    const parts = [
+      tp.length ? `中控屏×${tp.length}` : '',
+      sp.length ? `音箱×${sp.length}` : '',
+      vrf.length ? `空调网关×${vrf.length}` : '',
+    ]
+      .filter(Boolean)
+      .join(' / ')
+    hubs.push({
+      title: `${shortCodes(ctrl)} 中控与语音交互`,
+      badge: parts,
+      sub: `${roomsOf(ctrl)} · 场景触控与语音控制`,
+    })
   }
-  if (!hubs.length) hubs.push({ title: '手机 App / 语音中控', badge: '直连控制', sub: 'Wi-Fi 设备直连局域网 · 无独立网关' })
+  if (!hubs.length)
+    hubs.push({
+      title: '手机 App / 语音中控',
+      badge: '直连控制',
+      sub: 'Wi-Fi 设备直连局域网 · 无独立网关',
+    })
   const leaves: TopoBox[] = d.categories
     .filter((c) => c.slug !== 'gateway' && c.slug !== 'network')
     .sort((a, b) => b.count - a.count)
@@ -479,8 +633,19 @@ export function buildDeck(d: ProjectDocsData) {
         sub: `${CAT_DESC[c.slug] ?? '按需接入'} · ${roomsOf(pts)}`,
       }
     })
-  const apLink = apRooms.length ? `PoE 供电 + AC 漫游 · ${apRooms.length} 房间（${ap.length} 台 AP）` : '六类网线预留 · 按需扩展 AP 节点'
-  const topology = { top: topoTop, ac: acNode, apRooms, apTotal: ap.length, apLink, hubs, leaves, link: `${protocol} · 中控联动总线` }
+  const apLink = apRooms.length
+    ? `PoE 供电 + AC 漫游 · ${apRooms.length} 房间（${ap.length} 台 AP）`
+    : '六类网线预留 · 按需扩展 AP 节点'
+  const topology = {
+    top: topoTop,
+    ac: acNode,
+    apRooms,
+    apTotal: ap.length,
+    apLink,
+    hubs,
+    leaves,
+    link: `${protocol} · 中控联动总线`,
+  }
 
   const missingCore = [
     !has('smart-lock') && '智能门锁',
@@ -497,7 +662,9 @@ export function buildDeck(d: ProjectDocsData) {
     ]
       .filter(Boolean)
       .join('；') + '。',
-    missingCore.length ? `本配置不含${missingCore.join('、')}；如需增加，须书面确认并同步更新点位及报价。` : '全部设备以现场复核与联调验收结果为准。',
+    missingCore.length
+      ? `本配置不含${missingCore.join('、')}；如需增加，须书面确认并同步更新点位及报价。`
+      : '全部设备以现场复核与联调验收结果为准。',
   ].filter((n) => n.length > 1)
 
   // 第 07 章：不含项与有效期
@@ -510,7 +677,9 @@ export function buildDeck(d: ProjectDocsData) {
     '其他装修工程',
   ].filter((v): v is string => !!v)
   const exclusionText = `${exclusions.join('、')}。不含新增设备或点位增减费用；现场差异与任何变更须书面确认，并同步更新全部点位及报价。`
-  const valid = new Date(Date.now() + 15 * 86400000).toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }).replaceAll('-', '.')
+  const valid = new Date(Date.now() + 15 * 86400000)
+    .toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' })
+    .replaceAll('-', '.')
 
   // 第 08 章：付款节点（有合同按合同，否则用设计稿的 40 / 50 / 10）
   const terms = d.contract?.payments?.length

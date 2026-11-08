@@ -20,23 +20,68 @@ function check(doc: BoardDoc): CheckIssue[] {
   const byCode = new Map<string, string[]>()
   for (const p of points) if (p.code) byCode.set(p.code, [...(byCode.get(p.code) ?? []), p.id])
   const dups = [...byCode].filter(([, ids]) => ids.length > 1)
-  if (dups.length) issues.push({ id: 'dup-code', level: 'error', title: `${dups.length} 个代号重复`, detail: dups.slice(0, 6).map(([c, ids]) => `${c} ×${ids.length}`).join('、'), targets: dups.flatMap(([, ids]) => ids) })
+  if (dups.length)
+    issues.push({
+      id: 'dup-code',
+      level: 'error',
+      title: `${dups.length} 个代号重复`,
+      detail: dups
+        .slice(0, 6)
+        .map(([c, ids]) => `${c} ×${ids.length}`)
+        .join('、'),
+      targets: dups.flatMap(([, ids]) => ids),
+    })
   const syms = symbolsOf(doc)
   const overlap = new Set<string>()
   for (let i = 0; i < syms.length; i++)
     for (let j = i + 1; j < syms.length; j++) {
       const a = syms[i]
       const b = syms[j]
-      if (a.data.deviceType === b.data.deviceType && Math.abs(a.x - b.x) < 3 && Math.abs(a.y - b.y) < 3) overlap.add(a.id).add(b.id)
+      if (
+        a.data.deviceType === b.data.deviceType &&
+        Math.abs(a.x - b.x) < 3 &&
+        Math.abs(a.y - b.y) < 3
+      )
+        overlap.add(a.id).add(b.id)
     }
-  if (overlap.size) issues.push({ id: 'overlap', level: 'warning', title: `${overlap.size} 个点位重叠`, detail: '同类型点位放在了同一位置，可能重复放置', targets: [...overlap] })
+  if (overlap.size)
+    issues.push({
+      id: 'overlap',
+      level: 'warning',
+      title: `${overlap.size} 个点位重叠`,
+      detail: '同类型点位放在了同一位置，可能重复放置',
+      targets: [...overlap],
+    })
   const off = points.filter((p) => !p.sheetId)
-  if (off.length) issues.push({ id: 'off-sheet', level: 'warning', title: `${off.length} 个点位不在图纸上`, targets: off.map((p) => p.id) })
+  if (off.length)
+    issues.push({
+      id: 'off-sheet',
+      level: 'warning',
+      title: `${off.length} 个点位不在图纸上`,
+      targets: off.map((p) => p.id),
+    })
   if (areas.length) {
     const un = points.filter((p) => p.sheetId && !p.areaId)
-    if (un.length) issues.push({ id: 'no-area', level: 'warning', title: `${un.length} 个点位不在任何区域内`, detail: '不在区域内的点位不会按房间统计', targets: un.map((p) => p.id) })
+    if (un.length)
+      issues.push({
+        id: 'no-area',
+        level: 'warning',
+        title: `${un.length} 个点位不在任何区域内`,
+        detail: '不在区域内的点位不会按房间统计',
+        targets: un.map((p) => p.id),
+      })
     const empty = areas.filter((a) => !points.some((p) => p.areaId === a.id))
-    if (empty.length) issues.push({ id: 'empty-area', level: 'info', title: `${empty.length} 个区域还没有点位`, detail: empty.slice(0, 6).map((a) => a.name).join('、'), targets: empty.map((a) => a.id) })
+    if (empty.length)
+      issues.push({
+        id: 'empty-area',
+        level: 'info',
+        title: `${empty.length} 个区域还没有点位`,
+        detail: empty
+          .slice(0, 6)
+          .map((a) => a.name)
+          .join('、'),
+        targets: empty.map((a) => a.id),
+      })
     // 有灯具却没有开关、门外附近也没有开关（也没有人体传感器 / 中控屏）的房间：灯装上了却没法控制
     const dark = new Map<string, { name: string; lights: string[] }>()
     for (const { light, area } of unswitchedLights(doc)) {
@@ -59,7 +104,14 @@ function check(doc: BoardDoc): CheckIssue[] {
     }
   }
   const uncal = syms.filter((s) => s.real && s.sizeCm && !sheetAt(doc, s.x, s.y)?.mmPerUnit)
-  if (uncal.length) issues.push({ id: 'uncalibrated', level: 'warning', title: `${uncal.length} 个按比例的灯具所在图纸未标定`, detail: '标定图纸比例后才按真实尺寸显示，现在按固定大小示意', targets: uncal.map((s) => s.id) })
+  if (uncal.length)
+    issues.push({
+      id: 'uncalibrated',
+      level: 'warning',
+      title: `${uncal.length} 个按比例的灯具所在图纸未标定`,
+      detail: '标定图纸比例后才按真实尺寸显示，现在按固定大小示意',
+      targets: uncal.map((s) => s.id),
+    })
   return issues
 }
 
@@ -71,11 +123,19 @@ function legend(doc: BoardDoc): LegendRow[] {
     if (row) row.count++
     else {
       const v = lightingVariant(s.symbolId)
-      rows.set(look.key, { key: look.key, label: v && look.key.includes(':') ? v.family.name : (deviceTypeOf(look.key)?.name ?? look.name), count: 1, look })
+      rows.set(look.key, {
+        key: look.key,
+        label:
+          v && look.key.includes(':') ? v.family.name : (deviceTypeOf(look.key)?.name ?? look.name),
+        count: 1,
+        look,
+      })
     }
   }
   const order = (k: string) => DEVICE_TYPE_ORDER.indexOf(k.split(':')[0])
-  return [...rows.values()].sort((a, b) => order(a.key) - order(b.key) || a.label.localeCompare(b.label, 'zh'))
+  return [...rows.values()].sort(
+    (a, b) => order(a.key) - order(b.key) || a.label.localeCompare(b.label, 'zh'),
+  )
 }
 
 export const smartHomePack: SystemPack = {

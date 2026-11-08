@@ -13,7 +13,11 @@ describe('quoteTotals', () => {
 
   it('金额四舍五入到分，避免浮点误差外泄', () => {
     // 0.1 * 3 在二进制浮点里是 0.30000000000000004，必须收敛成 0.3
-    expect(quoteTotals([{ price: 0.1, quantity: 3 }])).toEqual({ productTotal: 0.3, feeTotal: 0, total: 0.3 })
+    expect(quoteTotals([{ price: 0.1, quantity: 3 }])).toEqual({
+      productTotal: 0.3,
+      feeTotal: 0,
+      total: 0.3,
+    })
     expect(quoteTotals([{ price: 33.335, quantity: 1 }], [{ amount: 0.005 }])).toEqual({
       productTotal: 33.34,
       feeTotal: 0.01,

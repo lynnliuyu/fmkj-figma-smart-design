@@ -1,4 +1,14 @@
-import { Bot, FileUp, Palette, Presentation, ScanSearch, Sparkles, Wand2, Wrench, type LucideIcon } from 'lucide-react'
+import {
+  Bot,
+  FileUp,
+  Palette,
+  Presentation,
+  ScanSearch,
+  Sparkles,
+  Wand2,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react'
 
 import type { PluginId } from '@/plugins/types'
 

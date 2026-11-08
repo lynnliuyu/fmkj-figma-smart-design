@@ -24,7 +24,8 @@ export type ImageModelId = ImageModel['id']
 export const isImageModelId = (v: unknown): v is ImageModelId =>
   typeof v === 'string' && IMAGE_MODELS.some((m) => m.id === v)
 
-export const imageGenerationConfigured = () => Boolean(process.env.AI_BAILIAN_TOKEN_PLAN_KEY?.trim())
+export const imageGenerationConfigured = () =>
+  Boolean(process.env.AI_BAILIAN_TOKEN_PLAN_KEY?.trim())
 
 export class ImageGenerationError extends Error {}
 
@@ -35,15 +36,27 @@ export async function generateImage(opts: {
   userId: string | number
   /** 参考图（data URL）：支持图生图的模型会参考它的构图与空间；不支持时自动退回纯文生图 */
   referenceImage?: string | null
-}): Promise<{ mediaId: string; url: string; width: number; height: number; model: ImageModelId; buffer: Buffer; usedReference: boolean }> {
+}): Promise<{
+  mediaId: string
+  url: string
+  width: number
+  height: number
+  model: ImageModelId
+  buffer: Buffer
+  usedReference: boolean
+}> {
   const key = process.env.AI_BAILIAN_TOKEN_PLAN_KEY?.trim()
   if (!key) throw new ImageGenerationError('服务器尚未配置 AI_BAILIAN_TOKEN_PLAN_KEY')
   const model = IMAGE_MODELS.find((m) => m.id === opts.model)
   if (!model) throw new ImageGenerationError('不支持的图像模型')
-  const size = opts.size && (model.sizes as readonly string[]).includes(opts.size) ? opts.size : model.sizes[0]
+  const size =
+    opts.size && (model.sizes as readonly string[]).includes(opts.size) ? opts.size : model.sizes[0]
 
   const request = async (withReference: boolean) => {
-    const content: Record<string, string>[] = withReference && opts.referenceImage ? [{ image: opts.referenceImage }, { text: opts.prompt }] : [{ text: opts.prompt }]
+    const content: Record<string, string>[] =
+      withReference && opts.referenceImage
+        ? [{ image: opts.referenceImage }, { text: opts.prompt }]
+        : [{ text: opts.prompt }]
     try {
       return await fetch(ENDPOINT, {
         method: 'POST',

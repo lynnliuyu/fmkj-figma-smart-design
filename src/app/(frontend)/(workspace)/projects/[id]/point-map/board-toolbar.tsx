@@ -1,6 +1,24 @@
 'use client'
 
-import { Cable, Download, Eye, EyeOff, FileJson, FileUp, Grid3x3, Hand, ImageDown, MousePointer2, Pentagon, Redo2, Ruler, SlidersHorizontal, Sparkles, Undo2, Wifi } from 'lucide-react'
+import {
+  Cable,
+  Download,
+  Eye,
+  EyeOff,
+  FileJson,
+  FileUp,
+  Grid3x3,
+  Hand,
+  ImageDown,
+  MousePointer2,
+  Pentagon,
+  Redo2,
+  Ruler,
+  SlidersHorizontal,
+  Sparkles,
+  Undo2,
+  Wifi,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,10 +35,24 @@ import { SYMBOL_SIZES } from '@/board/core/symbols'
 import type { BoardTool, LayerId, ViewSettings } from '@/board/core/types'
 import { cn } from '@/lib/utils'
 
-export const BOARD_TOOLS: { id: BoardTool; label: string; shortLabel: string; key: string; icon: typeof Hand; edit?: boolean }[] = [
+export const BOARD_TOOLS: {
+  id: BoardTool
+  label: string
+  shortLabel: string
+  key: string
+  icon: typeof Hand
+  edit?: boolean
+}[] = [
   { id: 'select', label: '选择与移动', shortLabel: '选择', key: 'V', icon: MousePointer2 },
   { id: 'pan', label: '平移画布', shortLabel: '平移', key: 'H / 空格', icon: Hand },
-  { id: 'area', label: '绘制房间区域轮廓', shortLabel: '区域', key: 'A', icon: Pentagon, edit: true },
+  {
+    id: 'area',
+    label: '绘制房间区域轮廓',
+    shortLabel: '区域',
+    key: 'A',
+    icon: Pentagon,
+    edit: true,
+  },
   { id: 'calibrate', label: '标定图纸比例', shortLabel: '标定', key: 'C', icon: Ruler, edit: true },
 ]
 
@@ -58,14 +90,17 @@ export function BoardLayersPanel({
   const layerName = (id: LayerId) => pack.layers.find((l) => l.id === id)?.name ?? id
   const hiddenCount = LAYER_ROWS.filter((l) => !view.layers[l.id]).length + (view.labels ? 0 : 1)
   const overlays = pack.overlays ?? []
-  const showAll = () => onView({ labels: true, layers: { sheet: true, area: true, shape: true, symbol: true } })
+  const showAll = () =>
+    onView({ labels: true, layers: { sheet: true, area: true, shape: true, symbol: true } })
 
   return (
     <div className="space-y-4 px-3 py-3 text-xs">
       {/* 图层开关 */}
       <section className="space-y-1">
         <div className="flex items-center justify-between px-1 pb-1">
-          <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">画布图层</span>
+          <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            画布图层
+          </span>
           {hiddenCount ? (
             <button
               type="button"
@@ -123,12 +158,15 @@ export function BoardLayersPanel({
                     onClick={() => onView({ overlays: { ...view.overlays, [o.id]: !on } })}
                     className={cn(
                       'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors disabled:opacity-40',
-                      on
-                        ? 'bg-primary/8 text-foreground'
-                        : 'text-muted-foreground hover:bg-muted',
+                      on ? 'bg-primary/8 text-foreground' : 'text-muted-foreground hover:bg-muted',
                     )}
                   >
-                    <Icon className={cn('size-3.5 shrink-0', on ? 'text-primary' : 'text-muted-foreground')} />
+                    <Icon
+                      className={cn(
+                        'size-3.5 shrink-0',
+                        on ? 'text-primary' : 'text-muted-foreground',
+                      )}
+                    />
                     <span className="min-w-0 flex-1 truncate font-medium">{o.name}</span>
                     <span
                       className={cn(
@@ -156,8 +194,12 @@ export function BoardLayersPanel({
       <section className="space-y-2 border-t border-border pt-3">
         <label className="block px-1">
           <span className="mb-2 flex items-center justify-between">
-            <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">底图浓度</span>
-            <span className="text-[11px] text-muted-foreground tabular-nums">{Math.round(view.sheetOpacity * 100)}%</span>
+            <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              底图浓度
+            </span>
+            <span className="text-[11px] text-muted-foreground tabular-nums">
+              {Math.round(view.sheetOpacity * 100)}%
+            </span>
           </span>
           <input
             type="range"
@@ -249,19 +291,34 @@ export function BoardViewPopover({
       <Tooltip>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground" aria-label={label}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+              aria-label={label}
+            >
               <SlidersHorizontal />
               {hiddenCount ? (
-                <span aria-hidden className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-warning" />
+                <span
+                  aria-hidden
+                  className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-warning"
+                />
               ) : highlighted || overlayOn ? (
-                <span aria-hidden className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary" />
+                <span
+                  aria-hidden
+                  className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary"
+                />
               ) : null}
             </Button>
           </PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent side="bottom">{label}</TooltipContent>
       </Tooltip>
-      <PopoverContent align="end" className="max-h-[min(40rem,calc(100svh-7rem))] w-72 gap-0 overflow-y-auto p-0" onPointerDown={(e) => e.stopPropagation()}>
+      <PopoverContent
+        align="end"
+        className="max-h-[min(40rem,calc(100svh-7rem))] w-72 gap-0 overflow-y-auto p-0"
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         {children}
         <BoardLayersPanel view={view} onView={onView} pack={pack} />
       </PopoverContent>
@@ -293,11 +350,27 @@ export function BoardToolbar(props: {
   const hiddenCount = LAYER_ROWS.filter((l) => !view.layers[l.id]).length + (view.labels ? 0 : 1)
   const overlays = props.pack.overlays ?? []
   const overlayOn = overlays.filter((o) => view.overlays?.[o.id]).length
-  const showAll = () => onView({ labels: true, layers: { sheet: true, area: true, shape: true, symbol: true } })
+  const showAll = () =>
+    onView({ labels: true, layers: { sheet: true, area: true, shape: true, symbol: true } })
   return (
-    <div className={cn('absolute z-10 flex items-center gap-0.5 rounded-xl border bg-background/95 p-1 shadow-sm', props.offset ? 'top-7 left-7' : 'top-3 left-3')} onPointerDown={(e) => e.stopPropagation()}>
+    <div
+      className={cn(
+        'absolute z-10 flex items-center gap-0.5 rounded-xl border bg-background/95 p-1 shadow-sm',
+        props.offset ? 'top-7 left-7' : 'top-3 left-3',
+      )}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
       {TOOLS.filter((t) => !t.edit || !readOnly).map((t) => (
-        <Button key={t.id} variant={tool === t.id ? 'secondary' : 'ghost'} size="icon" className={btn} aria-pressed={tool === t.id} aria-label={t.label} title={`${t.label}（${t.key}）`} onClick={() => props.onTool(t.id)}>
+        <Button
+          key={t.id}
+          variant={tool === t.id ? 'secondary' : 'ghost'}
+          size="icon"
+          className={btn}
+          aria-pressed={tool === t.id}
+          aria-label={t.label}
+          title={`${t.label}（${t.key}）`}
+          onClick={() => props.onTool(t.id)}
+        >
           <t.icon className="size-4" />
         </Button>
       ))}
@@ -316,16 +389,40 @@ export function BoardToolbar(props: {
               <Sparkles className="size-4" />
             </Button>
           ) : null}
-          <Button variant="ghost" size="icon" className={btn} disabled={!props.canUndo} aria-label="撤销" title="撤销（Ctrl/⌘ + Z）" onClick={props.onUndo}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={btn}
+            disabled={!props.canUndo}
+            aria-label="撤销"
+            title="撤销（Ctrl/⌘ + Z）"
+            onClick={props.onUndo}
+          >
             <Undo2 className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" className={btn} disabled={!props.canRedo} aria-label="重做" title="重做（Ctrl/⌘ + Shift + Z）" onClick={props.onRedo}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={btn}
+            disabled={!props.canRedo}
+            aria-label="重做"
+            title="重做（Ctrl/⌘ + Shift + Z）"
+            onClick={props.onRedo}
+          >
             <Redo2 className="size-4" />
           </Button>
         </>
       )}
       <span className="mx-0.5 h-5 w-px bg-border" />
-      <Button variant={view.grid ? 'secondary' : 'ghost'} size="icon" className={btn} aria-pressed={view.grid} aria-label="网格" title="网格 25cm（G）" onClick={() => onView({ grid: !view.grid })}>
+      <Button
+        variant={view.grid ? 'secondary' : 'ghost'}
+        size="icon"
+        className={btn}
+        aria-pressed={view.grid}
+        aria-label="网格"
+        title="网格 25cm（G）"
+        onClick={() => onView({ grid: !view.grid })}
+      >
         <Grid3x3 className="size-4" />
       </Button>
       <Popover>
@@ -335,14 +432,32 @@ export function BoardToolbar(props: {
             size="icon"
             className={cn(btn, 'relative')}
             aria-label={hiddenCount ? `显示与隐藏（${hiddenCount} 项已隐藏）` : '显示与隐藏'}
-            title={hiddenCount ? `有 ${hiddenCount} 项已隐藏` : '显示与隐藏：图层、代号、底图浓度、符号样式'}
+            title={
+              hiddenCount
+                ? `有 ${hiddenCount} 项已隐藏`
+                : '显示与隐藏：图层、代号、底图浓度、符号样式'
+            }
           >
             {hiddenCount ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-            {hiddenCount ? <span aria-hidden className="absolute top-1 right-1 size-1.5 rounded-full bg-warning" /> : null}
-            {!hiddenCount && overlayOn ? <span aria-hidden className="absolute top-1 right-1 size-1.5 rounded-full bg-primary" /> : null}
+            {hiddenCount ? (
+              <span
+                aria-hidden
+                className="absolute top-1 right-1 size-1.5 rounded-full bg-warning"
+              />
+            ) : null}
+            {!hiddenCount && overlayOn ? (
+              <span
+                aria-hidden
+                className="absolute top-1 right-1 size-1.5 rounded-full bg-primary"
+              />
+            ) : null}
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-72 gap-0 p-0" onPointerDown={(e) => e.stopPropagation()}>
+        <PopoverContent
+          align="start"
+          className="w-72 gap-0 p-0"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
             <p className="text-sm font-medium">显示与隐藏</p>
             {hiddenCount ? (
@@ -357,9 +472,21 @@ export function BoardToolbar(props: {
               const on = view.layers[row.id]
               return (
                 <li key={row.id}>
-                  <LayerRow on={on} name={layerName(row.id)} hint={row.hint} onToggle={() => onView({ layers: { ...view.layers, [row.id]: !on } })} />
+                  <LayerRow
+                    on={on}
+                    name={layerName(row.id)}
+                    hint={row.hint}
+                    onToggle={() => onView({ layers: { ...view.layers, [row.id]: !on } })}
+                  />
                   {row.id === 'symbol' ? (
-                    <LayerRow on={view.labels} name="点位代号" hint="图标下方的编号" indent disabled={!on} onToggle={() => onView({ labels: !view.labels })} />
+                    <LayerRow
+                      on={view.labels}
+                      name="点位代号"
+                      hint="图标下方的编号"
+                      indent
+                      disabled={!on}
+                      onToggle={() => onView({ labels: !view.labels })}
+                    />
                   ) : null}
                 </li>
               )
@@ -367,7 +494,9 @@ export function BoardToolbar(props: {
           </ul>
           {overlays.length ? (
             <div className="border-t px-1.5 py-1.5">
-              <p className="px-1.5 pt-1 pb-1 text-xs font-medium text-muted-foreground">智能辅助图层（只显示，不写进图纸）</p>
+              <p className="px-1.5 pt-1 pb-1 text-xs font-medium text-muted-foreground">
+                智能辅助图层（只显示，不写进图纸）
+              </p>
               <ul>
                 {overlays.map((o) => {
                   const on = Boolean(view.overlays?.[o.id])
@@ -380,15 +509,29 @@ export function BoardToolbar(props: {
                         aria-checked={on}
                         disabled={!view.layers.symbol}
                         onClick={() => onView({ overlays: { ...view.overlays, [o.id]: !on } })}
-                        className={cn('h-auto w-full justify-start gap-2.5 px-1.5 py-1.5 text-left font-normal disabled:opacity-40', !on && 'text-muted-foreground')}
+                        className={cn(
+                          'h-auto w-full justify-start gap-2.5 px-1.5 py-1.5 text-left font-normal disabled:opacity-40',
+                          !on && 'text-muted-foreground',
+                        )}
                       >
                         <Icon className={cn('size-4 shrink-0', on && 'text-primary')} />
                         <span className="flex min-w-0 flex-1 flex-col">
                           <span>{o.name}</span>
                           <span className="truncate text-xs text-muted-foreground">{o.hint}</span>
                         </span>
-                        <span className={cn('h-4 w-7 shrink-0 rounded-full p-0.5 transition-colors', on ? 'bg-primary' : 'bg-muted')} aria-hidden>
-                          <span className={cn('block size-3 rounded-full bg-background shadow-sm transition-transform', on && 'translate-x-3')} />
+                        <span
+                          className={cn(
+                            'h-4 w-7 shrink-0 rounded-full p-0.5 transition-colors',
+                            on ? 'bg-primary' : 'bg-muted',
+                          )}
+                          aria-hidden
+                        >
+                          <span
+                            className={cn(
+                              'block size-3 rounded-full bg-background shadow-sm transition-transform',
+                              on && 'translate-x-3',
+                            )}
+                          />
                         </span>
                       </Button>
                     </li>
@@ -403,7 +546,16 @@ export function BoardToolbar(props: {
                 <span>底图浓度</span>
                 <span className="tabular-nums">{Math.round(view.sheetOpacity * 100)}%</span>
               </span>
-              <input type="range" min={15} max={100} step={5} value={Math.round(view.sheetOpacity * 100)} onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })} className="w-full accent-primary" aria-label="底图浓度" />
+              <input
+                type="range"
+                min={15}
+                max={100}
+                step={5}
+                value={Math.round(view.sheetOpacity * 100)}
+                onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })}
+                className="w-full accent-primary"
+                aria-label="底图浓度"
+              />
             </label>
             <Segmented
               label="符号样式"
@@ -414,10 +566,20 @@ export function BoardToolbar(props: {
               ]}
               onChange={(v) => onView({ symbolStyle: v as ViewSettings['symbolStyle'] })}
             />
-            <Segmented label="符号大小" value={String(view.symbolSize)} options={SYMBOL_SIZES.map((s) => ({ value: String(s.value), label: s.label }))} onChange={(v) => onView({ symbolSize: Number(v) })} />
+            <Segmented
+              label="符号大小"
+              value={String(view.symbolSize)}
+              options={SYMBOL_SIZES.map((s) => ({ value: String(s.value), label: s.label }))}
+              onChange={(v) => onView({ symbolSize: Number(v) })}
+            />
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">标尺（Shift + R）</span>
-              <Button variant={view.rulers ? 'secondary' : 'outline'} size="xs" aria-pressed={view.rulers} onClick={() => onView({ rulers: !view.rulers })}>
+              <Button
+                variant={view.rulers ? 'secondary' : 'outline'}
+                size="xs"
+                aria-pressed={view.rulers}
+                onClick={() => onView({ rulers: !view.rulers })}
+              >
                 {view.rulers ? '已显示' : '已隐藏'}
               </Button>
             </div>
@@ -426,7 +588,13 @@ export function BoardToolbar(props: {
       </Popover>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className={btn} aria-label="导入导出" title="导出图片 / 画板 JSON">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={btn}
+            aria-label="导入导出"
+            title="导出图片 / 画板 JSON"
+          >
             <Download className="size-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -453,7 +621,21 @@ export function BoardToolbar(props: {
   )
 }
 
-function LayerRow({ on, name, hint, onToggle, indent, disabled }: { on: boolean; name: string; hint: string; onToggle: () => void; indent?: boolean; disabled?: boolean }) {
+function LayerRow({
+  on,
+  name,
+  hint,
+  onToggle,
+  indent,
+  disabled,
+}: {
+  on: boolean
+  name: string
+  hint: string
+  onToggle: () => void
+  indent?: boolean
+  disabled?: boolean
+}) {
   return (
     <button
       type="button"
@@ -467,14 +649,32 @@ function LayerRow({ on, name, hint, onToggle, indent, disabled }: { on: boolean;
         on ? 'text-foreground' : 'text-muted-foreground',
       )}
     >
-      {on ? <Eye className="size-3.5 shrink-0 text-primary" /> : <EyeOff className="size-3.5 shrink-0" />}
-      <span className={cn('flex-1 font-medium', !on && 'line-through decoration-muted-foreground/50')}>{name}</span>
+      {on ? (
+        <Eye className="size-3.5 shrink-0 text-primary" />
+      ) : (
+        <EyeOff className="size-3.5 shrink-0" />
+      )}
+      <span
+        className={cn('flex-1 font-medium', !on && 'line-through decoration-muted-foreground/50')}
+      >
+        {name}
+      </span>
       <span className="text-[11px] text-muted-foreground">{hint}</span>
     </button>
   )
 }
 
-function Segmented({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (v: string) => void }) {
+function Segmented({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string
+  value: string
+  options: { value: string; label: string }[]
+  onChange: (v: string) => void
+}) {
   return (
     <div className="flex items-center justify-between gap-2">
       <span className="shrink-0 whitespace-nowrap text-muted-foreground">{label}</span>

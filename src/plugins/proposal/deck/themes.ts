@@ -30,8 +30,25 @@ const AZURE_STYLE: DocStyle = {
   id: 'azure',
   name: '晨岚现代',
   description: '冷白纸色、深海蓝强调',
-  colors: { paper: '#f8fafc', ink: '#1b2230', muted: '#64708a', accent: '#24508f', soft: '#e6edf6', softTo: '#f1f5fa', rule: '#dbe3ee', headBg: '#1d2b44', headFg: '#ffffff', stripe: '#f1f5fa' },
-  fonts: { display: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`, strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`, body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`, numeral: `'Inter:Regular', ${SANS}`, latin: `'Inter:Regular', ${SANS}` },
+  colors: {
+    paper: '#f8fafc',
+    ink: '#1b2230',
+    muted: '#64708a',
+    accent: '#24508f',
+    soft: '#e6edf6',
+    softTo: '#f1f5fa',
+    rule: '#dbe3ee',
+    headBg: '#1d2b44',
+    headFg: '#ffffff',
+    stripe: '#f1f5fa',
+  },
+  fonts: {
+    display: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`,
+    strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`,
+    body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`,
+    numeral: `'Inter:Regular', ${SANS}`,
+    latin: `'Inter:Regular', ${SANS}`,
+  },
   weights: { display: 500, strong: 500, numeral: 300 },
   header: 'line',
   title: 'numbered',
@@ -44,8 +61,25 @@ const TERRA_STYLE: DocStyle = {
   id: 'terra',
   name: '赤陶中古',
   description: '羊皮纸色、赤陶棕与温厚衬线',
-  colors: { paper: '#f5eee4', ink: '#3e2d25', muted: '#766257', accent: '#994b32', soft: '#ead9c9', softTo: '#f3e8dc', rule: '#d6c3b2', headBg: '#583d30', headFg: '#fff7eb', stripe: '#eee3d5' },
-  fonts: { display: SERIF, strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`, body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`, numeral: SERIF, latin: `'Inter:Regular', ${SANS}` },
+  colors: {
+    paper: '#f5eee4',
+    ink: '#3e2d25',
+    muted: '#766257',
+    accent: '#994b32',
+    soft: '#ead9c9',
+    softTo: '#f3e8dc',
+    rule: '#d6c3b2',
+    headBg: '#583d30',
+    headFg: '#fff7eb',
+    stripe: '#eee3d5',
+  },
+  fonts: {
+    display: SERIF,
+    strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`,
+    body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`,
+    numeral: SERIF,
+    latin: `'Inter:Regular', ${SANS}`,
+  },
   weights: { display: 600, strong: 500, numeral: 400 },
   header: 'line',
   title: 'underline',
@@ -59,7 +93,18 @@ const LINEN_STYLE: DocStyle = {
   id: 'linen',
   name: '海盐柔雅',
   description: '海盐蓝灰、柔和衬线与浅色留白',
-  colors: { paper: '#f3f7f6', ink: '#293f45', muted: '#5c747a', accent: '#526f78', soft: '#e0e9e8', softTo: '#edf2ef', rule: '#cbd8d7', headBg: '#dfe9e9', headFg: '#29464f', stripe: '#eaf0ee' },
+  colors: {
+    paper: '#f3f7f6',
+    ink: '#293f45',
+    muted: '#5c747a',
+    accent: '#526f78',
+    soft: '#e0e9e8',
+    softTo: '#edf2ef',
+    rule: '#cbd8d7',
+    headBg: '#dfe9e9',
+    headFg: '#29464f',
+    stripe: '#eaf0ee',
+  },
   radius: '16px',
   tagline: 'QUIET EVERYDAY',
 }
@@ -69,7 +114,18 @@ const SLATE_STYLE: DocStyle = {
   id: 'slate',
   name: '岩灰建筑',
   description: '冷灰纸色、石墨文字与建筑线框',
-  colors: { paper: '#eff0ed', ink: '#252c30', muted: '#626e73', accent: '#46545b', soft: '#dde2df', softTo: '#e8ebe7', rule: '#bec7c4', headBg: '#303b40', headFg: '#f4f5ef', stripe: '#e5e9e5' },
+  colors: {
+    paper: '#eff0ed',
+    ink: '#252c30',
+    muted: '#626e73',
+    accent: '#46545b',
+    soft: '#dde2df',
+    softTo: '#e8ebe7',
+    rule: '#bec7c4',
+    headBg: '#303b40',
+    headFg: '#f4f5ef',
+    stripe: '#e5e9e5',
+  },
   fonts: { ...AZURE_STYLE.fonts, numeral: `'Inter:Bold', ${SANS}` },
   weights: { display: 500, strong: 500, numeral: 700 },
   radius: '0px',
@@ -105,8 +161,25 @@ const MONO_STYLE: DocStyle = {
   id: 'mono',
   name: '素白极简',
   description: '纯白画面、黑色粗体',
-  colors: { paper: '#ffffff', ink: '#111111', muted: '#6b6b6b', accent: '#111111', soft: '#f2f2f2', softTo: '#fafafa', rule: '#e3e3e3', headBg: '#111111', headFg: '#ffffff', stripe: '#f7f7f7' },
-  fonts: { display: `'Noto Sans SC:Bold', ${NOTO_FALLBACK}`, strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`, body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`, numeral: `'Inter:Bold', ${SANS}`, latin: `'Inter:Regular', ${SANS}` },
+  colors: {
+    paper: '#ffffff',
+    ink: '#111111',
+    muted: '#6b6b6b',
+    accent: '#111111',
+    soft: '#f2f2f2',
+    softTo: '#fafafa',
+    rule: '#e3e3e3',
+    headBg: '#111111',
+    headFg: '#ffffff',
+    stripe: '#f7f7f7',
+  },
+  fonts: {
+    display: `'Noto Sans SC:Bold', ${NOTO_FALLBACK}`,
+    strong: `'Noto Sans SC:Medium', ${NOTO_FALLBACK}`,
+    body: `'Noto Sans SC:Regular', ${NOTO_FALLBACK}`,
+    numeral: `'Inter:Bold', ${SANS}`,
+    latin: `'Inter:Regular', ${SANS}`,
+  },
   weights: { display: 700, strong: 500, numeral: 700 },
   header: 'line',
   title: 'numbered',
@@ -148,7 +221,17 @@ const NOIR_DECK_STYLE: DocStyle = {
 }
 
 /** 方案视觉主题；后台「方案模板」可进一步换强调色、封面图和标语。 */
-export type DeckThemeId = 'qixu' | 'noir' | 'grove' | 'azure' | 'terra' | 'mono' | 'dawn' | 'jade' | 'linen' | 'slate'
+export type DeckThemeId =
+  | 'qixu'
+  | 'noir'
+  | 'grove'
+  | 'azure'
+  | 'terra'
+  | 'mono'
+  | 'dawn'
+  | 'jade'
+  | 'linen'
+  | 'slate'
 
 export type DeckTheme = {
   id: DeckThemeId
@@ -449,7 +532,19 @@ export const DECK_THEMES: Record<DeckThemeId, DeckTheme> = {
     id: 'jade',
     label: '东方雅韵',
     description: '宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅',
-    style: { ...GROVE_STYLE, id: 'jade', name: '东方雅韵', colors: { ...GROVE_STYLE.colors, paper: '#f7f4ec', accent: '#3f7f78', soft: '#dfece9', headBg: '#dde9e6', headFg: '#2c5a55' } },
+    style: {
+      ...GROVE_STYLE,
+      id: 'jade',
+      name: '东方雅韵',
+      colors: {
+        ...GROVE_STYLE.colors,
+        paper: '#f7f4ec',
+        accent: '#3f7f78',
+        soft: '#dfece9',
+        headBg: '#dde9e6',
+        headFg: '#2c5a55',
+      },
+    },
     vars: {
       '--deck-panel': '#dfece9',
       '--deck-panel-border': 'transparent',
@@ -529,15 +624,31 @@ export const DECK_THEMES: Record<DeckThemeId, DeckTheme> = {
   },
 }
 
-export const isDeckTheme = (v: unknown): v is DeckThemeId => typeof v === 'string' && Object.hasOwn(DECK_THEMES, v)
+export const isDeckTheme = (v: unknown): v is DeckThemeId =>
+  typeof v === 'string' && Object.hasOwn(DECK_THEMES, v)
 export const DECK_THEME_LIST = Object.values(DECK_THEMES)
 
 const HEX = /^#[0-9a-f]{6}$/i
 const mixHex = (a: string, b: string, t: number) =>
-  '#' + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) + (parseInt(b.slice(i, i + 2), 16) - parseInt(a.slice(i, i + 2), 16)) * t).toString(16).padStart(2, '0')).join('')
+  '#' +
+  [1, 3, 5]
+    .map((i) =>
+      Math.round(
+        parseInt(a.slice(i, i + 2), 16) +
+          (parseInt(b.slice(i, i + 2), 16) - parseInt(a.slice(i, i + 2), 16)) * t,
+      )
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')
 
 /** 后台方案模板对框架的覆盖项 */
-export type DeckOverrides = { accent?: string | null; coverPhoto?: string | null; headline?: string | null; coverTagline?: string | null }
+export type DeckOverrides = {
+  accent?: string | null
+  coverPhoto?: string | null
+  headline?: string | null
+  coverTagline?: string | null
+}
 
 /** 在框架之上应用模板覆盖：强调色同步到编号圆点、标签、浅色面板 */
 export function customizeTheme(theme: DeckTheme, o: DeckOverrides): DeckTheme {
@@ -545,14 +656,25 @@ export function customizeTheme(theme: DeckTheme, o: DeckOverrides): DeckTheme {
   const dark = theme.mood === 'dark'
   return {
     ...theme,
-    style: accent ? { ...theme.style, colors: { ...theme.style.colors, accent, ...(dark ? { headFg: accent } : {}) } } : theme.style,
+    style: accent
+      ? {
+          ...theme.style,
+          colors: { ...theme.style.colors, accent, ...(dark ? { headFg: accent } : {}) },
+        }
+      : theme.style,
     vars: accent
       ? {
           ...theme.vars,
           '--deck-marker': accent,
           '--deck-plan-code': mixHex(accent, '#000000', 0.2),
           '--deck-chip-fg': accent,
-          ...(dark ? {} : { '--deck-panel': mixHex(accent, '#ffffff', 0.85), '--deck-badge': mixHex(accent, '#ffffff', 0.85), '--deck-service-row': mixHex(accent, '#ffffff', 0.88) }),
+          ...(dark
+            ? {}
+            : {
+                '--deck-panel': mixHex(accent, '#ffffff', 0.85),
+                '--deck-badge': mixHex(accent, '#ffffff', 0.85),
+                '--deck-service-row': mixHex(accent, '#ffffff', 0.88),
+              }),
         }
       : theme.vars,
     headline: o.headline?.trim() || theme.headline,

@@ -16,7 +16,13 @@ export const GET = mpRoute(async ({ request }) => {
     .filter((p) => p.status === 'active')
     .filter((p) => (!deviceType ? true : p.deviceType === deviceType))
     .filter((p) => (!category ? true : categoryOfType(p.deviceType)?.slug === category))
-    .filter((p) => (!q ? true : `${p.name} ${p.sku} ${p.brand?.name ?? ''} ${deviceTypeOf(p.deviceType)?.name ?? ''}`.toLowerCase().includes(q)))
+    .filter((p) =>
+      !q
+        ? true
+        : `${p.name} ${p.sku} ${p.brand?.name ?? ''} ${deviceTypeOf(p.deviceType)?.name ?? ''}`
+            .toLowerCase()
+            .includes(q),
+    )
   all.sort((a, b) =>
     sort === 'price-asc'
       ? (a.price || Infinity) - (b.price || Infinity)

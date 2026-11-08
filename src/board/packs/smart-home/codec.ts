@@ -8,17 +8,37 @@
  */
 import { sheetAt } from '@/board/core/ops'
 import { DEFAULT_SYMBOL_SIZE, symbolGeom, textWidth } from '@/board/core/symbols'
-import type { AreaObj, BoardDoc, BoardFile, BoardObj, RawEl, SheetObj, SizeCm, SymbolObj } from '@/board/core/types'
+import type {
+  AreaObj,
+  BoardDoc,
+  BoardFile,
+  BoardObj,
+  RawEl,
+  SheetObj,
+  SizeCm,
+  SymbolObj,
+} from '@/board/core/types'
 import { inferAreaType, isAreaType } from '@/lib/area-types'
 import { categoryOfType, isDeviceType } from '@/lib/device-types'
 import { markerFileId } from '@/lib/point-markers'
-import { AREA_STYLE, areaLabelAnchor, areaPolygon, isPointElement, sceneAreas, scenePoints, sceneSheets, type SceneEl, type SceneFile } from '@/lib/point-scene'
+import {
+  AREA_STYLE,
+  areaLabelAnchor,
+  areaPolygon,
+  isPointElement,
+  sceneAreas,
+  scenePoints,
+  sceneSheets,
+  type SceneEl,
+  type SceneFile,
+} from '@/lib/point-scene'
 import { MARKER, SHEET } from '@/lib/sheet-spec'
 
 import { lookOf } from './look'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
-const kindOf = (el: SceneEl) => (typeof el.customData?.kind === 'string' ? (el.customData.kind as string) : null)
+const kindOf = (el: SceneEl) =>
+  typeof el.customData?.kind === 'string' ? (el.customData.kind as string) : null
 const POINT_KEYS = new Set(['pointCode', 'symbolId', 'sizeCm', 'real'])
 
 export function parseSize(v: unknown): SizeCm | null {
@@ -127,7 +147,12 @@ function encodePoint(o: SymbolObj, doc: BoardDoc): SceneEl[] {
   if (o.real && o.sizeCm) {
     const sheet = sheetAt(doc, o.x, o.y)
     if (sheet?.mmPerUnit) {
-      const g = symbolGeom(o, lookOf(o), { symbolStyle: 'plan', symbolSize: DEFAULT_SYMBOL_SIZE }, sheet.mmPerUnit)
+      const g = symbolGeom(
+        o,
+        lookOf(o),
+        { symbolStyle: 'plan', symbolSize: DEFAULT_SYMBOL_SIZE },
+        sheet.mmPerUnit,
+      )
       w = g.w
       h = g.h
     }
@@ -137,7 +162,19 @@ function encodePoint(o: SymbolObj, doc: BoardDoc): SceneEl[] {
   if (o.symbolId !== fileType) cd.symbolId = o.symbolId
   if (o.sizeCm) cd.sizeCm = o.sizeCm
   if (o.real) cd.real = true
-  const image: SceneEl = { ...(m.el ?? {}), id: o.id, type: 'image', x: o.x - w / 2, y: o.y - h / 2, width: w, height: h, groupIds: [group], fileId: markerFileId(fileType), status: 'saved', customData: cd }
+  const image: SceneEl = {
+    ...(m.el ?? {}),
+    id: o.id,
+    type: 'image',
+    x: o.x - w / 2,
+    y: o.y - h / 2,
+    width: w,
+    height: h,
+    groupIds: [group],
+    fileId: markerFileId(fileType),
+    status: 'saved',
+    customData: cd,
+  }
   if (o.angle) image.angle = o.angle
   else delete image.angle
   const lw = Math.max(MARKER.size, textWidth(o.code, MARKER.labelSize) + 2)
@@ -183,10 +220,23 @@ function encodeArea(o: AreaObj): SceneEl[] {
       kind: 'area',
       name: o.name,
       areaType: o.areaType,
-      ...(poly ? { polygon: poly.map((q) => [Math.round((q.x - o.x) * 10) / 10, Math.round((q.y - o.y) * 10) / 10]) } : {}),
+      ...(poly
+        ? {
+            polygon: poly.map((q) => [
+              Math.round((q.x - o.x) * 10) / 10,
+              Math.round((q.y - o.y) * 10) / 10,
+            ]),
+          }
+        : {}),
     },
   }
-  const [lx, ly] = areaLabelAnchor({ x: o.x, y: o.y, width: o.w, height: o.h, poly: poly ? poly.map((q) => [q.x, q.y] as [number, number]) : null })
+  const [lx, ly] = areaLabelAnchor({
+    x: o.x,
+    y: o.y,
+    width: o.w,
+    height: o.h,
+    poly: poly ? poly.map((q) => [q.x, q.y] as [number, number]) : null,
+  })
   const label: SceneEl = {
     ...(m.label ?? { strokeColor: AREA_STYLE.label, fontFamily: 2, lineHeight: 1.25 }),
     id: m.labelId || m.label?.id || `${o.id}-lb`,
@@ -206,11 +256,28 @@ function encodeArea(o: AreaObj): SceneEl[] {
 
 function encodeSheet(o: SheetObj): SceneEl[] {
   const m = metaOf(o)
-  const cd: Record<string, unknown> = { ...(m.el?.customData ?? {}), kind: 'sheet', sheetId: o.sheetId, name: o.name }
+  const cd: Record<string, unknown> = {
+    ...(m.el?.customData ?? {}),
+    kind: 'sheet',
+    sheetId: o.sheetId,
+    name: o.name,
+  }
   if (o.mediaId) cd.mediaId = o.mediaId
   if (o.mmPerUnit) cd.mmPerUnit = Math.round(o.mmPerUnit * 10000) / 10000
   else delete cd.mmPerUnit
-  const image: SceneEl = { ...(m.el ?? { opacity: SHEET.opacity }), id: o.id, type: 'image', x: o.x, y: o.y, width: o.w, height: o.h, locked: true, fileId: o.fileId, status: 'saved', customData: cd }
+  const image: SceneEl = {
+    ...(m.el ?? { opacity: SHEET.opacity }),
+    id: o.id,
+    type: 'image',
+    x: o.x,
+    y: o.y,
+    width: o.w,
+    height: o.h,
+    locked: true,
+    fileId: o.fileId,
+    status: 'saved',
+    customData: cd,
+  }
   const title: SceneEl = {
     ...(m.title ?? { fontFamily: 2, lineHeight: 1.25, strokeColor: '#404040' }),
     id: m.title?.id || `${o.id}-tt`,
@@ -257,7 +324,18 @@ export function analyzeDoc(doc: BoardDoc, files: Record<string, SceneFile | Boar
 export const BOARD_FORMAT = 'fmkj-board'
 
 export function exportBoardJson(doc: BoardDoc, files: Record<string, BoardFile>, name: string) {
-  return JSON.stringify({ format: BOARD_FORMAT, version: 1, pack: 'smart-home', name, exportedAt: new Date().toISOString(), scene: { elements: encodeDoc(doc), files } }, null, 1)
+  return JSON.stringify(
+    {
+      format: BOARD_FORMAT,
+      version: 1,
+      pack: 'smart-home',
+      name,
+      exportedAt: new Date().toISOString(),
+      scene: { elements: encodeDoc(doc), files },
+    },
+    null,
+    1,
+  )
 }
 
 /** 读取画板 JSON、旧版点位图场景或 .excalidraw 文件 */
@@ -268,13 +346,26 @@ export function parseBoardJson(text: string): { doc: BoardDoc; files: Record<str
   } catch {
     throw new Error('文件不是有效的 JSON')
   }
-  const d = data as { format?: string; scene?: { elements?: unknown; files?: unknown }; elements?: unknown; files?: unknown }
+  const d = data as {
+    format?: string
+    scene?: { elements?: unknown; files?: unknown }
+    elements?: unknown
+    files?: unknown
+  }
   const scene = d?.format === BOARD_FORMAT ? d.scene : d
-  if (!scene || !Array.isArray(scene.elements)) throw new Error('没有找到图纸内容（需要画板 JSON 或点位图场景）')
+  if (!scene || !Array.isArray(scene.elements))
+    throw new Error('没有找到图纸内容（需要画板 JSON 或点位图场景）')
   const files: Record<string, BoardFile> = {}
   if (scene.files && typeof scene.files === 'object') {
-    for (const [id, f] of Object.entries(scene.files as Record<string, Partial<BoardFile> | null>)) {
-      if (f && typeof f.dataURL === 'string') files[id] = { id, dataURL: f.dataURL, mimeType: typeof f.mimeType === 'string' ? f.mimeType : 'image/png' }
+    for (const [id, f] of Object.entries(
+      scene.files as Record<string, Partial<BoardFile> | null>,
+    )) {
+      if (f && typeof f.dataURL === 'string')
+        files[id] = {
+          id,
+          dataURL: f.dataURL,
+          mimeType: typeof f.mimeType === 'string' ? f.mimeType : 'image/png',
+        }
     }
   }
   return { doc: decodeScene({ elements: scene.elements as SceneEl[] }), files }

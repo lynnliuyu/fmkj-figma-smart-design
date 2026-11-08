@@ -38,24 +38,46 @@ export function ProjectHeader({
 }) {
   const segment = useSelectedLayoutSegment()
   // 售后维保属于交付阶段，高亮「归档」板块
-  const active = PROJECT_SECTIONS.find((s) => s.segment === segment)?.key ?? (segment === 'after-sales' ? 'archive' : 'info')
+  const active =
+    PROJECT_SECTIONS.find((s) => s.segment === segment)?.key ??
+    (segment === 'after-sales' ? 'archive' : 'info')
 
   return (
     <header className="project-header sticky top-0 z-40 -mx-4 -mt-5 border-b border-border bg-background md:-mx-8 md:-mt-7">
       <div className="flex flex-wrap items-center md:h-12 md:flex-nowrap">
         <div className="flex h-12 min-w-0 flex-1 items-center gap-2 pl-3 md:flex-none md:pl-4">
           <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-          <Separator orientation="vertical" className="data-vertical:h-5 data-vertical:self-center" />
-          <GuardedLink href="/projects" className="hidden shrink-0 text-[13px] text-muted-foreground transition-colors hover:text-foreground sm:inline">
+          <Separator
+            orientation="vertical"
+            className="data-vertical:h-5 data-vertical:self-center"
+          />
+          <GuardedLink
+            href="/projects"
+            className="hidden shrink-0 text-[13px] text-muted-foreground transition-colors hover:text-foreground sm:inline"
+          >
             项目
           </GuardedLink>
-          <ChevronRight aria-hidden className="hidden size-3.5 shrink-0 text-muted-foreground/60 sm:block" />
+          <ChevronRight
+            aria-hidden
+            className="hidden size-3.5 shrink-0 text-muted-foreground/60 sm:block"
+          />
           <div className="min-w-0 md:max-w-[16rem] xl:max-w-[22rem]">
             <div className="flex min-w-0 items-center gap-1.5">
-              <h1 className="truncate text-sm leading-tight font-semibold text-foreground" title={name}>{name}</h1>
-              {demo ? <Badge variant="brand" className="h-4.5 shrink-0 px-1.5 text-[11px]">示例</Badge> : null}
+              <h1
+                className="truncate text-sm leading-tight font-semibold text-foreground"
+                title={name}
+              >
+                {name}
+              </h1>
+              {demo ? (
+                <Badge variant="brand" className="h-4.5 shrink-0 px-1.5 text-[11px]">
+                  示例
+                </Badge>
+              ) : null}
             </div>
-            {subtitle ? <p className="truncate text-[11px] leading-tight text-muted-foreground">{subtitle}</p> : null}
+            {subtitle ? (
+              <p className="truncate text-[11px] leading-tight text-muted-foreground">{subtitle}</p>
+            ) : null}
           </div>
         </div>
         <div className="flex h-12 items-center gap-1.5 pr-3 md:order-last md:ml-auto md:pr-4">

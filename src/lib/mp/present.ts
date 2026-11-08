@@ -18,7 +18,13 @@ import { planAreaOf } from '@/lib/point-scene'
 export const presentType = (t: string | null | undefined) => {
   const type = t || 'other'
   const cat = categoryOfType(type)
-  return { value: type, name: deviceTypeOf(type)?.name ?? '其他设备', category: cat?.name ?? '其他', color: cat?.color ?? '#525252', marker: pointIconArt(type)?.src ?? markerUrl(type) }
+  return {
+    value: type,
+    name: deviceTypeOf(type)?.name ?? '其他设备',
+    category: cat?.name ?? '其他',
+    color: cat?.color ?? '#525252',
+    marker: pointIconArt(type)?.src ?? markerUrl(type),
+  }
 }
 
 export function presentProduct(p: CatalogProduct, detail = false) {
@@ -42,17 +48,37 @@ export function presentProduct(p: CatalogProduct, detail = false) {
 type ProjectLike = Pick<Project, 'id' | 'name' | 'status'> & Partial<Project>
 
 /** 早期项目还没有「点位数」统计值：和网页一样，临时从点位图计算（下次保存点位图时写入）。 */
-export async function fillPointCounts<T extends { id: string | number; pointCount?: number | null }>(docs: T[], user: User): Promise<T[]> {
+export async function fillPointCounts<
+  T extends { id: string | number; pointCount?: number | null },
+>(docs: T[], user: User): Promise<T[]> {
   const missing = docs.filter((d) => d.pointCount == null).map((d) => d.id)
   if (!missing.length) return docs
   const payload = await getPayloadClient()
-  const res = await payload.find({ collection: 'projects', where: { id: { in: missing } }, limit: missing.length, depth: 0, user, overrideAccess: false, select: { pointMap: true } })
+  const res = await payload.find({
+    collection: 'projects',
+    where: { id: { in: missing } },
+    limit: missing.length,
+    depth: 0,
+    user,
+    overrideAccess: false,
+    select: { pointMap: true },
+  })
   const counts = new Map(res.docs.map((p) => [String(p.id), countScenePoints(p.pointMap)]))
-  return docs.map((d) => (d.pointCount == null ? { ...d, pointCount: counts.get(String(d.id)) ?? 0 } : d))
+  return docs.map((d) =>
+    d.pointCount == null ? { ...d, pointCount: counts.get(String(d.id)) ?? 0 } : d,
+  )
 }
 
-export function presentProject(p: ProjectLike, extra: { quoteCount: number; contractStatus?: string | null; pointCount?: number | null }) {
-  const progress = projectProgress({ status: p.status, pointCount: extra.pointCount ?? p.pointCount, quoteCount: extra.quoteCount, contractStatus: extra.contractStatus })
+export function presentProject(
+  p: ProjectLike,
+  extra: { quoteCount: number; contractStatus?: string | null; pointCount?: number | null },
+) {
+  const progress = projectProgress({
+    status: p.status,
+    pointCount: extra.pointCount ?? p.pointCount,
+    quoteCount: extra.quoteCount,
+    contractStatus: extra.contractStatus,
+  })
   return {
     id: String(p.id),
     name: p.name,
@@ -125,7 +151,13 @@ export function presentContract(c: Contract) {
     durationDays: c.durationDays ?? null,
     warrantyMonths: c.warrantyMonths ?? null,
     terms: c.terms ?? '',
-    payments: (c.payments ?? []).map((p, i) => ({ id: p.id ?? null, name: p.name, percent: p.percent, received: Boolean(p.received), amount: amounts[i] ?? 0 })),
+    payments: (c.payments ?? []).map((p, i) => ({
+      id: p.id ?? null,
+      name: p.name,
+      percent: p.percent,
+      received: Boolean(p.received),
+      amount: amounts[i] ?? 0,
+    })),
   }
 }
 
@@ -134,7 +166,13 @@ export function presentPointMap(d: ProjectDocsData) {
   const sheetById = new Map(d.sheets.map((s) => [s.id, s]))
   const productOf = (id: string | null) => (id ? (d.productById.get(id) ?? null) : null)
   return {
-    sheets: d.sheets.map((s) => ({ id: s.id, name: s.name, url: s.url, index: s.index, pointCount: d.points.filter((p) => p.sheetId === s.id).length })),
+    sheets: d.sheets.map((s) => ({
+      id: s.id,
+      name: s.name,
+      url: s.url,
+      index: s.index,
+      pointCount: d.points.filter((p) => p.sheetId === s.id).length,
+    })),
     areas: d.areas
       .filter((a) => a.sheetId && sheetById.has(a.sheetId))
       .map((a) => {
@@ -153,13 +191,26 @@ export function presentPointMap(d: ProjectDocsData) {
         ry: p.ry,
         source: p.source,
         type: presentType(p.deviceType),
-        product: prod ? { id: prod.id, name: prod.name, price: prod.price, image: prod.image?.url ?? null, brand: prod.brand?.name ?? null } : null,
+        product: prod
+          ? {
+              id: prod.id,
+              name: prod.name,
+              price: prod.price,
+              image: prod.image?.url ?? null,
+              brand: prod.brand?.name ?? null,
+            }
+          : null,
       }
     }),
     legend: DEVICE_TYPE_ORDER.filter((t) => d.points.some((p) => p.deviceType === t)).map((t) => {
       const pts = d.points.filter((p) => p.deviceType === t)
       const prod = productOf(pts.find((p) => p.productId)?.productId ?? null)
-      return { ...presentType(t), count: pts.length, product: prod?.name ?? null, subtotal: pts.reduce((s, p) => s + (productOf(p.productId)?.price ?? 0), 0) }
+      return {
+        ...presentType(t),
+        count: pts.length,
+        product: prod?.name ?? null,
+        subtotal: pts.reduce((s, p) => s + (productOf(p.productId)?.price ?? 0), 0),
+      }
     }),
     rooms: d.rooms.map((r) => ({
       id: r.areaId,
@@ -169,7 +220,12 @@ export function presentPointMap(d: ProjectDocsData) {
       points: r.total,
       subtotal: r.subtotal,
       score: r.score,
-      lines: r.lines.map((l) => ({ type: presentType(l.deviceType), product: l.product?.name ?? null, count: l.count, subtotal: l.subtotal })),
+      lines: r.lines.map((l) => ({
+        type: presentType(l.deviceType),
+        product: l.product?.name ?? null,
+        count: l.count,
+        subtotal: l.subtotal,
+      })),
     })),
     summary: {
       points: d.points.length,
@@ -177,8 +233,16 @@ export function presentPointMap(d: ProjectDocsData) {
       sheets: d.sheets.length,
       total: d.total,
       pending: d.pending,
-      categories: d.categories.map((c) => ({ slug: c.slug, name: c.name, color: c.color, count: c.count, amount: c.amount })),
+      categories: d.categories.map((c) => ({
+        slug: c.slug,
+        name: c.name,
+        color: c.color,
+        count: c.count,
+        amount: c.amount,
+      })),
     },
-    quote: d.quote ? { id: String(d.quote.id), title: d.quote.title, total: d.quote.total ?? 0 } : null,
+    quote: d.quote
+      ? { id: String(d.quote.id), title: d.quote.title, total: d.quote.total ?? 0 }
+      : null,
   }
 }

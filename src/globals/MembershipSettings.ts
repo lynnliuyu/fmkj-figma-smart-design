@@ -6,7 +6,10 @@ import { cmsAdminOnly, cmsAdminOrMember } from '@/lib/access'
 export const MembershipSettings: GlobalConfig = {
   slug: 'membership-settings',
   label: '会员设置',
-  admin: { group: '账号', description: '平台不再有会员等级；所有功能统一按 AI 积分计费，这里只配置积分充值引导文案。' },
+  admin: {
+    group: '账号',
+    description: '平台不再有会员等级；所有功能统一按 AI 积分计费，这里只配置积分充值引导文案。',
+  },
   access: { read: cmsAdminOrMember, update: cmsAdminOnly },
   fields: [
     {

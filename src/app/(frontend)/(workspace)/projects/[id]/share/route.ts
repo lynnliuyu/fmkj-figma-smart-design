@@ -3,7 +3,12 @@ import { randomBytes } from 'node:crypto'
 import { relId } from '@/lib/access'
 import { appAuth } from '@/lib/app-auth'
 import { getPayloadClient } from '@/lib/payload'
-import { getProjectRole, parseShareConfig, type CollaboratorItem, type CollaboratorRole } from '@/lib/project-access'
+import {
+  getProjectRole,
+  parseShareConfig,
+  type CollaboratorItem,
+  type CollaboratorRole,
+} from '@/lib/project-access'
 import type { User } from '@/payload-types'
 
 const fail = (status: number, error: string) => Response.json({ ok: false, error }, { status })
@@ -54,13 +59,20 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
     collaborators?: CollaboratorItem[] | null
     shareConfig?: unknown
   }
-  const role = getProjectRole({ owner: project.owner, collaborators: rawProj.collaborators }, user.id)
+  const role = getProjectRole(
+    { owner: project.owner, collaborators: rawProj.collaborators },
+    user.id,
+  )
   if (!role) return fail(403, '你没有该项目的访问权限')
 
   let shareConfig = parseShareConfig(rawProj.shareConfig)
 
   // 仅当项目管理员（owner）首次打开时将自动生成的 token 持久化到项目中
-  if (role === 'owner' && (!rawProj.shareConfig || typeof (rawProj.shareConfig as { token?: unknown })?.token !== 'string')) {
+  if (
+    role === 'owner' &&
+    (!rawProj.shareConfig ||
+      typeof (rawProj.shareConfig as { token?: unknown })?.token !== 'string')
+  ) {
     await payload
       .update({
         collection: 'projects',
@@ -72,7 +84,8 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       .catch(() => null)
   }
 
-  const ownerObj = typeof project.owner === 'object' && project.owner ? (project.owner as User) : null
+  const ownerObj =
+    typeof project.owner === 'object' && project.owner ? (project.owner as User) : null
   return Response.json({
     ok: true,
     role,
@@ -81,7 +94,10 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       name: ownerObj?.name ?? '项目创建者',
       email: ownerObj?.email ?? '',
     },
-    shareConfig: role === 'owner' ? shareConfig : { enabled: shareConfig.enabled, role: shareConfig.role, token: '' },
+    shareConfig:
+      role === 'owner'
+        ? shareConfig
+        : { enabled: shareConfig.enabled, role: shareConfig.role, token: '' },
     collaborators: serializeCollaborators(rawProj.collaborators),
   })
 }
@@ -99,7 +115,10 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     collaborators?: CollaboratorItem[] | null
     shareConfig?: unknown
   }
-  const myRole = getProjectRole({ owner: project.owner, collaborators: rawProj.collaborators }, user.id)
+  const myRole = getProjectRole(
+    { owner: project.owner, collaborators: rawProj.collaborators },
+    user.id,
+  )
   const body = (await request.json().catch(() => ({}))) as {
     action?: 'config' | 'collaborator' | 'leave'
     enabled?: boolean
@@ -169,7 +188,10 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
       populate: { users: { name: true, email: true } },
     })
     const updatedRaw = updated as unknown as { collaborators?: CollaboratorItem[] | null }
-    return Response.json({ ok: true, collaborators: serializeCollaborators(updatedRaw.collaborators) })
+    return Response.json({
+      ok: true,
+      collaborators: serializeCollaborators(updatedRaw.collaborators),
+    })
   }
 
   return fail(400, '无效的协作操作')

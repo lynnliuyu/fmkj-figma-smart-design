@@ -20,7 +20,9 @@ export function SectionHeading({
       <h2 id={id} className="text-headline font-medium">
         {title}
       </h2>
-      {description ? <p className="mt-5 text-lead text-balance text-muted-foreground">{description}</p> : null}
+      {description ? (
+        <p className="mt-5 text-lead text-balance text-muted-foreground">{description}</p>
+      ) : null}
     </div>
   )
 }

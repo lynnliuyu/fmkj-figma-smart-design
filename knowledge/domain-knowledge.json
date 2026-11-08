@@ -479,11 +479,7 @@
     "scoringRule": "score = 已满足的(必备 core + 推荐 recommended)项数量 / 总(必备 core + 推荐 recommended)项数量 × 100（四舍五入，可选 optional 不计入分母）",
     "designRules": {
       "summaryText": "开关、插座、灯具只在图纸上已有准确点位符号时照图生成（source 标为 \"drawing\"）；图上没有就不要生成，不得凭经验推测。其余默认设计：全屋 WiFi（ap-node、network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、摄像头 camera（source 标为 \"design\"）。数量规范：VRF 控制器每层只放 1 个且放在客厅；智能音箱与中控屏每个区域只放其中一种、只放 1 个，不能共存；智能音箱一般只放客厅和书房；中控屏 touch-panel 要对照开关点位布置，图上没有开关点位时不要加入；摄像头一般只放 2 个——客厅 1 个、入户门口 1 个。",
-      "drawingOnlyCategories": [
-        "switch",
-        "socket",
-        "lighting"
-      ],
+      "drawingOnlyCategories": ["switch", "socket", "lighting"],
       "autoDesignTypes": [
         "ap-node",
         "network-panel",
@@ -494,17 +490,9 @@
         "speaker",
         "camera"
       ],
-      "needsSwitchTypes": [
-        "touch-panel"
-      ],
-      "speakerAreaTypes": [
-        "living",
-        "study"
-      ],
-      "onePerAreaTypes": [
-        "speaker",
-        "touch-panel"
-      ],
+      "needsSwitchTypes": ["touch-panel"],
+      "speakerAreaTypes": ["living", "study"],
+      "onePerAreaTypes": ["speaker", "touch-panel"],
       "vrfPerFloor": 1,
       "cameraPerFloor": 2
     },
@@ -518,9 +506,7 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "指纹 / 人脸开门，开锁即触发回家模式",
-            "matchingDevices": [
-              "smart-lock"
-            ]
+            "matchingDevices": ["smart-lock"]
           },
           {
             "label": "照明",
@@ -544,33 +530,21 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "进门自动亮灯，离开后自动关闭",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           },
           {
             "label": "场景面板",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "门口一键「回家 / 离家」",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "门铃 / 摄像头",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "访客识别、入户门状态提醒",
-            "matchingDevices": [
-              "contact-sensor",
-              "doorbell",
-              "camera"
-            ]
+            "matchingDevices": ["contact-sensor", "doorbell", "camera"]
           }
         ],
         "scenes": [
@@ -604,42 +578,28 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "分回路控制，支持会客、观影等场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "电动窗帘",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "观影、起床场景联动窗帘开合",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           },
           {
             "label": "中控屏 / 智能音箱",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "集中控制和语音控制全屋设备",
-            "matchingDevices": [
-              "speaker",
-              "touch-panel"
-            ]
+            "matchingDevices": ["speaker", "touch-panel"]
           },
           {
             "label": "温湿度 / 空调控制",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "按温湿度自动调节空调",
-            "matchingDevices": [
-              "temp-sensor",
-              "vrf-controller"
-            ]
+            "matchingDevices": ["temp-sensor", "vrf-controller"]
           }
         ],
         "scenes": [
@@ -673,27 +633,17 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "智能音箱",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "用餐背景音乐",
-            "matchingDevices": [
-              "speaker"
-            ]
+            "matchingDevices": ["speaker"]
           }
         ],
-        "scenes": [
-          "用餐模式：餐吊灯 80% 暖光，其余区域灯光调暗"
-        ]
+        "scenes": ["用餐模式：餐吊灯 80% 暖光，其余区域灯光调暗"]
       },
       "kitchen": {
         "areaType": "kitchen",
@@ -721,45 +671,31 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "烟雾 / 燃气报警",
             "level": "core",
             "levelLabel": "必备",
             "reason": "火情、燃气泄漏早期报警",
-            "matchingDevices": [
-              "smoke-sensor"
-            ]
+            "matchingDevices": ["smoke-sensor"]
           },
           {
             "label": "水浸传感器",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "水槽下方漏水及时告警",
-            "matchingDevices": [
-              "water-sensor"
-            ]
+            "matchingDevices": ["water-sensor"]
           },
           {
             "label": "人体传感器",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "双手占用时人来灯亮",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           }
         ],
-        "scenes": [
-          "安全联动：烟雾或燃气报警时推送手机，并联动声光提醒"
-        ]
+        "scenes": ["安全联动：烟雾或燃气报警时推送手机，并联动声光提醒"]
       },
       "bedroom": {
         "areaType": "bedroom",
@@ -787,41 +723,28 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "门口与床头双控",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "电动窗帘",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "定时开合，起床自然光唤醒",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           },
           {
             "label": "人体传感器",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "起夜自动亮起低亮度夜灯",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           },
           {
             "label": "温湿度 / 空调控制",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "睡眠时自动调节空调",
-            "matchingDevices": [
-              "temp-sensor",
-              "vrf-controller"
-            ]
+            "matchingDevices": ["temp-sensor", "vrf-controller"]
           }
         ],
         "scenes": [
@@ -855,31 +778,21 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "温湿度传感器",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "关注孩子房间温湿度",
-            "matchingDevices": [
-              "temp-sensor"
-            ]
+            "matchingDevices": ["temp-sensor"]
           },
           {
             "label": "电动窗帘",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "午睡、晚睡定时闭合",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           }
         ],
         "scenes": [
@@ -913,27 +826,17 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "电动窗帘",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "视频会议时一键遮光",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           }
         ],
-        "scenes": [
-          "专注模式：主灯 4000K 全亮，音箱静音"
-        ]
+        "scenes": ["专注模式：主灯 4000K 全亮，音箱静音"]
       },
       "bathroom": {
         "areaType": "bathroom",
@@ -975,18 +878,14 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "地漏、洗衣机漏水告警",
-            "matchingDevices": [
-              "water-sensor"
-            ]
+            "matchingDevices": ["water-sensor"]
           },
           {
             "label": "浴霸 / 换气",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "洗浴前远程预热",
-            "matchingDevices": [
-              "other"
-            ]
+            "matchingDevices": ["other"]
           }
         ],
         "scenes": [
@@ -1020,23 +919,17 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "遮阳、隐私，随日照自动开合",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           },
           {
             "label": "智能晾衣架",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "一键升降、烘干",
-            "matchingDevices": [
-              "other"
-            ]
+            "matchingDevices": ["other"]
           }
         ],
-        "scenes": [
-          "日落模式：日落后阳台灯自动亮起，22:00 关闭"
-        ]
+        "scenes": ["日落模式：日落后阳台灯自动亮起，22:00 关闭"]
       },
       "corridor": {
         "areaType": "corridor",
@@ -1064,27 +957,17 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "夜间经过自动亮灯，不用摸黑找开关",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           },
           {
             "label": "开关",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "两端双控",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           }
         ],
-        "scenes": [
-          "夜间通行：22:00 后感应亮灯，亮度 30%"
-        ]
+        "scenes": ["夜间通行：22:00 后感应亮灯，亮度 30%"]
       },
       "stairs": {
         "areaType": "stairs",
@@ -1112,27 +995,17 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "踏步灯逐级点亮，30 秒后熄灭",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           },
           {
             "label": "上下双控",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "楼上楼下都能控制",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           }
         ],
-        "scenes": [
-          "感应照明：有人上下楼时踏步灯逐级点亮，无人后自动熄灭"
-        ]
+        "scenes": ["感应照明：有人上下楼时踏步灯逐级点亮，无人后自动熄灭"]
       },
       "closet": {
         "areaType": "closet",
@@ -1160,14 +1033,10 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "进门即亮，离开即关",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           }
         ],
-        "scenes": [
-          "进门即亮：感应到有人时柜内灯带亮起"
-        ]
+        "scenes": ["进门即亮：感应到有人时柜内灯带亮起"]
       },
       "theater": {
         "areaType": "theater",
@@ -1195,36 +1064,24 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "电动窗帘",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "观影一键遮光",
-            "matchingDevices": [
-              "curtain-track"
-            ]
+            "matchingDevices": ["curtain-track"]
           },
           {
             "label": "中控屏",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "影音、灯光、窗帘集中控制",
-            "matchingDevices": [
-              "touch-panel"
-            ]
+            "matchingDevices": ["touch-panel"]
           }
         ],
-        "scenes": [
-          "影院模式：灯光渐暗至 5%，窗帘闭合，投影开启"
-        ]
+        "scenes": ["影院模式：灯光渐暗至 5%，窗帘闭合，投影开启"]
       },
       "leisure": {
         "areaType": "leisure",
@@ -1252,27 +1109,17 @@
             "level": "core",
             "levelLabel": "必备",
             "reason": "灯光可本地控制，也能接入场景",
-            "matchingDevices": [
-              "switch-1",
-              "switch-2",
-              "switch-3",
-              "switch-4",
-              "touch-panel"
-            ]
+            "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
           },
           {
             "label": "智能音箱",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "背景音乐",
-            "matchingDevices": [
-              "speaker"
-            ]
+            "matchingDevices": ["speaker"]
           }
         ],
-        "scenes": [
-          "休闲模式：氛围灯 50%，播放背景音乐"
-        ]
+        "scenes": ["休闲模式：氛围灯 50%，播放背景音乐"]
       },
       "garage": {
         "areaType": "garage",
@@ -1300,23 +1147,17 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "停车自动亮灯",
-            "matchingDevices": [
-              "motion-sensor"
-            ]
+            "matchingDevices": ["motion-sensor"]
           },
           {
             "label": "摄像头",
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "车辆与出入安全",
-            "matchingDevices": [
-              "camera"
-            ]
+            "matchingDevices": ["camera"]
           }
         ],
-        "scenes": [
-          "到家联动：车库门打开时灯光自动亮起"
-        ]
+        "scenes": ["到家联动：车库门打开时灯光自动亮起"]
       },
       "utility": {
         "areaType": "utility",
@@ -1344,23 +1185,17 @@
             "level": "recommended",
             "levelLabel": "推荐",
             "reason": "热水器、洗衣机漏水告警",
-            "matchingDevices": [
-              "water-sensor"
-            ]
+            "matchingDevices": ["water-sensor"]
           },
           {
             "label": "烟雾报警",
             "level": "optional",
             "levelLabel": "可选",
             "reason": "设备间火情报警",
-            "matchingDevices": [
-              "smoke-sensor"
-            ]
+            "matchingDevices": ["smoke-sensor"]
           }
         ],
-        "scenes": [
-          "漏水告警：检测到漏水立即推送手机"
-        ]
+        "scenes": ["漏水告警：检测到漏水立即推送手机"]
       },
       "other": {
         "areaType": "other",
@@ -1423,16 +1258,11 @@
       "米家": [
         {
           "brandPattern": null,
-          "platforms": [
-            "米家"
-          ]
+          "platforms": ["米家"]
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "通用",
-            "Matter"
-          ]
+          "platforms": ["通用", "Matter"]
         }
       ],
       "Aqara Home": [
@@ -1442,75 +1272,53 @@
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "Apple Home",
-            "Matter"
-          ]
+          "platforms": ["Apple Home", "Matter"]
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ],
       "Apple Home": [
         {
           "brandPattern": null,
-          "platforms": [
-            "Apple Home",
-            "Matter"
-          ]
+          "platforms": ["Apple Home", "Matter"]
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ],
       "华为鸿蒙智家": [
         {
           "brandPattern": null,
-          "platforms": [
-            "华为"
-          ]
+          "platforms": ["华为"]
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ],
       "KNX": [
         {
           "brandPattern": null,
-          "platforms": [
-            "KNX"
-          ]
+          "platforms": ["KNX"]
         },
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ],
       "Control4": [
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ],
       "网络/弱电": [
         {
           "brandPattern": null,
-          "platforms": [
-            "通用"
-          ]
+          "platforms": ["通用"]
         }
       ]
     },
@@ -1615,15 +1423,7 @@
         "description": "先讲生活场景，再落到空间、平面与预算，适合首次沟通打动业主",
         "audience": "还在了解全屋智能、需要被打动的业主",
         "occasion": "首次方案沟通、家庭成员一起看方案",
-        "sections": [
-          "cover",
-          "scenes",
-          "zones",
-          "plans",
-          "system",
-          "investment",
-          "service"
-        ]
+        "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
       },
       {
         "value": "budget",
@@ -1631,12 +1431,7 @@
         "description": "封面 + 系统 + 投资 + 交付，几页讲清预算，适合快速报价",
         "audience": "预算敏感、正在比价的业主",
         "occasion": "首次咨询后的快速报价、比价阶段",
-        "sections": [
-          "cover",
-          "system",
-          "investment",
-          "service"
-        ]
+        "sections": ["cover", "system", "investment", "service"]
       },
       {
         "value": "construction",
@@ -1909,11 +1704,7 @@
         "description": "暖白纸色、灰紫强调、细体大编号，忠于设计稿的 8 章完整提案",
         "audience": "大多数改善型住宅业主（三房到大平层）",
         "occasion": "方案深化后的正式汇报、签约前定稿",
-        "highlights": [
-          "暖白纸面",
-          "照片色带封面",
-          "8 章完整"
-        ],
+        "highlights": ["暖白纸面", "照片色带封面", "8 章完整"],
         "sections": [
           "cover",
           "plans",
@@ -1934,11 +1725,7 @@
         "description": "深色画面、香槟金与衬线标题，屏幕演示质感最强",
         "audience": "别墅、大平层等高净值业主",
         "occasion": "大屏投影或平板现场演示、高端项目提案",
-        "highlights": [
-          "深色画面",
-          "整幅照片封面",
-          "金线表头"
-        ],
+        "highlights": ["深色画面", "整幅照片封面", "金线表头"],
         "sections": [
           "cover",
           "plans",
@@ -1959,11 +1746,7 @@
         "description": "燕麦纸色、橄榄绿、左文右图封面与圆角卡片",
         "audience": "原木、日式、侘寂等自然风格的家庭",
         "occasion": "与室内设计师联合提案、软装偏自然的项目",
-        "highlights": [
-          "燕麦纸面",
-          "分栏封面",
-          "圆角卡片"
-        ],
+        "highlights": ["燕麦纸面", "分栏封面", "圆角卡片"],
         "sections": [
           "cover",
           "plans",
@@ -1984,17 +1767,8 @@
         "description": "封面、系统、投资与交付 4 章，几页讲清预算",
         "audience": "预算敏感、第一次咨询的业主",
         "occasion": "首次沟通后当天出报价、比价阶段",
-        "highlights": [
-          "4 章精简",
-          "先讲预算",
-          "约 5 页"
-        ],
-        "sections": [
-          "cover",
-          "system",
-          "investment",
-          "service"
-        ]
+        "highlights": ["4 章精简", "先讲预算", "约 5 页"],
+        "sections": ["cover", "system", "investment", "service"]
       },
       {
         "slug": "azure",
@@ -2005,20 +1779,8 @@
         "description": "冷白纸面、深海蓝强调与细线卡片，先讲生活场景再落到预算",
         "audience": "年轻业主、数码爱好者与偏好科技感的家庭",
         "occasion": "首次方案沟通，用场景打动业主",
-        "highlights": [
-          "场景先行",
-          "深海蓝细线",
-          "现代简约"
-        ],
-        "sections": [
-          "cover",
-          "scenes",
-          "zones",
-          "plans",
-          "system",
-          "investment",
-          "service"
-        ]
+        "highlights": ["场景先行", "深海蓝细线", "现代简约"],
+        "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
       },
       {
         "slug": "mono",
@@ -2029,11 +1791,7 @@
         "description": "纯白纸面与黑色粗体，纯文字大字封面，克制高级",
         "audience": "设计师工作室、极简风业主与商务客户",
         "occasion": "与设计公司合作提案、需要打印装订的正式文本",
-        "highlights": [
-          "纯文字封面",
-          "黑白克制",
-          "打印友好"
-        ],
+        "highlights": ["纯文字封面", "黑白克制", "打印友好"],
         "sections": [
           "cover",
           "plans",
@@ -2054,20 +1812,8 @@
         "description": "奶油纸色与陶土橙、竖幅照片，以场景故事打动家庭用户",
         "audience": "有老人和孩子的家庭、偏爱温馨风格的业主",
         "occasion": "首次方案沟通、全家一起看方案",
-        "highlights": [
-          "场景先行",
-          "陶土暖色",
-          "竖幅照片"
-        ],
-        "sections": [
-          "cover",
-          "scenes",
-          "zones",
-          "plans",
-          "system",
-          "investment",
-          "service"
-        ]
+        "highlights": ["场景先行", "陶土暖色", "竖幅照片"],
+        "sections": ["cover", "scenes", "zones", "plans", "system", "investment", "service"]
       },
       {
         "slug": "jade",
@@ -2078,11 +1824,7 @@
         "description": "宣纸色与青瓷绿、衬线标题，适合新中式与东方风住宅",
         "audience": "新中式、东方风别墅与高端住宅业主",
         "occasion": "顶奢项目正式提案、需要文化调性的汇报",
-        "highlights": [
-          "宣纸青瓷",
-          "衬线标题",
-          "东方意境"
-        ],
+        "highlights": ["宣纸青瓷", "衬线标题", "东方意境"],
         "sections": [
           "cover",
           "plans",
@@ -2103,11 +1845,7 @@
         "description": "羊皮纸底、赤陶棕与衬线标题，画廊式横幅照片呈现中古住宅的温厚质感",
         "audience": "中古、复古与胡桃木风格住宅的业主",
         "occasion": "设计深化汇报、软装与全屋智能联合提案",
-        "highlights": [
-          "画廊式封面",
-          "羊皮纸赤陶棕",
-          "8 章完整"
-        ],
+        "highlights": ["画廊式封面", "羊皮纸赤陶棕", "8 章完整"],
         "sections": [
           "cover",
           "plans",
@@ -2128,11 +1866,7 @@
         "description": "海盐蓝灰纸面、拱窗照片与柔和衬线，适合明亮从容的法式居家提案",
         "audience": "法式、轻复古与浅色自然风住宅的家庭",
         "occasion": "家庭方案沟通、与室内设计师联合汇报",
-        "highlights": [
-          "拱窗照片封面",
-          "海盐蓝灰",
-          "8 章完整"
-        ],
+        "highlights": ["拱窗照片封面", "海盐蓝灰", "8 章完整"],
         "sections": [
           "cover",
           "plans",
@@ -2153,11 +1887,7 @@
         "description": "冷灰纸面、石墨文字与直角线框，左图右文的建筑目录式封面",
         "audience": "现代建筑、清水混凝土与工业风住宅的业主",
         "occasion": "建筑师联合提案、需要清楚核对点位与预算的正式汇报",
-        "highlights": [
-          "建筑目录封面",
-          "石墨直角线框",
-          "8 章完整"
-        ],
+        "highlights": ["建筑目录封面", "石墨直角线框", "8 章完整"],
         "sections": [
           "cover",
           "plans",
@@ -2178,11 +1908,7 @@
         "description": "点位代号、安装位置、房间配置与逐点核对表，不含任何价格",
         "audience": "安装团队、水电工与项目经理",
         "occasion": "进场施工前交底、现场安装与验收核对",
-        "highlights": [
-          "不含价格",
-          "点位代号",
-          "逐点核对"
-        ],
+        "highlights": ["不含价格", "点位代号", "逐点核对"],
         "sections": []
       }
     ],
@@ -2217,19 +1943,9 @@
         "tagline": "ARRIVE",
         "scope": "house",
         "chapter": "arrive",
-        "roomTypes": [
-          "entrance",
-          "living"
-        ],
+        "roomTypes": ["entrance", "living"],
         "requiredDevices": [],
-        "anyDevices": [
-          "smart-lock",
-          "touch-panel",
-          "switch-1",
-          "switch-2",
-          "switch-3",
-          "switch-4"
-        ],
+        "anyDevices": ["smart-lock", "touch-panel", "switch-1", "switch-2", "switch-3", "switch-4"],
         "steps": [
           "指纹 / 人脸开锁，或在玄关面板按「回家」",
           "玄关灯先亮，客厅主灯随后亮起",
@@ -2246,24 +1962,10 @@
         "tagline": "LEAVE",
         "scope": "house",
         "chapter": "arrive",
-        "roomTypes": [
-          "entrance",
-          "living"
-        ],
+        "roomTypes": ["entrance", "living"],
         "requiredDevices": [],
-        "anyDevices": [
-          "touch-panel",
-          "switch-1",
-          "switch-2",
-          "switch-3",
-          "switch-4",
-          "smart-lock"
-        ],
-        "steps": [
-          "玄关面板或手机按「离家」",
-          "全屋灯光、窗帘关闭",
-          "摄像头、门磁进入布防状态"
-        ],
+        "anyDevices": ["touch-panel", "switch-1", "switch-2", "switch-3", "switch-4", "smart-lock"],
+        "steps": ["玄关面板或手机按「离家」", "全屋灯光、窗帘关闭", "摄像头、门磁进入布防状态"],
         "photo": "/proposal/photos/scenes/leave-home.jpg",
         "credit": "Felix Mulderrig / Unsplash"
       },
@@ -2275,23 +1977,10 @@
         "tagline": "WELCOME",
         "scope": "room",
         "chapter": "focus",
-        "roomTypes": [
-          "living",
-          "dining"
-        ],
+        "roomTypes": ["living", "dining"],
         "requiredDevices": [],
-        "anyDevices": [
-          "downlight",
-          "ceiling-light",
-          "pendant-light",
-          "spotlight",
-          "panel-light"
-        ],
-        "steps": [
-          "客厅面板按「会客」",
-          "主灯、筒灯全亮",
-          "窗帘打开"
-        ],
+        "anyDevices": ["downlight", "ceiling-light", "pendant-light", "spotlight", "panel-light"],
+        "steps": ["客厅面板按「会客」", "主灯、筒灯全亮", "窗帘打开"],
         "photo": "/proposal/photos/scenes/guest.jpg",
         "credit": "Zac Gudakov / Unsplash"
       },
@@ -2303,21 +1992,10 @@
         "tagline": "MOVIE",
         "scope": "room",
         "chapter": "focus",
-        "roomTypes": [
-          "living",
-          "theater",
-          "leisure"
-        ],
+        "roomTypes": ["living", "theater", "leisure"],
         "requiredDevices": [],
-        "anyDevices": [
-          "light-strip",
-          "curtain-track"
-        ],
-        "steps": [
-          "按「观影」或语音开启",
-          "主灯关闭，灯带 30% 暖光",
-          "窗帘闭合"
-        ],
+        "anyDevices": ["light-strip", "curtain-track"],
+        "steps": ["按「观影」或语音开启", "主灯关闭，灯带 30% 暖光", "窗帘闭合"],
         "photo": "/proposal/scenes/11-movie-night.jpg",
         "credit": "AI 夜间场景意向图 / image_gen"
       },
@@ -2329,26 +2007,10 @@
         "tagline": "NIGHT",
         "scope": "room",
         "chapter": "rest",
-        "roomTypes": [
-          "bedroom",
-          "kids",
-          "corridor",
-          "bathroom"
-        ],
-        "requiredDevices": [
-          "motion-sensor"
-        ],
-        "anyDevices": [
-          "light-strip",
-          "downlight",
-          "other-light",
-          "wall-light"
-        ],
-        "steps": [
-          "夜间人体传感器感应到有人",
-          "夜灯 / 灯带 10% 亮起，不刺眼",
-          "无人后自动关闭"
-        ],
+        "roomTypes": ["bedroom", "kids", "corridor", "bathroom"],
+        "requiredDevices": ["motion-sensor"],
+        "anyDevices": ["light-strip", "downlight", "other-light", "wall-light"],
+        "steps": ["夜间人体传感器感应到有人", "夜灯 / 灯带 10% 亮起，不刺眼", "无人后自动关闭"],
         "photo": "/proposal/scenes/13-corridor-night.jpg",
         "credit": "AI 夜间场景意向图 / image_gen"
       },
@@ -2360,10 +2022,7 @@
         "tagline": "SLEEP",
         "scope": "room",
         "chapter": "rest",
-        "roomTypes": [
-          "bedroom",
-          "kids"
-        ],
+        "roomTypes": ["bedroom", "kids"],
         "requiredDevices": [],
         "anyDevices": [
           "switch-1",
@@ -2373,11 +2032,7 @@
           "touch-panel",
           "curtain-track"
         ],
-        "steps": [
-          "床头开关按「睡眠」",
-          "灯光渐暗后关闭",
-          "窗帘闭合"
-        ],
+        "steps": ["床头开关按「睡眠」", "灯光渐暗后关闭", "窗帘闭合"],
         "photo": "/proposal/scenes/12-bedroom-night.jpg",
         "credit": "AI 夜间场景意向图 / image_gen"
       },
@@ -2389,19 +2044,10 @@
         "tagline": "SAFETY",
         "scope": "room",
         "chapter": "care",
-        "roomTypes": [
-          "kitchen",
-          "dining"
-        ],
+        "roomTypes": ["kitchen", "dining"],
         "requiredDevices": [],
-        "anyDevices": [
-          "smoke-sensor"
-        ],
-        "steps": [
-          "烟感检测到异常",
-          "本地声光报警",
-          "手机收到推送"
-        ],
+        "anyDevices": ["smoke-sensor"],
+        "steps": ["烟感检测到异常", "本地声光报警", "手机收到推送"],
         "photo": "/proposal/photos/scenes/kitchen-safety.jpg",
         "credit": "Lotus Design N Print / Unsplash"
       },
@@ -2413,20 +2059,10 @@
         "tagline": "LEAK",
         "scope": "room",
         "chapter": "care",
-        "roomTypes": [
-          "bathroom",
-          "kitchen",
-          "balcony",
-          "utility"
-        ],
-        "requiredDevices": [
-          "water-sensor"
-        ],
+        "roomTypes": ["bathroom", "kitchen", "balcony", "utility"],
+        "requiredDevices": ["water-sensor"],
         "anyDevices": [],
-        "steps": [
-          "水浸探头检测到积水",
-          "手机立即收到推送"
-        ],
+        "steps": ["水浸探头检测到积水", "手机立即收到推送"],
         "photo": "/proposal/photos/scenes/bathroom-leak.jpg",
         "credit": "Murad Kerimli / Unsplash"
       },
@@ -2438,19 +2074,10 @@
         "tagline": "CARE",
         "scope": "house",
         "chapter": "care",
-        "roomTypes": [
-          "bedroom",
-          "bathroom",
-          "corridor"
-        ],
-        "requiredDevices": [
-          "motion-sensor"
-        ],
+        "roomTypes": ["bedroom", "bathroom", "corridor"],
+        "requiredDevices": ["motion-sensor"],
         "anyDevices": [],
-        "steps": [
-          "人体传感器持续记录活动",
-          "设定时间内无活动时提醒家人"
-        ],
+        "steps": ["人体传感器持续记录活动", "设定时间内无活动时提醒家人"],
         "photo": "/proposal/photos/scenes/elder-care.jpg",
         "credit": "Keith Tanner / Unsplash"
       },
@@ -2464,17 +2091,8 @@
         "chapter": "care",
         "roomTypes": [],
         "requiredDevices": [],
-        "anyDevices": [
-          "camera",
-          "contact-sensor",
-          "doorbell",
-          "smart-lock"
-        ],
-        "steps": [
-          "离家后自动布防",
-          "门磁 / 摄像头发现异常",
-          "推送提醒并保存录像"
-        ],
+        "anyDevices": ["camera", "contact-sensor", "doorbell", "smart-lock"],
+        "steps": ["离家后自动布防", "门磁 / 摄像头发现异常", "推送提醒并保存录像"],
         "photo": "/proposal/photos/scenes/security-alarm.jpg",
         "credit": "Alan J. Hendry / Unsplash"
       },
@@ -2488,15 +2106,8 @@
         "chapter": "network",
         "roomTypes": [],
         "requiredDevices": [],
-        "anyDevices": [
-          "ap-node",
-          "ceiling-ap",
-          "ac-router"
-        ],
-        "steps": [
-          "AC 路由统一管理",
-          "各房间 AP 覆盖，自动漫游"
-        ],
+        "anyDevices": ["ap-node", "ceiling-ap", "ac-router"],
+        "steps": ["AC 路由统一管理", "各房间 AP 覆盖，自动漫游"],
         "photo": "/proposal/photos/scenes/whole-wifi.jpg",
         "credit": "User_Pascal / Unsplash"
       },
@@ -2508,23 +2119,10 @@
         "tagline": "AUTO ON",
         "scope": "room",
         "chapter": "arrive",
-        "roomTypes": [
-          "entrance",
-          "corridor",
-          "stairs",
-          "bathroom",
-          "closet",
-          "garage",
-          "utility"
-        ],
-        "requiredDevices": [
-          "motion-sensor"
-        ],
+        "roomTypes": ["entrance", "corridor", "stairs", "bathroom", "closet", "garage", "utility"],
+        "requiredDevices": ["motion-sensor"],
         "anyDevices": [],
-        "steps": [
-          "人体传感器感应到有人",
-          "灯光自动亮起，夜间自动降低亮度"
-        ],
+        "steps": ["人体传感器感应到有人", "灯光自动亮起，夜间自动降低亮度"],
         "photo": "/proposal/photos/scenes/motion-on.jpg",
         "credit": "Franco Debartolo / Unsplash"
       },
@@ -2536,23 +2134,10 @@
         "tagline": "AUTO OFF",
         "scope": "room",
         "chapter": "arrive",
-        "roomTypes": [
-          "entrance",
-          "corridor",
-          "stairs",
-          "bathroom",
-          "closet",
-          "garage",
-          "utility"
-        ],
-        "requiredDevices": [
-          "motion-sensor"
-        ],
+        "roomTypes": ["entrance", "corridor", "stairs", "bathroom", "closet", "garage", "utility"],
+        "requiredDevices": ["motion-sensor"],
         "anyDevices": [],
-        "steps": [
-          "持续无人 3 分钟",
-          "灯光自动关闭"
-        ],
+        "steps": ["持续无人 3 分钟", "灯光自动关闭"],
         "photo": "/proposal/photos/scenes/motion-off.jpg",
         "credit": "Spencer Plouzek / Unsplash"
       },
@@ -2565,14 +2150,9 @@
         "scope": "house",
         "chapter": "focus",
         "roomTypes": [],
-        "requiredDevices": [
-          "speaker"
-        ],
+        "requiredDevices": ["speaker"],
         "anyDevices": [],
-        "steps": [
-          "对音箱说「广播：开饭了」",
-          "其他房间音箱同步播放"
-        ],
+        "steps": ["对音箱说「广播：开饭了」", "其他房间音箱同步播放"],
         "photo": "/proposal/photos/scenes/intercom.jpg",
         "credit": "Tim Schmidbauer / Unsplash"
       }
@@ -2588,12 +2168,7 @@
         "tagline": "在任何页面直接问 AI，让它帮你识图、选型、写说明",
         "description": "侧边栏常驻 AI 助手，支持户型图识别、技能模板与跨插件自动执行。",
         "where": "左侧边栏「对话」模式、独立页 /ai",
-        "provides": [
-          "侧边栏常驻对话",
-          "对话技能模板",
-          "多模型与积分",
-          "跨插件联动"
-        ],
+        "provides": ["侧边栏常驻对话", "对话技能模板", "多模型与积分", "跨插件联动"],
         "ai": {
           "permissions": [
             "projects:read",
@@ -2654,9 +2229,7 @@
             "plan_points_with_vision",
             "generate_image"
           ],
-          "skills": [
-            "tpl-competitor-quote"
-          ]
+          "skills": ["tpl-competitor-quote"]
         }
       },
       {
@@ -2667,21 +2240,10 @@
         "tagline": "报价单、合同换上更多高级排版风格",
         "description": "为报价单、点位图、合同和交底清单解锁 6 套扩展视觉风格（与方案模板配套）。",
         "where": "打印页顶部「风格」切换、设置 → 文档模板",
-        "provides": [
-          "栖序雅致",
-          "墨金臻选",
-          "原木自然",
-          "商务蓝",
-          "东方雅韵",
-          "科技"
-        ],
+        "provides": ["栖序雅致", "墨金臻选", "原木自然", "商务蓝", "东方雅韵", "科技"],
         "ai": {
-          "permissions": [
-            "documents:read"
-          ],
-          "guidance": [
-            "生成打印或导出链接时，可根据客户偏好传入 style 参数切换文档视觉风格。"
-          ],
+          "permissions": ["documents:read"],
+          "guidance": ["生成打印或导出链接时，可根据客户偏好传入 style 参数切换文档视觉风格。"],
           "knowledge": [
             {
               "id": "doc-styles-catalog",
@@ -2709,15 +2271,9 @@
         "tagline": "点位和预算一键变成给业主看的横版方案",
         "description": "将点位图、房间分析与预算一键生成 A4 横版提案并导出 PDF。",
         "where": "项目 → 点位「打印 / 方案」、项目 → 归档",
-        "provides": [
-          "方案预览",
-          "服务交付页"
-        ],
+        "provides": ["方案预览", "服务交付页"],
         "ai": {
-          "permissions": [
-            "templates:read",
-            "documents:read"
-          ],
+          "permissions": ["templates:read", "documents:read"],
           "guidance": [
             "当用户询问「哪个方案模板适合我的客户」「怎么选提案风格」或需要汇报方案时，调用 recommend_proposal_template 根据客户画像、汇报时机和预算敏感度推荐最匹配的方案模板，并附上预览链接。"
           ],
@@ -2748,13 +2304,8 @@
               ]
             }
           ],
-          "tools": [
-            "recommend_proposal_template"
-          ],
-          "skills": [
-            "tpl-qixu-handover",
-            "tpl-proposal-pick"
-          ]
+          "tools": ["recommend_proposal_template"],
+          "skills": ["tpl-qixu-handover", "tpl-proposal-pick"]
         }
       },
       {
@@ -2765,15 +2316,9 @@
         "tagline": "逐个房间检查漏配，顺手推荐联动场景",
         "description": "按房间类型评估点位完整度，提供缺失提醒与联动场景建议。",
         "where": "项目 → 点位「区域」面板、方案演示",
-        "provides": [
-          "配置完整度",
-          "补充建议",
-          "场景推荐"
-        ],
+        "provides": ["配置完整度", "补充建议", "场景推荐"],
         "ai": {
-          "permissions": [
-            "point-map:read"
-          ],
+          "permissions": ["point-map:read"],
           "guidance": [
             "当用户询问某房间的点位是否合理、是否有遗漏、或者需要生成水电施工交底注意事项时，先调用 room_insights 获取每个房间的完整度评分与缺失项，再给出结构化建议。"
           ],
@@ -2793,13 +2338,8 @@
               ]
             }
           ],
-          "tools": [
-            "room_insights"
-          ],
-          "skills": [
-            "tpl-room-audit",
-            "tpl-wiring-deep"
-          ]
+          "tools": ["room_insights"],
+          "skills": ["tpl-room-audit", "tpl-wiring-deep"]
         }
       },
       {
@@ -2810,14 +2350,9 @@
         "tagline": "按平台和预算档位，一键给全屋选好型号",
         "description": "按生态平台与预算档位，一键匹配全屋各设备类型的默认型号。",
         "where": "项目 → 点位「统计与默认型号」",
-        "provides": [
-          "一键选型"
-        ],
+        "provides": ["一键选型"],
         "ai": {
-          "permissions": [
-            "catalog:read",
-            "defaults:write"
-          ],
+          "permissions": ["catalog:read", "defaults:write"],
           "guidance": [
             "当用户要求按平台（米家、Aqara、Apple Home、华为、KNX）和预算档次（经济、标准、高端）配单或推荐型号时，调用 smart_select 工具。"
           ],
@@ -2834,12 +2369,8 @@
               ]
             }
           ],
-          "tools": [
-            "smart_select"
-          ],
-          "skills": [
-            "tpl-smart-select"
-          ]
+          "tools": ["smart_select"],
+          "skills": ["tpl-smart-select"]
         }
       },
       {
@@ -2850,16 +2381,9 @@
         "tagline": "让 AI 读图纸，自动生成点位",
         "description": "识别标准图纸中的开关插座与点位符号，支持导入导出点位 JSON。",
         "where": "项目 → 点位「AI 识别」标签页",
-        "provides": [
-          "识别提示词",
-          "导入识别结果",
-          "导出点位 JSON"
-        ],
+        "provides": ["识别提示词", "导入识别结果", "导出点位 JSON"],
         "ai": {
-          "permissions": [
-            "point-map:read",
-            "point-map:write"
-          ],
+          "permissions": ["point-map:read", "point-map:write"],
           "guidance": [
             "当用户需要将外部识图 JSON 导入项目时，调用 import_points_json；当用户询问如何用视觉大模型识别户型图点位时，按 fmkj-points 协议输出标准 JSON 结构说明。"
           ],
@@ -2887,10 +2411,7 @@
             }
           ],
           "tools": [],
-          "skills": [
-            "tpl-switch-plan-recognition",
-            "tpl-blueprint-vision"
-          ]
+          "skills": ["tpl-switch-plan-recognition", "tpl-blueprint-vision"]
         }
       },
       {
@@ -2901,13 +2422,9 @@
         "tagline": "CAD 图纸直接导入成户型底图",
         "description": "上传 CAD DWG 图纸并自动转换为标准户型底图。",
         "where": "项目 → 点位「导入 DWG」",
-        "provides": [
-          "导入 DWG"
-        ],
+        "provides": ["导入 DWG"],
         "ai": {
-          "permissions": [
-            "point-map:write"
-          ],
+          "permissions": ["point-map:write"],
           "guidance": [
             "用户询问 CAD .dwg 文件如何导入时，引导其在点位图工作台顶部点击「导入 DWG」自动转换为 3:2 标准户型底图。"
           ],
@@ -2933,17 +2450,9 @@
         "tagline": "质保、检修与配置备份都有记录",
         "description": "按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。",
         "where": "项目 → 归档 →「售后维保」、项目工具箱",
-        "provides": [
-          "质保倒计时",
-          "维保记录",
-          "配置备份",
-          "售后维保卡"
-        ],
+        "provides": ["质保倒计时", "维保记录", "配置备份", "售后维保卡"],
         "ai": {
-          "permissions": [
-            "projects:read",
-            "contracts:read"
-          ],
+          "permissions": ["projects:read", "contracts:read"],
           "guidance": [
             "解答售后质保问题时：质保起算日优先取项目「交付验收」维保记录的日期，没有时取合同签订日期；质保月数取合同 warrantyMonths（未填写按 12 个月）。",
             "用户需要登记检修、设备更换或留存配置备份时，引导其打开项目的售后维保页（/projects/[id]/after-sales）；交付时可提供售后维保卡打印链接（/print/projects/[id]/after-sales）。"
@@ -3069,9 +2578,7 @@
         "cost": 0.2,
         "scope": "workspace",
         "mutates": false,
-        "permissions": [
-          "projects:read"
-        ],
+        "permissions": ["projects:read"],
         "description": "查询或搜索项目列表（可按关键词、状态、主平台筛选），也可用来把某个已有项目设为当前操作项目。",
         "parameters": {
           "type": "object",
@@ -3082,11 +2589,7 @@
             },
             "status": {
               "type": "string",
-              "enum": [
-                "active",
-                "archived",
-                "all"
-              ],
+              "enum": ["active", "archived", "all"],
               "description": "进行中 active / 已归档 archived / 全部 all（默认 active）"
             },
             "switchToProjectId": {
@@ -3103,9 +2606,7 @@
         "cost": 0.5,
         "scope": "workspace",
         "mutates": true,
-        "permissions": [
-          "projects:write"
-        ],
+        "permissions": ["projects:write"],
         "description": "创建一个新的全屋智能项目。项目名称留空时会按「小区 + 房号」或客户姓名自动生成。创建成功后会自动将当前会话关联到该新项目。",
         "parameters": {
           "type": "object",
@@ -3162,9 +2663,7 @@
         "cost": 0.5,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "projects:write"
-        ],
+        "permissions": ["projects:write"],
         "description": "修改当前关联项目（或指定 projectId）的基本信息、主平台、预算、备注，或将项目归档/恢复。",
         "parameters": {
           "type": "object",
@@ -3217,10 +2716,7 @@
             },
             "status": {
               "type": "string",
-              "enum": [
-                "active",
-                "archived"
-              ],
+              "enum": ["active", "archived"],
               "description": "状态：active 进行中 / archived 已归档"
             }
           }
@@ -3233,9 +2729,7 @@
         "cost": 1,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "point-map:write"
-        ],
+        "permissions": ["point-map:write"],
         "description": "将户型图纸添加或更新到当前关联项目的点位图中。当用户说「重新生成点位 / 重新识别刚才的图纸 / 改成导入全部点位」时，绝不要让用户重新上传图片！直接调用本工具（可省略 url 和 mediaId，服务端会自动复用当前项目已有的图纸或历史上传图纸），并设置 replaceExisting=true（及按需设置 redetect=true）即可原地重新识别并替换点位。",
         "parameters": {
           "type": "object",
@@ -3254,11 +2748,7 @@
             },
             "importMode": {
               "type": "string",
-              "enum": [
-                "switches",
-                "all",
-                "none"
-              ],
+              "enum": ["switches", "all", "none"],
               "description": "点位导入范围：switches 仅导入开关（默认，避免将灯具圆圈混入开关图）；all 导入开关+筒灯/射灯全部识别点位；none 仅添加干净图纸不生成点位"
             },
             "replaceExisting": {
@@ -3288,11 +2778,7 @@
                     "description": "0-1 垂直比例坐标"
                   }
                 },
-                "required": [
-                  "type",
-                  "x",
-                  "y"
-                ]
+                "required": ["type", "x", "y"]
               }
             }
           }
@@ -3305,9 +2791,7 @@
         "cost": 1,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "point-map:write"
-        ],
+        "permissions": ["point-map:write"],
         "description": "将用户拖入上传或粘贴的 fmkj-points 格式点位识别 JSON（含 sheets / areas / points）直接导入到当前关联项目的点位图中。",
         "parameters": {
           "type": "object",
@@ -3317,9 +2801,7 @@
               "description": "完整的点位 JSON 字符串"
             }
           },
-          "required": [
-            "jsonText"
-          ]
+          "required": ["jsonText"]
         }
       },
       {
@@ -3329,9 +2811,7 @@
         "cost": 2,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "point-map:write"
-        ],
+        "permissions": ["point-map:write"],
         "description": "仅用于【没有上传户型图】的纯文字需求项目，在空白示意图上创建房间框和设备点位。只布置 WiFi AP、网络面板、窗帘电轨、网关、中控屏、VRF 控制器、人体传感器、音箱、摄像头；开关、插座、灯具没有图纸准确点位时不生成。如果项目已经上传了真实户型图（非空白图），严禁调用此工具生成网格默认点位！",
         "parameters": {
           "type": "object",
@@ -3342,10 +2822,7 @@
             },
             "mode": {
               "type": "string",
-              "enum": [
-                "append",
-                "replace"
-              ],
+              "enum": ["append", "replace"],
               "description": "append 在现有基础上追加（默认）；replace 清空当前图纸后重新生成"
             },
             "rooms": {
@@ -3377,23 +2854,15 @@
                           "description": "数量（1–20）"
                         }
                       },
-                      "required": [
-                        "deviceType",
-                        "count"
-                      ]
+                      "required": ["deviceType", "count"]
                     }
                   }
                 },
-                "required": [
-                  "name",
-                  "devices"
-                ]
+                "required": ["name", "devices"]
               }
             }
           },
-          "required": [
-            "rooms"
-          ]
+          "required": ["rooms"]
         }
       },
       {
@@ -3403,9 +2872,7 @@
         "cost": 0.3,
         "scope": "workspace",
         "mutates": false,
-        "permissions": [
-          "catalog:read"
-        ],
+        "permissions": ["catalog:read"],
         "description": "搜索平台产品库（728 款在售产品）：可按关键词、设备类型、品牌名称、生态平台、最高价格筛选，返回产品 ID、型号、SKU、品牌、售价与成本。",
         "parameters": {
           "type": "object",
@@ -3440,9 +2907,7 @@
         "cost": 0.5,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "defaults:write"
-        ],
+        "permissions": ["defaults:write"],
         "description": "为当前关联项目的指定设备类型设置具体的默认产品型号（传入设备类型与对应的产品 ID）。",
         "parameters": {
           "type": "object",
@@ -3461,16 +2926,11 @@
                     "description": "产品 ID（可通过 search_products 获取）"
                   }
                 },
-                "required": [
-                  "deviceType",
-                  "productId"
-                ]
+                "required": ["deviceType", "productId"]
               }
             }
           },
-          "required": [
-            "items"
-          ]
+          "required": ["items"]
         }
       },
       {
@@ -3480,12 +2940,7 @@
         "cost": 0.2,
         "scope": "project",
         "mutates": false,
-        "permissions": [
-          "projects:read",
-          "point-map:read",
-          "quotes:read",
-          "contracts:read"
-        ],
+        "permissions": ["projects:read", "point-map:read", "quotes:read", "contracts:read"],
         "description": "读取当前关联项目的详细点位清单、已汇总的产品金额、以及项目下所有报价单和合同信息。",
         "parameters": {
           "type": "object",
@@ -3499,9 +2954,7 @@
         "cost": 1,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "quotes:write"
-        ],
+        "permissions": ["quotes:write"],
         "description": "为当前关联项目生成一份新的报价单（根据点位图和默认型号汇总），或修改已有的报价单（传入 quoteId 可修改标题、状态 draft/sent/accepted、优惠金额 discount、附加费用 fees 如安装调试费、备注 notes）。",
         "parameters": {
           "type": "object",
@@ -3516,11 +2969,7 @@
             },
             "status": {
               "type": "string",
-              "enum": [
-                "draft",
-                "sent",
-                "accepted"
-              ],
+              "enum": ["draft", "sent", "accepted"],
               "description": "报价单状态：draft 草稿 / sent 已发送 / accepted 已确认"
             },
             "discount": {
@@ -3542,10 +2991,7 @@
                     "description": "金额（元）"
                   }
                 },
-                "required": [
-                  "name",
-                  "amount"
-                ]
+                "required": ["name", "amount"]
               }
             },
             "notes": {
@@ -3562,10 +3008,7 @@
         "cost": 2,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "catalog:read",
-          "quotes:write"
-        ],
+        "permissions": ["catalog:read", "quotes:write"],
         "description": "把客户提供的外店报价单（识图结果或粘贴的 Excel 表格）逐行匹配到本平台产品库的同级型号，在当前关联项目生成一份对比报价单（草稿）。传入每行的品名、品牌、型号、数量和外店单价；返回逐行匹配结果、本店合计、外店合计与差价。安装调试等服务项请放在 fees。",
         "parameters": {
           "type": "object",
@@ -3617,10 +3060,7 @@
                     "description": "外店单价（元，可选）"
                   }
                 },
-                "required": [
-                  "name",
-                  "quantity"
-                ]
+                "required": ["name", "quantity"]
               }
             },
             "fees": {
@@ -3638,16 +3078,11 @@
                     "description": "金额（元）"
                   }
                 },
-                "required": [
-                  "name",
-                  "amount"
-                ]
+                "required": ["name", "amount"]
               }
             }
           },
-          "required": [
-            "items"
-          ]
+          "required": ["items"]
         }
       },
       {
@@ -3657,9 +3092,7 @@
         "cost": 1,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "contracts:write"
-        ],
+        "permissions": ["contracts:write"],
         "description": "为当前关联项目生成合同（若尚无合同则基于最新报价单自动创建），或修改已有合同的金额、工期、质保期、付款分期比例（合计需 100%）、合同条款、签订状态（draft/signed）及各期收款登记。",
         "parameters": {
           "type": "object",
@@ -3699,10 +3132,7 @@
                     "description": "是否已收款"
                   }
                 },
-                "required": [
-                  "name",
-                  "percent"
-                ]
+                "required": ["name", "percent"]
               }
             },
             "terms": {
@@ -3711,10 +3141,7 @@
             },
             "status": {
               "type": "string",
-              "enum": [
-                "draft",
-                "signed"
-              ],
+              "enum": ["draft", "signed"],
               "description": "合同状态：draft 草稿 / signed 已签订"
             }
           }
@@ -3727,24 +3154,14 @@
         "cost": 0.2,
         "scope": "project",
         "mutates": false,
-        "permissions": [
-          "documents:read"
-        ],
+        "permissions": ["documents:read"],
         "description": "获取当前项目所有可打印/导出 PDF 文档的直达链接（点位图、点位交底清单、报价单、合同、方案演示与已启用插件的工程单据），支持指定风格与模板。",
         "parameters": {
           "type": "object",
           "properties": {
             "style": {
               "type": "string",
-              "enum": [
-                "qixu",
-                "business",
-                "oriental",
-                "tech",
-                "noir",
-                "grove",
-                "minimal"
-              ],
+              "enum": ["qixu", "business", "oriental", "tech", "noir", "grove", "minimal"],
               "description": "文档风格：qixu 栖序雅致 / business 商务蓝 / oriental 东方雅韵 / tech 科技 / noir 墨金臻选 / grove 原木自然 / minimal 简约"
             },
             "template": {
@@ -3761,9 +3178,7 @@
         "cost": 2,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "point-map:write"
-        ],
+        "permissions": ["point-map:write"],
         "description": "对当前项目已上传的户型图，调用视觉大模型看图，并按平台设计规范规划智能设备点位：全屋 WiFi（ap-node / ceiling-ap / network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、中控屏 touch-panel、摄像头 camera，以及门磁 contact-sensor、水浸 water-sensor、烟感 smoke-sensor。开关、插座、灯具只照图识别，本工具不会生成。用户说「帮我规划/补齐/布置 AP、窗帘、传感器、摄像头」「按户型把智能设备点位布好」时调用；重复调用会先替换上次规划的点位。",
         "parameters": {
           "type": "object",
@@ -3804,9 +3219,7 @@
         "cost": 0,
         "scope": "workspace",
         "mutates": false,
-        "permissions": [
-          "images:generate"
-        ],
+        "permissions": ["images:generate"],
         "description": "根据文字描述生成智能家居场景图、方案配图、效果图或材质意向图。用户说“画一张”“生成图片”“出个效果图”时调用。用户上传了参考图并希望据此出图时设 useAttachedImage=true：平台会先由视觉模型理解参考图再写提示词生成，生成后再由视觉模型质检。",
         "parameters": {
           "type": "object",
@@ -3817,11 +3230,7 @@
             },
             "size": {
               "type": "string",
-              "enum": [
-                "1024*1024",
-                "1536*1024",
-                "1024*1536"
-              ],
+              "enum": ["1024*1024", "1536*1024", "1024*1536"],
               "description": "输出尺寸，默认 1024*1024；横版效果图用 1536*1024"
             },
             "useAttachedImage": {
@@ -3829,9 +3238,7 @@
               "description": "是否参考本轮对话里用户上传的图片（户型图 / 实景照片 / 效果图）"
             }
           },
-          "required": [
-            "prompt"
-          ]
+          "required": ["prompt"]
         }
       },
       {
@@ -3841,9 +3248,7 @@
         "cost": 0.5,
         "scope": "project",
         "mutates": false,
-        "permissions": [
-          "point-map:read"
-        ],
+        "permissions": ["point-map:read"],
         "description": "读取当前关联项目的房间点位配置：每个房间的设备、配置完整度评分、缺少的必备/推荐设备和推荐联动场景。",
         "parameters": {
           "type": "object",
@@ -3857,21 +3262,14 @@
         "cost": 2,
         "scope": "project",
         "mutates": true,
-        "permissions": [
-          "catalog:read",
-          "defaults:write"
-        ],
+        "permissions": ["catalog:read", "defaults:write"],
         "description": "按项目主平台和档次（economy 经济 / standard 标准 / premium 高端），为当前关联项目点位图里用到的设备类型匹配默认型号。当 apply=true 时，会直接把选型结果写入该项目的默认型号。",
         "parameters": {
           "type": "object",
           "properties": {
             "tier": {
               "type": "string",
-              "enum": [
-                "economy",
-                "standard",
-                "premium"
-              ],
+              "enum": ["economy", "standard", "premium"],
               "description": "economy 经济 / standard 标准 / premium 高端"
             },
             "apply": {
@@ -3879,9 +3277,7 @@
               "description": "是否直接写入当前项目的默认型号（默认 true）"
             }
           },
-          "required": [
-            "tier"
-          ]
+          "required": ["tier"]
         }
       },
       {
@@ -3891,10 +3287,7 @@
         "cost": 0.2,
         "scope": "workspace",
         "mutates": false,
-        "permissions": [
-          "templates:read",
-          "documents:read"
-        ],
+        "permissions": ["templates:read", "documents:read"],
         "description": "根据业主画像（如别墅高净值、年轻数码家庭、原木风、新中式）、沟通时机（首次沟通、比价阶段、签约汇报）推荐最匹配的方案模板，并返回项目方案预览链接。",
         "parameters": {
           "type": "object",
@@ -3929,24 +3322,13 @@
             "key": "strategy",
             "label": "匹配策略",
             "defaultValue": "同级优先",
-            "options": [
-              "同级优先",
-              "同品牌优先",
-              "性价比优先"
-            ]
+            "options": ["同级优先", "同品牌优先", "性价比优先"]
           },
           {
             "key": "brand",
             "label": "优先品牌",
             "defaultValue": "不限",
-            "options": [
-              "不限",
-              "Aqara",
-              "小米",
-              "领普",
-              "易来",
-              "华为"
-            ]
+            "options": ["不限", "Aqara", "小米", "领普", "易来", "华为"]
           }
         ],
         "promptTemplate": "我上传了客户从别家拿来的报价单（截图或粘贴的表格）。请先逐行识别品名、品牌、型号、数量和单价，安装调试、线材辅材等服务项单独列为费用；然后按【{strategy}】策略（优先品牌：{brand}）调用「竞品报价单转配单」工具，在当前项目生成对比报价单。最后用表格列出每行匹配到的型号、单价差和整单差价，并给出 3 条向业主解释我们方案优势的话术。"
@@ -3958,20 +3340,13 @@
         "description": "调用「房间智能分析」插件，按户型逐间检查必配点位、安防传感器与双控遗漏",
         "modelHint": "fast",
         "recommendedModelId": "deepseek-flash",
-        "requiredPlugins": [
-          "room-insights"
-        ],
+        "requiredPlugins": ["room-insights"],
         "variables": [
           {
             "key": "layout",
             "label": "户型结构",
             "defaultValue": "三室两厅两卫",
-            "options": [
-              "两室两厅一卫",
-              "三室两厅两卫",
-              "四室两厅三卫",
-              "复式 / 别墅"
-            ]
+            "options": ["两室两厅一卫", "三室两厅两卫", "四室两厅三卫", "复式 / 别墅"]
           },
           {
             "key": "focus",
@@ -3994,20 +3369,13 @@
         "description": "针对现场水电施工交底，按点位汇总零火线、窗帘盒电源、网口与网关位置要求",
         "modelHint": "fast",
         "recommendedModelId": "deepseek-flash",
-        "requiredPlugins": [
-          "room-insights",
-          "proposal"
-        ],
+        "requiredPlugins": ["room-insights", "proposal"],
         "variables": [
           {
             "key": "stage",
             "label": "施工阶段",
             "defaultValue": "水电开槽布管前",
-            "options": [
-              "水电开槽布管前",
-              "吊顶木工封板前",
-              "油漆完工安装前"
-            ]
+            "options": ["水电开槽布管前", "吊顶木工封板前", "油漆完工安装前"]
           }
         ],
         "promptTemplate": "当前项目处于【{stage}】阶段，请结合项目点位生成一份给水电工与项目经理的强弱电预留交底注意事项（含零火线、底盒深度、窗帘电源与网关网口要求）。"
@@ -4019,32 +3387,19 @@
         "description": "调用「智能选型」插件，按指定生态平台和预算档次匹配全屋默认设备型号",
         "modelHint": "fast",
         "recommendedModelId": "deepseek-flash",
-        "requiredPlugins": [
-          "smart-select",
-          "room-insights"
-        ],
+        "requiredPlugins": ["smart-select", "room-insights"],
         "variables": [
           {
             "key": "platform",
             "label": "主平台",
             "defaultValue": "米家",
-            "options": [
-              "米家",
-              "Aqara Home",
-              "Apple Home",
-              "华为鸿蒙智家",
-              "KNX"
-            ]
+            "options": ["米家", "Aqara Home", "Apple Home", "华为鸿蒙智家", "KNX"]
           },
           {
             "key": "tier",
             "label": "配置档次",
             "defaultValue": "标准档",
-            "options": [
-              "经济档",
-              "标准档",
-              "高端档"
-            ]
+            "options": ["经济档", "标准档", "高端档"]
           }
         ],
         "promptTemplate": "请调用「智能选型」插件，以【{platform}】为主平台、按【{tier}】预算标准，为当前项目的开关、窗帘、门锁、传感器与网关推荐默认型号组合，并说明选型理由。"
@@ -4056,29 +3411,19 @@
         "description": "结合「方案演示」与「文档风格包」，生成客户汇报话术、三阶段付款说明与共同验收清单",
         "modelHint": "fast",
         "recommendedModelId": "deepseek-flash",
-        "requiredPlugins": [
-          "proposal",
-          "doc-styles"
-        ],
+        "requiredPlugins": ["proposal", "doc-styles"],
         "variables": [
           {
             "key": "paymentSplit",
             "label": "付款比例",
             "defaultValue": "40% / 50% / 10%",
-            "options": [
-              "40% / 50% / 10%",
-              "30% / 60% / 10%",
-              "50% / 40% / 10%"
-            ]
+            "options": ["40% / 50% / 10%", "30% / 60% / 10%", "50% / 40% / 10%"]
           },
           {
             "key": "warranty",
             "label": "质保与维护",
             "defaultValue": "设备质保 12 个月，含 1 年上门联调",
-            "options": [
-              "设备质保 12 个月，含 1 年上门联调",
-              "设备质保 24 个月，含季度巡检"
-            ]
+            "options": ["设备质保 12 个月，含 1 年上门联调", "设备质保 24 个月，含季度巡检"]
           }
         ],
         "promptTemplate": "请调用「方案演示」与「文档风格包」插件，按栖序提案「08 服务交付 · 付款与确认」结构，采用【{paymentSplit}】付款节点与【{warranty}】条款，生成给客户的方案汇报话术与现场验收确认要点。"
@@ -4090,9 +3435,7 @@
         "description": "根据业主装修风格与沟通阶段，从方案模板库中挑选最合适的提案模板并生成开场汇报要点",
         "modelHint": "fast",
         "recommendedModelId": "deepseek-flash",
-        "requiredPlugins": [
-          "proposal"
-        ],
+        "requiredPlugins": ["proposal"],
         "variables": [
           {
             "key": "clientProfile",
@@ -4109,11 +3452,7 @@
             "key": "meetingStage",
             "label": "汇报时机",
             "defaultValue": "首次方案沟通",
-            "options": [
-              "首次方案沟通",
-              "比价与预算速览",
-              "深化定稿与签约汇报"
-            ]
+            "options": ["首次方案沟通", "比价与预算速览", "深化定稿与签约汇报"]
           }
         ],
         "promptTemplate": "当前客户属于【{clientProfile}】，处于【{meetingStage}】阶段。请调用 recommend_proposal_template 工具推荐最合适的方案模板，并给出 3 条针对该客户的提案讲解建议。"
@@ -4125,18 +3464,13 @@
         "description": "按视觉直读模式识别开关面板与智能屏，读取图例和插座数量，但不生成插座点位",
         "modelHint": "vision",
         "recommendedModelId": "qwen3.7-plus",
-        "requiredPlugins": [
-          "ai-import"
-        ],
+        "requiredPlugins": ["ai-import"],
         "variables": [
           {
             "key": "scope",
             "label": "识别范围",
             "defaultValue": "仅开关面板与智能屏",
-            "options": [
-              "仅开关面板与智能屏",
-              "开关面板 + 灯具"
-            ]
+            "options": ["仅开关面板与智能屏", "开关面板 + 灯具"]
           }
         ],
         "promptTemplate": "请按【{scope}】重新识别当前图纸：先读图例和房间文字统计，再让视觉模型直读开关面板/智能屏点位；本地几何识别只做坐标吸附与补缺。插座只统计数量，不生成点位。"
@@ -4148,30 +3482,19 @@
         "description": "调用「AI 识别导入」插件，生成标准 3:2 户型图的房间与点位比例坐标识别指令",
         "modelHint": "vision",
         "recommendedModelId": "qwen-vl-plus",
-        "requiredPlugins": [
-          "ai-import"
-        ],
+        "requiredPlugins": ["ai-import"],
         "variables": [
           {
             "key": "sheetName",
             "label": "图纸楼层",
             "defaultValue": "一层平面图",
-            "options": [
-              "一层平面图",
-              "二层平面图",
-              "地下室平面图",
-              "全套标准图"
-            ]
+            "options": ["一层平面图", "二层平面图", "地下室平面图", "全套标准图"]
           },
           {
             "key": "scope",
             "label": "布点范围",
             "defaultValue": "全屋点位（含灯光开关与传感）",
-            "options": [
-              "全屋点位（含灯光开关与传感）",
-              "仅智能开关与插座",
-              "不含灯具（后装改造）"
-            ]
+            "options": ["全屋点位（含灯光开关与传感）", "仅智能开关与插座", "不含灯具（后装改造）"]
           }
         ],
         "promptTemplate": "请按「AI 识别导入」插件规范，针对【{sheetName}】按【{scope}】生成 fmkj-points JSON 识图提示词与导入校验清单。"

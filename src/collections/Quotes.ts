@@ -1,4 +1,10 @@
-import { APIError, type Access, type CollectionConfig, type PayloadRequest, type Where } from 'payload'
+import {
+  APIError,
+  type Access,
+  type CollectionConfig,
+  type PayloadRequest,
+  type Where,
+} from 'payload'
 
 import { cmsAdminOrMember, isCmsAdmin, isMember, relId } from '@/lib/access'
 import { DEVICE_TYPE_OPTIONS } from '@/lib/device-types'
@@ -22,7 +28,9 @@ const readQuoteAccess: Access = ({ req }) => {
 async function contractUsing(req: PayloadRequest, quoteId: string, signedOnly: boolean) {
   const found = await req.payload.find({
     collection: 'contracts',
-    where: signedOnly ? { and: [{ quote: { equals: quoteId } }, { status: { equals: 'signed' } }] } : { quote: { equals: quoteId } },
+    where: signedOnly
+      ? { and: [{ quote: { equals: quoteId } }, { status: { equals: 'signed' } }] }
+      : { quote: { equals: quoteId } },
     limit: 1,
     depth: 0,
     req,
@@ -54,7 +62,11 @@ export const Quotes: CollectionConfig = {
       async ({ data, operation, originalDoc, req }) => {
         if (!isMember(req)) return data
         await assertProjectEditable(req, relId(data.project ?? originalDoc?.project))
-        if (operation === 'update' && originalDoc?.id && (await contractUsing(req, String(originalDoc.id), true))) {
+        if (
+          operation === 'update' &&
+          originalDoc?.id &&
+          (await contractUsing(req, String(originalDoc.id), true))
+        ) {
           throw new APIError('这份报价已用于已签订的合同，撤销签订后才能修改', 403)
         }
         return data
@@ -74,9 +86,19 @@ export const Quotes: CollectionConfig = {
     beforeDelete: [
       async ({ id, req }) => {
         if (!isMember(req)) return
-        const quote = await req.payload.findByID({ collection: 'quotes', id, depth: 0, req, overrideAccess: true, select: { project: true } }).catch(() => null)
+        const quote = await req.payload
+          .findByID({
+            collection: 'quotes',
+            id,
+            depth: 0,
+            req,
+            overrideAccess: true,
+            select: { project: true },
+          })
+          .catch(() => null)
         await assertProjectEditable(req, relId(quote?.project))
-        if (await contractUsing(req, String(id), false)) throw new APIError('这份报价已用于合同，不能删除', 403)
+        if (await contractUsing(req, String(id), false))
+          throw new APIError('这份报价已用于合同，不能删除', 403)
       },
     ],
   },
@@ -85,7 +107,14 @@ export const Quotes: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'project', label: '项目', type: 'relationship', relationTo: 'projects', required: true, index: true },
+        {
+          name: 'project',
+          label: '项目',
+          type: 'relationship',
+          relationTo: 'projects',
+          required: true,
+          index: true,
+        },
         {
           name: 'status',
           label: '状态',
@@ -125,7 +154,14 @@ export const Quotes: CollectionConfig = {
           type: 'row',
           fields: [
             { name: 'price', label: '单价', type: 'number', required: true, min: 0 },
-            { name: 'quantity', label: '数量', type: 'number', required: true, min: 0, defaultValue: 1 },
+            {
+              name: 'quantity',
+              label: '数量',
+              type: 'number',
+              required: true,
+              min: 0,
+              defaultValue: 1,
+            },
           ],
         },
       ],

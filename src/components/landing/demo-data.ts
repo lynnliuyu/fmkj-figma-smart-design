@@ -9,7 +9,17 @@ export const PLAN_W = 800
 export const PLAN_H = 500
 
 /** 房间矩形与标注位置（lx / ly 为房间名所在位置） */
-export type PlanRoom = { name: string; area?: string; x: number; y: number; w: number; h: number; lx: number; ly: number; accent?: boolean }
+export type PlanRoom = {
+  name: string
+  area?: string
+  x: number
+  y: number
+  w: number
+  h: number
+  lx: number
+  ly: number
+  accent?: boolean
+}
 
 export const PLAN_ROOMS: PlanRoom[] = [
   { name: '主卧', area: '16.8㎡', x: 20, y: 20, w: 250, h: 200, lx: 130, ly: 192 },
@@ -83,7 +93,14 @@ const RAW_POINTS: [string, number, number][] = [
   ['camera', 700, 445],
 ]
 
-export type PlanPoint = { id: string; type: string; x: number; y: number; code: string; category: string }
+export type PlanPoint = {
+  id: string
+  type: string
+  x: number
+  y: number
+  code: string
+  category: string
+}
 
 /** 点位：代号按「类别代码 + 序号」自动编号，与点位图画布的规则一致 */
 export const PLAN_POINTS: PlanPoint[] = (() => {
@@ -93,6 +110,13 @@ export const PLAN_POINTS: PlanPoint[] = (() => {
     const prefix = category?.code ?? 'Q'
     const n = (seq.get(prefix) ?? 0) + 1
     seq.set(prefix, n)
-    return { id: `pt-${i}`, type, x, y, code: `${prefix}${String(n).padStart(2, '0')}`, category: category?.slug ?? 'other' }
+    return {
+      id: `pt-${i}`,
+      type,
+      x,
+      y,
+      code: `${prefix}${String(n).padStart(2, '0')}`,
+      category: category?.slug ?? 'other',
+    }
   })
 })()

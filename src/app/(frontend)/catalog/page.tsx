@@ -26,7 +26,9 @@ export const metadata: Metadata = {
 export default async function PublicCatalogPage() {
   const catalog = await getCatalog().catch(() => [])
   const active = catalog.filter((p) => p.status === 'active')
-  const brandNames = [...new Set(active.map((p) => p.brand?.name).filter((v): v is string => Boolean(v)))]
+  const brandNames = [
+    ...new Set(active.map((p) => p.brand?.name).filter((v): v is string => Boolean(v))),
+  ]
 
   return (
     <div data-landing className="min-h-svh overflow-x-clip bg-background text-foreground">
@@ -35,16 +37,26 @@ export default async function PublicCatalogPage() {
         <div className="max-w-3xl">
           <h1 className="text-display font-medium">点位图例与产品选型库</h1>
           <p className="mt-5 text-lead text-muted-foreground">
-            统一全屋智能点位图符号、代号前缀与水电预留规范，覆盖 {brandNames.length} 个主流品牌、{active.length} 款在售产品。
+            统一全屋智能点位图符号、代号前缀与水电预留规范，覆盖 {brandNames.length} 个主流品牌、
+            {active.length} 款在售产品。
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+            <Button
+              asChild
+              size="lg"
+              className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+            >
               <Link href="/projects">
                 用这些设备画点位出报价
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6 text-base">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-11 rounded-full px-6 text-base"
+            >
               <Link href="#products">浏览在售产品 ({active.length})</Link>
             </Button>
           </div>
@@ -56,14 +68,19 @@ export default async function PublicCatalogPage() {
             <h2 id="legend-title" className="text-2xl font-medium tracking-tight">
               标准点位图例与水电施工预留规范
             </h2>
-            <span className="text-sm text-muted-foreground">11 大系统类别 · 点位图、报价单与水电交底单共用</span>
+            <span className="text-sm text-muted-foreground">
+              11 大系统类别 · 点位图、报价单与水电交底单共用
+            </span>
           </div>
 
           <div className="mt-8 space-y-10">
             {DEVICE_GROUPS.map(({ category, types }) => (
               <div key={category.slug} className="space-y-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="size-2.5 rounded-full" style={{ backgroundColor: category.color }} />
+                  <span
+                    className="size-2.5 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
                   <h3 className="text-base font-medium">{category.name}</h3>
                   <Badge variant="outline" className="font-mono text-xs">
                     代号前缀 {category.code}1, {category.code}2…
@@ -73,12 +90,17 @@ export default async function PublicCatalogPage() {
                   {types.map((t) => {
                     const spec = wiringSpecOf(t.value)
                     return (
-                      <div key={t.value} className="flex items-start gap-3.5 rounded-xl border border-border bg-card p-4">
+                      <div
+                        key={t.value}
+                        className="flex items-start gap-3.5 rounded-xl border border-border bg-card p-4"
+                      >
                         <PointMarker type={t.value} className="mt-0.5 size-8 shrink-0" />
                         <div className="min-w-0 flex-1 text-xs">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-sm font-medium text-foreground">{t.name}</span>
-                            <span className="font-mono text-muted-foreground">{category.code}n</span>
+                            <span className="font-mono text-muted-foreground">
+                              {category.code}n
+                            </span>
                           </div>
                           <p className="mt-1.5 text-muted-foreground">{spec.box}</p>
                           <p className="mt-0.5 text-muted-foreground">{spec.cable}</p>
@@ -105,27 +127,53 @@ export default async function PublicCatalogPage() {
 
           <div className="mt-8 space-y-12">
             {DEVICE_GROUPS.map(({ category }) => {
-              const items = active.filter((p) => categoryOfType(p.deviceType)?.slug === category.slug)
+              const items = active.filter(
+                (p) => categoryOfType(p.deviceType)?.slug === category.slug,
+              )
               if (!items.length) return null
               const shown = items.slice(0, 8)
               return (
                 <div key={category.slug} className="space-y-4">
                   <div className="flex items-baseline justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="size-2.5 rounded-full" style={{ backgroundColor: category.color }} />
+                      <span
+                        className="size-2.5 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      />
                       <h3 className="text-base font-medium">{category.name}系统</h3>
                     </div>
-                    <span className="text-xs text-muted-foreground tabular-nums">共 {items.length} 款型号</span>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      共 {items.length} 款型号
+                    </span>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {shown.map((p) => (
-                      <div key={p.id} className="flex flex-col justify-between gap-3 rounded-xl border border-border bg-card p-3.5">
+                      <div
+                        key={p.id}
+                        className="flex flex-col justify-between gap-3 rounded-xl border border-border bg-card p-3.5"
+                      >
                         <div className="flex gap-3">
-                          <ProductThumb src={p.image?.url} alt={p.name} size={96} loading="lazy" className="size-14 shrink-0" />
+                          <ProductThumb
+                            src={p.image?.url}
+                            alt={p.name}
+                            size={96}
+                            loading="lazy"
+                            className="size-14 shrink-0"
+                          />
                           <div className="min-w-0 flex-1">
-                            {p.brand ? <BrandLogo name={p.brand.name} logo={p.brand.logo} className="h-3.5 max-w-16" /> : null}
-                            <p className="mt-1 line-clamp-2 text-xs leading-snug font-medium">{p.name}</p>
-                            <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">{p.sku}</p>
+                            {p.brand ? (
+                              <BrandLogo
+                                name={p.brand.name}
+                                logo={p.brand.logo}
+                                className="h-3.5 max-w-16"
+                              />
+                            ) : null}
+                            <p className="mt-1 line-clamp-2 text-xs leading-snug font-medium">
+                              {p.name}
+                            </p>
+                            <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                              {p.sku}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-baseline justify-between border-t border-border/60 pt-2 text-xs">
@@ -134,7 +182,9 @@ export default async function PublicCatalogPage() {
                           </span>
                           <span className="shrink-0 font-semibold tabular-nums">
                             {yuan(p.price)}
-                            <span className="font-normal text-muted-foreground">/{p.unit || '个'}</span>
+                            <span className="font-normal text-muted-foreground">
+                              /{p.unit || '个'}
+                            </span>
                           </span>
                         </div>
                       </div>

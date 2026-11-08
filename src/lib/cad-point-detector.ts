@@ -46,9 +46,19 @@ export type CadDetectionResult = {
 
 const isSwitchType = (t: string) => t.startsWith('switch-')
 export const isLightType = (t: string) =>
-  t === 'downlight' || t === 'spotlight' || t === 'ceiling-light' || t === 'panel-light' || t === 'light-strip' || t === 'track-light' || t === 'pendant-light' || t === 'wall-light'
+  t === 'downlight' ||
+  t === 'spotlight' ||
+  t === 'ceiling-light' ||
+  t === 'panel-light' ||
+  t === 'light-strip' ||
+  t === 'track-light' ||
+  t === 'pendant-light' ||
+  t === 'wall-light'
 
-export function buildCadDetectionSummary(points: DetectedCadPoint[], areas: DetectedCadArea[]): DetectedCadSummary {
+export function buildCadDetectionSummary(
+  points: DetectedCadPoint[],
+  areas: DetectedCadArea[],
+): DetectedCadSummary {
   const byType: Record<string, number> = {}
   let switches = 0
   let lights = 0
@@ -268,8 +278,16 @@ export function detectCadSymbolsFromPixels(
   const rowThick = new Int32Array(H)
   const colThick = new Int32Array(W)
   let totalThickSamples = 0
-  for (let y = Math.max(yMin, Math.floor(H * 0.06)); y < Math.min(yMax, Math.floor(H * 0.90)); y += 2) {
-    for (let x = Math.max(xMin, Math.floor(W * 0.08)); x < Math.min(xMax, Math.floor(W * 0.92)); x += 2) {
+  for (
+    let y = Math.max(yMin, Math.floor(H * 0.06));
+    y < Math.min(yMax, Math.floor(H * 0.9));
+    y += 2
+  ) {
+    for (
+      let x = Math.max(xMin, Math.floor(W * 0.08));
+      x < Math.min(xMax, Math.floor(W * 0.92));
+      x += 2
+    ) {
       if (isThickWall(x, y)) {
         rowThick[y]++
         colThick[x]++
@@ -580,80 +598,81 @@ export function detectCadSymbolsFromPixels(
     return sat >= 0.08
   }
 
-  if (badgeSwitches.length < 4) for (let y = wy0 + 12; y < wy1 - 12; y += 2) {
-    for (let x = wx0 + 12; x < wx1 - 12; x += 2) {
-      if (visited[y * W + x] || inMaskedCorner(x, y)) continue
-      const i = (y * W + x) * ch
-      if (ch === 4 && d[i + 3] < 128) continue
-      const r = d[i]
-      const g = d[i + 1]
-      const b = d[i + 2]
-      const paleYellow = isPaleYellowSwitchPixel(r, g, b)
-      const max = Math.max(r, g, b)
-      const min = Math.min(r, g, b)
-      const sat = max > 0 ? (max - min) / max : 0
-      const strongColor = max >= 85 && max - min >= 55 && sat >= 0.35
-      if (!paleYellow && !strongColor) continue
+  if (badgeSwitches.length < 4)
+    for (let y = wy0 + 12; y < wy1 - 12; y += 2) {
+      for (let x = wx0 + 12; x < wx1 - 12; x += 2) {
+        if (visited[y * W + x] || inMaskedCorner(x, y)) continue
+        const i = (y * W + x) * ch
+        if (ch === 4 && d[i + 3] < 128) continue
+        const r = d[i]
+        const g = d[i + 1]
+        const b = d[i + 2]
+        const paleYellow = isPaleYellowSwitchPixel(r, g, b)
+        const max = Math.max(r, g, b)
+        const min = Math.min(r, g, b)
+        const sat = max > 0 ? (max - min) / max : 0
+        const strongColor = max >= 85 && max - min >= 55 && sat >= 0.35
+        if (!paleYellow && !strongColor) continue
 
-      let colorInner = 0
-      let colorOuter = 0
-      let sumX = 0
-      let sumY = 0
-      for (let dy = -16; dy <= 16; dy += 2) {
-        for (let dx = -16; dx <= 16; dx += 2) {
-          const idx = ((y + dy) * W + (x + dx)) * ch
-          const pr = d[idx]
-          const pg = d[idx + 1]
-          const pb = d[idx + 2]
-          const isCol = paleYellow
-            ? isPaleYellowSwitchPixel(pr, pg, pb)
-            : Math.max(pr, pg, pb) >= 80 && Math.max(pr, pg, pb) - Math.min(pr, pg, pb) >= 50
-          const r2 = dx * dx + dy * dy
-          if (r2 <= 64 && isCol) {
-            colorInner++
-            sumX += x + dx
-            sumY += y + dy
-          } else if (r2 >= 169 && r2 <= 256 && isCol) {
-            colorOuter++
+        let colorInner = 0
+        let colorOuter = 0
+        let sumX = 0
+        let sumY = 0
+        for (let dy = -16; dy <= 16; dy += 2) {
+          for (let dx = -16; dx <= 16; dx += 2) {
+            const idx = ((y + dy) * W + (x + dx)) * ch
+            const pr = d[idx]
+            const pg = d[idx + 1]
+            const pb = d[idx + 2]
+            const isCol = paleYellow
+              ? isPaleYellowSwitchPixel(pr, pg, pb)
+              : Math.max(pr, pg, pb) >= 80 && Math.max(pr, pg, pb) - Math.min(pr, pg, pb) >= 50
+            const r2 = dx * dx + dy * dy
+            if (r2 <= 64 && isCol) {
+              colorInner++
+              sumX += x + dx
+              sumY += y + dy
+            } else if (r2 >= 169 && r2 <= 256 && isCol) {
+              colorOuter++
+            }
           }
         }
-      }
-      if (colorInner >= 8 && colorOuter <= 16) {
-        const cx = Math.round(sumX / colorInner)
-        const cy = Math.round(sumY / colorInner)
-        let hue = 0
-        const delta = Math.max(1, max - min)
-        if (max === r) hue = ((g - b) / delta) % 6
-        else if (max === g) hue = (b - r) / delta + 2
-        else hue = (r - g) / delta + 4
-        hue = Math.round(hue * 60)
-        if (hue < 0) hue += 360
+        if (colorInner >= 8 && colorOuter <= 16) {
+          const cx = Math.round(sumX / colorInner)
+          const cy = Math.round(sumY / colorInner)
+          let hue = 0
+          const delta = Math.max(1, max - min)
+          if (max === r) hue = ((g - b) / delta) % 6
+          else if (max === g) hue = (b - r) / delta + 2
+          else hue = (r - g) / delta + 4
+          hue = Math.round(hue * 60)
+          if (hue < 0) hue += 360
 
-        if (paleYellow || (hue >= 25 && hue <= 72)) {
-          const ring = analyzeSectors(cx, cy, 4, 16)
-          const labelRing = analyzeSectors(cx, cy, 16, 42)
-          if (ring.totalInk >= 6 || labelRing.totalInk >= 12) {
-            const stemInk = ring.maxSec
-            const swType = stemInk >= 36 ? 'switch-3' : stemInk >= 22 ? 'switch-2' : 'switch-1'
-            colorSwitches.push({ x: cx, y: cy, type: swType })
-            markVisited(cx, cy, 22)
+          if (paleYellow || (hue >= 25 && hue <= 72)) {
+            const ring = analyzeSectors(cx, cy, 4, 16)
+            const labelRing = analyzeSectors(cx, cy, 16, 42)
+            if (ring.totalInk >= 6 || labelRing.totalInk >= 12) {
+              const stemInk = ring.maxSec
+              const swType = stemInk >= 36 ? 'switch-3' : stemInk >= 22 ? 'switch-2' : 'switch-1'
+              colorSwitches.push({ x: cx, y: cy, type: swType })
+              markVisited(cx, cy, 22)
+            }
+            continue
           }
-          continue
+
+          let dt = 'switch-2'
+          if (hue >= 115 && hue <= 165) dt = 'motion-sensor'
+          else if (hue > 165 && hue <= 198) dt = 'ap-node'
+          else if (hue >= 200 && hue <= 250) dt = 'switch-2'
+          else if (hue > 250 && hue <= 300) dt = 'gateway'
+          else if (hue > 300 && hue <= 345) dt = 'curtain-track'
+
+          if (isSwitchType(dt)) colorSwitches.push({ x: cx, y: cy, type: dt })
+          else otherColorPoints.push({ x: cx, y: cy, type: dt })
+          markVisited(cx, cy, 20)
         }
-
-        let dt = 'switch-2'
-        if (hue >= 115 && hue <= 165) dt = 'motion-sensor'
-        else if (hue > 165 && hue <= 198) dt = 'ap-node'
-        else if (hue >= 200 && hue <= 250) dt = 'switch-2'
-        else if (hue > 250 && hue <= 300) dt = 'gateway'
-        else if (hue > 300 && hue <= 345) dt = 'curtain-track'
-
-        if (isSwitchType(dt)) colorSwitches.push({ x: cx, y: cy, type: dt })
-        else otherColorPoints.push({ x: cx, y: cy, type: dt })
-        markVisited(cx, cy, 20)
       }
     }
-  }
 
   const bwSwitches: { x: number; y: number; type: string }[] = []
   const bwLights: { x: number; y: number; type: string }[] = []
@@ -680,7 +699,11 @@ export function detectCadSymbolsFromPixels(
           }
           const onThick = nearThickWall(cx, cy)
           const useThinWall = totalThickSamples < 14000
-          if (best >= 0.86 && !visited[cy * W + cx] && (onThick || (useThinWall && nearAnyWall(cx, cy)))) {
+          if (
+            best >= 0.86 &&
+            !visited[cy * W + cx] &&
+            (onThick || (useThinWall && nearAnyWall(cx, cy)))
+          ) {
             const ring = analyzeSectors(cx, cy, 7, 13)
             const outer = analyzeSectors(cx, cy, 12, 18)
             const farRing = analyzeSectors(cx, cy, 18, 26)
@@ -810,7 +833,8 @@ export function detectCadSymbolsFromPixels(
     }
   }
 
-  const finalSwitches = colorSwitches.length >= 3 ? colorSwitches : [...colorSwitches, ...bwSwitches]
+  const finalSwitches =
+    colorSwitches.length >= 3 ? colorSwitches : [...colorSwitches, ...bwSwitches]
   const finalLights = bwLights.slice(0, 200)
 
   // 5. 自动房间区域切分（基于建筑墙体投影）
@@ -820,9 +844,17 @@ export function detectCadSymbolsFromPixels(
     const rx = Math.round((c.x / W) * 1000) / 1000
     const ry = Math.round((c.y / H) * 1000) / 1000
     const matchedArea = areas.find(
-      (a) => rx >= a.rect[0] && rx <= a.rect[0] + a.rect[2] && ry >= a.rect[1] && ry <= a.rect[1] + a.rect[3],
+      (a) =>
+        rx >= a.rect[0] &&
+        rx <= a.rect[0] + a.rect[2] &&
+        ry >= a.rect[1] &&
+        ry <= a.rect[1] + a.rect[3],
     )
-    const category: 'switch' | 'light' | 'other' = isSwitchType(c.type) ? 'switch' : isLightType(c.type) ? 'light' : 'other'
+    const category: 'switch' | 'light' | 'other' = isSwitchType(c.type)
+      ? 'switch'
+      : isLightType(c.type)
+        ? 'light'
+        : 'other'
     return {
       type: c.type,
       x: rx,
@@ -846,7 +878,9 @@ export function detectCadSymbolsFromPixels(
   // 如果调用方指定了 mode='switches'，或者图纸名称明确是「开关布置图」且存在开关点位，默认 points 只返回开关点位
   const preferSwitchesOnly =
     opts.mode === 'switches' ||
-    (opts.mode !== 'all' && Boolean(opts.sheetName && /开关/.test(opts.sheetName)) && switchPoints.length > 0)
+    (opts.mode !== 'all' &&
+      Boolean(opts.sheetName && /开关/.test(opts.sheetName)) &&
+      switchPoints.length > 0)
 
   return {
     points: preferSwitchesOnly ? switchPoints : allPoints,
@@ -865,7 +899,12 @@ export function detectCadSymbolsFromPixels(
 /**
  * 把一个视觉模型给出的近似坐标（0–1）吸附到附近最像符号中心的墨迹/色块上（找不到合适位置时保持原坐标）。
  */
-export function snapPointToInk(pixels: Pixels, x: number, y: number, isSwitch: boolean): { x: number; y: number; snapped: boolean } {
+export function snapPointToInk(
+  pixels: Pixels,
+  x: number,
+  y: number,
+  isSwitch: boolean,
+): { x: number; y: number; snapped: boolean } {
   const { data: d, width: W, height: H, channels: ch = 4 } = pixels
   const isDark = (px: number, py: number) => {
     if (px < 2 || px >= W - 2 || py < 2 || py >= H - 2) return false
@@ -910,7 +949,11 @@ export function snapPointToInk(pixels: Pixels, x: number, y: number, isSwitch: b
       }
     }
   }
-  return { x: Math.round((bestX / W) * 1000) / 1000, y: Math.round((bestY / H) * 1000) / 1000, snapped: bestScore >= 0 }
+  return {
+    x: Math.round((bestX / W) * 1000) / 1000,
+    y: Math.round((bestY / H) * 1000) / 1000,
+    snapped: bestScore >= 0,
+  }
 }
 
 export function snapVisionPointsToCadInk(
@@ -924,9 +967,17 @@ export function snapVisionPointsToCadInk(
     const isSw = isSwitchType(vp.type)
     const { x: rx, y: ry } = snapPointToInk(pixels, vp.x, vp.y, isSw)
     const matchedArea = existingAreas.find(
-      (a) => rx >= a.rect[0] && rx <= a.rect[0] + a.rect[2] && ry >= a.rect[1] && ry <= a.rect[1] + a.rect[3],
+      (a) =>
+        rx >= a.rect[0] &&
+        rx <= a.rect[0] + a.rect[2] &&
+        ry >= a.rect[1] &&
+        ry <= a.rect[1] + a.rect[3],
     )
-    const category: 'switch' | 'light' | 'other' = isSw ? 'switch' : isLightType(vp.type) ? 'light' : 'other'
+    const category: 'switch' | 'light' | 'other' = isSw
+      ? 'switch'
+      : isLightType(vp.type)
+        ? 'light'
+        : 'other'
     snapped.push({
       type: vp.type,
       x: rx,
@@ -939,7 +990,8 @@ export function snapVisionPointsToCadInk(
   const switchPoints = snapped.filter((p) => p.category === 'switch')
   const lightPoints = snapped.filter((p) => p.category === 'light')
   const summary = buildSummary(snapped, existingAreas)
-  const preferSwitchesOnly = Boolean(opts.sheetName && /开关/.test(opts.sheetName)) && switchPoints.length > 0
+  const preferSwitchesOnly =
+    Boolean(opts.sheetName && /开关/.test(opts.sheetName)) && switchPoints.length > 0
 
   return {
     points: preferSwitchesOnly ? switchPoints : snapped,

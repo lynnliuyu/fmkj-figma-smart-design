@@ -2,7 +2,15 @@ import type { TokenUsage } from './billing'
 import type { loadProjectDocs } from '@/lib/project-docs'
 import type { PluginFlags } from '@/plugins/state'
 
-import { activePluginPromptLines, availableTools, runTool, type ActiveProjectUpdate, type AiTool, type LlmToolCall, type ToolContext } from './registry'
+import {
+  activePluginPromptLines,
+  availableTools,
+  runTool,
+  type ActiveProjectUpdate,
+  type AiTool,
+  type LlmToolCall,
+  type ToolContext,
+} from './registry'
 import {
   AI_PROVIDER_CHANNELS,
   AUTO_AI_MODEL,
@@ -15,7 +23,14 @@ import {
   type AiModelConfig,
 } from './templates'
 
-export { availableTools, runTool, type ActiveProjectUpdate, type AiTool, type LlmToolCall, type ToolContext }
+export {
+  availableTools,
+  runTool,
+  type ActiveProjectUpdate,
+  type AiTool,
+  type LlmToolCall,
+  type ToolContext,
+}
 
 function isPrivateOrLocalHost(hostname: string): boolean {
   const h = hostname.toLowerCase()
@@ -40,7 +55,11 @@ function isPrivateOrLocalHost(hostname: string): boolean {
  * - 官方渠道只读对应官方环境变量，且只发往对应官方 HTTPS 域名；
  * - NewAPI 聚合网关只从服务端环境变量 NEWAPI_BASE_URL（需为公网 HTTPS）与 NEWAPI_API_KEY 读取，绝不接受客户端传入的 URL 或环境变量名。
  */
-export function resolveModelEndpoint(model?: (Pick<AiModelConfig, 'channelId'> & Partial<Pick<AiModelConfig, 'baseUrl' | 'apiKeyEnv'>>) | null): {
+export function resolveModelEndpoint(
+  model?:
+    | (Pick<AiModelConfig, 'channelId'> & Partial<Pick<AiModelConfig, 'baseUrl' | 'apiKeyEnv'>>)
+    | null,
+): {
   url: string
   apiKey: string | null
   envKey: string
@@ -49,17 +68,25 @@ export function resolveModelEndpoint(model?: (Pick<AiModelConfig, 'channelId'> &
   if (model?.channelId === 'custom') {
     const base = normalizeCustomBaseUrl(model.baseUrl)
     const envKey = model.apiKeyEnv && CUSTOM_KEY_ENV_RE.test(model.apiKeyEnv) ? model.apiKeyEnv : ''
-    return { url: base ? `${base}/chat/completions` : '', apiKey: base && envKey ? process.env[envKey]?.trim() || null : null, envKey }
+    return {
+      url: base ? `${base}/chat/completions` : '',
+      apiKey: base && envKey ? process.env[envKey]?.trim() || null : null,
+      envKey,
+    }
   }
   const channelId = isAiProviderChannelId(model?.channelId) ? model.channelId : 'deepseek'
   const channel = AI_PROVIDER_CHANNELS[channelId]
 
   if (channelId === 'newapi') {
-    const rawBase = (process.env.NEWAPI_BASE_URL || process.env.APP_OPENAI_BASE_URL || '').trim().replace(/\/+$/, '')
+    const rawBase = (process.env.NEWAPI_BASE_URL || process.env.APP_OPENAI_BASE_URL || '')
+      .trim()
+      .replace(/\/+$/, '')
     let validUrl = ''
     if (rawBase) {
       try {
-        const parsed = new URL(rawBase.endsWith('/chat/completions') ? rawBase : `${rawBase}/chat/completions`)
+        const parsed = new URL(
+          rawBase.endsWith('/chat/completions') ? rawBase : `${rawBase}/chat/completions`,
+        )
         if (parsed.protocol === 'https:' && !isPrivateOrLocalHost(parsed.hostname)) {
           validUrl = parsed.toString()
         }
@@ -84,7 +111,9 @@ export function resolveModelEndpoint(model?: (Pick<AiModelConfig, 'channelId'> &
   }
 }
 
-export function resolveModelApiKey(model?: Parameters<typeof resolveModelEndpoint>[0]): string | null {
+export function resolveModelApiKey(
+  model?: Parameters<typeof resolveModelEndpoint>[0],
+): string | null {
   return resolveModelEndpoint(model).apiKey
 }
 
@@ -107,11 +136,15 @@ export function stripDsml(text: string | null | undefined): string {
 }
 
 export const aiConfigured = (models?: AiModelConfig[]) => {
-  if (models?.length) return models.some((m) => m.enabled && m.id !== 'auto' && Boolean(resolveModelApiKey(m)))
+  if (models?.length)
+    return models.some((m) => m.enabled && m.id !== 'auto' && Boolean(resolveModelApiKey(m)))
   return Boolean(resolveModelApiKey({ channelId: 'deepseek' }))
 }
 
-export const findModel = (id: unknown, models: AiModelConfig[] = DEFAULT_AI_MODELS): AiModelConfig => {
+export const findModel = (
+  id: unknown,
+  models: AiModelConfig[] = DEFAULT_AI_MODELS,
+): AiModelConfig => {
   if (id === 'auto') return AUTO_AI_MODEL
   const list = enabledAiModels(models)
   return list.find((m) => m.id === id) ?? list.find((m) => m.id !== 'auto') ?? DEFAULT_AI_MODELS[0]
@@ -193,12 +226,22 @@ export function rankModelsForScene(
   const pool = enabledAiModels(models, { includeAuto: false }).filter(
     (m) => Boolean(resolveModelApiKey(m)) && (opts.canAccessModel ? opts.canAccessModel(m) : true),
   )
-  return [...pool].filter((m) => sceneScore(m, scene) >= 0).sort((a, b) => sceneScore(b, scene) - sceneScore(a, scene))
+  return [...pool]
+    .filter((m) => sceneScore(m, scene) >= 0)
+    .sort((a, b) => sceneScore(b, scene) - sceneScore(a, scene))
 }
 
-export function inferRouteScene(opts: { hasImage?: boolean; userText?: string; calledToolNames?: string[] }): RouteScene {
+export function inferRouteScene(opts: {
+  hasImage?: boolean
+  userText?: string
+  calledToolNames?: string[]
+}): RouteScene {
   if (opts.hasImage) return 'vision'
-  if ((opts.calledToolNames ?? []).some((n) => PRO_EXPERT_TOOLS.has(n)) || EXPERT_INTENT_RE.test(opts.userText ?? '')) return 'expert'
+  if (
+    (opts.calledToolNames ?? []).some((n) => PRO_EXPERT_TOOLS.has(n)) ||
+    EXPERT_INTENT_RE.test(opts.userText ?? '')
+  )
+    return 'expert'
   return 'fast'
 }
 
@@ -219,7 +262,11 @@ export function resolveAutoRouteModel(
 ): { model: AiModelConfig; reason: 'vision' | 'expert' | 'fast' } {
   const accessOpts = { canAccessModel: opts.canAccessModel }
   const wantsVision = Boolean(opts.hasImage) || /\[图片\]|mediaId:/i.test(opts.userText ?? '')
-  const scene = inferRouteScene({ hasImage: wantsVision, userText: opts.userText, calledToolNames: opts.calledToolNames })
+  const scene = inferRouteScene({
+    hasImage: wantsVision,
+    userText: opts.userText,
+    calledToolNames: opts.calledToolNames,
+  })
   if (scene === 'vision') {
     const vision = rankModelsForScene(models, 'vision', accessOpts)[0]
     if (vision) return { model: vision, reason: 'vision' }
@@ -242,7 +289,12 @@ export class AiError extends Error {
   }
 }
 
-async function postOnce(url: string, apiKey: string, body: Record<string, unknown>, timeoutMs: number) {
+async function postOnce(
+  url: string,
+  apiKey: string,
+  body: Record<string, unknown>,
+  timeoutMs: number,
+) {
   let res: Response
   try {
     res = await fetch(url, {
@@ -252,7 +304,11 @@ async function postOnce(url: string, apiKey: string, body: Record<string, unknow
       signal: AbortSignal.timeout(timeoutMs),
     })
   } catch (error) {
-    throw new AiError((error as Error)?.name === 'TimeoutError' ? 'AI 响应超时，请稍后重试' : 'AI 服务暂时无法连接，请稍后重试')
+    throw new AiError(
+      (error as Error)?.name === 'TimeoutError'
+        ? 'AI 响应超时，请稍后重试'
+        : 'AI 服务暂时无法连接，请稍后重试',
+    )
   }
   return res
 }
@@ -262,18 +318,31 @@ function toModelConfig(modelOrId: AiModelConfig | string): AiModelConfig {
   return modelOrId
 }
 
-async function post(modelOrId: AiModelConfig | string, body: Record<string, unknown>, timeoutMs: number) {
+async function post(
+  modelOrId: AiModelConfig | string,
+  body: Record<string, unknown>,
+  timeoutMs: number,
+) {
   const model = toModelConfig(modelOrId)
   const { url, apiKey, envKey } = resolveModelEndpoint(model)
   if (!url || !apiKey) {
-    throw new AiError(`模型「${model.name}」尚未配置服务端环境变量（${envKey}），请在环境变量 / Secrets 中添加`, 503)
+    throw new AiError(
+      `模型「${model.name}」尚未配置服务端环境变量（${envKey}），请在环境变量 / Secrets 中添加`,
+      503,
+    )
   }
   const apiModel = model.apiModel || model.id
   const payloadBody: Record<string, unknown> = { ...body, model: apiModel }
   let res = await postOnce(url, apiKey, payloadBody, timeoutMs)
   // 兼容不同网关对 DeepSeek V4.1-Flash-1017 的模型 ID 命名（官方 /models 返回 deepseek-flash）
   if ((res.status === 400 || res.status === 404) && /deepseek.*flash/i.test(apiModel)) {
-    for (const alias of ['deepseek-flash-1017', 'deepseek-v4.1-flash-1017', 'DeepSeek-V4.1-Flash', 'deepseek-flash', 'deepseek-chat']) {
+    for (const alias of [
+      'deepseek-flash-1017',
+      'deepseek-v4.1-flash-1017',
+      'DeepSeek-V4.1-Flash',
+      'deepseek-flash',
+      'deepseek-chat',
+    ]) {
       if (alias === apiModel) continue
       res = await postOnce(url, apiKey, { ...payloadBody, model: alias }, timeoutMs)
       if (res.ok) return res
@@ -281,7 +350,9 @@ async function post(modelOrId: AiModelConfig | string, body: Record<string, unkn
   }
   // 如果网关中的该模型不支持多模态 image_url 数组结构而返回 400/422，自动退回纯文本消息重试一次，确保对话绝不中断
   if ((res.status === 400 || res.status === 422) && Array.isArray(payloadBody.messages)) {
-    const hasArrayContent = (payloadBody.messages as LlmMessage[]).some((m) => Array.isArray(m.content))
+    const hasArrayContent = (payloadBody.messages as LlmMessage[]).some((m) =>
+      Array.isArray(m.content),
+    )
     if (hasArrayContent) {
       const textOnlyMessages = (payloadBody.messages as LlmMessage[]).map((m) => {
         if (!Array.isArray(m.content)) return m
@@ -297,26 +368,56 @@ async function post(modelOrId: AiModelConfig | string, body: Record<string, unkn
   }
   if (!res.ok) {
     const detail = (await res.json().catch(() => null)) as { error?: { message?: string } } | null
-    if (res.status === 401) throw new AiError(`模型「${model.name}」密钥无效，请检查环境变量 ${envKey}`, 503)
-    if (res.status === 402) throw new AiError(`模型「${model.name}」对应账户余额不足，请先在对应平台充值`, 503)
+    if (res.status === 401)
+      throw new AiError(`模型「${model.name}」密钥无效，请检查环境变量 ${envKey}`, 503)
+    if (res.status === 402)
+      throw new AiError(`模型「${model.name}」对应账户余额不足，请先在对应平台充值`, 503)
     // 403：密钥没有该模型权限、账户受限，或所在网络被服务商拦截（返回体通常不是 JSON）
     if (res.status === 403) {
       console.error('[ai] provider forbidden', model.id, url, detail?.error?.message)
-      throw new AiError(`模型「${model.name}」的服务拒绝了请求（403）：请检查 ${envKey} 对应账户的权限与状态；在预览环境中可能被网络限制，发布后在正式站点再试`, 503)
+      throw new AiError(
+        `模型「${model.name}」的服务拒绝了请求（403）：请检查 ${envKey} 对应账户的权限与状态；在预览环境中可能被网络限制，发布后在正式站点再试`,
+        503,
+      )
     }
     if (res.status === 429) throw new AiError('请求太频繁，请稍后再试', 429)
-    if (res.status === 520) throw new AiError('当前预览环境不允许连接外部 AI 服务。请点击 Publish 发布后，在正式站点或自建服务器使用。', 503)
+    if (res.status === 520)
+      throw new AiError(
+        '当前预览环境不允许连接外部 AI 服务。请点击 Publish 发布后，在正式站点或自建服务器使用。',
+        503,
+      )
     console.error('[ai] provider error', model.id, url, res.status, detail?.error?.message)
-    throw new AiError(detail?.error?.message ? `AI 服务出错：${detail.error.message.slice(0, 120)}` : 'AI 服务出错，请稍后重试')
+    throw new AiError(
+      detail?.error?.message
+        ? `AI 服务出错：${detail.error.message.slice(0, 120)}`
+        : 'AI 服务出错，请稍后重试',
+    )
   }
   return res
 }
 
 /** 不流式的一次调用（用于判断是否需要调用工具）。 */
-export async function complete(model: AiModelConfig | string, messages: LlmMessage[], tools?: unknown[]) {
-  const res = await post(model, { messages, ...(tools?.length ? { tools } : {}), ...samplingParams(toModelConfig(model)), stream: false }, 90_000)
-  const json = (await res.json()) as { choices?: { message?: { content?: string | null; tool_calls?: LlmToolCall[] } }[]; usage?: TokenUsage }
-  const msg: { content?: string | null; tool_calls?: LlmToolCall[]; usage?: TokenUsage } = json.choices?.[0]?.message ?? { content: '' }
+export async function complete(
+  model: AiModelConfig | string,
+  messages: LlmMessage[],
+  tools?: unknown[],
+) {
+  const res = await post(
+    model,
+    {
+      messages,
+      ...(tools?.length ? { tools } : {}),
+      ...samplingParams(toModelConfig(model)),
+      stream: false,
+    },
+    90_000,
+  )
+  const json = (await res.json()) as {
+    choices?: { message?: { content?: string | null; tool_calls?: LlmToolCall[] } }[]
+    usage?: TokenUsage
+  }
+  const msg: { content?: string | null; tool_calls?: LlmToolCall[]; usage?: TokenUsage } = json
+    .choices?.[0]?.message ?? { content: '' }
   if (typeof msg.content === 'string') {
     msg.content = stripDsml(msg.content)
   }
@@ -370,7 +471,12 @@ function createDsmlFilter(emit: (text: string) => void) {
   }
 }
 
-export type StreamTurnResult = { content: string; reasoning: string; tool_calls: LlmToolCall[]; usage: TokenUsage | null }
+export type StreamTurnResult = {
+  content: string
+  reasoning: string
+  tool_calls: LlmToolCall[]
+  usage: TokenUsage | null
+}
 
 /**
  * 流式调用（支持工具）：正文与思考过程实时回调，同时按 index 拼接流式返回的 tool_calls。
@@ -379,23 +485,48 @@ export type StreamTurnResult = { content: string; reasoning: string; tool_calls:
 export async function streamTurn(
   model: AiModelConfig,
   messages: LlmMessage[],
-  opts: { tools?: unknown[]; onDelta?: (text: string) => void; onReasoning?: (text: string) => void; signal?: AbortSignal } = {},
+  opts: {
+    tools?: unknown[]
+    onDelta?: (text: string) => void
+    onReasoning?: (text: string) => void
+    signal?: AbortSignal
+  } = {},
 ): Promise<StreamTurnResult> {
   const res = await post(
     model,
-    { messages, ...(opts.tools?.length ? { tools: opts.tools } : {}), ...samplingParams(model), stream: true, stream_options: { include_usage: true } },
+    {
+      messages,
+      ...(opts.tools?.length ? { tools: opts.tools } : {}),
+      ...samplingParams(model),
+      stream: true,
+      stream_options: { include_usage: true },
+    },
     180_000,
   )
   if (!res.body) throw new AiError('AI 服务没有返回内容，请稍后重试')
   const ctype = res.headers.get('content-type') ?? ''
   if (ctype.includes('application/json')) {
     // 个别网关忽略 stream 参数，直接返回整段 JSON
-    const json = (await res.json()) as { choices?: { message?: { content?: string | null; tool_calls?: LlmToolCall[]; reasoning_content?: string } }[]; usage?: TokenUsage }
+    const json = (await res.json()) as {
+      choices?: {
+        message?: {
+          content?: string | null
+          tool_calls?: LlmToolCall[]
+          reasoning_content?: string
+        }
+      }[]
+      usage?: TokenUsage
+    }
     const msg = json.choices?.[0]?.message
     const content = stripDsml(msg?.content ?? '')
     if (msg?.reasoning_content) opts.onReasoning?.(msg.reasoning_content)
     if (content) opts.onDelta?.(content)
-    return { content, reasoning: msg?.reasoning_content ?? '', tool_calls: msg?.tool_calls ?? [], usage: json.usage ?? null }
+    return {
+      content,
+      reasoning: msg?.reasoning_content ?? '',
+      tool_calls: msg?.tool_calls ?? [],
+      usage: json.usage ?? null,
+    }
   }
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
@@ -415,7 +546,17 @@ export async function streamTurn(
     if (!data || data === '[DONE]') return
     try {
       const chunk = JSON.parse(data) as {
-        choices?: { delta?: { content?: string | null; reasoning_content?: string | null; tool_calls?: { index?: number; id?: string; function?: { name?: string; arguments?: string } }[] } }[]
+        choices?: {
+          delta?: {
+            content?: string | null
+            reasoning_content?: string | null
+            tool_calls?: {
+              index?: number
+              id?: string
+              function?: { name?: string; arguments?: string }
+            }[]
+          }
+        }[]
         usage?: TokenUsage | null
       }
       if (chunk.usage) usage = chunk.usage
@@ -455,12 +596,18 @@ export async function streamTurn(
     if (buffer.trim()) handleLine(buffer)
   } catch (error) {
     if (opts.signal?.aborted) return { content, reasoning, tool_calls: [], usage }
-    throw new AiError((error as Error)?.name === 'TimeoutError' ? 'AI 响应超时，请稍后重试' : 'AI 输出中断，请重试')
+    throw new AiError(
+      (error as Error)?.name === 'TimeoutError' ? 'AI 响应超时，请稍后重试' : 'AI 输出中断，请重试',
+    )
   }
   filter.flush()
   const tool_calls: LlmToolCall[] = calls
     .filter((c) => c && c.name)
-    .map((c, i) => ({ id: c.id || `call_${Date.now().toString(36)}_${i}`, type: 'function' as const, function: { name: c.name, arguments: c.args || '{}' } }))
+    .map((c, i) => ({
+      id: c.id || `call_${Date.now().toString(36)}_${i}`,
+      type: 'function' as const,
+      function: { name: c.name, arguments: c.args || '{}' },
+    }))
   return { content: stripDsml(content), reasoning, tool_calls, usage }
 }
 
@@ -474,7 +621,11 @@ export async function stream(
   onUsage?: (usage: TokenUsage) => void,
 ) {
   // include_usage：让 OpenAI 兼容接口在最后一个分片返回 tokens 用量，用于按量计费
-  const res = await post(model, { messages, stream: true, stream_options: { include_usage: true } }, 120_000)
+  const res = await post(
+    model,
+    { messages, stream: true, stream_options: { include_usage: true } },
+    120_000,
+  )
   const reader = res.body!.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
@@ -493,7 +644,10 @@ export async function stream(
       const data = line.trim().replace(/^data:\s*/, '')
       if (!data || data === '[DONE]' || !line.trim().startsWith('data:')) continue
       try {
-        const chunk = JSON.parse(data) as { choices?: { delta?: { content?: string; reasoning_content?: string } }[]; usage?: TokenUsage | null }
+        const chunk = JSON.parse(data) as {
+          choices?: { delta?: { content?: string; reasoning_content?: string } }[]
+          usage?: TokenUsage | null
+        }
         if (chunk.usage) onUsage?.(chunk.usage)
         const delta = chunk.choices?.[0]?.delta
         if (delta?.reasoning_content) onReasoning(delta.reasoning_content)
@@ -525,7 +679,15 @@ export function systemPrompt(
   sessionUploads: { name: string; mediaId: string; url: string }[] = [],
   extra: PromptExtra = {},
 ) {
-  const now = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hour: '2-digit', minute: '2-digit' })
+  const now = new Date().toLocaleString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
   const lines = [
     '你是「繁梦空间」（FMKJ）全屋智能家居方案设计平台的 AI 助手，服务对象是方案设计师和安装团队。',
     `现在是北京时间 ${now}。${extra.userName ? `当前用户：${extra.userName}${extra.membershipLabel ? `（${extra.membershipLabel}` : ''}${extra.credits != null ? `${extra.membershipLabel ? '，' : '（'}剩余 ${extra.credits} 积分）` : extra.membershipLabel ? '）' : ''}。` : ''}${extra.pageLabel ? `用户当前所在页面：${extra.pageLabel}。` : ''}`,
@@ -571,7 +733,10 @@ export function systemPrompt(
       `按当前选型的设备预算：${project.total.toFixed(0)} 元${project.quote ? `；最新报价「${project.quote.title}」合计 ${project.quote.total} 元` : ''}。`,
     )
   } else {
-    lines.push('', '当前尚未关联具体项目。你可以调用 list_projects 查找已有项目，或调用 create_project 直接新建项目（新建后会自动关联）。')
+    lines.push(
+      '',
+      '当前尚未关联具体项目。你可以调用 list_projects 查找已有项目，或调用 create_project 直接新建项目（新建后会自动关联）。',
+    )
   }
   if (sessionUploads.length > 0) {
     lines.push(

@@ -19,10 +19,19 @@ export function DeviceSymbol({
   const key = symbol ?? symbolOfType(type)
   const tint = color ?? categoryOfType(type)?.color ?? '#525252'
   const mask = `url(${symbolUrl(key)}) center / contain no-repeat`
-  const glyph = <span aria-hidden className={cn('block size-full', !framed && className)} style={{ backgroundColor: tint, mask, WebkitMask: mask }} />
+  const glyph = (
+    <span
+      aria-hidden
+      className={cn('block size-full', !framed && className)}
+      style={{ backgroundColor: tint, mask, WebkitMask: mask }}
+    />
+  )
   if (!framed) return glyph
   return (
-    <span className={cn('flex shrink-0 items-center justify-center rounded-md border p-1', className)} style={{ backgroundColor: `${tint}0f`, borderColor: `${tint}33` }}>
+    <span
+      className={cn('flex shrink-0 items-center justify-center rounded-md border p-1', className)}
+      style={{ backgroundColor: `${tint}0f`, borderColor: `${tint}33` }}
+    >
       {glyph}
     </span>
   )

@@ -16,7 +16,12 @@ import type { LandingShowcase } from '@/lib/landing-showcase'
 import { markerSrc } from '@/lib/point-marker-data'
 import { yuan } from '@/lib/quotes'
 import { cn } from '@/lib/utils'
-import { DECK_THEMES, deckVars, type DeckTheme, type DeckThemeId } from '@/plugins/proposal/deck/themes'
+import {
+  DECK_THEMES,
+  deckVars,
+  type DeckTheme,
+  type DeckThemeId,
+} from '@/plugins/proposal/deck/themes'
 
 import { money } from './section'
 
@@ -77,12 +82,17 @@ const AP_TYPES = ['ap-node', 'ceiling-ap']
 function useDemoFacts(data: LandingShowcase) {
   return useMemo(() => {
     const points = data.sheets.flatMap((sh) =>
-      sh.points.map((pt) => ({ ...pt, floor: sh.floor, displayRoom: pt.room ? `${sh.floor} · ${pt.room}` : `${sh.floor} · 公共区域` })),
+      sh.points.map((pt) => ({
+        ...pt,
+        floor: sh.floor,
+        displayRoom: pt.room ? `${sh.floor} · ${pt.room}` : `${sh.floor} · 公共区域`,
+      })),
     )
     const types = new Set(points.map((p) => p.type))
     const count = (list: string[]) => points.filter((p) => list.includes(p.type)).length
     const has = (...list: string[]) => list.some((t) => types.has(t))
-    const bedrooms = new Set(points.filter((p) => p.room?.includes('卧')).map((p) => p.displayRoom)).size
+    const bedrooms = new Set(points.filter((p) => p.room?.includes('卧')).map((p) => p.displayRoom))
+      .size
     const protocol = PROTOCOL[data.project.platform] ?? '无线协议'
     return { points, count, has, bedrooms, protocol }
   }, [data.sheets, data.project.platform])
@@ -98,7 +108,10 @@ function codeRange(codes: string[]) {
   const c = [...new Set(codes.filter(Boolean))].sort(byCode)
   if (c.length <= 2) return c.join(' / ')
   const parts = c.map((x) => /^(\D*)(\d+)$/.exec(x))
-  const contiguous = parts.every((m, i) => m && m[1] === parts[0]![1] && (i === 0 || Number(m[2]) === Number(parts[i - 1]![2]) + 1))
+  const contiguous = parts.every(
+    (m, i) =>
+      m && m[1] === parts[0]![1] && (i === 0 || Number(m[2]) === Number(parts[i - 1]![2]) + 1),
+  )
   if (contiguous) return `${c[0]}～${c[c.length - 1]}`
   return c.length <= 3 ? c.join(' / ') : `${c.slice(0, 3).join(' / ')} 等${c.length}个`
 }
@@ -120,7 +133,10 @@ export function ProposalShowcase({
   const theme = DECK_THEMES[themeId] ?? DECK_THEMES.qixu
   const activeFramework = FRAMEWORKS.find((f) => f.value === frameworkId) ?? FRAMEWORKS[0]!
   const activeChapters = useMemo(
-    () => (data.sheets.length ? activeFramework.chapters : activeFramework.chapters.filter((c) => c !== 'plan' && c !== 'zone')),
+    () =>
+      data.sheets.length
+        ? activeFramework.chapters
+        : activeFramework.chapters.filter((c) => c !== 'plan' && c !== 'zone'),
     [activeFramework.chapters, data.sheets.length],
   )
 
@@ -171,8 +187,14 @@ export function ProposalShowcase({
             <span className="font-medium text-foreground">方案结构</span>
             <span className="text-muted-foreground">{activeChapters.length} 页</span>
           </div>
-          <Tabs value={frameworkId} onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}>
-            <TabsList aria-label="方案结构" className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto">
+          <Tabs
+            value={frameworkId}
+            onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
+          >
+            <TabsList
+              aria-label="方案结构"
+              className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+            >
               {FRAMEWORKS.map((f) => (
                 <TabsTrigger
                   key={f.value}
@@ -193,7 +215,10 @@ export function ProposalShowcase({
             <span className="text-muted-foreground">{theme.label}</span>
           </div>
           <Tabs value={themeId} onValueChange={(v) => setThemeId(v as DeckThemeId)}>
-            <TabsList aria-label="方案视觉主题" className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto">
+            <TabsList
+              aria-label="方案视觉主题"
+              className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+            >
               {THEME_IDS.map((id) => {
                 const t = DECK_THEMES[id]
                 return (
@@ -288,7 +313,10 @@ export function ProposalShowcase({
               </DialogDescription>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Tabs value={frameworkId} onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}>
+              <Tabs
+                value={frameworkId}
+                onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
+              >
                 <TabsList className="h-8 p-0.5">
                   {FRAMEWORKS.map((f) => (
                     <TabsTrigger key={f.value} value={f.value} className="h-7 px-2.5 text-xs">
@@ -303,7 +331,10 @@ export function ProposalShowcase({
                     const t = DECK_THEMES[id]
                     return (
                       <TabsTrigger key={id} value={id} className="h-7 gap-1.5 px-2.5 text-xs">
-                        <span className="size-2 rounded-full" style={{ backgroundColor: t.style.colors.accent }} />
+                        <span
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: t.style.colors.accent }}
+                        />
                         {t.label}
                       </TabsTrigger>
                     )
@@ -385,7 +416,9 @@ function ShowcaseSlide({
       : {
           title: 'AC 控制器 / PoE 核心交换机',
           badge: '弱电箱核心',
-          sub: apPts.length ? `统一管控全屋 ${apPts.length} 台 AP 漫游与 PoE 供电` : '宽带光猫 → AC 路由 / PoE 交换机',
+          sub: apPts.length
+            ? `统一管控全屋 ${apPts.length} 台 AP 漫游与 PoE 供电`
+            : '宽带光猫 → AC 路由 / PoE 交换机',
         }
 
     const roomBuckets = new Map<string, typeof apPts>()
@@ -409,7 +442,9 @@ function ShowcaseSlide({
     const tp = allPoints.filter((p) => p.type === 'touch-panel').length
     const sp = allPoints.filter((p) => p.type === 'speaker').length
     const vrf = allPoints.filter((p) => p.type === 'vrf-controller').length
-    const ctrlPts = allPoints.filter((p) => p.type === 'touch-panel' || p.type === 'speaker' || p.type === 'vrf-controller')
+    const ctrlPts = allPoints.filter(
+      (p) => p.type === 'touch-panel' || p.type === 'speaker' || p.type === 'vrf-controller',
+    )
     const hubs: TopoBox[] = []
     if (gwPts.length) {
       hubs.push({
@@ -421,13 +456,22 @@ function ShowcaseSlide({
     if (ctrlPts.length) {
       hubs.push({
         title: `${codeRange(ctrlPts.map((p) => p.code))} 中控与语音交互`,
-        badge: [tp ? `中控屏×${tp}` : '', sp ? `音箱×${sp}` : '', vrf ? `空调网关×${vrf}` : ''].filter(Boolean).join(' / '),
+        badge: [tp ? `中控屏×${tp}` : '', sp ? `音箱×${sp}` : '', vrf ? `空调网关×${vrf}` : '']
+          .filter(Boolean)
+          .join(' / '),
         sub: `${joinRooms(ctrlPts.map((p) => p.displayRoom))} · 场景触控与语音控制`,
       })
     }
-    if (!hubs.length) hubs.push({ title: '手机 App / 语音中控', badge: '直连控制', sub: 'Wi-Fi 设备直连局域网 · 无独立网关' })
+    if (!hubs.length)
+      hubs.push({
+        title: '手机 App / 语音中控',
+        badge: '直连控制',
+        sub: 'Wi-Fi 设备直连局域网 · 无独立网关',
+      })
 
-    const leaves: TopoBox[] = DEVICE_CATEGORIES.filter((c) => c.slug !== 'gateway' && c.slug !== 'network')
+    const leaves: TopoBox[] = DEVICE_CATEGORIES.filter(
+      (c) => c.slug !== 'gateway' && c.slug !== 'network',
+    )
       .map((c) => {
         const pts = allPoints.filter((p) => categoryOfType(p.type)?.slug === c.slug)
         return { c, pts }
@@ -464,7 +508,8 @@ function ShowcaseSlide({
   ].filter(Boolean)
 
   const totalAmount = data.quote?.total ?? 0
-  const place = [data.project.community, data.project.address].filter(Boolean).join('') || data.project.name
+  const place =
+    [data.project.community, data.project.address].filter(Boolean).join('') || data.project.name
   const customer = data.project.customer || '业主'
   const layoutText = `${data.sheets.length}层 · ${data.roomCount}个空间`
   const tagline = [brandLatin(company.name), theme.tagline].filter(Boolean).join('  /  ')
@@ -492,7 +537,14 @@ function ShowcaseSlide({
       {/* 页眉 */}
       <div className="flex h-[32px] w-full shrink-0 items-center justify-between">
         <SlideBrand company={company} theme={theme} />
-        <p className={cn('doc-latin text-[11px] text-doc-muted', theme.trackedTagline && 'tracking-[0.18em]')}>{tagline}</p>
+        <p
+          className={cn(
+            'doc-latin text-[11px] text-doc-muted',
+            theme.trackedTagline && 'tracking-[0.18em]',
+          )}
+        >
+          {tagline}
+        </p>
       </div>
 
       {chapterId === 'system' ? (
@@ -524,7 +576,9 @@ function ShowcaseSlide({
             <div className="flex w-[692px] shrink-0 flex-col gap-[16px] overflow-hidden">
               <div className="flex items-baseline justify-between">
                 <p className="doc-display text-[20px]">本次设备清单</p>
-                <p className="doc-body text-[13px] text-doc-accent">按类别汇总 / 共 {data.pointCount} 台/只设备</p>
+                <p className="doc-body text-[13px] text-doc-accent">
+                  按类别汇总 / 共 {data.pointCount} 台/只设备
+                </p>
               </div>
               <div className="overflow-hidden rounded-(--deck-radius-sm) border border-doc-rule">
                 <table className="w-full border-collapse text-[13px]">
@@ -538,12 +592,20 @@ function ShowcaseSlide({
                   </thead>
                   <tbody>
                     {DEVICE_CATEGORIES.map((c, idx) => {
-                      const lines = (data.quote?.lines ?? []).filter((l) => categoryOfType(l.type)?.slug === c.slug)
+                      const lines = (data.quote?.lines ?? []).filter(
+                        (l) => categoryOfType(l.type)?.slug === c.slug,
+                      )
                       if (!lines.length) return null
                       const count = lines.reduce((s, l) => s + l.qty, 0)
                       const sub = lines.reduce((s, l) => s + l.price * l.qty, 0)
                       return (
-                        <tr key={c.slug} className={cn('h-[42px] border-b border-doc-rule', idx % 2 === 1 && 'bg-(--deck-box)/50')}>
+                        <tr
+                          key={c.slug}
+                          className={cn(
+                            'h-[42px] border-b border-doc-rule',
+                            idx % 2 === 1 && 'bg-(--deck-box)/50',
+                          )}
+                        >
                           <td className="doc-latin px-3 text-doc-accent">Q0{idx + 1}</td>
                           <td className="doc-body px-3">
                             {c.name} ×{count}
@@ -575,7 +637,13 @@ function ShowcaseSlide({
       ) : chapterId === 'zone' ? (
         <ZoneSlide data={data} theme={theme} no={pageNo} />
       ) : (
-        <ServiceSlide data={data} company={company} theme={theme} totalAmount={totalAmount} no={pageNo} />
+        <ServiceSlide
+          data={data}
+          company={company}
+          theme={theme}
+          totalAmount={totalAmount}
+          no={pageNo}
+        />
       )}
 
       {/* 页脚 */}
@@ -583,7 +651,7 @@ function ShowcaseSlide({
         <div className="h-px w-full bg-doc-rule" />
         <div className="flex w-full items-start justify-between text-[11px] text-doc-muted">
           <p>{`${place} / ${customer}　 ·　 ${data.project.platform ? `${data.project.platform} · ` : ''}全屋智能设计方案`}</p>
-          <p className="doc-latin">QX-DEMO  /  V1.0</p>
+          <p className="doc-latin">QX-DEMO / V1.0</p>
           <p className="doc-latin text-[12px] text-doc-ink">{`${pageNo} / ${pageTotal}`}</p>
         </div>
       </div>
@@ -619,7 +687,10 @@ function TopologyDiagram({
   const apStartY = 104
   const apAvailH = CARD_H - apStartY - 14
   const apGapY = apRows >= 4 ? 10 : 12
-  const apCardH = Math.min(62, Math.max(46, Math.floor((apAvailH - (apRows - 1) * apGapY) / apRows)))
+  const apCardH = Math.min(
+    62,
+    Math.max(46, Math.floor((apAvailH - (apRows - 1) * apGapY) / apRows)),
+  )
 
   const apPlacements = shownRooms.map((item, idx) => {
     const row = Math.floor(idx / 2)
@@ -627,7 +698,15 @@ function TopologyDiagram({
     const y = apStartY + row * (apCardH + apGapY)
     const w = 138
     const x = col === 0 ? 16 : 178
-    return { item, x, y, w, h: apCardH, cy: y + apCardH / 2, side: col === 0 ? ('left' as const) : ('right' as const) }
+    return {
+      item,
+      x,
+      y,
+      w,
+      h: apCardH,
+      cy: y + apCardH / 2,
+      side: col === 0 ? ('left' as const) : ('right' as const),
+    }
   })
   const apLastCy = apPlacements.length ? apPlacements[apPlacements.length - 1]!.cy : apStartY + 32
 
@@ -641,7 +720,9 @@ function TopologyDiagram({
     const y = hubStartY + i * (hubH + hubGap)
     return { box: h, x: hubX, y, w: hubW, h: hubH, cy: y + hubH / 2 }
   })
-  const lastHubBottom = hubPlacements.length ? hubPlacements[hubPlacements.length - 1]!.y + hubH : hubStartY
+  const lastHubBottom = hubPlacements.length
+    ? hubPlacements[hubPlacements.length - 1]!.y + hubH
+    : hubStartY
 
   const leafSpineX = 344
   const leafX = 358
@@ -651,13 +732,21 @@ function TopologyDiagram({
   const shownLeaves = leaves.slice(0, 4)
   const leafGap = shownLeaves.length >= 4 ? 6 : 8
   const leafH = shownLeaves.length
-    ? Math.min(48, Math.max(36, Math.floor((leafAvailH - (shownLeaves.length - 1) * leafGap) / shownLeaves.length)))
+    ? Math.min(
+        48,
+        Math.max(
+          36,
+          Math.floor((leafAvailH - (shownLeaves.length - 1) * leafGap) / shownLeaves.length),
+        ),
+      )
     : 44
   const leafPlacements = shownLeaves.map((l, i) => {
     const y = leafStartY + i * (leafH + leafGap)
     return { box: l, x: leafX, y, w: leafW, h: leafH, cy: y + leafH / 2 }
   })
-  const leafLastCy = leafPlacements.length ? leafPlacements[leafPlacements.length - 1]!.cy : lastHubBottom
+  const leafLastCy = leafPlacements.length
+    ? leafPlacements[leafPlacements.length - 1]!.cy
+    : lastHubBottom
 
   return (
     <div className="relative h-[428px] w-[604px] shrink-0 overflow-hidden rounded-(--deck-radius) border border-(--deck-card-border) bg-(--deck-diagram)">
@@ -667,10 +756,19 @@ function TopologyDiagram({
           <path d={`M${rightTrunkX} ${coreBottom} V${pillTop}`} />
           <path d={`M${leftBusX} ${pillBottom} V${apLastCy}`} />
           {apPlacements.map((p, i) => (
-            <path key={i} d={p.side === 'left' ? `M${p.x + p.w} ${p.cy} H${leftBusX}` : `M${leftBusX} ${p.cy} H${p.x}`} />
+            <path
+              key={i}
+              d={
+                p.side === 'left'
+                  ? `M${p.x + p.w} ${p.cy} H${leftBusX}`
+                  : `M${leftBusX} ${p.cy} H${p.x}`
+              }
+            />
           ))}
           <path d={`M${rightTrunkX} ${pillBottom} V${hubStartY}`} />
-          {hubPlacements.length > 1 ? <path d={`M${rightTrunkX} ${hubPlacements[0]!.y + hubH} V${hubPlacements[1]!.y}`} /> : null}
+          {hubPlacements.length > 1 ? (
+            <path d={`M${rightTrunkX} ${hubPlacements[0]!.y + hubH} V${hubPlacements[1]!.y}`} />
+          ) : null}
           {leafPlacements.length ? (
             <>
               <path d={`M${leafSpineX} ${lastHubBottom} V${leafLastCy}`} />
@@ -727,11 +825,22 @@ function TopologyDiagram({
       {hubPlacements.map((p) => (
         <TopoNodeCard key={p.box.title} box={p.box} x={p.x} y={p.y} w={p.w} h={p.h} tone="hub" />
       ))}
-      <p className="doc-body absolute truncate text-[10.5px] leading-none text-doc-accent" style={{ left: leafSpineX + 8, top: lastHubBottom + 9, width: 236 }}>
+      <p
+        className="doc-body absolute truncate text-[10.5px] leading-none text-doc-accent"
+        style={{ left: leafSpineX + 8, top: lastHubBottom + 9, width: 236 }}
+      >
         {link}
       </p>
       {leafPlacements.map((p, i) => (
-        <TopoNodeCard key={`${p.box.title}-${i}`} box={p.box} x={p.x} y={p.y} w={p.w} h={p.h} tone="leaf" />
+        <TopoNodeCard
+          key={`${p.box.title}-${i}`}
+          box={p.box}
+          x={p.x}
+          y={p.y}
+          w={p.w}
+          h={p.h}
+          tone="leaf"
+        />
       ))}
     </div>
   )
@@ -763,7 +872,14 @@ function TopoNodeCard({
       style={{ left: x, top: y, width: w, height: h }}
     >
       <div className="flex items-center justify-between gap-[6px]">
-        <p className={cn('doc-strong min-w-0 truncate leading-tight', tone === 'core' ? 'text-[14.5px]' : 'text-[13px]')}>{box.title}</p>
+        <p
+          className={cn(
+            'doc-strong min-w-0 truncate leading-tight',
+            tone === 'core' ? 'text-[14.5px]' : 'text-[13px]',
+          )}
+        >
+          {box.title}
+        </p>
         {box.badge ? (
           <span className="doc-latin shrink-0 rounded bg-(--deck-badge) px-[6px] py-[1px] text-[10px] leading-tight text-doc-accent">
             {box.badge}
@@ -775,23 +891,44 @@ function TopoNodeCard({
   )
 }
 
-function SlideBrand({ company, theme, large = false }: { company: CompanyInfo; theme: DeckTheme; large?: boolean }) {
+function SlideBrand({
+  company,
+  theme,
+  large = false,
+}: {
+  company: CompanyInfo
+  theme: DeckTheme
+  large?: boolean
+}) {
   return (
     <div className="flex items-center gap-[10px]">
       {company.logo ? (
-        <img src={company.logo.url} alt={company.name} className={cn('w-auto object-contain', large ? 'h-[28px]' : 'h-[22px]')} />
+        <img
+          src={company.logo.url}
+          alt={company.name}
+          className={cn('w-auto object-contain', large ? 'h-[28px]' : 'h-[22px]')}
+        />
       ) : (
         <span
           aria-hidden
           className={cn(
             'shrink-0',
             large ? 'size-[26px]' : 'size-[22px]',
-            theme.brandMark === 'outline' ? 'border border-doc-accent' : 'bg-linear-to-r from-doc-soft to-doc-soft-to',
+            theme.brandMark === 'outline'
+              ? 'border border-doc-accent'
+              : 'bg-linear-to-r from-doc-soft to-doc-soft-to',
             theme.rounded && 'rounded-full',
           )}
         />
       )}
-      <p className={cn('doc-display leading-normal whitespace-nowrap', large ? 'text-[21px]' : 'text-[17px]')}>{company.name}</p>
+      <p
+        className={cn(
+          'doc-display leading-normal whitespace-nowrap',
+          large ? 'text-[21px]' : 'text-[17px]',
+        )}
+      >
+        {company.name}
+      </p>
     </div>
   )
 }
@@ -877,14 +1014,24 @@ function CoverSlide({
     return (
       <div className="relative size-full overflow-hidden">
         <img src={theme.coverPhoto} alt="" className="absolute inset-0 size-full object-cover" />
-        <div aria-hidden className="absolute inset-0 bg-linear-to-r from-doc-paper via-doc-paper/80 to-doc-paper/10" />
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[420px] bg-linear-to-t from-doc-paper via-doc-paper/85 to-transparent" />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-linear-to-r from-doc-paper via-doc-paper/80 to-doc-paper/10"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-[420px] bg-linear-to-t from-doc-paper via-doc-paper/85 to-transparent"
+        />
         <div className="absolute inset-x-[56px] top-[36px] flex h-[34px] items-center justify-between">
           <SlideBrand company={company} theme={theme} large />
-          <p className="doc-latin text-[11px] tracking-[0.28em] text-doc-accent">{theme.coverTagline}</p>
+          <p className="doc-latin text-[11px] tracking-[0.28em] text-doc-accent">
+            {theme.coverTagline}
+          </p>
         </div>
         <div className="absolute top-[250px] left-[56px] w-[760px]">
-          <p className="doc-latin text-[12px] tracking-[0.36em] text-doc-accent">SMART LIVING PROPOSAL</p>
+          <p className="doc-latin text-[12px] tracking-[0.36em] text-doc-accent">
+            SMART LIVING PROPOSAL
+          </p>
           <h1 className="doc-display mt-[24px] text-[64px] leading-[1.2]">{theme.headline}</h1>
           <span aria-hidden className="mt-[28px] block h-px w-[120px] bg-doc-accent" />
           <p className="doc-body mt-[24px] text-[22px]">全屋智能 · 点位设计与服务报价</p>
@@ -899,7 +1046,15 @@ function CoverSlide({
           ].map(([k, v]) => (
             <div key={k}>
               <p className="doc-latin text-[10.5px] tracking-[0.3em] text-doc-accent">{k}</p>
-              <p className={k === 'INVESTMENT' ? 'doc-numeral mt-[8px] text-[24px] text-doc-accent' : 'doc-body mt-[10px] text-[16px]'}>{v}</p>
+              <p
+                className={
+                  k === 'INVESTMENT'
+                    ? 'doc-numeral mt-[8px] text-[24px] text-doc-accent'
+                    : 'doc-body mt-[10px] text-[16px]'
+                }
+              >
+                {v}
+              </p>
             </div>
           ))}
         </div>
@@ -919,13 +1074,18 @@ function CoverSlide({
       </div>
       <div className="absolute inset-x-0 top-[90px] h-[520px] overflow-hidden">
         <img src={theme.coverPhoto} alt="" className="size-full object-cover" />
-        <span className="doc-body absolute bottom-[26px] left-[56px] bg-white px-[12px] py-[5px] text-[11px] text-[#252523]">{theme.photoNote}</span>
+        <span className="doc-body absolute bottom-[26px] left-[56px] bg-white px-[12px] py-[5px] text-[11px] text-[#252523]">
+          {theme.photoNote}
+        </span>
       </div>
       <div className="absolute top-[648px] left-[56px] w-[830px]">
         <h1 className="doc-display text-[56px] leading-[1.25]">{theme.headline}</h1>
         <p className="doc-body mt-[14px] text-[24px]">全屋智能 · 点位设计与服务报价</p>
         <div className="mt-[16px] flex items-center gap-[20px]">
-          <span aria-hidden className="h-[3px] w-[100px] bg-linear-to-r from-doc-soft to-doc-soft-to" />
+          <span
+            aria-hidden
+            className="h-[3px] w-[100px] bg-linear-to-r from-doc-soft to-doc-soft-to"
+          />
           <p className="doc-body text-[14px] text-doc-muted">{tags.join('　 /　 ')}</p>
         </div>
       </div>
@@ -949,15 +1109,27 @@ function PlanSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
   const needs: [string, string][] = [
     [
       '生活需求',
-      facts.has('smart-lock', 'contact-sensor', 'doorbell') ? '回家有光，离家少牵挂' : facts.has('curtain-track') ? '灯光窗帘，一键随心' : '常用灯光，触手可及',
+      facts.has('smart-lock', 'contact-sensor', 'doorbell')
+        ? '回家有光，离家少牵挂'
+        : facts.has('curtain-track')
+          ? '灯光窗帘，一键随心'
+          : '常用灯光，触手可及',
     ],
-    ['休息需求', facts.bedrooms ? `${facts.bedrooms > 1 ? `${facts.bedrooms} 间卧室` : '卧室'}一键关灯入睡` : '夜间起居更安心'],
+    [
+      '休息需求',
+      facts.bedrooms
+        ? `${facts.bedrooms > 1 ? `${facts.bedrooms} 间卧室` : '卧室'}一键关灯入睡`
+        : '夜间起居更安心',
+    ],
     ['网络底座', facts.has(...AP_TYPES) ? 'AC 管控 + 全屋 AP 漫游' : '路由覆盖，按需扩展 AP'],
     ['配置原则', '够用、可维护、边界清楚'],
   ]
   const roomSummary = useMemo(() => {
     if (!sheet) return []
-    const map = new Map<string, { name: string; deviceTypes: string[]; types: Set<string>; count: number }>()
+    const map = new Map<
+      string,
+      { name: string; deviceTypes: string[]; types: Set<string>; count: number }
+    >()
     for (const p of sheet.points) {
       const r = p.room || '公共区域'
       const cur = map.get(r) ?? { name: r, deviceTypes: [], types: new Set<string>(), count: 0 }
@@ -1005,7 +1177,9 @@ function PlanSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
         <div className="flex w-[520px] shrink-0 flex-col gap-[12px]">
           <div className="flex items-baseline justify-between">
             <p className="doc-display text-[19px]">分房间点位索引</p>
-            <p className="doc-body text-[12.5px] text-doc-accent">{roomSummary.length} 个主要空间</p>
+            <p className="doc-body text-[12.5px] text-doc-accent">
+              {roomSummary.length} 个主要空间
+            </p>
           </div>
           <div className="overflow-hidden rounded-(--deck-radius-sm) border border-doc-rule">
             <table className="w-full border-collapse text-[12.5px]">
@@ -1019,16 +1193,28 @@ function PlanSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
               </thead>
               <tbody>
                 {roomSummary.map((r, i) => (
-                  <tr key={r.name} className={cn('h-[38px] border-b border-doc-rule', i % 2 === 1 && 'bg-(--deck-box)/50')}>
+                  <tr
+                    key={r.name}
+                    className={cn(
+                      'h-[38px] border-b border-doc-rule',
+                      i % 2 === 1 && 'bg-(--deck-box)/50',
+                    )}
+                  >
                     <td className="doc-strong px-3">{r.name}</td>
                     <td className="px-3">
                       <span className="flex items-center -space-x-1">
                         {r.deviceTypes.slice(0, 4).map((dt) => (
-                          <PointMarker key={dt} type={dt} className="size-5 rounded-full ring-1 ring-white" />
+                          <PointMarker
+                            key={dt}
+                            type={dt}
+                            className="size-5 rounded-full ring-1 ring-white"
+                          />
                         ))}
                       </span>
                     </td>
-                    <td className="doc-body truncate px-3 text-doc-muted">{[...r.types].slice(0, 3).join('、')}</td>
+                    <td className="doc-body truncate px-3 text-doc-muted">
+                      {[...r.types].slice(0, 3).join('、')}
+                    </td>
                     <td className="doc-latin px-3 text-right tabular-nums">{r.count}</td>
                   </tr>
                 ))}
@@ -1046,7 +1232,8 @@ function ZoneSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
   const sheet = data.sheets[0]
   const rooms = useMemo(() => {
     const byRoom = new Map<string, NonNullable<typeof sheet>['points']>()
-    for (const p of sheet?.points ?? []) if (p.room) byRoom.set(p.room, [...(byRoom.get(p.room) ?? []), p])
+    for (const p of sheet?.points ?? [])
+      if (p.room) byRoom.set(p.room, [...(byRoom.get(p.room) ?? []), p])
     const prefer = ['玄关', '客厅', '餐厅']
     const rank = (name: string) => {
       const i = prefer.findIndex((k) => name.includes(k))
@@ -1057,10 +1244,14 @@ function ZoneSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
       .slice(0, 2)
       .map(([name, pts]) => ({ name, pts }))
   }, [sheet])
-  const lineByType = useMemo(() => new Map((data.quote?.lines ?? []).map((l) => [l.type, l])), [data.quote?.lines])
+  const lineByType = useMemo(
+    () => new Map((data.quote?.lines ?? []).map((l) => [l.type, l])),
+    [data.quote?.lines],
+  )
   const composition = useMemo(() => {
     const byType = new Map<string, string[]>()
-    for (const r of rooms) for (const p of r.pts) byType.set(p.type, [...(byType.get(p.type) ?? []), p.code])
+    for (const r of rooms)
+      for (const p of r.pts) byType.set(p.type, [...(byType.get(p.type) ?? []), p.code])
     return [...byType.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 6)
   }, [rooms])
   if (!sheet || !rooms.length) return null
@@ -1078,30 +1269,42 @@ function ZoneSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
         <div className="col-span-7 flex flex-col gap-[16px]">
           <div className="relative h-[440px] shrink-0 overflow-hidden rounded-(--deck-radius)">
             <img src="/proposal/photos/living.jpg" alt="" className="size-full object-cover" />
-            <span className="doc-body absolute bottom-4 left-4 bg-white/90 px-3 py-1 text-[11px] text-[#252523]">{theme.photoNote}</span>
+            <span className="doc-body absolute bottom-4 left-4 bg-white/90 px-3 py-1 text-[11px] text-[#252523]">
+              {theme.photoNote}
+            </span>
           </div>
           <div className="grid grid-cols-2 items-start gap-[16px]">
             {rooms.map((r) => {
               const types = new Map<string, number>()
               for (const p of r.pts) types.set(p.type, (types.get(p.type) ?? 0) + 1)
               return (
-                <div key={r.name} className="flex flex-col gap-[12px] rounded-(--deck-radius-sm) border border-doc-rule bg-(--deck-card) p-[18px]">
+                <div
+                  key={r.name}
+                  className="flex flex-col gap-[12px] rounded-(--deck-radius-sm) border border-doc-rule bg-(--deck-card) p-[18px]"
+                >
                   <div className="flex items-baseline justify-between border-b border-doc-rule pb-2">
                     <span className="doc-strong text-[16px]">
                       {floor} · {r.name}
                     </span>
-                    <span className="doc-latin text-[12px] text-doc-accent">{r.pts.length} 个点位</span>
+                    <span className="doc-latin text-[12px] text-doc-accent">
+                      {r.pts.length} 个点位
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-2 text-[12px] text-doc-muted">
                     {[...types.entries()].map(([type, n]) => (
-                      <span key={type} className="inline-flex items-center gap-1 rounded bg-(--deck-box) px-2 py-0.5">
+                      <span
+                        key={type}
+                        className="inline-flex items-center gap-1 rounded bg-(--deck-box) px-2 py-0.5"
+                      >
                         <PointMarker type={type} className="size-3.5" />
                         <span>{deviceTypeOf(type)?.name ?? '设备'}</span>
                         <span className="doc-latin text-doc-accent">×{n}</span>
                       </span>
                     ))}
                   </div>
-                  <p className="text-[11px] text-doc-muted">点位代号：{codeRange(r.pts.map((p) => p.code))}</p>
+                  <p className="text-[11px] text-doc-muted">
+                    点位代号：{codeRange(r.pts.map((p) => p.code))}
+                  </p>
                 </div>
               )
             })}
@@ -1112,15 +1315,22 @@ function ZoneSlide({ data, theme, no }: { data: LandingShowcase; theme: DeckThem
           {composition.map(([type, codes]) => {
             const line = lineByType.get(type)
             return (
-              <div key={type} className="flex items-center gap-[14px] rounded-(--deck-radius-sm) border border-(--deck-panel-border) bg-(--deck-panel) px-[18px] py-[14px]">
+              <div
+                key={type}
+                className="flex items-center gap-[14px] rounded-(--deck-radius-sm) border border-(--deck-panel-border) bg-(--deck-panel) px-[18px] py-[14px]"
+              >
                 <PointMarker type={type} className="size-[28px] shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="doc-strong truncate text-[15px]">
                     {deviceTypeOf(type)?.name ?? '设备'} ×{codes.length}
                   </p>
-                  <p className="doc-body truncate text-[12.5px] text-doc-muted">{line?.name ?? '待选型'}</p>
+                  <p className="doc-body truncate text-[12.5px] text-doc-muted">
+                    {line?.name ?? '待选型'}
+                  </p>
                 </div>
-                <span className="doc-latin shrink-0 text-[12px] text-doc-accent">{codeRange(codes)}</span>
+                <span className="doc-latin shrink-0 text-[12px] text-doc-accent">
+                  {codeRange(codes)}
+                </span>
               </div>
             )
           })}
@@ -1184,7 +1394,10 @@ function ServiceSlide({
           ['03', '安装联调', '设备到场开箱核验，按图逐点安装、配网与场景联调'],
           ['04', '验收培训', '双方现场逐项打勾测试，移交账号、点位图与质保凭证'],
         ].map(([no, title, sub]) => (
-          <div key={no} className="rounded-(--deck-radius-sm) border border-doc-rule bg-(--deck-card) p-[18px]">
+          <div
+            key={no}
+            className="rounded-(--deck-radius-sm) border border-doc-rule bg-(--deck-card) p-[18px]"
+          >
             <p className="doc-latin text-[12px] text-doc-accent">STEP {no}</p>
             <p className="doc-strong mt-1 text-[17px]">{title}</p>
             <p className="doc-body mt-1.5 text-[12.5px] leading-relaxed text-doc-muted">{sub}</p>
@@ -1204,34 +1417,38 @@ function ServiceSlide({
           </div>
         </div>
         <div className="col-span-6 flex flex-col gap-[12px]">
-            <div className="flex items-baseline justify-between">
-              <p className="doc-display text-[19px]">付款节点</p>
-              <p className="doc-body text-[13px] text-doc-accent">方案总计 {yuan(totalAmount)}</p>
-            </div>
-            <div className="overflow-hidden rounded-(--deck-radius-sm) border border-doc-rule">
-              <table className="w-full border-collapse text-[13px]">
-                <thead>
-                  <tr className="bg-doc-head text-left text-doc-head-fg">
-                    <th className="px-3 py-2 font-medium">阶段</th>
-                    <th className="w-[80px] px-3 py-2 text-right font-medium">比例</th>
-                    <th className="w-[140px] px-3 py-2 text-right font-medium">应付金额</th>
+          <div className="flex items-baseline justify-between">
+            <p className="doc-display text-[19px]">付款节点</p>
+            <p className="doc-body text-[13px] text-doc-accent">方案总计 {yuan(totalAmount)}</p>
+          </div>
+          <div className="overflow-hidden rounded-(--deck-radius-sm) border border-doc-rule">
+            <table className="w-full border-collapse text-[13px]">
+              <thead>
+                <tr className="bg-doc-head text-left text-doc-head-fg">
+                  <th className="px-3 py-2 font-medium">阶段</th>
+                  <th className="w-[80px] px-3 py-2 text-right font-medium">比例</th>
+                  <th className="w-[140px] px-3 py-2 text-right font-medium">应付金额</th>
+                </tr>
+              </thead>
+              <tbody>
+                {DEFAULT_PAYMENTS.map((p, i) => (
+                  <tr key={p.name} className="h-[42px] border-b border-doc-rule">
+                    <td className="px-3">{p.name}</td>
+                    <td className="doc-latin px-3 text-right tabular-nums">{p.percent}%</td>
+                    <td className="doc-latin px-3 text-right font-medium tabular-nums text-doc-accent">
+                      {yuan(amounts[i] ?? 0)}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {DEFAULT_PAYMENTS.map((p, i) => (
-                    <tr key={p.name} className="h-[42px] border-b border-doc-rule">
-                      <td className="px-3">{p.name}</td>
-                      <td className="doc-latin px-3 text-right tabular-nums">{p.percent}%</td>
-                      <td className="doc-latin px-3 text-right font-medium tabular-nums text-doc-accent">{yuan(amounts[i] ?? 0)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {company.phone || company.address ? (
             <div className="rounded-(--deck-radius-sm) bg-linear-to-r from-doc-soft to-doc-soft-to p-[20px]">
               <p className="doc-strong text-[15px]">{company.name}</p>
-              <p className="doc-body mt-1 text-[12.5px] text-doc-muted">{[company.phone, company.address].filter(Boolean).join('　·　')}</p>
+              <p className="doc-body mt-1 text-[12.5px] text-doc-muted">
+                {[company.phone, company.address].filter(Boolean).join('　·　')}
+              </p>
             </div>
           ) : null}
         </div>

@@ -15,7 +15,13 @@ export type ActiveProjectUpdate = {
 }
 
 /** 本轮对话里用户附带的图片（已压成视觉模型可用的 data URL） */
-export type ToolImage = { dataUrl: string; mediaId?: string | null; url?: string | null; kind?: string | null; name?: string }
+export type ToolImage = {
+  dataUrl: string
+  mediaId?: string | null
+  url?: string | null
+  kind?: string | null
+  name?: string
+}
 
 export type ToolContext = {
   user: User
@@ -30,7 +36,11 @@ export type ToolContext = {
   /** 可用的视觉模型（按能力排序），工具内部看图时使用 */
   visionModels?: AiModelConfig[]
   /** 工具内部调用模型产生的 tokens 计入本次对话费用 */
-  recordUsage?: (model: AiModelConfig, usage: TokenUsage | null, fallback?: { input: string; output: string }) => void
+  recordUsage?: (
+    model: AiModelConfig,
+    usage: TokenUsage | null,
+    fallback?: { input: string; output: string },
+  ) => void
   /** 长耗时工具向前端推送进度提示 */
   notify?: (status: string) => void
 }
@@ -44,7 +54,10 @@ export type ToolRunResult = {
   imageUrl?: string
 }
 
-export type AiToolHandler = (args: Record<string, unknown>, ctx: ToolContext) => Promise<ToolRunResult>
+export type AiToolHandler = (
+  args: Record<string, unknown>,
+  ctx: ToolContext,
+) => Promise<ToolRunResult>
 
 export type AiTool = {
   /** null 表示核心内置工具（始终可用）；非 null 表示需开启并勾选对应插件 */

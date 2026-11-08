@@ -81,16 +81,27 @@ export default async function AiPage({
   const activeModels = enabledAiModels(company.aiModels)
   // 从插件详情页「去 AI 对话推演需求」进来时，预先填好关于这个插件的问题
   const fromPlugin = sp.plugin ? PLUGINS.find((p) => p.id === sp.plugin) : undefined
-  const initialInput = fromPlugin ? `我想用「${fromPlugin.name}」插件：${fromPlugin.description} 结合我手上的项目，它能帮我做什么？应该怎么开始？` : undefined
+  const initialInput = fromPlugin
+    ? `我想用「${fromPlugin.name}」插件：${fromPlugin.description} 结合我手上的项目，它能帮我做什么？应该怎么开始？`
+    : undefined
 
   return (
     // 视口高度减去 48px 顶栏和 main 的上下内边距
     <div className="mx-auto flex h-[calc(100svh-5.5rem)] w-full max-w-3xl flex-col md:h-[calc(100svh-6.5rem)]">
       <div className="flex items-center justify-between pb-2">
         <span className="text-xs font-medium tracking-[0.18em] text-muted-foreground">AI 对话</span>
-        <Button asChild size="sm" variant="outline"><Link href="/ai/image">AI 生图 →</Link></Button>
+        <Button asChild size="sm" variant="outline">
+          <Link href="/ai/image">AI 生图 →</Link>
+        </Button>
       </div>
-      <AiSidebarDock plugins={plugins} projects={projects} credits={user.aiCredits ?? 0} configured={aiConfigured(activeModels)} models={activeModels} initialInput={initialInput} />
+      <AiSidebarDock
+        plugins={plugins}
+        projects={projects}
+        credits={user.aiCredits ?? 0}
+        configured={aiConfigured(activeModels)}
+        models={activeModels}
+        initialInput={initialInput}
+      />
     </div>
   )
 }

@@ -5,7 +5,13 @@ import { Check, Copy, ExternalLink, FileDown, FolderDown, Loader2 } from 'lucide
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { downloadBlob, exportPagesAsPdfBundle } from '@/lib/export-pdf'
 
 type ExportState = {
@@ -50,10 +56,16 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
           headers: { 'Content-Type': 'application/pdf' },
           body: bundle.blob,
         })
-        const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; previewUrl?: string } | null
+        const data = (await res.json().catch(() => null)) as {
+          ok?: boolean
+          url?: string
+          previewUrl?: string
+        } | null
         if (res.ok && data?.ok && data.url) {
           downloadUrl = new URL(data.url, window.location.origin).toString()
-          previewUrl = data.previewUrl ? new URL(data.previewUrl, window.location.origin).toString() : downloadUrl
+          previewUrl = data.previewUrl
+            ? new URL(data.previewUrl, window.location.origin).toString()
+            : downloadUrl
         }
       } catch {
         // ignore upload fallback error
@@ -78,7 +90,16 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
 
   const saveWithPicker = async () => {
     if (!result) return
-    const picker = (window as unknown as { showSaveFilePicker?: (opts: unknown) => Promise<{ createWritable: () => Promise<{ write: (b: Blob) => Promise<void>; close: () => Promise<void> }> }> }).showSaveFilePicker
+    const picker = (
+      window as unknown as {
+        showSaveFilePicker?: (opts: unknown) => Promise<{
+          createWritable: () => Promise<{
+            write: (b: Blob) => Promise<void>
+            close: () => Promise<void>
+          }>
+        }>
+      }
+    ).showSaveFilePicker
     if (typeof picker === 'function') {
       try {
         const handle = await picker({
@@ -114,7 +135,14 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
 
   return (
     <>
-      <Button type="button" size="sm" variant="default" className="h-8 gap-1.5 text-xs" disabled={busy} onClick={() => void handleExport()}>
+      <Button
+        type="button"
+        size="sm"
+        variant="default"
+        className="h-8 gap-1.5 text-xs"
+        disabled={busy}
+        onClick={() => void handleExport()}
+      >
         {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileDown className="size-3.5" />}
         {busy ? '生成 PDF 中…' : '下载方案与报价 PDF'}
       </Button>
@@ -130,10 +158,13 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
 
           <div className="space-y-2 rounded-xl border bg-muted/35 p-3.5 text-xs leading-relaxed text-muted-foreground">
             <p>
-              <strong className="text-foreground">电脑浏览器</strong>：已自动保存到浏览器的「下载 (Downloads)」文件夹，也可点击下方「选择位置另存为」。
+              <strong className="text-foreground">电脑浏览器</strong>：已自动保存到浏览器的「下载
+              (Downloads)」文件夹，也可点击下方「选择位置另存为」。
             </p>
             <p>
-              <strong className="text-foreground">手机 / 微信端</strong>：可点击「复制 PDF 下载链接」到手机系统浏览器打开保存，或直接<strong className="text-foreground">长按下方高清图片</strong>保存到手机相册。
+              <strong className="text-foreground">手机 / 微信端</strong>：可点击「复制 PDF
+              下载链接」到手机系统浏览器打开保存，或直接
+              <strong className="text-foreground">长按下方高清图片</strong>保存到手机相册。
             </p>
           </div>
 
@@ -160,7 +191,9 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
 
           {result?.previewImages.length ? (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">页面高清图预览（手机端可长按图片直接保存到相册）：</p>
+              <p className="text-xs font-medium text-muted-foreground">
+                页面高清图预览（手机端可长按图片直接保存到相册）：
+              </p>
               <div className="max-h-64 space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5">
                 {result.previewImages.map((src, idx) => (
                   <div key={idx} className="overflow-hidden rounded-lg border bg-white shadow-2xs">

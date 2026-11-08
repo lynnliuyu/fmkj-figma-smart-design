@@ -5,7 +5,13 @@
  * - 报价单（纵向 A4 长文）：按 A4 比例自动分页，并在切页位置向上寻找空白行，避免把文字或图片截断。
  */
 
-export type PageJpeg = { bytes: Uint8Array; widthPx: number; heightPx: number; widthPt: number; heightPt: number }
+export type PageJpeg = {
+  bytes: Uint8Array
+  widthPx: number
+  heightPx: number
+  widthPt: number
+  heightPt: number
+}
 
 /** 1×1 透明 PNG：当某张图片 404、跨域或损坏时作为兜底占位，避免整份 PDF 导出失败 */
 const TRANSPARENT_PNG =
@@ -30,10 +36,19 @@ function paperColor(ctx: CanvasRenderingContext2D): Rgb {
 }
 
 /** 像素和纸张底色是否明显不同（文字、线条、图片） */
-const inked = (data: Uint8ClampedArray, i: number, bg: Rgb) => Math.abs(data[i] - bg[0]) > 13 || Math.abs(data[i + 1] - bg[1]) > 13 || Math.abs(data[i + 2] - bg[2]) > 13
+const inked = (data: Uint8ClampedArray, i: number, bg: Rgb) =>
+  Math.abs(data[i] - bg[0]) > 13 ||
+  Math.abs(data[i + 1] - bg[1]) > 13 ||
+  Math.abs(data[i + 2] - bg[2]) > 13
 
 /** 在 targetY 往上找一整行几乎只有纸色的位置切页，避免截断文字或表格边线 */
-function findSafeCutY(ctx: CanvasRenderingContext2D, width: number, targetY: number, minY: number, bg: Rgb): number {
+function findSafeCutY(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  targetY: number,
+  minY: number,
+  bg: Rgb,
+): number {
   const searchH = Math.min(180, targetY - minY)
   if (searchH <= 8) return targetY
   const startY = targetY - searchH
@@ -58,7 +73,9 @@ function findSafeCutY(ctx: CanvasRenderingContext2D, width: number, targetY: num
 function collectAtomicBlocks(root: HTMLElement, scale: number): { top: number; bottom: number }[] {
   const rootRect = root.getBoundingClientRect()
   const blocks: { top: number; bottom: number }[] = []
-  for (const el of root.querySelectorAll<HTMLElement>('[data-pdf-block], .break-inside-avoid, tr, header, footer')) {
+  for (const el of root.querySelectorAll<HTMLElement>(
+    '[data-pdf-block], .break-inside-avoid, tr, header, footer',
+  )) {
     const r = el.getBoundingClientRect()
     if (r.height <= 0) continue
     blocks.push({
@@ -93,7 +110,10 @@ function collectAtomicBlocks(root: HTMLElement, scale: number): { top: number; b
     const fr = footerEl.getBoundingClientRect()
     if (fr.height > 0) {
       const fBottom = Math.ceil((fr.bottom - rootRect.top) * scale)
-      const fTop = Math.max(0, Math.floor((fr.top - rootRect.top) * scale) - Math.round(140 * scale))
+      const fTop = Math.max(
+        0,
+        Math.floor((fr.top - rootRect.top) * scale) - Math.round(140 * scale),
+      )
       blocks.push({ top: fTop, bottom: fBottom })
     }
   }
@@ -104,12 +124,21 @@ function collectAtomicBlocks(root: HTMLElement, scale: number): { top: number; b
 function collectBreaks(root: HTMLElement, scale: number): number[] {
   const rootRect = root.getBoundingClientRect()
   return [...root.querySelectorAll<HTMLElement>('[data-pdf-break-before]')]
-    .map((el) => Math.floor((el.getBoundingClientRect().top - rootRect.top) * scale) - Math.round(4 * scale))
+    .map(
+      (el) =>
+        Math.floor((el.getBoundingClientRect().top - rootRect.top) * scale) - Math.round(4 * scale),
+    )
     .filter((n) => n > 0)
     .sort((a, b) => a - b)
 }
 
-function isStripMostlyBlank(ctx: CanvasRenderingContext2D, width: number, startY: number, endY: number, bg: Rgb): boolean {
+function isStripMostlyBlank(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  startY: number,
+  endY: number,
+  bg: Rgb,
+): boolean {
   const h = endY - startY
   if (h <= 0) return true
   const data = ctx.getImageData(0, startY, width, h).data
@@ -129,7 +158,11 @@ function isStripMostlyBlank(ctx: CanvasRenderingContext2D, width: number, startY
 }
 
 /** 把纵向长画布按 A4 比例切成多页 A4 画布（按 DOM 块边界切页，不劈开卡片、点位图或表格行） */
-function slicePortraitCanvas(source: HTMLCanvasElement, domEl: HTMLElement, scale: number): PageJpeg[] {
+function slicePortraitCanvas(
+  source: HTMLCanvasElement,
+  domEl: HTMLElement,
+  scale: number,
+): PageJpeg[] {
   const W_PT = 595.28
   const H_PT = 841.89
   const safeWidth = Math.max(8, source.width)
@@ -173,7 +206,13 @@ function slicePortraitCanvas(source: HTMLCanvasElement, domEl: HTMLElement, scal
         }
       }
       if (!atBlockBoundary) {
-        nextY = findSafeCutY(srcCtx, safeWidth, nextY, Math.max(minCut, nextY - Math.round(48 * scale)), bg)
+        nextY = findSafeCutY(
+          srcCtx,
+          safeWidth,
+          nextY,
+          Math.max(minCut, nextY - Math.round(48 * scale)),
+          bg,
+        )
       }
     }
     const sliceH = Math.max(1, nextY - y)
@@ -230,7 +269,9 @@ export function buildPdfFromJpegs(pages: PageJpeg[]): Blob {
   endObj()
 
   startObj(2)
-  pushStr(`<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pages.length} >>`)
+  pushStr(
+    `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pages.length} >>`,
+  )
   endObj()
 
   pages.forEach((p, i) => {
@@ -293,7 +334,11 @@ async function fetchImageAsDataUrl(rawUrl: string): Promise<string> {
     const res = await fetch(abs, { signal: ctrl.signal, credentials: 'same-origin' })
     if (!res.ok) return TRANSPARENT_PNG
     const ct = res.headers.get('Content-Type') ?? ''
-    if (ct && !ct.toLowerCase().startsWith('image/') && !ct.toLowerCase().includes('octet-stream')) {
+    if (
+      ct &&
+      !ct.toLowerCase().startsWith('image/') &&
+      !ct.toLowerCase().includes('octet-stream')
+    ) {
       return TRANSPARENT_PNG
     }
     const blob = await res.blob()
@@ -302,7 +347,12 @@ async function fetchImageAsDataUrl(rawUrl: string): Promise<string> {
     const normalizedBlob = blob.type === mime ? blob : new Blob([blob], { type: mime })
     const dataUrl = await new Promise<string>((resolve) => {
       const reader = new FileReader()
-      reader.onloadend = () => resolve(typeof reader.result === 'string' && reader.result.startsWith('data:image/') ? reader.result : TRANSPARENT_PNG)
+      reader.onloadend = () =>
+        resolve(
+          typeof reader.result === 'string' && reader.result.startsWith('data:image/')
+            ? reader.result
+            : TRANSPARENT_PNG,
+        )
       reader.onerror = () => resolve(TRANSPARENT_PNG)
       reader.readAsDataURL(normalizedBlob)
     })
@@ -425,7 +475,10 @@ function loadSvgDataUrl(svgDataUrl: string): Promise<HTMLImageElement> {
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       if (typeof img.decode === 'function') {
-        img.decode().catch(() => null).finally(() => resolve(img))
+        img
+          .decode()
+          .catch(() => null)
+          .finally(() => resolve(img))
       } else {
         resolve(img)
       }
@@ -440,10 +493,14 @@ async function renderElementToCanvas(
   opts: { width?: number; height?: number; pixelRatio: number; isSlide: boolean },
 ): Promise<HTMLCanvasElement> {
   const { toSvg, toCanvas } = await import('html-to-image')
-  const w = opts.width || Math.max(1, el.offsetWidth || Math.round(el.getBoundingClientRect().width) || 794)
-  const h = opts.height || Math.max(1, el.offsetHeight || Math.round(el.getBoundingClientRect().height) || 1123)
+  const w =
+    opts.width || Math.max(1, el.offsetWidth || Math.round(el.getBoundingClientRect().width) || 794)
+  const h =
+    opts.height ||
+    Math.max(1, el.offsetHeight || Math.round(el.getBoundingClientRect().height) || 1123)
   const bg = opts.isSlide ? getComputedStyle(el).backgroundColor : ''
-  const backgroundColor = bg && bg !== 'transparent' && !/^rgba\([^)]*,\s*0\)$/.test(bg) ? bg : '#ffffff'
+  const backgroundColor =
+    bg && bg !== 'transparent' && !/^rgba\([^)]*,\s*0\)$/.test(bg) ? bg : '#ffffff'
   const baseOptions = {
     pixelRatio: opts.pixelRatio,
     width: w,
@@ -504,7 +561,8 @@ export async function renderPagesToJpegs(elements: HTMLElement[]): Promise<PageJ
         isSlide,
       })
       const flow = el.dataset.exportPage === 'flow' || Boolean(el.closest('#quote-preview'))
-      const isLandscapeCard = isSlide || (!flow && (elements.length > 1 || canvas.width > canvas.height * 1.15))
+      const isLandscapeCard =
+        isSlide || (!flow && (elements.length > 1 || canvas.width > canvas.height * 1.15))
       if (isLandscapeCard) {
         // 横版卡片按自身比例成页（A4 比例的卡片仍是标准 A4；3:2 的方案页不会被压扁）
         pdfPages.push({
@@ -571,7 +629,10 @@ export async function exportPagesAsPdf(elements: HTMLElement[], fileName: string
   return pdfPages.length
 }
 
-export async function exportPagesAsPdfBundle(elements: HTMLElement[], fileName: string): Promise<ExportedPdfBundle> {
+export async function exportPagesAsPdfBundle(
+  elements: HTMLElement[],
+  fileName: string,
+): Promise<ExportedPdfBundle> {
   await waitForPageAssets(elements)
   const pdfPages = await renderPagesToJpegs(elements)
   if (!pdfPages.length) {

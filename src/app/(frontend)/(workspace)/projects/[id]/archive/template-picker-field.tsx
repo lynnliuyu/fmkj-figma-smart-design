@@ -52,8 +52,18 @@ export function ArchiveTemplatePicker({
       disabled={!editable}
       onSelect={editable ? select : undefined}
       trigger={
-        <Button type="button" variant="outline" size="sm" className="ml-7 h-8 gap-2 text-xs sm:ml-0" aria-label={`交付方案模板：${current?.label ?? '未选择'}，点击${editable ? '更换' : '查看'}`}>
-          {current ? <Swatches colors={current.swatches} /> : <LayoutTemplate className="size-3.5" />}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="ml-7 h-8 gap-2 text-xs sm:ml-0"
+          aria-label={`交付方案模板：${current?.label ?? '未选择'}，点击${editable ? '更换' : '查看'}`}
+        >
+          {current ? (
+            <Swatches colors={current.swatches} />
+          ) : (
+            <LayoutTemplate className="size-3.5" />
+          )}
           <span className="max-w-28 truncate">{current?.label ?? '选择模板'}</span>
           <span className="text-muted-foreground">{editable ? '更换' : '查看'}</span>
         </Button>

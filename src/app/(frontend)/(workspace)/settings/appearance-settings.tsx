@@ -54,7 +54,9 @@ export function AppearanceSettings() {
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <p id="appearance-mode" className="text-sm font-medium">颜色模式</p>
+          <p id="appearance-mode" className="text-sm font-medium">
+            颜色模式
+          </p>
           <RadioGroup
             aria-labelledby="appearance-mode"
             value={mounted ? (theme ?? 'system') : ''}
@@ -62,17 +64,27 @@ export function AppearanceSettings() {
             className="grid-cols-3 gap-2"
           >
             {MODES.map(({ value, label, icon: Icon }) => (
-              <Label key={value} htmlFor={`appearance-mode-${value}`} className={cn(tile, 'flex-col items-start gap-2 p-3')}>
+              <Label
+                key={value}
+                htmlFor={`appearance-mode-${value}`}
+                className={cn(tile, 'flex-col items-start gap-2 p-3')}
+              >
                 <Icon className="size-4 text-muted-foreground" />
                 <span className="text-sm">{label}</span>
-                <RadioGroupItem id={`appearance-mode-${value}`} value={value} className="absolute top-3 right-3" />
+                <RadioGroupItem
+                  id={`appearance-mode-${value}`}
+                  value={value}
+                  className="absolute top-3 right-3"
+                />
               </Label>
             ))}
           </RadioGroup>
         </div>
 
         <div className="flex flex-col gap-2">
-          <p id="appearance-accent" className="text-sm font-medium">主题风格</p>
+          <p id="appearance-accent" className="text-sm font-medium">
+            主题风格
+          </p>
           <RadioGroup
             aria-labelledby="appearance-accent"
             value={accent}
@@ -80,12 +92,18 @@ export function AppearanceSettings() {
             className="gap-2 sm:grid-cols-3"
           >
             {ACCENTS.map((a) => (
-              <Label key={a.id} htmlFor={`appearance-accent-${a.id}`} className={cn(tile, 'flex-col items-stretch gap-2.5 p-3')}>
+              <Label
+                key={a.id}
+                htmlFor={`appearance-accent-${a.id}`}
+                className={cn(tile, 'flex-col items-stretch gap-2.5 p-3')}
+              >
                 <AccentPreview swatch={ACCENT_SWATCH[a.id]} />
                 <span className="flex items-center justify-between gap-2">
                   <span className="text-sm font-medium">
                     {a.label}
-                    {a.id === DEFAULT_ACCENT ? <span className="ml-1.5 text-xs font-normal text-muted-foreground">默认</span> : null}
+                    {a.id === DEFAULT_ACCENT ? (
+                      <span className="ml-1.5 text-xs font-normal text-muted-foreground">默认</span>
+                    ) : null}
                   </span>
                   <RadioGroupItem id={`appearance-accent-${a.id}`} value={a.id} />
                 </span>

@@ -5,7 +5,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { AI_PROVIDER_CHANNEL_LIST, AI_PROVIDER_PRESETS } from '@/plugins/ai-copilot/templates'
 
 type Custom = { key: string; label?: string }
-type ChannelStatus = { id: string; label: string; envKey: string; configured: boolean; isCustom: boolean }
+type ChannelStatus = {
+  id: string
+  label: string
+  envKey: string
+  configured: boolean
+  isCustom: boolean
+}
 type ExistingModel = {
   name: string
   channelId: string
@@ -18,10 +24,35 @@ type ExistingModel = {
 }
 
 const API = '/api/globals/ai-settings'
-const box: React.CSSProperties = { border: '1px solid var(--theme-elevation-150)', borderRadius: 8, padding: 18, margin: '12px 0 24px', background: 'var(--theme-elevation-50)' }
-const sectionCard: React.CSSProperties = { border: '1px solid var(--theme-elevation-150)', borderRadius: 6, padding: 14, marginTop: 14, background: 'var(--theme-elevation-0)' }
-const btn: React.CSSProperties = { padding: '6px 14px', borderRadius: 4, border: '1px solid var(--theme-elevation-250)', background: 'var(--theme-elevation-0)', cursor: 'pointer', fontSize: 13 }
-const primaryBtn: React.CSSProperties = { ...btn, background: 'var(--theme-elevation-800)', color: 'var(--theme-elevation-0)', borderColor: 'var(--theme-elevation-800)', fontWeight: 500 }
+const box: React.CSSProperties = {
+  border: '1px solid var(--theme-elevation-150)',
+  borderRadius: 8,
+  padding: 18,
+  margin: '12px 0 24px',
+  background: 'var(--theme-elevation-50)',
+}
+const sectionCard: React.CSSProperties = {
+  border: '1px solid var(--theme-elevation-150)',
+  borderRadius: 6,
+  padding: 14,
+  marginTop: 14,
+  background: 'var(--theme-elevation-0)',
+}
+const btn: React.CSSProperties = {
+  padding: '6px 14px',
+  borderRadius: 4,
+  border: '1px solid var(--theme-elevation-250)',
+  background: 'var(--theme-elevation-0)',
+  cursor: 'pointer',
+  fontSize: 13,
+}
+const primaryBtn: React.CSSProperties = {
+  ...btn,
+  background: 'var(--theme-elevation-800)',
+  color: 'var(--theme-elevation-0)',
+  borderColor: 'var(--theme-elevation-800)',
+  fontWeight: 500,
+}
 
 const CORE_STARTER_KEYS = [
   'deepseek:deepseek-chat',
@@ -56,7 +87,9 @@ export function AiModelFetcher() {
   const refreshStatus = useCallback(() => {
     fetch(`${API}?depth=0`, { credentials: 'include' })
       .then((r) => r.json())
-      .then((g: { customChannels?: Custom[] }) => setCustoms((g.customChannels ?? []).filter((c) => c.key)))
+      .then((g: { customChannels?: Custom[] }) =>
+        setCustoms((g.customChannels ?? []).filter((c) => c.key)),
+      )
       .catch(() => null)
     fetch(`${API}/status`, { credentials: 'include' })
       .then((r) => r.json())
@@ -71,7 +104,10 @@ export function AiModelFetcher() {
     refreshStatus()
   }, [refreshStatus])
 
-  const body = () => (channel.startsWith('custom:') ? { channelId: 'custom', customChannel: channel.slice(7) } : { channelId: channel })
+  const body = () =>
+    channel.startsWith('custom:')
+      ? { channelId: 'custom', customChannel: channel.slice(7) }
+      : { channelId: channel }
 
   const addPresets = async (presetKeys?: string[]) => {
     setBusy(true)
@@ -110,7 +146,12 @@ export function AiModelFetcher() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...body(), testModel }),
       })
-      const d = (await r.json()) as { ok?: boolean; latencyMs?: number; reply?: string; error?: string }
+      const d = (await r.json()) as {
+        ok?: boolean
+        latencyMs?: number
+        reply?: string
+        error?: string
+      }
       if (!r.ok || !d.ok) {
         setMsg({ ok: false, text: d.error ?? '连通性测试未通过' })
       } else {
@@ -128,7 +169,12 @@ export function AiModelFetcher() {
     setModels([])
     setPicked(new Set())
     try {
-      const r = await fetch(`${API}/models`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body()) })
+      const r = await fetch(`${API}/models`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body()),
+      })
       const d = (await r.json()) as { models?: string[]; error?: string }
       if (!r.ok || d.error) setMsg({ ok: false, text: d.error ?? '获取失败' })
       else {
@@ -142,18 +188,32 @@ export function AiModelFetcher() {
   }
 
   const add = async () => {
-    const list = [...picked, ...manual.split(/[\s,，]+/).map((s) => s.trim()).filter(Boolean)]
+    const list = [
+      ...picked,
+      ...manual
+        .split(/[\s,，]+/)
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ]
     if (!list.length) return setMsg({ ok: false, text: '请勾选或手动填写模型名' })
     setBusy(true)
     try {
-      const r = await fetch(`${API}/models/add`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body(), models: list }) })
+      const r = await fetch(`${API}/models/add`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...body(), models: list }),
+      })
       const d = (await r.json()) as { added?: number; skipped?: number; error?: string }
       if (!r.ok || d.error) {
         setMsg({ ok: false, text: d.error ?? '添加失败' })
         setBusy(false)
         return
       }
-      setMsg({ ok: true, text: `已启用 ${d.added} 个模型${d.skipped ? `（${d.skipped} 个已存在，已跳过）` : ''}，正在刷新…` })
+      setMsg({
+        ok: true,
+        text: `已启用 ${d.added} 个模型${d.skipped ? `（${d.skipped} 个已存在，已跳过）` : ''}，正在刷新…`,
+      })
       setTimeout(() => window.location.reload(), 800)
     } catch {
       setMsg({ ok: false, text: '网络错误' })
@@ -162,18 +222,25 @@ export function AiModelFetcher() {
   }
 
   const shown = models.filter((m) => m.toLowerCase().includes(filter.toLowerCase()))
-  const toggle = (m: string) => setPicked((s) => {
-    const n = new Set(s)
-    if (n.has(m)) n.delete(m)
-    else n.add(m)
-    return n
-  })
+  const toggle = (m: string) =>
+    setPicked((s) => {
+      const n = new Set(s)
+      if (n.has(m)) n.delete(m)
+      else n.add(m)
+      return n
+    })
 
-  const filteredPresets = AI_PROVIDER_PRESETS.filter((p) => (tierFilter === 'all' ? true : p.minTier === tierFilter))
+  const filteredPresets = AI_PROVIDER_PRESETS.filter((p) =>
+    tierFilter === 'all' ? true : p.minTier === tierFilter,
+  )
   const isPresetAdded = (channelId: string, apiModel: string) =>
     existingModels.some((m) => m.channelId === channelId && m.apiModel === apiModel)
 
-  const quickUpdateRow = async (payload: { index?: number; patch?: Record<string, unknown>; deleteIndex?: number }) => {
+  const quickUpdateRow = async (payload: {
+    index?: number
+    patch?: Record<string, unknown>
+    deleteIndex?: number
+  }) => {
     setBusy(true)
     setMsg(null)
     try {
@@ -211,11 +278,19 @@ export function AiModelFetcher() {
           testModel: m.apiModel,
         }),
       })
-      const d = (await r.json()) as { ok?: boolean; latencyMs?: number; reply?: string; error?: string }
+      const d = (await r.json()) as {
+        ok?: boolean
+        latencyMs?: number
+        reply?: string
+        error?: string
+      }
       if (!r.ok || !d.ok) {
         setMsg({ ok: false, text: `「${m.name}」测试未通过：${d.error ?? '请求失败'}` })
       } else {
-        setMsg({ ok: true, text: `「${m.name}」连通正常（耗时 ${d.latencyMs}ms，返回：${d.reply}）` })
+        setMsg({
+          ok: true,
+          text: `「${m.name}」连通正常（耗时 ${d.latencyMs}ms，返回：${d.reply}）`,
+        })
       }
     } catch {
       setMsg({ ok: false, text: '网络错误' })
@@ -225,15 +300,32 @@ export function AiModelFetcher() {
 
   return (
     <div style={box}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
         <div>
-          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>国产 AI 大模型快捷配置工作台（Go / Plus / Pro）</div>
+          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>
+            国产 AI 大模型快捷配置工作台（Go / Plus / Pro）
+          </div>
           <div style={{ fontSize: 12, color: 'var(--theme-elevation-500)' }}>
-            一键载入精选国产模型或从渠道拉取模型。添加后可在下方「AI 模型」列表中随时修改显示名称、计费倍率、所需会员等级（Go / Plus / Pro）及默认模型，点击右上角 <strong>Save</strong> 即刻对全站与小程序生效。
+            一键载入精选国产模型或从渠道拉取模型。添加后可在下方「AI
+            模型」列表中随时修改显示名称、计费倍率、所需会员等级（Go / Plus /
+            Pro）及默认模型，点击右上角 <strong>Save</strong> 即刻对全站与小程序生效。
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="button" style={primaryBtn} disabled={busy} onClick={() => addPresets(CORE_STARTER_KEYS)}>
+          <button
+            type="button"
+            style={primaryBtn}
+            disabled={busy}
+            onClick={() => addPresets(CORE_STARTER_KEYS)}
+          >
             一键载入推荐 6 款国产核心套件
           </button>
           <button type="button" style={btn} disabled={busy} onClick={() => addPresets()}>
@@ -261,7 +353,8 @@ export function AiModelFetcher() {
       {existingModels.length > 0 ? (
         <div style={sectionCard}>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>
-            当前开放给客户使用的 AI 模型（共 {existingModels.length} 个 · 可直接切换会员档位、计费倍率或启停，详细字段可在页面最下方表单编辑）
+            当前开放给客户使用的 AI 模型（共 {existingModels.length} 个 ·
+            可直接切换会员档位、计费倍率或启停，详细字段可在页面最下方表单编辑）
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {existingModels.map((m, idx) => (
@@ -281,13 +374,38 @@ export function AiModelFetcher() {
                   fontSize: 12,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', minWidth: 220 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    flexWrap: 'wrap',
+                    minWidth: 220,
+                  }}
+                >
                   <span style={{ fontWeight: 600, fontSize: 13 }}>{m.name}</span>
-                  <code style={{ padding: '1px 6px', borderRadius: 4, background: 'var(--theme-elevation-100)', fontFamily: 'monospace', fontSize: 11 }}>
+                  <code
+                    style={{
+                      padding: '1px 6px',
+                      borderRadius: 4,
+                      background: 'var(--theme-elevation-100)',
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                    }}
+                  >
                     {m.apiModel}
                   </code>
                   {m.isDefault ? (
-                    <span style={{ padding: '1px 6px', borderRadius: 4, background: 'rgba(16, 185, 129, 0.14)', color: '#059669', fontSize: 11, fontWeight: 600 }}>
+                    <span
+                      style={{
+                        padding: '1px 6px',
+                        borderRadius: 4,
+                        background: 'rgba(16, 185, 129, 0.14)',
+                        color: '#059669',
+                        fontSize: 11,
+                        fontWeight: 600,
+                      }}
+                    >
                       默认模型
                     </span>
                   ) : null}
@@ -299,7 +417,9 @@ export function AiModelFetcher() {
                     <select
                       value={m.minTier}
                       disabled={busy}
-                      onChange={(e) => void quickUpdateRow({ index: idx, patch: { minTier: e.target.value } })}
+                      onChange={(e) =>
+                        void quickUpdateRow({ index: idx, patch: { minTier: e.target.value } })
+                      }
                       style={{ ...btn, padding: '3px 8px', fontSize: 12 }}
                     >
                       <option value="free">Go 基础版（全员可用）</option>
@@ -314,7 +434,9 @@ export function AiModelFetcher() {
                     <select
                       value={String(m.cost)}
                       disabled={busy}
-                      onChange={(e) => void quickUpdateRow({ index: idx, patch: { cost: Number(e.target.value) } })}
+                      onChange={(e) =>
+                        void quickUpdateRow({ index: idx, patch: { cost: Number(e.target.value) } })
+                      }
                       style={{ ...btn, padding: '3px 8px', fontSize: 12 }}
                     >
                       <option value="1">1x 标准</option>
@@ -327,7 +449,9 @@ export function AiModelFetcher() {
                   <button
                     type="button"
                     disabled={busy}
-                    onClick={() => void quickUpdateRow({ index: idx, patch: { enabled: !m.enabled } })}
+                    onClick={() =>
+                      void quickUpdateRow({ index: idx, patch: { enabled: !m.enabled } })
+                    }
                     style={{ ...btn, padding: '3px 8px', fontSize: 12 }}
                   >
                     {m.enabled ? '已启用（点此停用）' : '已停用（点此启用）'}
@@ -337,7 +461,9 @@ export function AiModelFetcher() {
                     <button
                       type="button"
                       disabled={busy}
-                      onClick={() => void quickUpdateRow({ index: idx, patch: { isDefault: true } })}
+                      onClick={() =>
+                        void quickUpdateRow({ index: idx, patch: { isDefault: true } })
+                      }
                       style={{ ...btn, padding: '3px 8px', fontSize: 12 }}
                     >
                       设为默认
@@ -373,8 +499,16 @@ export function AiModelFetcher() {
       {/* 1. 服务端渠道环境变量状态 */}
       {channelStatuses.length > 0 ? (
         <div style={sectionCard}>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>1. 渠道密钥（环境变量）就绪状态</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 8 }}>
+          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>
+            1. 渠道密钥（环境变量）就绪状态
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
+              gap: 8,
+            }}
+          >
             {channelStatuses.map((ch) => (
               <div
                 key={ch.id}
@@ -390,8 +524,25 @@ export function AiModelFetcher() {
                 }}
               >
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--theme-elevation-500)', fontFamily: 'monospace' }}>{ch.envKey}</div>
+                  <div
+                    style={{
+                      fontWeight: 500,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {ch.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: 'var(--theme-elevation-500)',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {ch.envKey}
+                  </div>
                 </div>
                 <span
                   style={{
@@ -400,7 +551,9 @@ export function AiModelFetcher() {
                     borderRadius: 999,
                     fontSize: 11,
                     fontWeight: 500,
-                    background: ch.configured ? 'rgba(22, 163, 74, 0.12)' : 'var(--theme-elevation-100)',
+                    background: ch.configured
+                      ? 'rgba(22, 163, 74, 0.12)'
+                      : 'var(--theme-elevation-100)',
                     color: ch.configured ? '#16a34a' : 'var(--theme-elevation-500)',
                   }}
                 >
@@ -414,8 +567,19 @@ export function AiModelFetcher() {
 
       {/* 2. 精选国产大模型库（按 Go / Plus / Pro 分档一键添加） */}
       <div style={sectionCard}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
-          <div style={{ fontWeight: 600, fontSize: 13 }}>2. 精选国产大模型库（点击即可加入下方模型列表）</div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 8,
+            marginBottom: 10,
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: 13 }}>
+            2. 精选国产大模型库（点击即可加入下方模型列表）
+          </div>
           <div style={{ display: 'flex', gap: 6 }}>
             {(
               [
@@ -433,7 +597,10 @@ export function AiModelFetcher() {
                   ...btn,
                   padding: '4px 10px',
                   fontSize: 12,
-                  background: tierFilter === tab.k ? 'var(--theme-elevation-800)' : 'var(--theme-elevation-0)',
+                  background:
+                    tierFilter === tab.k
+                      ? 'var(--theme-elevation-800)'
+                      : 'var(--theme-elevation-0)',
                   color: tierFilter === tab.k ? 'var(--theme-elevation-0)' : 'inherit',
                 }}
               >
@@ -443,7 +610,13 @@ export function AiModelFetcher() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: 10,
+          }}
+        >
           {filteredPresets.map((p) => {
             const key = `${p.channelId}:${p.apiModel}`
             const added = isPresetAdded(p.channelId, p.apiModel)
@@ -463,7 +636,14 @@ export function AiModelFetcher() {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
+                  >
                     <span style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</span>
                     <span
                       style={{
@@ -479,14 +659,35 @@ export function AiModelFetcher() {
                       {tierMeta.label}
                     </span>
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--theme-elevation-500)', marginTop: 3, fontFamily: 'monospace' }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: 'var(--theme-elevation-500)',
+                      marginTop: 3,
+                      fontFamily: 'monospace',
+                    }}
+                  >
                     {p.provider} · {p.apiModel}
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--theme-elevation-600)', marginTop: 6, lineHeight: 1.45 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: 'var(--theme-elevation-600)',
+                      marginTop: 6,
+                      lineHeight: 1.45,
+                    }}
+                  >
                     {p.description}
                   </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 4,
+                  }}
+                >
                   <span style={{ fontSize: 11, color: 'var(--theme-elevation-500)' }}>
                     {p.reasoning ? '支持深度思考链' : '标准对话/工具调用'}
                   </span>
@@ -513,7 +714,9 @@ export function AiModelFetcher() {
 
       {/* 3. 从渠道接口在线拉取模型 / 连通性测试 / 手动输入添加 */}
       <div style={sectionCard}>
-        <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>3. 在线拉取渠道模型列表 / 测试连通性 / 手动添加</div>
+        <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>
+          3. 在线拉取渠道模型列表 / 测试连通性 / 手动添加
+        </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <select
             value={channel}
@@ -530,13 +733,19 @@ export function AiModelFetcher() {
             style={{ ...btn, minWidth: 240 }}
           >
             {AI_PROVIDER_CHANNEL_LIST.map((c) => (
-              <option key={c.id} value={c.id}>{c.label}</option>
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
             ))}
             {customs.map((c) => (
-              <option key={c.key} value={`custom:${c.key}`}>自定义 · {c.label || c.key}</option>
+              <option key={c.key} value={`custom:${c.key}`}>
+                自定义 · {c.label || c.key}
+              </option>
             ))}
           </select>
-          <button type="button" style={btn} disabled={busy} onClick={load}>{busy ? '处理中…' : '从接口拉取 /models 列表'}</button>
+          <button type="button" style={btn} disabled={busy} onClick={load}>
+            {busy ? '处理中…' : '从接口拉取 /models 列表'}
+          </button>
           <input
             placeholder="测试用模型名（如 deepseek-chat）"
             value={testModel}
@@ -550,22 +759,72 @@ export function AiModelFetcher() {
         {models.length ? (
           <>
             <div style={{ display: 'flex', gap: 8, marginTop: 12, alignItems: 'center' }}>
-              <input placeholder="搜索拉取到的模型" value={filter} onChange={(e) => setFilter(e.target.value)} style={{ ...btn, flex: 1, cursor: 'text' }} />
-              <button type="button" style={btn} onClick={() => setPicked(new Set([...picked, ...shown]))}>全选</button>
-              <button type="button" style={btn} onClick={() => setPicked(new Set())}>清空</button>
+              <input
+                placeholder="搜索拉取到的模型"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                style={{ ...btn, flex: 1, cursor: 'text' }}
+              />
+              <button
+                type="button"
+                style={btn}
+                onClick={() => setPicked(new Set([...picked, ...shown]))}
+              >
+                全选
+              </button>
+              <button type="button" style={btn} onClick={() => setPicked(new Set())}>
+                清空
+              </button>
             </div>
-            <div style={{ marginTop: 8, maxHeight: 240, overflow: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 4, border: '1px solid var(--theme-elevation-100)', borderRadius: 4, padding: 8, background: 'var(--theme-elevation-50)' }}>
+            <div
+              style={{
+                marginTop: 8,
+                maxHeight: 240,
+                overflow: 'auto',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gap: 4,
+                border: '1px solid var(--theme-elevation-100)',
+                borderRadius: 4,
+                padding: 8,
+                background: 'var(--theme-elevation-50)',
+              }}
+            >
               {shown.map((m) => (
-                <label key={m} style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 13, cursor: 'pointer', padding: '2px 4px' }}>
+                <label
+                  key={m}
+                  style={{
+                    display: 'flex',
+                    gap: 6,
+                    alignItems: 'center',
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    padding: '2px 4px',
+                  }}
+                >
                   <input type="checkbox" checked={picked.has(m)} onChange={() => toggle(m)} />
-                  <span style={{ fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m}</span>
+                  <span
+                    style={{
+                      fontFamily: 'monospace',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {m}
+                  </span>
                 </label>
               ))}
             </div>
           </>
         ) : null}
         <div style={{ display: 'flex', gap: 8, marginTop: 12, alignItems: 'center' }}>
-          <input placeholder="或手动填写模型名（如 qwen-vl-max, glm-4v-plus，多个用逗号分隔）" value={manual} onChange={(e) => setManual(e.target.value)} style={{ ...btn, flex: 1, cursor: 'text' }} />
+          <input
+            placeholder="或手动填写模型名（如 qwen-vl-max, glm-4v-plus，多个用逗号分隔）"
+            value={manual}
+            onChange={(e) => setManual(e.target.value)}
+            style={{ ...btn, flex: 1, cursor: 'text' }}
+          />
           <button type="button" style={primaryBtn} disabled={busy} onClick={add}>
             启用所选{picked.size ? `（${picked.size}）` : ''}
           </button>
@@ -617,7 +876,8 @@ export function AdminAiQuickBanner() {
           国产 AI 大模型与会员权益配置中心（Go / Plus / Pro）
         </div>
         <div style={{ fontSize: 12, color: 'var(--theme-elevation-500)' }}>
-          在这里随时增删国产大模型（DeepSeek / 通义千问 / 豆包 / 智谱 / Kimi）、修改模型会员等级与计费倍率，或管理会员限制模式与兑换码。
+          在这里随时增删国产大模型（DeepSeek / 通义千问 / 豆包 / 智谱 /
+          Kimi）、修改模型会员等级与计费倍率，或管理会员限制模式与兑换码。
         </div>
         {syncMsg ? (
           <div style={{ marginTop: 6, fontSize: 12, color: syncMsg.ok ? '#16a34a' : '#dc2626' }}>

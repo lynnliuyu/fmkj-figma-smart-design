@@ -21,7 +21,8 @@ import { PLUGIN_DOC_STYLES } from '@/plugins/doc-styles/styles'
 
 export const metadata: Metadata = {
   title: `${APP_NAME} · 全屋智能方案设计与报价工作台`,
-  description: '在户型图上布好设备点位，系统按设备类型统计数量、匹配产品库型号，一键生成报价单、合同、方案演示与施工交底。为全屋智能设计师与集成商打造的方案工作台。',
+  description:
+    '在户型图上布好设备点位，系统按设备类型统计数量、匹配产品库型号，一键生成报价单、合同、方案演示与施工交底。为全屋智能设计师与集成商打造的方案工作台。',
   alternates: { canonical: '/' },
 }
 
@@ -34,11 +35,18 @@ const DOC_STYLES = [MINIMAL_STYLE, ...PLUGIN_DOC_STYLES]
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const [data, company] = await Promise.all([getLandingShowcase().catch(() => null), getCompanyInfo().catch(() => null)])
+  const [data, company] = await Promise.all([
+    getLandingShowcase().catch(() => null),
+    getCompanyInfo().catch(() => null),
+  ])
   const hasDemo = Boolean(data?.sheets.length)
   const wechatQrUrl = company?.qrCode?.url ?? '/brand/wechat-contact-qr.jpg'
   const wechatQrCaption = company?.qrCaption ?? '扫码添加微信'
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.FIGMA_PUBLIC_URL || 'https://fmkj.top').replace(/\/+$/, '')
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.FIGMA_PUBLIC_URL ||
+    'https://fmkj.top'
+  ).replace(/\/+$/, '')
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -90,7 +98,10 @@ export default async function HomePage() {
   }
   return (
     <div data-landing className="min-h-svh overflow-x-clip bg-background text-foreground">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <LandingNav />
       <main>
         <section aria-labelledby="hero-title" className="px-4 pt-20 sm:px-6 sm:pt-28 lg:px-8">
@@ -104,14 +115,23 @@ export default async function HomePage() {
               几分钟出一份能直接交给客户的报价单。
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+              <Button
+                asChild
+                size="lg"
+                className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+              >
                 <Link href="/projects">
                   进入工作台
                   <ArrowRight data-icon="inline-end" />
                 </Link>
               </Button>
               {data?.quote ? (
-                <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6 text-base">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="h-11 rounded-full px-6 text-base"
+                >
                   <Link href="#proposal">看方案与报价样张</Link>
                 </Button>
               ) : null}
@@ -132,15 +152,26 @@ export default async function HomePage() {
 
         {data?.quote && company ? (
           <Section id="quote" labelledBy="quote-title" className="pt-28 sm:pt-36">
-            <QuoteShowcase data={data} quote={data.quote} styles={DOC_STYLES} layouts={DOC_KINDS.quote.layouts} company={company} />
+            <QuoteShowcase
+              data={data}
+              quote={data.quote}
+              styles={DOC_STYLES}
+              layouts={DOC_KINDS.quote.layouts}
+              company={company}
+            />
           </Section>
         ) : null}
 
         <DeliverySection total={data?.quote?.total ?? null} styles={DOC_STYLES} />
-        {data ? <LibrarySection products={data.library.products} brands={data.library.brands} /> : null}
+        {data ? (
+          <LibrarySection products={data.library.products} brands={data.library.brands} />
+        ) : null}
         <AppsSection />
 
-        <section aria-labelledby="closing-title" className="border-t border-border/70 px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+        <section
+          aria-labelledby="closing-title"
+          className="border-t border-border/70 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
+        >
           <div className="mx-auto grid max-w-5xl items-center gap-10 rounded-3xl border bg-card p-6 shadow-xs sm:p-10 lg:grid-cols-[1fr_auto]">
             <div className="space-y-5 text-left">
               <div className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
@@ -151,17 +182,28 @@ export default async function HomePage() {
                 下一个项目，从一张户型图开始
               </h2>
               <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
-                免费注册即送 <strong className="font-semibold text-foreground">20 AI 积分</strong> 并自带完整三层别墅示例项目。添加微信可领取
-                <strong className="font-semibold text-foreground"> 7 天专业版体验兑换码</strong>（解锁全套高定提案模板、施工水电布线表与一键交付包），或咨询团队私有化部署。
+                免费注册即送 <strong className="font-semibold text-foreground">20 AI 积分</strong>{' '}
+                并自带完整三层别墅示例项目。添加微信可领取
+                <strong className="font-semibold text-foreground"> 7 天专业版体验兑换码</strong>
+                （解锁全套高定提案模板、施工水电布线表与一键交付包），或咨询团队私有化部署。
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+                >
                   <Link href="/projects">
                     进入工作台
                     <ArrowRight data-icon="inline-end" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6 text-base">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="h-11 rounded-full px-6 text-base"
+                >
                   <Link href="/login?mode=register">
                     <Gift className="size-4" />
                     免费注册领 20 积分

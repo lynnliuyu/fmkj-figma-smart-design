@@ -6,12 +6,29 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 import { deleteProject } from '../actions'
 
 /** 项目信息页底部的「删除项目」：二次确认后删除项目及其报价单、未签合同。 */
-export function DeleteProject({ projectId, projectName, quoteCount }: { projectId: string; projectName: string; quoteCount: number }) {
+export function DeleteProject({
+  projectId,
+  projectName,
+  quoteCount,
+}: {
+  projectId: string
+  projectName: string
+  quoteCount: number
+}) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
@@ -29,14 +46,25 @@ export function DeleteProject({ projectId, projectName, quoteCount }: { projectI
     })
 
   return (
-    <section aria-labelledby="danger-title" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/25 px-5 py-4">
+    <section
+      aria-labelledby="danger-title"
+      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/25 px-5 py-4"
+    >
       <div className="min-w-0">
-        <p id="danger-title" className="text-sm font-medium">删除项目</p>
-        <p className="text-xs text-muted-foreground">删除后点位图、报价单和未签合同都会一并删除，无法恢复。不再跟进的项目也可以选择归档。</p>
+        <p id="danger-title" className="text-sm font-medium">
+          删除项目
+        </p>
+        <p className="text-xs text-muted-foreground">
+          删除后点位图、报价单和未签合同都会一并删除，无法恢复。不再跟进的项目也可以选择归档。
+        </p>
       </div>
       <Dialog open={open} onOpenChange={(v) => (setOpen(v), setError(''))}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="text-destructive-strong hover:text-destructive-strong">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-destructive-strong hover:text-destructive-strong"
+          >
             <Trash2 className="size-4" />
             删除项目
           </Button>
@@ -45,16 +73,30 @@ export function DeleteProject({ projectId, projectName, quoteCount }: { projectI
           <DialogHeader>
             <DialogTitle>删除「{projectName}」？</DialogTitle>
             <DialogDescription>
-              将同时删除这个项目的点位图{quoteCount ? `、${quoteCount} 份报价单` : ''}和未签合同。删除后无法恢复。
+              将同时删除这个项目的点位图{quoteCount ? `、${quoteCount} 份报价单` : ''}
+              和未签合同。删除后无法恢复。
             </DialogDescription>
           </DialogHeader>
-          {error ? <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong">{error}</p> : null}
+          {error ? (
+            <p
+              role="alert"
+              className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong"
+            >
+              {error}
+            </p>
+          ) : null}
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" disabled={pending}>取消</Button>
+              <Button variant="outline" disabled={pending}>
+                取消
+              </Button>
             </DialogClose>
             <Button variant="destructive" onClick={confirm} disabled={pending}>
-              {pending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+              {pending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
               确认删除
             </Button>
           </DialogFooter>

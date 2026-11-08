@@ -7,7 +7,15 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 /** 手写签名板：鼠标、触控笔与手指都可以签；每次落笔结束后把签名导出为 PNG data URL（空白时为 null） */
-export function SignaturePad({ onChange, invalid, className }: { onChange: (dataUrl: string | null) => void; invalid?: boolean; className?: string }) {
+export function SignaturePad({
+  onChange,
+  invalid,
+  className,
+}: {
+  onChange: (dataUrl: string | null) => void
+  invalid?: boolean
+  className?: string
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const drawing = useRef(false)
   const last = useRef<{ x: number; y: number } | null>(null)
@@ -85,14 +93,28 @@ export function SignaturePad({ onChange, invalid, className }: { onChange: (data
       <canvas
         ref={canvasRef}
         aria-label="手写签名区域"
-        className={cn('h-32 w-full touch-none rounded-xl border bg-white', invalid ? 'border-destructive' : 'border-input')}
+        className={cn(
+          'h-32 w-full touch-none rounded-xl border bg-white',
+          invalid ? 'border-destructive' : 'border-input',
+        )}
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
         onPointerCancel={up}
       />
-      {empty ? <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground/70">请在此处手写签名</span> : null}
-      <Button type="button" variant="ghost" size="xs" className="absolute top-1.5 right-1.5" onClick={clear} disabled={empty}>
+      {empty ? (
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground/70">
+          请在此处手写签名
+        </span>
+      ) : null}
+      <Button
+        type="button"
+        variant="ghost"
+        size="xs"
+        className="absolute top-1.5 right-1.5"
+        onClick={clear}
+        disabled={empty}
+      >
         <Eraser />
         重签
       </Button>

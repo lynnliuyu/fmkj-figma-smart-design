@@ -15,5 +15,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await appAuth.getCurrentUser()
   if (!user) return fail(401, '登录已过期')
-  return (await deleteConversation(user, (await params).id)) ? Response.json({ ok: true }) : fail(404, '会话不存在')
+  return (await deleteConversation(user, (await params).id))
+    ? Response.json({ ok: true })
+    : fail(404, '会话不存在')
 }

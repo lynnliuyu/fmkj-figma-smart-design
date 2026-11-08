@@ -34,6 +34,7 @@ export const LANDING_BRANDS: LandingBrand[] = [
   { slug: 'jinshan', name: '今闪', width: 225, height: 96 },
 ]
 
-export const brandSrc = (slug: string, variant: 'color' | 'mono') => `/brands/${slug}${variant === 'mono' ? '-mono' : ''}.webp`
+export const brandSrc = (slug: string, variant: 'color' | 'mono') =>
+  `/brands/${slug}${variant === 'mono' ? '-mono' : ''}.webp`
 
 export const brandBySlug = (slug: string) => LANDING_BRANDS.find((b) => b.slug === slug)

@@ -10,7 +10,13 @@ import { Button } from '@/components/ui/button'
 import { setDeliverables } from '../archive/actions'
 
 /** 把这份报价设为定稿：交付资料包、方案默认都用它 */
-export function SetFinalQuoteButton({ projectId, quoteId }: { projectId: string; quoteId: string }) {
+export function SetFinalQuoteButton({
+  projectId,
+  quoteId,
+}: {
+  projectId: string
+  quoteId: string
+}) {
   const router = useRouter()
   const [pending, start] = useTransition()
   return (
@@ -28,7 +34,11 @@ export function SetFinalQuoteButton({ projectId, quoteId }: { projectId: string;
         })
       }
     >
-      {pending ? <Loader2 className="size-3.5 animate-spin" /> : <BadgeCheck className="size-3.5" />}
+      {pending ? (
+        <Loader2 className="size-3.5 animate-spin" />
+      ) : (
+        <BadgeCheck className="size-3.5" />
+      )}
       设为定稿
     </Button>
   )

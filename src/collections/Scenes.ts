@@ -19,7 +19,8 @@ export const Scenes: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'scope', 'chapter', 'enabled', 'sortOrder'],
     group: '方案',
-    description: '方案中的智能场景。生成方案时按房间类型和设备自动匹配，条件不满足的场景不会出现；文案只写匹配条件里的设备能做到的事。全部停用时方案改用内置场景库。',
+    description:
+      '方案中的智能场景。生成方案时按房间类型和设备自动匹配，条件不满足的场景不会出现；文案只写匹配条件里的设备能做到的事。全部停用时方案改用内置场景库。',
     components: { beforeListTable: ['@/components/admin/library-banner#ScenesLibraryBanner'] },
   },
   defaultSort: 'sortOrder',
@@ -37,9 +38,12 @@ export const Scenes: CollectionConfig = {
       handler: async (req) => {
         if (!isCmsAdmin(req)) return Response.json({ error: '无权限' }, { status: 403 })
         const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host')
-        const proto = req.headers.get('x-forwarded-proto') ?? (host?.startsWith('localhost') ? 'http' : 'https')
+        const proto =
+          req.headers.get('x-forwarded-proto') ?? (host?.startsWith('localhost') ? 'http' : 'https')
         const { seedBuiltinScenes } = await import('@/lib/proposal-library')
-        const result = await seedBuiltinScenes(req.payload, { origin: host ? `${proto}://${host}` : undefined })
+        const result = await seedBuiltinScenes(req.payload, {
+          origin: host ? `${proto}://${host}` : undefined,
+        })
         revalidateTemplatePages('all')
         return Response.json(result)
       },
@@ -64,7 +68,13 @@ export const Scenes: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'name', label: '场景名称', type: 'text', required: true, admin: { description: '如：回家模式、起夜模式' } },
+        {
+          name: 'name',
+          label: '场景名称',
+          type: 'text',
+          required: true,
+          admin: { description: '如：回家模式、起夜模式' },
+        },
         { name: 'slug', label: '标识', type: 'text', required: true, unique: true, index: true },
       ],
     },
@@ -81,10 +91,26 @@ export const Scenes: CollectionConfig = {
         {
           label: '文案',
           fields: [
-            { name: 'summary', label: '一句话说明', type: 'text', required: true, admin: { description: '方案里显示为「场景名称：一句话说明」' } },
-            { name: 'headline', label: '标题', type: 'text', admin: { description: '场景页大标题，如：进门的那一刻，生活开始切换。' } },
+            {
+              name: 'summary',
+              label: '一句话说明',
+              type: 'text',
+              required: true,
+              admin: { description: '方案里显示为「场景名称：一句话说明」' },
+            },
+            {
+              name: 'headline',
+              label: '标题',
+              type: 'text',
+              admin: { description: '场景页大标题，如：进门的那一刻，生活开始切换。' },
+            },
             { name: 'subtitle', label: '副标题', type: 'text' },
-            { name: 'tagline', label: '英文标签', type: 'text', admin: { description: '如：ARRIVE & LEAVE' } },
+            {
+              name: 'tagline',
+              label: '英文标签',
+              type: 'text',
+              admin: { description: '如：ARRIVE & LEAVE' },
+            },
             {
               name: 'steps',
               label: '联动步骤',
@@ -92,7 +118,13 @@ export const Scenes: CollectionConfig = {
               labels: { singular: '步骤', plural: '步骤' },
               fields: [{ name: 'text', label: '步骤', type: 'text', required: true }],
             },
-            { name: 'image', label: '场景图片', type: 'upload', relationTo: 'media', admin: { description: '请使用自有或已获授权的图片' } },
+            {
+              name: 'image',
+              label: '场景图片',
+              type: 'upload',
+              relationTo: 'media',
+              admin: { description: '请使用自有或已获授权的图片' },
+            },
           ],
         },
         {
@@ -107,7 +139,10 @@ export const Scenes: CollectionConfig = {
                 { label: '按房间', value: 'room' },
                 { label: '全屋', value: 'house' },
               ],
-              admin: { description: '按房间：在符合条件的每个房间里判断；全屋：按整套房子的设备判断，只出现一次' },
+              admin: {
+                description:
+                  '按房间：在符合条件的每个房间里判断；全屋：按整套房子的设备判断，只出现一次',
+              },
             },
             {
               name: 'chapter',
@@ -130,8 +165,22 @@ export const Scenes: CollectionConfig = {
               options: AREA_TYPES.map((t) => ({ label: t.label, value: t.value })),
               admin: { description: '留空表示任何房间都适用' },
             },
-            { name: 'requiredDevices', label: '必须具备的设备', type: 'select', hasMany: true, options: deviceOptions, admin: { description: '全部都有才显示' } },
-            { name: 'anyDevices', label: '至少有一种的设备', type: 'select', hasMany: true, options: deviceOptions, admin: { description: '其中任意一种即可；留空不限' } },
+            {
+              name: 'requiredDevices',
+              label: '必须具备的设备',
+              type: 'select',
+              hasMany: true,
+              options: deviceOptions,
+              admin: { description: '全部都有才显示' },
+            },
+            {
+              name: 'anyDevices',
+              label: '至少有一种的设备',
+              type: 'select',
+              hasMany: true,
+              options: deviceOptions,
+              admin: { description: '其中任意一种即可；留空不限' },
+            },
           ],
         },
       ],

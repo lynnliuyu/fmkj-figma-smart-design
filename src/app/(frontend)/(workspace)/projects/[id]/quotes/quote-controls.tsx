@@ -7,7 +7,13 @@ import { FilePlus2, Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { POINT_SCOPES } from '@/lib/point-scopes'
 
 import { createQuoteFromProject, deleteQuote } from './actions'
@@ -23,7 +29,13 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
 }
 
 /** 从点位图生成报价：可选统计范围（全部 / 不含灯具 / 仅开关 …）；没有点位时生成空白报价。 */
-export function GenerateQuoteForm({ projectId, hasPoints }: { projectId: string; hasPoints: boolean }) {
+export function GenerateQuoteForm({
+  projectId,
+  hasPoints,
+}: {
+  projectId: string
+  hasPoints: boolean
+}) {
   return (
     <form action={createQuoteFromProject} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="projectId" value={projectId} />
@@ -35,7 +47,9 @@ export function GenerateQuoteForm({ projectId, hasPoints }: { projectId: string;
             </SelectTrigger>
             <SelectContent>
               {POINT_SCOPES.map((s) => (
-                <SelectItem key={s.value} value={s.value}>{s.fullLabel}</SelectItem>
+                <SelectItem key={s.value} value={s.value}>
+                  {s.fullLabel}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

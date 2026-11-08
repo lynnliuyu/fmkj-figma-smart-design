@@ -13,10 +13,18 @@ export const READONLY_COLLAB_MESSAGE = '你对该项目仅有查看权限，无�
 export async function assertProjectEditable(req: PayloadRequest, projectId: string | null) {
   if (!isMember(req) || !projectId) return
   const project = await req.payload
-    .findByID({ collection: 'projects', id: projectId, depth: 0, req, overrideAccess: true, select: { status: true, owner: true, collaborators: true } })
+    .findByID({
+      collection: 'projects',
+      id: projectId,
+      depth: 0,
+      req,
+      overrideAccess: true,
+      select: { status: true, owner: true, collaborators: true },
+    })
     .catch(() => null)
   if (!project) throw new APIError('项目不存在或已被删除', 404)
-  if (req.user && !canEditProject(project as never, req.user.id)) throw new APIError(READONLY_COLLAB_MESSAGE, 403)
+  if (req.user && !canEditProject(project as never, req.user.id))
+    throw new APIError(READONLY_COLLAB_MESSAGE, 403)
   if (project.status === 'archived') throw new APIError(ARCHIVED_MESSAGE, 403)
 }
 

@@ -14,8 +14,12 @@ const TARGETS: Record<string, { platform: 'windows' | 'mac'; arch: DesktopArch }
 export async function GET(_request: Request, { params }: { params: Promise<{ target: string }> }) {
   const { target } = await params
   const spec = TARGETS[target]
-  if (!spec) return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } })
+  if (!spec)
+    return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } })
   const releases = await getDesktopReleases()
   const asset = pickDesktopAsset(releases[spec.platform], spec.arch, true)
-  return new Response(null, { status: 302, headers: { Location: asset ? asset.url : '/download', 'Cache-Control': 'no-store' } })
+  return new Response(null, {
+    status: 302,
+    headers: { Location: asset ? asset.url : '/download', 'Cache-Control': 'no-store' },
+  })
 }

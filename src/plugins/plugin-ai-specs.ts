@@ -20,13 +20,17 @@ export const EXTRA_PLUGIN_AI_SPECS: Partial<Record<PluginId, PluginAiSpec>> = {
   },
   'dwg-import': {
     permissions: ['point-map:write'],
-    guidance: ['用户询问 CAD .dwg 文件如何导入时，引导其在点位图工作台顶部点击「导入 DWG」自动转换为 3:2 标准户型底图。'],
+    guidance: [
+      '用户询问 CAD .dwg 文件如何导入时，引导其在点位图工作台顶部点击「导入 DWG」自动转换为 3:2 标准户型底图。',
+    ],
     knowledge: [
       {
         id: 'dwg-conversion-spec',
         title: 'CAD DWG 自动转换规范',
         summary: '将 .dwg 矢量工程图转换为去图框的 3:2 标准 PNG 底图',
-        rules: ['支持直接上传 .dwg 文件，服务端转换后进入标准图框裁切器，与手传 PNG 户型图拥有完全一致的标定与布点体验。'],
+        rules: [
+          '支持直接上传 .dwg 文件，服务端转换后进入标准图框裁切器，与手传 PNG 户型图拥有完全一致的标定与布点体验。',
+        ],
       },
     ],
     tools: [],

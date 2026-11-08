@@ -1,5 +1,9 @@
 import { DEVICE_TYPE_ORDER, isDeviceType } from '@/lib/device-types'
-import { autoSelectProducts, type SelectableProduct, type SelectionTier } from '@/plugins/smart-select/auto-select'
+import {
+  autoSelectProducts,
+  type SelectableProduct,
+  type SelectionTier,
+} from '@/plugins/smart-select/auto-select'
 
 /**
  * 点位 → 产品的统一解析规则（点位图统计、生成报价共用）：
@@ -11,14 +15,29 @@ import { autoSelectProducts, type SelectableProduct, type SelectionTier } from '
  */
 
 /** 点位 customData；symbolId / sizeCm / real 是画板新增的可选字段（灯光款式、真实尺寸、按比例落图），报价不使用 */
-export type PointCustomData = { deviceType?: unknown; productId?: unknown; pointCode?: unknown; categorySlug?: unknown; symbolId?: unknown; sizeCm?: unknown; real?: unknown }
-export type ResolvableProduct = { id: string; deviceType: string | null; status?: string; price?: number; image?: unknown }
+export type PointCustomData = {
+  deviceType?: unknown
+  productId?: unknown
+  pointCode?: unknown
+  categorySlug?: unknown
+  symbolId?: unknown
+  sizeCm?: unknown
+  real?: unknown
+}
+export type ResolvableProduct = {
+  id: string
+  deviceType: string | null
+  status?: string
+  price?: number
+  image?: unknown
+}
 export type ProjectDefaults = Record<string, string>
 
 export function parseDefaults(value: unknown): ProjectDefaults {
   const out: ProjectDefaults = {}
   if (!value || typeof value !== 'object' || Array.isArray(value)) return out
-  for (const [k, v] of Object.entries(value)) if (isDeviceType(k) && typeof v === 'string' && v) out[k] = v
+  for (const [k, v] of Object.entries(value))
+    if (isDeviceType(k) && typeof v === 'string' && v) out[k] = v
   return out
 }
 
@@ -55,14 +74,24 @@ export function pointDeviceType(cd: PointCustomData, byId: Map<string, Resolvabl
   return p?.deviceType && isDeviceType(p.deviceType) ? p.deviceType : 'other'
 }
 
-export type ResolvedPoint = { deviceType: string; productId: string | null; source: 'point' | 'default' | 'pending' }
+export type ResolvedPoint = {
+  deviceType: string
+  productId: string | null
+  source: 'point' | 'default' | 'pending'
+}
 
-export function resolvePoint(cd: PointCustomData, byId: Map<string, ResolvableProduct>, defaults: ProjectDefaults): ResolvedPoint {
+export function resolvePoint(
+  cd: PointCustomData,
+  byId: Map<string, ResolvableProduct>,
+  defaults: ProjectDefaults,
+): ResolvedPoint {
   const deviceType = pointDeviceType(cd, byId)
   const own = typeof cd.productId === 'string' ? byId.get(cd.productId) : undefined
-  if (own && (own.status ?? 'active') === 'active' && own.deviceType === deviceType) return { deviceType, productId: own.id, source: 'point' }
+  if (own && (own.status ?? 'active') === 'active' && own.deviceType === deviceType)
+    return { deviceType, productId: own.id, source: 'point' }
   const def = defaults[deviceType] ? byId.get(defaults[deviceType]) : undefined
-  if (def && (def.status ?? 'active') === 'active' && def.deviceType === deviceType) return { deviceType, productId: def.id, source: 'default' }
+  if (def && (def.status ?? 'active') === 'active' && def.deviceType === deviceType)
+    return { deviceType, productId: def.id, source: 'default' }
   // 未配置项目默认型号时，自动兜底同设备类型的在售产品（优先有价格、有图片）
   let fallback: ResolvableProduct | undefined
   for (const p of byId.values()) {
@@ -86,7 +115,11 @@ export function resolvePoint(cd: PointCustomData, byId: Map<string, ResolvablePr
 }
 
 /** 汇总：每个产品的数量（及其中来自默认型号的数量），以及各设备类型的待选型数量 */
-export function summarizePoints(points: PointCustomData[], byId: Map<string, ResolvableProduct>, defaults: ProjectDefaults) {
+export function summarizePoints(
+  points: PointCustomData[],
+  byId: Map<string, ResolvableProduct>,
+  defaults: ProjectDefaults,
+) {
   const products = new Map<string, { count: number; fromDefault: number; deviceType: string }>()
   const pending = new Map<string, number>()
   const byType = new Map<string, number>()
@@ -102,5 +135,10 @@ export function summarizePoints(points: PointCustomData[], byId: Map<string, Res
     if (r.source === 'default') row.fromDefault++
     products.set(r.productId, row)
   }
-  return { products, pending, byType, pendingTotal: [...pending.values()].reduce((s, n) => s + n, 0) }
+  return {
+    products,
+    pending,
+    byType,
+    pendingTotal: [...pending.values()].reduce((s, n) => s + n, 0),
+  }
 }

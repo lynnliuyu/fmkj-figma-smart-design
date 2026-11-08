@@ -5,7 +5,13 @@ import { Check, ChevronLeft, Columns3, ExternalLink, Eye, Loader2, X } from 'luc
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 import type { ProposalKind } from './framework'
@@ -21,7 +27,13 @@ const pad = (n: number) => String(n).padStart(2, '0')
 /** 主题色板：纸色、主色、强调色、浅色面板 */
 export function Swatches({ colors, className }: { colors: string[]; className?: string }) {
   return (
-    <span aria-hidden className={cn('flex shrink-0 overflow-hidden rounded-sm ring-1 ring-foreground/10', className)}>
+    <span
+      aria-hidden
+      className={cn(
+        'flex shrink-0 overflow-hidden rounded-sm ring-1 ring-foreground/10',
+        className,
+      )}
+    >
       {colors.map((c, i) => (
         <span key={i} className="size-3" style={{ backgroundColor: c }} />
       ))}
@@ -30,7 +42,15 @@ export function Swatches({ colors, className }: { colors: string[]; className?: 
 }
 
 /** 把 1440px 宽的打印页按容器宽度缩放显示（只读预览） */
-function FramePreview({ src, nativeWidth, title }: { src: string; nativeWidth: number; title: string }) {
+function FramePreview({
+  src,
+  nativeWidth,
+  title,
+}: {
+  src: string
+  nativeWidth: number
+  title: string
+}) {
   const box = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [loaded, setLoaded] = useState(false)
@@ -46,14 +66,22 @@ function FramePreview({ src, nativeWidth, title }: { src: string; nativeWidth: n
   useEffect(() => setLoaded(false), [src])
   const scale = size.w ? size.w / nativeWidth : 0
   return (
-    <div ref={box} className="relative min-h-0 flex-1 overflow-hidden bg-neutral-200/70 dark:bg-neutral-900">
+    <div
+      ref={box}
+      className="relative min-h-0 flex-1 overflow-hidden bg-neutral-200/70 dark:bg-neutral-900"
+    >
       {scale ? (
         <iframe
           title={title}
           src={src}
           onLoad={() => setLoaded(true)}
           className="absolute top-0 left-0 border-0 bg-transparent"
-          style={{ width: nativeWidth, height: size.h / scale, transform: `scale(${scale})`, transformOrigin: 'top left' }}
+          style={{
+            width: nativeWidth,
+            height: size.h / scale,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
         />
       ) : null}
       {loaded ? null : (
@@ -69,7 +97,13 @@ function FramePreview({ src, nativeWidth, title }: { src: string; nativeWidth: n
 type Row = { label: string; render: (t: PickerTemplate) => React.ReactNode }
 const COMPARE_ROWS: Row[] = [
   { label: '版式框架', render: (t) => t.frameworkLabel },
-  { label: '章节', render: (t) => (t.sections.length ? t.sections.map((s) => s.label).join(' → ') : '房间配置、设备清单与逐点核对表') },
+  {
+    label: '章节',
+    render: (t) =>
+      t.sections.length
+        ? t.sections.map((s) => s.label).join(' → ')
+        : '房间配置、设备清单与逐点核对表',
+  },
   { label: '页数', render: (t) => (t.pages ? `约 ${t.pages} 页` : '随项目变化') },
   { label: '封面', render: (t) => t.coverStyle },
   { label: '画面', render: (t) => t.mood },
@@ -109,7 +143,9 @@ export function TemplatePicker({
 }) {
   const [open, setOpen] = useState(false)
   const current = templates.find((t) => t.value === value)
-  const tabs = KIND_TABS.filter((k) => kinds.includes(k.value) && templates.some((t) => t.kind === k.value))
+  const tabs = KIND_TABS.filter(
+    (k) => kinds.includes(k.value) && templates.some((t) => t.kind === k.value),
+  )
   const [kind, setKind] = useState<ProposalKind>(current?.kind ?? tabs[0]?.value ?? 'owner')
   const [framework, setFramework] = useState<string>('all')
   const [active, setActive] = useState<string | null>(value)
@@ -119,9 +155,13 @@ export function TemplatePicker({
   const [busy, setBusy] = useState(false)
 
   const inKind = useMemo(() => templates.filter((t) => t.kind === kind), [templates, kind])
-  const frameworks = useMemo(() => [...new Map(inKind.map((t) => [t.framework, t.frameworkLabel])).entries()], [inKind])
+  const frameworks = useMemo(
+    () => [...new Map(inKind.map((t) => [t.framework, t.frameworkLabel])).entries()],
+    [inKind],
+  )
   const shown = framework === 'all' ? inKind : inKind.filter((t) => t.framework === framework)
-  const activeT = templates.find((t) => t.value === active && t.kind === kind) ?? shown[0] ?? inKind[0]
+  const activeT =
+    templates.find((t) => t.value === active && t.kind === kind) ?? shown[0] ?? inKind[0]
 
   function reset(nextOpen: boolean) {
     setOpen(nextOpen)
@@ -148,20 +188,29 @@ export function TemplatePicker({
   }
 
   const toggleCompare = (v: string) =>
-    setCompareIds((ids) => (ids.includes(v) ? ids.filter((x) => x !== v) : ids.length >= MAX_COMPARE ? ids : [...ids, v]))
+    setCompareIds((ids) =>
+      ids.includes(v) ? ids.filter((x) => x !== v) : ids.length >= MAX_COMPARE ? ids : [...ids, v],
+    )
 
   const canChoose = (t: PickerTemplate) => Boolean(onSelect) && !disabled && t.value !== value
   const chooseLabel = (t: PickerTemplate) => (t.value === value ? '当前使用中' : selectLabel)
-  const compared = compareIds.map((id) => templates.find((t) => t.value === id)).filter((t): t is PickerTemplate => Boolean(t))
+  const compared = compareIds
+    .map((id) => templates.find((t) => t.value === id))
+    .filter((t): t is PickerTemplate => Boolean(t))
 
   return (
     <Dialog open={open} onOpenChange={reset}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent showCloseButton={false} className="flex h-[min(880px,94vh)] w-[min(1220px,96vw)] max-w-none flex-col gap-0 overflow-hidden p-0 sm:max-w-none">
+      <DialogContent
+        showCloseButton={false}
+        className="flex h-[min(880px,94vh)] w-[min(1220px,96vw)] max-w-none flex-col gap-0 overflow-hidden p-0 sm:max-w-none"
+      >
         <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b px-5 py-3">
           <div className="min-w-0 flex-1">
             <DialogTitle className="text-base">选择方案模板</DialogTitle>
-            <DialogDescription className="mt-0.5 text-xs">同一份点位与报价，换个模板就是另一种提案。缩略图是真实封面，页数{pageNote}。</DialogDescription>
+            <DialogDescription className="mt-0.5 text-xs">
+              同一份点位与报价，换个模板就是另一种提案。缩略图是真实封面，页数{pageNote}。
+            </DialogDescription>
           </div>
           {tabs.length > 1 ? (
             <div className="flex rounded-lg bg-muted p-0.5" role="tablist" aria-label="方案用途">
@@ -178,10 +227,17 @@ export function TemplatePicker({
                     setView('grid')
                     setCompareIds([])
                   }}
-                  className={cn('rounded-md px-3 py-1.5 text-xs font-medium transition-colors', kind === k.value ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground')}
+                  className={cn(
+                    'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                    kind === k.value
+                      ? 'bg-background shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
                 >
                   {k.label}
-                  <span className="ml-1 text-muted-foreground tabular-nums">{templates.filter((t) => t.kind === k.value).length}</span>
+                  <span className="ml-1 text-muted-foreground tabular-nums">
+                    {templates.filter((t) => t.kind === k.value).length}
+                  </span>
                 </button>
               ))}
             </div>
@@ -201,7 +257,13 @@ export function TemplatePicker({
               {compareMode ? '退出对比' : '对比模板'}
             </Button>
           ) : null}
-          <Button type="button" variant="ghost" size="icon-sm" onClick={() => setOpen(false)} aria-label="关闭">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setOpen(false)}
+            aria-label="关闭"
+          >
             <X className="size-4" />
           </Button>
         </header>
@@ -214,7 +276,10 @@ export function TemplatePicker({
                 返回模板列表
               </Button>
               <span className="text-sm font-medium">{activeT.label}</span>
-              <span className="hidden text-xs text-muted-foreground md:inline">{activeT.pages ? `约 ${activeT.pages} 页 · ` : ''}{pageNote}</span>
+              <span className="hidden text-xs text-muted-foreground md:inline">
+                {activeT.pages ? `约 ${activeT.pages} 页 · ` : ''}
+                {pageNote}
+              </span>
               <div className="ml-auto flex gap-2">
                 <Button asChild variant="outline" size="sm">
                   <a href={previewHref[activeT.value]} target="_blank" rel="noreferrer">
@@ -223,14 +288,23 @@ export function TemplatePicker({
                   </a>
                 </Button>
                 {onSelect ? (
-                  <Button type="button" size="sm" disabled={!canChoose(activeT) || busy} onClick={() => void choose(activeT.value)}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={!canChoose(activeT) || busy}
+                    onClick={() => void choose(activeT.value)}
+                  >
                     {busy ? <Loader2 className="size-3.5 animate-spin" /> : null}
                     {chooseLabel(activeT)}
                   </Button>
                 ) : null}
               </div>
             </div>
-            <FramePreview src={previewHref[activeT.value]} nativeWidth={activeT.kind === 'construction' ? 1180 : 1500} title={`${activeT.label}完整样张`} />
+            <FramePreview
+              src={previewHref[activeT.value]}
+              nativeWidth={activeT.kind === 'construction' ? 1180 : 1500}
+              title={`${activeT.label}完整样张`}
+            />
           </div>
         ) : view === 'compare' && compared.length ? (
           <div className="min-h-0 flex-1 overflow-auto p-5">
@@ -239,7 +313,9 @@ export function TemplatePicker({
                 <ChevronLeft className="size-4" />
                 返回挑选
               </Button>
-              <span className="text-xs text-muted-foreground">并排对比 {compared.length} 套模板</span>
+              <span className="text-xs text-muted-foreground">
+                并排对比 {compared.length} 套模板
+              </span>
             </div>
             <table className="w-full min-w-[720px] table-fixed border-separate border-spacing-0 text-sm">
               <thead>
@@ -247,7 +323,9 @@ export function TemplatePicker({
                   <th className="w-28" />
                   {compared.map((t) => (
                     <th key={t.value} className="px-2 pb-3 text-left align-top font-normal">
-                      <div className="overflow-hidden rounded-lg border bg-muted/40">{thumbs[t.value]}</div>
+                      <div className="overflow-hidden rounded-lg border bg-muted/40">
+                        {thumbs[t.value]}
+                      </div>
                       <div className="mt-2 flex items-center justify-between gap-2">
                         <span className="truncate font-semibold">{t.label}</span>
                         <Swatches colors={t.swatches} />
@@ -259,11 +337,17 @@ export function TemplatePicker({
               <tbody>
                 {COMPARE_ROWS.map((r) => (
                   <tr key={r.label}>
-                    <th scope="row" className="border-t py-2.5 pr-3 text-left align-top text-xs font-medium text-muted-foreground">
+                    <th
+                      scope="row"
+                      className="border-t py-2.5 pr-3 text-left align-top text-xs font-medium text-muted-foreground"
+                    >
                       {r.label}
                     </th>
                     {compared.map((t) => (
-                      <td key={t.value} className="border-t px-2 py-2.5 align-top text-xs leading-relaxed">
+                      <td
+                        key={t.value}
+                        className="border-t px-2 py-2.5 align-top text-xs leading-relaxed"
+                      >
                         {r.render(t)}
                       </td>
                     ))}
@@ -273,12 +357,27 @@ export function TemplatePicker({
                   <td />
                   {compared.map((t) => (
                     <td key={t.value} className="space-y-1.5 px-2 pt-3">
-                      <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => { setActive(t.value); setView('preview') }}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          setActive(t.value)
+                          setView('preview')
+                        }}
+                      >
                         <Eye className="size-3.5" />
                         预览样张
                       </Button>
                       {onSelect ? (
-                        <Button type="button" size="sm" className="w-full" disabled={!canChoose(t) || busy} onClick={() => void choose(t.value)}>
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="w-full"
+                          disabled={!canChoose(t) || busy}
+                          onClick={() => void choose(t.value)}
+                        >
                           {chooseLabel(t)}
                         </Button>
                       ) : null}
@@ -292,7 +391,11 @@ export function TemplatePicker({
           <div className="flex min-h-0 flex-1">
             <div className="flex min-h-0 flex-1 flex-col">
               {frameworks.length > 1 ? (
-                <div className="flex flex-wrap items-center gap-1.5 px-5 pt-4" role="radiogroup" aria-label="版式框架">
+                <div
+                  className="flex flex-wrap items-center gap-1.5 px-5 pt-4"
+                  role="radiogroup"
+                  aria-label="版式框架"
+                >
                   {[['all', '全部'] as const, ...frameworks].map(([v, label]) => (
                     <button
                       key={v}
@@ -300,13 +403,26 @@ export function TemplatePicker({
                       role="radio"
                       aria-checked={framework === v}
                       onClick={() => setFramework(v)}
-                      className={cn('rounded-full border px-3 py-1 text-xs transition-colors', framework === v ? 'border-foreground bg-foreground text-background' : 'text-muted-foreground hover:border-foreground/30 hover:text-foreground')}
+                      className={cn(
+                        'rounded-full border px-3 py-1 text-xs transition-colors',
+                        framework === v
+                          ? 'border-foreground bg-foreground text-background'
+                          : 'text-muted-foreground hover:border-foreground/30 hover:text-foreground',
+                      )}
                     >
                       {label}
-                      <span className="ml-1 opacity-60 tabular-nums">{v === 'all' ? inKind.length : inKind.filter((t) => t.framework === v).length}</span>
+                      <span className="ml-1 opacity-60 tabular-nums">
+                        {v === 'all'
+                          ? inKind.length
+                          : inKind.filter((t) => t.framework === v).length}
+                      </span>
                     </button>
                   ))}
-                  {compareMode ? <span className="ml-1 text-xs text-muted-foreground">勾选 2–3 套模板后点「开始对比」</span> : null}
+                  {compareMode ? (
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      勾选 2–3 套模板后点「开始对比」
+                    </span>
+                  ) : null}
                 </div>
               ) : null}
               <div className="min-h-0 flex-1 overflow-y-auto p-5">
@@ -323,14 +439,24 @@ export function TemplatePicker({
                         aria-pressed={compareMode ? checked : isActive}
                         className={cn(
                           'group flex flex-col overflow-hidden rounded-xl border bg-card text-left transition-[border-color,box-shadow] outline-none hover:border-foreground/25 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-ring',
-                          (isActive || checked) && 'border-primary ring-1 ring-primary/40 hover:border-primary',
+                          (isActive || checked) &&
+                            'border-primary ring-1 ring-primary/40 hover:border-primary',
                         )}
                       >
                         <div className="relative border-b bg-muted/40">
                           {thumbs[t.value]}
-                          {t.value === value ? <Badge className="absolute top-2 left-2 shadow-sm">当前使用</Badge> : null}
+                          {t.value === value ? (
+                            <Badge className="absolute top-2 left-2 shadow-sm">当前使用</Badge>
+                          ) : null}
                           {compareMode ? (
-                            <span className={cn('absolute top-2 right-2 flex size-5 items-center justify-center rounded-md border-2 bg-background shadow-sm', checked ? 'border-primary bg-primary text-primary-foreground' : 'border-foreground/30')}>
+                            <span
+                              className={cn(
+                                'absolute top-2 right-2 flex size-5 items-center justify-center rounded-md border-2 bg-background shadow-sm',
+                                checked
+                                  ? 'border-primary bg-primary text-primary-foreground'
+                                  : 'border-foreground/30',
+                              )}
+                            >
                               {checked ? <Check className="size-3.5" /> : null}
                             </span>
                           ) : null}
@@ -355,7 +481,10 @@ export function TemplatePicker({
                           </p>
                           <div className="mt-auto flex flex-wrap gap-1 pt-1">
                             {t.highlights.map((h) => (
-                              <span key={h} className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                              <span
+                                key={h}
+                                className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground"
+                              >
                                 {h}
                               </span>
                             ))}
@@ -369,23 +498,44 @@ export function TemplatePicker({
               {compareMode ? (
                 <div className="flex items-center justify-between gap-3 border-t bg-background px-5 py-3">
                   <span className="text-xs text-muted-foreground">
-                    已选 <span className="font-medium text-foreground tabular-nums">{compareIds.length}</span> / {MAX_COMPARE}
+                    已选{' '}
+                    <span className="font-medium text-foreground tabular-nums">
+                      {compareIds.length}
+                    </span>{' '}
+                    / {MAX_COMPARE}
                     {compared.length ? `：${compared.map((t) => t.label).join('、')}` : ''}
                   </span>
-                  <Button type="button" size="sm" disabled={compareIds.length < 2} onClick={() => setView('compare')}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={compareIds.length < 2}
+                    onClick={() => setView('compare')}
+                  >
                     <Columns3 className="size-3.5" />
                     开始对比
                   </Button>
                 </div>
               ) : activeT ? (
                 <div className="flex items-center gap-2 border-t px-4 py-3 lg:hidden">
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{activeT.label}</span>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setView('preview')}>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                    {activeT.label}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setView('preview')}
+                  >
                     <Eye className="size-3.5" />
                     预览
                   </Button>
                   {onSelect ? (
-                    <Button type="button" size="sm" disabled={!canChoose(activeT) || busy} onClick={() => void choose(activeT.value)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={!canChoose(activeT) || busy}
+                      onClick={() => void choose(activeT.value)}
+                    >
                       {chooseLabel(activeT)}
                     </Button>
                   ) : null}
@@ -394,15 +544,22 @@ export function TemplatePicker({
             </div>
 
             {activeT && !compareMode ? (
-              <aside className="hidden w-[350px] shrink-0 flex-col border-l bg-muted/20 lg:flex" aria-label={`${activeT.label}详情`}>
+              <aside
+                className="hidden w-[350px] shrink-0 flex-col border-l bg-muted/20 lg:flex"
+                aria-label={`${activeT.label}详情`}
+              >
                 <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
-                  <div className="overflow-hidden rounded-lg border bg-background shadow-xs">{thumbs[activeT.value]}</div>
+                  <div className="overflow-hidden rounded-lg border bg-background shadow-xs">
+                    {thumbs[activeT.value]}
+                  </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="text-lg font-semibold tracking-tight">{activeT.label}</h3>
                       <Swatches colors={activeT.swatches} />
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{activeT.description}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {activeT.description}
+                    </p>
                   </div>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                     <div className="col-span-2">
@@ -419,7 +576,9 @@ export function TemplatePicker({
                     </div>
                     <div>
                       <dt className="text-muted-foreground">页数</dt>
-                      <dd className="mt-0.5 tabular-nums">{activeT.pages ? `约 ${activeT.pages} 页` : '随项目变化'}</dd>
+                      <dd className="mt-0.5 tabular-nums">
+                        {activeT.pages ? `约 ${activeT.pages} 页` : '随项目变化'}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-muted-foreground">封面</dt>
@@ -435,12 +594,19 @@ export function TemplatePicker({
                       <p className="mb-1.5 text-xs font-medium text-muted-foreground">章节顺序</p>
                       <ol className="divide-y rounded-lg border bg-background">
                         {activeT.sections.map((s, i) => (
-                          <li key={s.value} className="flex items-baseline justify-between gap-3 px-3 py-1.5 text-xs">
+                          <li
+                            key={s.value}
+                            className="flex items-baseline justify-between gap-3 px-3 py-1.5 text-xs"
+                          >
                             <span>
-                              <span className="mr-2 text-muted-foreground tabular-nums">{pad(i + 1)}</span>
+                              <span className="mr-2 text-muted-foreground tabular-nums">
+                                {pad(i + 1)}
+                              </span>
                               {s.label}
                             </span>
-                            <span className="shrink-0 text-[11px] text-muted-foreground">{s.pages}</span>
+                            <span className="shrink-0 text-[11px] text-muted-foreground">
+                              {s.pages}
+                            </span>
                           </li>
                         ))}
                       </ol>
@@ -448,12 +614,22 @@ export function TemplatePicker({
                   ) : null}
                 </div>
                 <div className="flex gap-2 border-t bg-background p-4">
-                  <Button type="button" variant="outline" className="flex-1" onClick={() => setView('preview')}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setView('preview')}
+                  >
                     <Eye className="size-4" />
                     预览样张
                   </Button>
                   {onSelect ? (
-                    <Button type="button" className="flex-1" disabled={!canChoose(activeT) || busy} onClick={() => void choose(activeT.value)}>
+                    <Button
+                      type="button"
+                      className="flex-1"
+                      disabled={!canChoose(activeT) || busy}
+                      onClick={() => void choose(activeT.value)}
+                    >
                       {busy ? <Loader2 className="size-4 animate-spin" /> : null}
                       {chooseLabel(activeT)}
                     </Button>

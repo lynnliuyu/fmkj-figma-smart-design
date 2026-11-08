@@ -51,7 +51,10 @@ async function sessionCookieOptions() {
   const host = h?.get('x-forwarded-host') || h?.get('host') || ''
   const proto = h?.get('x-forwarded-proto')?.split(',')[0]?.trim().toLowerCase()
   const origin = h?.get('origin') || h?.get('referer') || ''
-  const isLocalHttp = (host.startsWith('localhost') || host.startsWith('127.0.0.1')) && proto !== 'https' && !origin.startsWith('https://')
+  const isLocalHttp =
+    (host.startsWith('localhost') || host.startsWith('127.0.0.1')) &&
+    proto !== 'https' &&
+    !origin.startsWith('https://')
 
   if (process.env.FIGMA === '1') {
     if (isLocalHttp) {
@@ -59,7 +62,11 @@ async function sessionCookieOptions() {
     }
     return { httpOnly: true, sameSite: 'none' as const, secure: true, partitioned: true, path: '/' }
   }
-  const isHttps = proto ? proto === 'https' : origin ? origin.startsWith('https://') : !isLocalHttp && Boolean(process.env.PUBLIC_URL?.startsWith('https://'))
+  const isHttps = proto
+    ? proto === 'https'
+    : origin
+      ? origin.startsWith('https://')
+      : !isLocalHttp && Boolean(process.env.PUBLIC_URL?.startsWith('https://'))
   return { httpOnly: true, sameSite: 'lax' as const, secure: isHttps, path: '/' }
 }
 
@@ -102,7 +109,9 @@ async function resolvePreviewFallbackUser(): Promise<User | null> {
       overrideAccess: true,
     })
     .catch(() => null)
-  return anyActive?.docs[0] ? ({ ...(anyActive.docs[0] as User), collection: 'users' } as User) : null
+  return anyActive?.docs[0]
+    ? ({ ...(anyActive.docs[0] as User), collection: 'users' } as User)
+    : null
 }
 
 /**
@@ -114,7 +123,10 @@ export function createAppAuth(appUserCollection: 'users') {
     // 必须在第一行调用 cookies()，确保所有鉴权路由在 Next.js 构建中始终保持 Dynamic (ƒ)，绝不被静态缓存
     const jar = await cookies()
     // 浏览器中可能同时存在旧的非 Partitioned Cookie（如 signed-out）与新的 Partitioned JWT Cookie，遍历全部同名值优先取有效 JWT
-    const allTokens = jar.getAll(APP_SESSION_COOKIE).map((c) => c.value).filter(Boolean)
+    const allTokens = jar
+      .getAll(APP_SESSION_COOKIE)
+      .map((c) => c.value)
+      .filter(Boolean)
     const jwtTokens = allTokens.filter((t) => t !== SIGNED_OUT_SENTINEL)
     const hasSignedOutCookie = allTokens.includes(SIGNED_OUT_SENTINEL)
 
@@ -152,17 +164,35 @@ export function createAppAuth(appUserCollection: 'users') {
     return resolvePreviewFallbackUser()
   })
 
-  async function login(email: string, password: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  async function login(
+    email: string,
+    password: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }> {
     const payload = await getPayloadClient()
     try {
       // 若账号此前因输错密码被锁定，登录前自动解除锁定计数
       const existing = await payload
-        .find({ collection: appUserCollection, where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true, showHiddenFields: true })
+        .find({
+          collection: appUserCollection,
+          where: { email: { equals: email } },
+          limit: 1,
+          depth: 0,
+          overrideAccess: true,
+          showHiddenFields: true,
+        })
         .catch(() => null)
-      const doc = existing?.docs[0] as (User & { lockUntil?: string | null; loginAttempts?: number | null }) | undefined
+      const doc = existing?.docs[0] as
+        | (User & { lockUntil?: string | null; loginAttempts?: number | null })
+        | undefined
       if (doc && (doc.lockUntil || (doc.loginAttempts && doc.loginAttempts > 0))) {
         await payload
-          .update({ collection: appUserCollection, id: doc.id, data: { lockUntil: null, loginAttempts: 0 } as never, overrideAccess: true, depth: 0 })
+          .update({
+            collection: appUserCollection,
+            id: doc.id,
+            data: { lockUntil: null, loginAttempts: 0 } as never,
+            overrideAccess: true,
+            depth: 0,
+          })
           .catch(() => null)
       }
 
@@ -171,7 +201,8 @@ export function createAppAuth(appUserCollection: 'users') {
         data: { email, password },
       })
       if (!result.token || !result.user) return { ok: false, error: '邮箱或密码不正确' }
-      if ((result.user as User).status !== 'active') return { ok: false, error: '该账号已停用，请联系管理员' }
+      if ((result.user as User).status !== 'active')
+        return { ok: false, error: '该账号已停用，请联系管理员' }
 
       // 忽略自动化冒烟测试临时账号，避免覆盖预览面板当前登录的真实/演示账号
       if (!/^preview_\d+@example\.com$/i.test(email)) {
@@ -219,7 +250,8 @@ export function createAppAuth(appUserCollection: 'users') {
     const phone = input.phone?.trim().slice(0, 30) || undefined
 
     if (!name) return { ok: false, error: '请输入姓名或团队称呼' }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: '请输入有效的邮箱地址' }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return { ok: false, error: '请输入有效的邮箱地址' }
     if (!password || password.length < 8) return { ok: false, error: '密码长度至少为 8 位' }
 
     const payload = await getPayloadClient()

@@ -6,10 +6,20 @@ import type { CatalogProduct } from '@/lib/cached-data'
 import type { DocPoint } from '@/lib/project-docs'
 import type { SceneVisual } from '@/lib/scene-visuals'
 
-export type SceneProductStatus = 'ready' | 'missing-image' | 'pending' | 'missing-product' | 'type-mismatch'
+export type SceneProductStatus =
+  | 'ready'
+  | 'missing-image'
+  | 'pending'
+  | 'missing-product'
+  | 'type-mismatch'
 
-export type SceneProductPoint = Pick<DocPoint, 'id' | 'deviceType' | 'productId' | 'sheetId' | 'areaId' | 'code'>
-export type SceneProductAnchor = SceneVisual['anchors'][number] & { deviceTypes?: readonly string[] }
+export type SceneProductPoint = Pick<
+  DocPoint,
+  'id' | 'deviceType' | 'productId' | 'sheetId' | 'areaId' | 'code'
+>
+export type SceneProductAnchor = SceneVisual['anchors'][number] & {
+  deviceTypes?: readonly string[]
+}
 
 export type SceneProduct = {
   id: string
@@ -32,7 +42,10 @@ export type SceneProductGroup = {
   product: SceneProduct | null
 }
 
-export type SceneProductCallout = SceneProductGroup & { anchor: SceneProductAnchor; anchorIndex: number }
+export type SceneProductCallout = SceneProductGroup & {
+  anchor: SceneProductAnchor
+  anchorIndex: number
+}
 
 export type SceneProductOptions = {
   /** 未指定的范围不做过滤；[null] 可明确选择未分区或未上图点位。 */
@@ -53,9 +66,18 @@ export type SceneProductMatch = {
   counts: { points: number; groups: number; callouts: number; unplacedPoints: number }
 }
 
-const statusOrder: Record<SceneProductStatus, number> = { ready: 0, 'missing-image': 1, pending: 2, 'missing-product': 3, 'type-mismatch': 4 }
+const statusOrder: Record<SceneProductStatus, number> = {
+  ready: 0,
+  'missing-image': 1,
+  pending: 2,
+  'missing-product': 3,
+  'type-mismatch': 4,
+}
 
-function pointProduct(point: SceneProductPoint, byId: ReadonlyMap<string, CatalogProduct>): Pick<SceneProductGroup, 'status' | 'product'> {
+function pointProduct(
+  point: SceneProductPoint,
+  byId: ReadonlyMap<string, CatalogProduct>,
+): Pick<SceneProductGroup, 'status' | 'product'> {
   if (!point.productId) return { status: 'pending', product: null }
   const selected = byId.get(point.productId)
   if (!selected) return { status: 'missing-product', product: null }
@@ -64,7 +86,13 @@ function pointProduct(point: SceneProductPoint, byId: ReadonlyMap<string, Catalo
   const imageUrl = selected.image?.url?.trim() || null
   return {
     status: imageUrl ? 'ready' : 'missing-image',
-    product: { id: selected.id, name: selected.name, sku: selected.sku ?? '', imageUrl, imageAlt: selected.image?.alt || selected.name },
+    product: {
+      id: selected.id,
+      name: selected.name,
+      sku: selected.sku ?? '',
+      imageUrl,
+      imageAlt: selected.image?.alt || selected.name,
+    },
   }
 }
 
@@ -81,7 +109,8 @@ export function matchSceneProducts(
   const areas = options.areaIds ? new Set(options.areaIds) : null
   const sheets = options.sheetIds ? new Set(options.sheetIds) : null
   const ids = options.pointIds ? new Set(options.pointIds) : null
-  const roomMatches = !options.roomType || !visual.roomTypes.length || visual.roomTypes.includes(options.roomType)
+  const roomMatches =
+    !options.roomType || !visual.roomTypes.length || visual.roomTypes.includes(options.roomType)
   const byGroup = new Map<string, SceneProductGroup>()
   const seen = new Set<string>()
   const excludedPointIds: string[] = []
@@ -91,7 +120,12 @@ export function matchSceneProducts(
     seen.add(point.id)
     const sheetId = point.sheetId ?? null
     const areaId = point.areaId ?? null
-    if (!roomMatches || (areas && !areas.has(areaId)) || (sheets && !sheets.has(sheetId)) || (ids && !ids.has(point.id))) {
+    if (
+      !roomMatches ||
+      (areas && !areas.has(areaId)) ||
+      (sheets && !sheets.has(sheetId)) ||
+      (ids && !ids.has(point.id))
+    ) {
       excludedPointIds.push(point.id)
       continue
     }
@@ -100,8 +134,15 @@ export function matchSceneProducts(
     let group = byGroup.get(key)
     if (!group) {
       group = {
-        key, deviceType: point.deviceType, productId, sheetId, areaId,
-        pointIds: [], codes: [], count: 0, ...pointProduct(point, productById),
+        key,
+        deviceType: point.deviceType,
+        productId,
+        sheetId,
+        areaId,
+        pointIds: [],
+        codes: [],
+        count: 0,
+        ...pointProduct(point, productById),
       }
       byGroup.set(key, group)
     }
@@ -113,17 +154,26 @@ export function matchSceneProducts(
   const groups = [...byGroup.values()]
   const assigned = new Set<string>()
   const callouts: SceneProductCallout[] = []
-  const max = options.maxCallouts != null && Number.isFinite(options.maxCallouts)
-    ? Math.max(0, Math.floor(options.maxCallouts))
-    : visual.anchors.length
+  const max =
+    options.maxCallouts != null && Number.isFinite(options.maxCallouts)
+      ? Math.max(0, Math.floor(options.maxCallouts))
+      : visual.anchors.length
 
   for (const [anchorIndex, anchor] of visual.anchors.entries()) {
     if (callouts.length >= max) break
     // 跨类型匹配只接受模板明确声明的范围，例如开关面板的一至四键变体。
-    const types = new Set([anchor.deviceType, ...((anchor as SceneProductAnchor).deviceTypes ?? [])])
-    const candidates = groups.filter((group) => !assigned.has(group.key) && types.has(group.deviceType))
-    candidates.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]
-      || Number(b.deviceType === anchor.deviceType) - Number(a.deviceType === anchor.deviceType))
+    const types = new Set([
+      anchor.deviceType,
+      ...((anchor as SceneProductAnchor).deviceTypes ?? []),
+    ])
+    const candidates = groups.filter(
+      (group) => !assigned.has(group.key) && types.has(group.deviceType),
+    )
+    candidates.sort(
+      (a, b) =>
+        statusOrder[a.status] - statusOrder[b.status] ||
+        Number(b.deviceType === anchor.deviceType) - Number(a.deviceType === anchor.deviceType),
+    )
     const group = candidates[0]
     if (!group) continue
     assigned.add(group.key)
@@ -132,7 +182,11 @@ export function matchSceneProducts(
 
   const unplaced = groups.filter((group) => !assigned.has(group.key))
   return {
-    visual, groups, callouts, unplaced, excludedPointIds,
+    visual,
+    groups,
+    callouts,
+    unplaced,
+    excludedPointIds,
     counts: {
       points: groups.reduce((sum, group) => sum + group.count, 0),
       groups: groups.length,

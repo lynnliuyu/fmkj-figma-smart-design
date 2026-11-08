@@ -13,7 +13,11 @@ export const AiMessages: CollectionConfig = {
   slug: 'ai-messages',
   graphQL: false,
   labels: { singular: 'AI 消息', plural: 'AI 消息' },
-  admin: { useAsTitle: 'role', defaultColumns: ['conversation', 'role', 'model', 'cost', 'createdAt'], group: 'AI 对话' },
+  admin: {
+    useAsTitle: 'role',
+    defaultColumns: ['conversation', 'role', 'model', 'cost', 'createdAt'],
+    group: 'AI 对话',
+  },
   access: {
     read: ownOnly,
     create: ({ req }) => isCmsAdmin(req),
@@ -21,8 +25,22 @@ export const AiMessages: CollectionConfig = {
     delete: ownOnly,
   },
   fields: [
-    { name: 'conversation', label: '会话', type: 'relationship', relationTo: 'ai-conversations', required: true, index: true },
-    { name: 'owner', label: '成员', type: 'relationship', relationTo: 'users', required: true, index: true },
+    {
+      name: 'conversation',
+      label: '会话',
+      type: 'relationship',
+      relationTo: 'ai-conversations',
+      required: true,
+      index: true,
+    },
+    {
+      name: 'owner',
+      label: '成员',
+      type: 'relationship',
+      relationTo: 'users',
+      required: true,
+      index: true,
+    },
     {
       name: 'role',
       label: '角色',

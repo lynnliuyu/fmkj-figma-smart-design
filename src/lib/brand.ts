@@ -5,7 +5,8 @@ export const APP_NAME_EN = 'Dream Space'
 /** 公司名称（品牌标识与版权信息使用） */
 export const COMPANY_NAME = '繁梦空间智能信息技术'
 export const APP_TAGLINE = '智能家居设计报价'
-export const APP_DESCRIPTION = '个人和团队的智能家居设计报价平台：户型点位、产品选型、报价、合同和归档一站完成。'
+export const APP_DESCRIPTION =
+  '个人和团队的智能家居设计报价平台：户型点位、产品选型、报价、合同和归档一站完成。'
 
 export const pageTitle = (title: string) => `${title} · ${APP_NAME} ${APP_TAGLINE}`
 

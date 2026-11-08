@@ -21,7 +21,8 @@ export default async function LoginPage({
 }) {
   const { from, switch: switchAccount, mode, code } = await searchParams
   const redirectTo = safeRedirectPath(from, '/projects')
-  if (!switchAccount && mode !== 'register' && (await appAuth.getCurrentUser())) redirect(redirectTo)
+  if (!switchAccount && mode !== 'register' && (await appAuth.getCurrentUser()))
+    redirect(redirectTo)
   const previewDemo = previewDemoEnabled()
   const initialMode = mode === 'register' ? 'register' : 'login'
   const initialCode = typeof code === 'string' ? code.trim().toUpperCase().slice(0, 40) : ''

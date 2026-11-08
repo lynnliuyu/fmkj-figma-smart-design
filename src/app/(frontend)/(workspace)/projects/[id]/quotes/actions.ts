@@ -38,14 +38,21 @@ export async function createQuoteFromProject(form: FormData) {
 export async function syncQuoteFromPointMap(
   quoteId: string,
   explicitScope?: PointScope,
-): Promise<{ ok: true; quoteId: string; pending: number; total: number; scope: PointScope } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; quoteId: string; pending: number; total: number; scope: PointScope }
+  | { ok: false; error: string }
+> {
   const user = await appAuth.getCurrentUser()
   if (!user) return { ok: false, error: '登录已过期，请重新登录' }
   return syncQuoteWithPointMap(user, quoteId, explicitScope)
 }
 
 /** 在报价里换型号时，可同时把新型号设为项目默认型号。 */
-export async function setQuoteProjectDefault(projectId: string, deviceType: string, productId: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function setQuoteProjectDefault(
+  projectId: string,
+  deviceType: string,
+  productId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const user = await appAuth.getCurrentUser()
   if (!user) return { ok: false, error: '登录已过期，请重新登录' }
   const result = await setProjectDefault(user, projectId, deviceType, productId)
@@ -58,7 +65,9 @@ export async function saveQuote(id: string, input: QuoteInput): Promise<SaveQuot
   return saveQuoteInput(user, id, input)
 }
 
-export async function deleteQuote(id: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function deleteQuote(
+  id: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const user = await appAuth.getCurrentUser()
   if (!user) return { ok: false, error: '登录已过期，请重新登录' }
   return deleteQuoteById(user, id)

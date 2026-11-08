@@ -11,7 +11,8 @@ export type QuoteStatus = (typeof QUOTE_STATUSES)[number]['value']
 export const quoteStatusVariant = (v?: string | null): 'outline' | 'warning' | 'success' =>
   v === 'accepted' ? 'success' : v === 'sent' ? 'warning' : 'outline'
 
-export const quoteStatusLabel = (v?: string | null) => QUOTE_STATUSES.find((s) => s.value === v)?.label ?? '草稿'
+export const quoteStatusLabel = (v?: string | null) =>
+  QUOTE_STATUSES.find((s) => s.value === v)?.label ?? '草稿'
 
 export type QuoteLine = { price?: number | null; quantity?: number | null }
 export type QuoteFee = { amount?: number | null }

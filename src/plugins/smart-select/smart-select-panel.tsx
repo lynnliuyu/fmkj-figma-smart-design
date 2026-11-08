@@ -9,25 +9,62 @@ import { cn } from '@/lib/utils'
 import { SELECTION_TIERS, type SelectionTier } from './auto-select'
 
 /** 智能选型插件的面板：按主平台和档次一键设置项目默认型号（接口见 point-map/auto-defaults）。 */
-export function SmartSelect({ platform, busy, onRun, disabled }: { platform: string | null; busy: boolean; onRun: (tier: SelectionTier, overwrite: boolean) => void; disabled: boolean }) {
+export function SmartSelect({
+  platform,
+  busy,
+  onRun,
+  disabled,
+}: {
+  platform: string | null
+  busy: boolean
+  onRun: (tier: SelectionTier, overwrite: boolean) => void
+  disabled: boolean
+}) {
   const [tier, setTier] = useState<SelectionTier>('standard')
   return (
     <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-1.5 text-sm font-semibold"><Sparkles className="size-4" />智能选型</h3>
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold">
+          <Sparkles className="size-4" />
+          智能选型
+        </h3>
         <span className="text-[11px] text-muted-foreground">主平台：{platform ?? '未设置'}</span>
       </div>
-      <p className="text-[11px] text-muted-foreground">按主平台和档次为每类设备挑选默认型号，同类尽量统一品牌。之后在报价里仍可逐行更换。</p>
-      <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-0.5" role="radiogroup" aria-label="选型档次">
+      <p className="text-[11px] text-muted-foreground">
+        按主平台和档次为每类设备挑选默认型号，同类尽量统一品牌。之后在报价里仍可逐行更换。
+      </p>
+      <div
+        className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-0.5"
+        role="radiogroup"
+        aria-label="选型档次"
+      >
         {SELECTION_TIERS.map((t) => (
-          <Button key={t.value} type="button" size="sm" variant={tier === t.value ? 'outline' : 'ghost'} role="radio" aria-checked={tier === t.value} className={cn('h-7 text-xs', tier === t.value && 'bg-background shadow-sm')} onClick={() => setTier(t.value)}>
+          <Button
+            key={t.value}
+            type="button"
+            size="sm"
+            variant={tier === t.value ? 'outline' : 'ghost'}
+            role="radio"
+            aria-checked={tier === t.value}
+            className={cn('h-7 text-xs', tier === t.value && 'bg-background shadow-sm')}
+            onClick={() => setTier(t.value)}
+          >
             {t.label}
           </Button>
         ))}
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <Button size="sm" disabled={disabled || busy} onClick={() => onRun(tier, false)}>{busy ? <Loader2 className="size-4 animate-spin" /> : null}补全未选型</Button>
-        <Button size="sm" variant="outline" disabled={disabled || busy} onClick={() => onRun(tier, true)}>全部重新选</Button>
+        <Button size="sm" disabled={disabled || busy} onClick={() => onRun(tier, false)}>
+          {busy ? <Loader2 className="size-4 animate-spin" /> : null}补全未选型
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={disabled || busy}
+          onClick={() => onRun(tier, true)}
+        >
+          全部重新选
+        </Button>
       </div>
     </div>
   )

@@ -57,7 +57,7 @@ export const sharedConfig = {
   },
   i18n: {
     fallbackLanguage: 'en',
-    supportedLanguages: { 'en': adminLanguage },
+    supportedLanguages: { en: adminLanguage },
   },
   collections: [
     Admins,

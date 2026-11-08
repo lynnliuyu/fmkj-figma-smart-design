@@ -14,14 +14,15 @@ const OTP_COOLDOWN_MS = 60 * 1000
 export function emailOtpConfigured(): boolean {
   return Boolean(
     (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) ||
-      (process.env.RESEND_API_KEY && process.env.SMTP_FROM),
+    (process.env.RESEND_API_KEY && process.env.SMTP_FROM),
   )
 }
 
 const otpHash = (purpose: OtpPurpose, email: string, code: string) =>
   hashToken(`email-otp:${purpose}:${email.toLowerCase()}:${code}`)
 
-const clientTag = (purpose: OtpPurpose, email: string) => `email-otp:${purpose}:${email.toLowerCase()}`
+const clientTag = (purpose: OtpPurpose, email: string) =>
+  `email-otp:${purpose}:${email.toLowerCase()}`
 
 /** 签发并发送 6 位邮箱验证码（同一邮箱 60 秒内限发 1 次，10 分钟内有效）。 */
 export async function issueAndSendEmailOtp(
@@ -154,7 +155,9 @@ export async function verifyAndConsumeEmailOtp(
   if (!doc) {
     return { ok: false, error: '验证码不正确，请核对后重试' }
   }
-  await payload.delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 }).catch(() => null)
+  await payload
+    .delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 })
+    .catch(() => null)
   if (new Date(doc.expiresAt).getTime() < Date.now()) {
     return { ok: false, error: '验证码已过期，请重新发送' }
   }
@@ -291,7 +294,10 @@ function sendViaSmtp({
           return
         }
         if (!line.startsWith(step.expect)) {
-          finish({ ok: false, error: `发信失败（SMTP ${line.slice(0, 3)}），请检查邮箱授权码与发信配置` })
+          finish({
+            ok: false,
+            error: `发信失败（SMTP ${line.slice(0, 3)}），请检查邮箱授权码与发信配置`,
+          })
           return
         }
         stepIdx += 1

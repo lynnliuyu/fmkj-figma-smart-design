@@ -14,8 +14,20 @@ import { refreshContextProject, type AiToolHandler } from './context'
  * 没把握的行保留外店品名和单价，标记「待匹配」，方便在报价台里一键换型号。
  */
 
-export type CompetitorLine = { name: string; brand: string; model: string; deviceType: string; quantity: number; unitPrice: number | null }
-export type CompetitorMatch = { line: CompetitorLine; product: CatalogProduct | null; deviceType: string | null; score: number }
+export type CompetitorLine = {
+  name: string
+  brand: string
+  model: string
+  deviceType: string
+  quantity: number
+  unitPrice: number | null
+}
+export type CompetitorMatch = {
+  line: CompetitorLine
+  product: CatalogProduct | null
+  deviceType: string | null
+  score: number
+}
 
 const norm = (s: string) => s.toLowerCase().replace(/[\s\-_/·,，。.:：;；()（）【】[\]"'“”]+/g, '')
 function grams(s: string) {
@@ -33,7 +45,12 @@ function jaccard(a: Set<string>, b: Set<string>) {
 }
 
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
-const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v)) ? Number(v) : null)
+const num = (v: unknown) =>
+  typeof v === 'number' && Number.isFinite(v)
+    ? v
+    : typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v))
+      ? Number(v)
+      : null
 const round2 = (n: number) => Math.round(n * 100) / 100
 
 export function sanitizeCompetitorLine(raw: unknown): CompetitorLine | null {
@@ -43,14 +60,28 @@ export function sanitizeCompetitorLine(raw: unknown): CompetitorLine | null {
   const quantity = num(r.quantity)
   if (!name || quantity === null || quantity <= 0) return null
   const price = num(r.unitPrice)
-  return { name, brand: str(r.brand, 40), model: str(r.model, 80), deviceType: str(r.deviceType, 40), quantity: Math.min(9999, Math.round(quantity * 100) / 100), unitPrice: price !== null && price >= 0 ? round2(price) : null }
+  return {
+    name,
+    brand: str(r.brand, 40),
+    model: str(r.model, 80),
+    deviceType: str(r.deviceType, 40),
+    quantity: Math.min(9999, Math.round(quantity * 100) / 100),
+    unitPrice: price !== null && price >= 0 ? round2(price) : null,
+  }
 }
 
 /** 一行外店明细匹配到产品库的同级型号（没把握时 product 为 null） */
-export function matchCompetitorLine(line: CompetitorLine, catalog: CatalogProduct[], opts: { preferBrand?: string | null } = {}): CompetitorMatch {
+export function matchCompetitorLine(
+  line: CompetitorLine,
+  catalog: CatalogProduct[],
+  opts: { preferBrand?: string | null } = {},
+): CompetitorMatch {
   const text = [line.brand, line.name, line.model].filter(Boolean).join(' ')
   const inferred = inferDeviceType(text, /开关|键/.test(text) ? 'switch' : null)
-  const dt = resolveDeviceType(line.deviceType) ?? resolveDeviceType(line.name) ?? (inferred === 'other' ? null : inferred)
+  const dt =
+    resolveDeviceType(line.deviceType) ??
+    resolveDeviceType(line.name) ??
+    (inferred === 'other' ? null : inferred)
   const active = catalog.filter((p) => (p.status ?? 'active') === 'active')
   const pool = dt ? active.filter((p) => p.deviceType === dt) : active
   if (!pool.length) return { line, product: null, deviceType: dt, score: 0 }
@@ -68,7 +99,8 @@ export function matchCompetitorLine(line: CompetitorLine, catalog: CatalogProduc
     const sku = norm(p.sku)
     if (sku.length >= 4 && lineText.includes(sku)) text += 4
     let score = text
-    if (line.unitPrice && line.unitPrice > 0 && p.price > 0) score += 2 * (1 - Math.min(1, Math.abs(p.price - line.unitPrice) / line.unitPrice))
+    if (line.unitPrice && line.unitPrice > 0 && p.price > 0)
+      score += 2 * (1 - Math.min(1, Math.abs(p.price - line.unitPrice) / line.unitPrice))
     if (prefer && brand && (brand.includes(prefer) || prefer.includes(brand))) score += 2
     if (p.price > 0) score += 0.3
     if (p.image) score += 0.1
@@ -85,23 +117,57 @@ export function matchCompetitorLine(line: CompetitorLine, catalog: CatalogProduc
 
 export const competitorQuoteHandlers: Record<string, AiToolHandler> = {
   async create_quote_from_competitor(args, ctx) {
-    if (!ctx.projectId) return { result: { error: '没有关联项目，请先新建或选择项目' }, summary: '未关联项目' }
-    const lines = (Array.isArray(args.items) ? args.items : []).map(sanitizeCompetitorLine).filter((l): l is CompetitorLine => Boolean(l)).slice(0, 200)
-    if (!lines.length) return { result: { error: '没有可用的产品明细：每行至少需要品名与数量' }, summary: '缺少产品明细' }
+    if (!ctx.projectId)
+      return { result: { error: '没有关联项目，请先新建或选择项目' }, summary: '未关联项目' }
+    const lines = (Array.isArray(args.items) ? args.items : [])
+      .map(sanitizeCompetitorLine)
+      .filter((l): l is CompetitorLine => Boolean(l))
+      .slice(0, 200)
+    if (!lines.length)
+      return {
+        result: { error: '没有可用的产品明细：每行至少需要品名与数量' },
+        summary: '缺少产品明细',
+      }
     const payload = await getPayloadClient()
     const project = await payload
-      .findByID({ collection: 'projects', id: ctx.projectId, depth: 0, user: ctx.user, overrideAccess: false, select: { status: true } })
+      .findByID({
+        collection: 'projects',
+        id: ctx.projectId,
+        depth: 0,
+        user: ctx.user,
+        overrideAccess: false,
+        select: { status: true },
+      })
       .catch(() => null)
     if (!project) return { result: { error: '项目不存在或无权限' }, summary: '项目不可用' }
-    if (project.status === 'archived') return { result: { error: '项目已归档，不能新建报价' }, summary: '项目已归档' }
+    if (project.status === 'archived')
+      return { result: { error: '项目已归档，不能新建报价' }, summary: '项目已归档' }
 
     const catalog = await getCatalog()
     const preferBrand = str(args.preferBrand, 40) || null
     const matches = lines.map((l) => matchCompetitorLine(l, catalog, { preferBrand }))
     const items = matches.map((m) =>
       m.product
-        ? { product: m.product.id, deviceType: (m.product.deviceType ?? m.deviceType) as never, image: m.product.image?.id ?? null, name: m.product.name, sku: m.product.sku, unit: m.product.unit, price: m.product.price, quantity: m.line.quantity }
-        : { product: null, deviceType: (m.deviceType ?? null) as never, image: null, name: `${m.line.name}（外店型号，待匹配）`.slice(0, 200), sku: m.line.model || null, unit: '个', price: m.line.unitPrice ?? 0, quantity: m.line.quantity },
+        ? {
+            product: m.product.id,
+            deviceType: (m.product.deviceType ?? m.deviceType) as never,
+            image: m.product.image?.id ?? null,
+            name: m.product.name,
+            sku: m.product.sku,
+            unit: m.product.unit,
+            price: m.product.price,
+            quantity: m.line.quantity,
+          }
+        : {
+            product: null,
+            deviceType: (m.deviceType ?? null) as never,
+            image: null,
+            name: `${m.line.name}（外店型号，待匹配）`.slice(0, 200),
+            sku: m.line.model || null,
+            unit: '个',
+            price: m.line.unitPrice ?? 0,
+            quantity: m.line.quantity,
+          },
     )
     const fees = Array.isArray(args.fees)
       ? (args.fees as { name?: unknown; amount?: unknown }[])
@@ -110,7 +176,9 @@ export const competitorQuoteHandlers: Record<string, AiToolHandler> = {
           .map((f) => ({ name: f.name, amount: round2(f.amount) }))
       : []
     const linesTotal = lines.reduce((s, l) => s + (l.unitPrice ?? 0) * l.quantity, 0)
-    const competitorTotal = num(args.competitorTotal) ?? (linesTotal > 0 ? round2(linesTotal + fees.reduce((s, f) => s + f.amount, 0)) : null)
+    const competitorTotal =
+      num(args.competitorTotal) ??
+      (linesTotal > 0 ? round2(linesTotal + fees.reduce((s, f) => s + f.amount, 0)) : null)
     const competitorName = str(args.competitorName, 40) || '外店'
     const matched = matches.filter((m) => m.product).length
     const title = str(args.title, 60) || `竞品对比配单（${competitorName}）`
@@ -138,8 +206,18 @@ export const competitorQuoteHandlers: Record<string, AiToolHandler> = {
         diff,
         lines: matches.slice(0, 60).map((m) => ({
           competitor: `${[m.line.brand, m.line.name, m.line.model].filter(Boolean).join(' ')} ×${m.line.quantity}${m.line.unitPrice !== null ? ` @¥${m.line.unitPrice}` : ''}`,
-          matched: m.product ? { name: m.product.name, sku: m.product.sku, brand: m.product.brand?.name ?? null, price: m.product.price } : null,
-          priceDiff: m.product && m.line.unitPrice !== null ? round2(m.product.price - m.line.unitPrice) : null,
+          matched: m.product
+            ? {
+                name: m.product.name,
+                sku: m.product.sku,
+                brand: m.product.brand?.name ?? null,
+                price: m.product.price,
+              }
+            : null,
+          priceDiff:
+            m.product && m.line.unitPrice !== null
+              ? round2(m.product.price - m.line.unitPrice)
+              : null,
         })),
       },
       summary: `已生成「${quote.title}」：匹配 ${matched}/${lines.length} 项，本店合计 ¥${ourTotal}${competitorTotal !== null ? `，外店 ¥${competitorTotal}（${diff! >= 0 ? '高' : '低'} ¥${Math.abs(diff!)}）` : ''}`,

@@ -22,7 +22,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
     const isFigmaMake = process.env.FIGMA === '1'
-    const frameAncestors = isFigmaMake ? "frame-ancestors 'self' https://*.figma.com https://figma.com;" : "frame-ancestors 'self';"
+    const frameAncestors = isFigmaMake
+      ? "frame-ancestors 'self' https://*.figma.com https://figma.com;"
+      : "frame-ancestors 'self';"
     const securityHeaders = [
       {
         key: 'Content-Security-Policy',
@@ -56,7 +58,8 @@ const nextConfig: NextConfig = {
     return [
       {
         // 带版本号（?v=）或文件名固定不变的静态图标：长期缓存
-        source: '/(brands|brand|ecosystem|point-markers|point-symbols|point-icons|board|fonts|demo-plans)/:path*',
+        source:
+          '/(brands|brand|ecosystem|point-markers|point-symbols|point-icons|board|fonts|demo-plans)/:path*',
         headers: [
           ...securityHeaders,
           {
@@ -79,7 +82,10 @@ const nextConfig: NextConfig = {
       {
         // 方案氛围图与校准场景底图：长效缓存 7 天 + 后台静默更新 30 天
         source: '/proposal/:path*',
-        headers: [...securityHeaders, { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=2592000' }],
+        headers: [
+          ...securityHeaders,
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=2592000' },
+        ],
       },
       {
         source: '/:path*',
@@ -138,7 +144,8 @@ const nextConfig: NextConfig = {
     },
   },
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.FIGMA_PUBLIC_URL || process.env.PUBLIC_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_SITE_URL:
+      process.env.FIGMA_PUBLIC_URL || process.env.PUBLIC_URL || 'http://localhost:3000',
     // NOTE: Do not add FIGMA_OAUTH_CLIENT_SECRET, FIGMA_CONTENT_API_ACCESS_KEY,
     // or any other credential here. Values placed in `env` are inlined into
     // the JavaScript bundle by Next.js at build time and become readable by

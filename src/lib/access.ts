@@ -20,4 +20,8 @@ export const fieldCmsAdminOnly: FieldAccess = ({ req }) => isCmsAdmin(req)
 
 /** 关系字段的值可能是 ID，也可能是展开后的文档，统一取 ID。 */
 export const relId = (v: unknown): string | null =>
-  v && typeof v === 'object' ? (String((v as { id?: unknown }).id ?? '') || null) : v ? String(v) : null
+  v && typeof v === 'object'
+    ? String((v as { id?: unknown }).id ?? '') || null
+    : v
+      ? String(v)
+      : null

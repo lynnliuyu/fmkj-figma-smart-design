@@ -14,7 +14,12 @@ type State = { doc: BoardDoc; past: BoardDoc[]; future: BoardDoc[]; version: num
  * version 每次变化都加一（提交、撤销、重做、重置），用来判断是否有未保存的修改。
  */
 export function useBoardHistory(initial: () => BoardDoc) {
-  const [state, setState] = useState<State>(() => ({ doc: initial(), past: [], future: [], version: 0 }))
+  const [state, setState] = useState<State>(() => ({
+    doc: initial(),
+    past: [],
+    future: [],
+    version: 0,
+  }))
   const ref = useRef(state)
   ref.current = state
 
@@ -23,7 +28,12 @@ export function useBoardHistory(initial: () => BoardDoc) {
     setState((s) => {
       const doc = typeof next === 'function' ? next(s.doc) : next
       if (!doc || doc === s.doc) return s
-      return { doc, past: [...s.past.slice(-(HISTORY_LIMIT - 1)), s.doc], future: [], version: s.version + 1 }
+      return {
+        doc,
+        past: [...s.past.slice(-(HISTORY_LIMIT - 1)), s.doc],
+        future: [],
+        version: s.version + 1,
+      }
     })
   }, [])
 
@@ -31,7 +41,12 @@ export function useBoardHistory(initial: () => BoardDoc) {
     setState((s) => {
       const prev = s.past[s.past.length - 1]
       if (!prev) return s
-      return { doc: prev, past: s.past.slice(0, -1), future: [s.doc, ...s.future], version: s.version + 1 }
+      return {
+        doc: prev,
+        past: s.past.slice(0, -1),
+        future: [s.doc, ...s.future],
+        version: s.version + 1,
+      }
     })
   }, [])
 
@@ -39,7 +54,12 @@ export function useBoardHistory(initial: () => BoardDoc) {
     setState((s) => {
       const next = s.future[0]
       if (!next) return s
-      return { doc: next, past: [...s.past, s.doc], future: s.future.slice(1), version: s.version + 1 }
+      return {
+        doc: next,
+        past: [...s.past, s.doc],
+        future: s.future.slice(1),
+        version: s.version + 1,
+      }
     })
   }, [])
 

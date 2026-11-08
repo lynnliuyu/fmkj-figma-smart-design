@@ -2,134 +2,134 @@
 name: FMKJ 项目管理
 description: 全屋智能家居公司的内部项目运营后台：点位图、产品库、报价
 colors:
-  ink: "oklch(0.145 0 0)"
-  ink-primary: "oklch(0.205 0 0)"
-  paper: "oklch(1 0 0)"
-  paper-muted: "oklch(0.97 0 0)"
-  pencil: "oklch(0.53 0 0)"
-  rule-line: "oklch(0.922 0 0)"
-  focus-ring: "oklch(0.708 0 0)"
-  sidebar-paper: "oklch(0.985 0 0)"
-  alert-red: "oklch(0.577 0.245 27.325)"
-  alert-red-strong: "oklch(0.47 0.2 27.325)"
-  confirmed-green: "oklch(0.49 0.12 155)"
-  pending-amber: "oklch(0.52 0.11 75)"
-  cat-switch: "#2563eb"
-  cat-socket: "#0d9488"
-  cat-lighting: "#d97706"
-  cat-sensor: "#059669"
-  cat-lock: "#475569"
-  cat-security: "#dc2626"
-  cat-curtain: "#db2777"
-  cat-gateway: "#7c3aed"
-  cat-network: "#0891b2"
-  cat-vrf: "#ea580c"
-  cat-other: "#525252"
-  accent: "oklch(0.51 0.22 279)"
+  ink: 'oklch(0.145 0 0)'
+  ink-primary: 'oklch(0.205 0 0)'
+  paper: 'oklch(1 0 0)'
+  paper-muted: 'oklch(0.97 0 0)'
+  pencil: 'oklch(0.53 0 0)'
+  rule-line: 'oklch(0.922 0 0)'
+  focus-ring: 'oklch(0.708 0 0)'
+  sidebar-paper: 'oklch(0.985 0 0)'
+  alert-red: 'oklch(0.577 0.245 27.325)'
+  alert-red-strong: 'oklch(0.47 0.2 27.325)'
+  confirmed-green: 'oklch(0.49 0.12 155)'
+  pending-amber: 'oklch(0.52 0.11 75)'
+  cat-switch: '#2563eb'
+  cat-socket: '#0d9488'
+  cat-lighting: '#d97706'
+  cat-sensor: '#059669'
+  cat-lock: '#475569'
+  cat-security: '#dc2626'
+  cat-curtain: '#db2777'
+  cat-gateway: '#7c3aed'
+  cat-network: '#0891b2'
+  cat-vrf: '#ea580c'
+  cat-other: '#525252'
+  accent: 'oklch(0.51 0.22 279)'
 typography:
   headline:
-    fontFamily: "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "1.5rem"
+    fontFamily: 'Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: '1.5rem'
     fontWeight: 600
-    letterSpacing: "-0.025em"
+    letterSpacing: '-0.025em'
   title:
-    fontFamily: "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "1rem"
+    fontFamily: 'Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: '1rem'
     fontWeight: 600
   body:
-    fontFamily: "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "0.875rem"
+    fontFamily: 'Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: '0.875rem'
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "0.75rem"
+    fontFamily: 'Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: '0.75rem'
     fontWeight: 500
   data:
-    fontFamily: "Inter, PingFang SC, Microsoft YaHei, sans-serif"
-    fontSize: "0.875rem"
+    fontFamily: 'Inter, PingFang SC, Microsoft YaHei, sans-serif'
+    fontSize: '0.875rem'
     fontWeight: 600
-    fontFeature: "tnum"
+    fontFeature: 'tnum'
   public-display:
-    fontFamily: "Inter (opsz), PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "clamp(2.5rem, 1.25rem + 4.2vw, 4.5rem)"
+    fontFamily: 'Inter (opsz), PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: 'clamp(2.5rem, 1.25rem + 4.2vw, 4.5rem)'
     fontWeight: 500
     lineHeight: 1.1
-    letterSpacing: "-0.022em"
+    letterSpacing: '-0.022em'
   public-headline:
-    fontFamily: "Inter (opsz), PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "clamp(1.875rem, 1.2rem + 2vw, 3rem)"
+    fontFamily: 'Inter (opsz), PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: 'clamp(1.875rem, 1.2rem + 2vw, 3rem)'
     fontWeight: 500
     lineHeight: 1.15
-    letterSpacing: "-0.018em"
+    letterSpacing: '-0.018em'
   public-lead:
-    fontFamily: "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"
-    fontSize: "1.125rem"
+    fontFamily: 'Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif'
+    fontSize: '1.125rem'
     fontWeight: 400
     lineHeight: 1.75
 rounded:
-  sm: "6px"
-  md: "8px"
-  lg: "10px"
-  xl: "14px"
-  window: "18px"
-  full: "9999px"
+  sm: '6px'
+  md: '8px'
+  lg: '10px'
+  xl: '14px'
+  window: '18px'
+  full: '9999px'
 spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "16px"
-  lg: "24px"
-  xl: "32px"
+  xs: '4px'
+  sm: '8px'
+  md: '16px'
+  lg: '24px'
+  xl: '32px'
 components:
   button-primary:
-    backgroundColor: "{colors.ink-primary}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.md}"
-    height: "32px"
-    padding: "0 12px"
+    backgroundColor: '{colors.ink-primary}'
+    textColor: '{colors.paper}'
+    rounded: '{rounded.md}'
+    height: '32px'
+    padding: '0 12px'
   button-outline:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    height: "32px"
+    backgroundColor: '{colors.paper}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.md}'
+    height: '32px'
   input:
-    backgroundColor: "{colors.paper-muted}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    height: "32px"
+    backgroundColor: '{colors.paper-muted}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.md}'
+    height: '32px'
   card:
-    backgroundColor: "{colors.paper}"
-    rounded: "{rounded.xl}"
-    padding: "20px"
+    backgroundColor: '{colors.paper}'
+    rounded: '{rounded.xl}'
+    padding: '20px'
   filter-tabs:
-    backgroundColor: "{colors.paper-muted}"
-    rounded: "{rounded.lg}"
-    height: "36px"
+    backgroundColor: '{colors.paper-muted}'
+    rounded: '{rounded.lg}'
+    height: '36px'
   filter-tab-active:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
+    backgroundColor: '{colors.paper}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.md}'
   badge-success:
-    textColor: "{colors.confirmed-green}"
-    rounded: "{rounded.full}"
+    textColor: '{colors.confirmed-green}'
+    rounded: '{rounded.full}'
   badge-warning:
-    textColor: "{colors.pending-amber}"
-    rounded: "{rounded.full}"
+    textColor: '{colors.pending-amber}'
+    rounded: '{rounded.full}'
   button-public-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.full}"
-    height: "44px"
-    padding: "0 24px"
+    backgroundColor: '{colors.ink}'
+    textColor: '{colors.paper}'
+    rounded: '{rounded.full}'
+    height: '44px'
+    padding: '0 24px'
   button-public-secondary:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
-    height: "44px"
-    padding: "0 24px"
+    backgroundColor: '{colors.paper}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.full}'
+    height: '44px'
+    padding: '0 24px'
   product-window:
-    backgroundColor: "{colors.paper}"
-    rounded: "{rounded.window}"
+    backgroundColor: '{colors.paper}'
+    rounded: '{rounded.window}'
 ---
 
 # Design System: FMKJ 项目管理
@@ -145,6 +145,7 @@ components:
 支持浅色和深色两套主题，两套用同一组语义变量（见 `src/app/(frontend)/styles.css`）。
 
 **Key Characteristics:**
+
 - 中性色为底，颜色只用来表达类别和状态
 - 一个字族（Inter 加中文字体链），靠字号和字重分层级
 - 平面为主，卡片只用很轻的阴影加 1px 描边
@@ -156,12 +157,15 @@ components:
 中性灰阶为主体，设备类别色和状态色是唯一的彩色。
 
 ### Primary
+
 - **墨黑 Ink Primary** (oklch(0.205 0 0))：主按钮、当前选中项、进度条已完成段。深色主题下反转为浅色。
 
 ### 主题强调色
+
 - **繁梦紫 Accent** (oklch(0.51 0.22 279))：默认主题风格（`data-accent="fanmeng"`，另有青碧、经典可选）的主色。工作台里是主按钮与当前项；公开页只用于选中态（清单固定行、付款节点进度），不用于大面积底色。
 
 ### Neutral
+
 - **正文墨 Ink** (oklch(0.145 0 0))：正文和标题。
 - **铅笔灰 Pencil** (oklch(0.53 0 0))：次要文字、说明、占位符。这是对比度下限：在白底上 5.25:1，在浅灰底上 4.82:1，不要再调浅。
 - **图纸白 Paper** (oklch(1 0 0))：页面和卡片底色。
@@ -170,14 +174,17 @@ components:
 - **格线 Rule Line** (oklch(0.922 0 0))：描边、分隔线、表格线。
 
 ### 状态色
+
 - **确认绿 Confirmed Green** (oklch(0.49 0.12 155))：已确认的报价，以及其他成功状态。
 - **待办琥珀 Pending Amber** (oklch(0.52 0.11 75))：已发送、等客户回复，以及其他需要关注的状态。
 - **警示红 Alert Red** (oklch(0.577 0.245 27.325))：错误和破坏性操作。浅红底上的文字改用 **Alert Red Strong** (oklch(0.47 0.2 27.325))，保证对比度不低于 4.5:1。
 
 ### 设备类别色
+
 定义在 `src/lib/device-types.ts`，是点位图符号、产品库类别圆点、设备类型标签共用的颜色：开关 #2563eb、插座 #0d9488、灯具 #d97706、传感器 #059669、门锁 #475569、监控 #dc2626、窗帘 #db2777、网关中控 #7c3aed、全屋 WiFi #0891b2、VRF #ea580c、其他 #525252。
 
 ### Named Rules
+
 **颜色即信息。** 彩色只出现在设备类别、业务状态、主操作与当前选中项上。头像、金额、计数、逐行重复的链接都不用主题色（逐行链接平时灰色，悬停才变主题色）。
 
 **未激活不着色。** 无库存、草稿、未选中等常态或空状态用灰色文字，不用红色或高饱和底色。红色只留给真正的错误和破坏性操作。
@@ -191,6 +198,7 @@ components:
 **风格：** 全站只用一个字族，相邻层级的字号比约 1.125–1.2，用固定的 rem 字号，不用随视口缩放的字号。
 
 ### Hierarchy
+
 - **页面标题 Headline**（600，1.5rem，字距 -0.025em）：每页一个 h1（`PageHeader`）。
 - **区块标题 Title**（600，1rem）：卡片标题、分组标题。
 - **正文 Body**（400，0.875rem，行高 1.5）：表格、表单、说明文字。
@@ -198,6 +206,7 @@ components:
 - **数据 Data**（600，等宽数字）：金额、数量、日期，右对齐。
 
 ### Named Rules
+
 **数字对齐。** 金额、数量、日期一律使用 `tabular-nums`；表格默认已开启。
 
 **标题上方不加小标签。** 页面标题本身就够了，不要在它上面再加一行小号的分类说明（kicker / eyebrow）。
@@ -250,6 +259,7 @@ components:
 ## Do's and Don'ts
 
 **Do**
+
 - 颜色只用于设备类别和业务状态。
 - 新的单选筛选复用 FilterTabs，新的状态徽章复用语义变体。
 - 金额和数量使用等宽数字并右对齐。
@@ -257,6 +267,7 @@ components:
 - 每个控件都要处理默认、悬停、聚焦、禁用、加载、出错这几种状态。
 
 **Don't**
+
 - 不用渐变文字、装饰性毛玻璃、硬边偏移阴影。
 - 不在页面标题上方加小号分类标签。
 - 不用红色表示常态或空状态（例如无库存、草稿）。

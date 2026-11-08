@@ -30,7 +30,11 @@ const staticThumb = (slug: string) => {
   return fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
   const { slug } = await params
   const tpl = resolveProposalTemplate(slug, await loadPublicProposalTemplates())
   if (!tpl) return { title: `方案模板 · ${APP_NAME}` }
@@ -39,19 +43,38 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${tpl.label} · 方案模板库 · ${APP_NAME}`,
     description: `${tpl.description}。适合${tpl.audience}，${tpl.occasion}。`,
     alternates: { canonical: `/templates/${tpl.value}` },
-    ...(image ? { openGraph: { images: [{ url: image, width: 1200, height: 800, alt: `${tpl.label}封面` }] } } : {}),
+    ...(image
+      ? {
+          openGraph: {
+            images: [{ url: image, width: 1200, height: 800, alt: `${tpl.label}封面` }],
+          },
+        }
+      : {}),
   }
 }
 
-export default async function TemplateDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function TemplateDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
-  const [templates, docs, company] = await Promise.all([loadPublicProposalTemplates(), getTemplatePreviewDocs().catch(() => null), getCompanyInfo().catch(() => null)])
+  const [templates, docs, company] = await Promise.all([
+    loadPublicProposalTemplates(),
+    getTemplatePreviewDocs().catch(() => null),
+    getCompanyInfo().catch(() => null),
+  ])
   const tpl = resolveProposalTemplate(slug, templates)
   if (!tpl) notFound()
   const { pages } = templatePreview(tpl, docs)
   const t = toPickerTemplate(tpl, { pages })
   const theme = templateTheme(tpl)
-  const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
+  const date = new Date().toLocaleDateString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const others = templates.filter((x) => x.value !== tpl.value && x.kind === tpl.kind).slice(0, 3)
   const otherCards = others.map((x) => {
     const p = templatePreview(x, docs)
@@ -98,19 +121,31 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                 </dl>
                 <div className="mt-6 flex flex-wrap gap-1.5">
                   {t.highlights.map((h) => (
-                    <span key={h} className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
+                    <span
+                      key={h}
+                      className="rounded-full border px-3 py-1 text-xs text-muted-foreground"
+                    >
                       {h}
                     </span>
                   ))}
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+                  >
                     <Link href="/projects">
                       在项目里使用
                       <ArrowRight data-icon="inline-end" />
                     </Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6 text-base">
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="h-11 rounded-full px-6 text-base"
+                  >
                     <a href="#sample">看整套样张</a>
                   </Button>
                 </div>
@@ -126,12 +161,19 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                 </dl>
                 {t.sections.length ? (
                   <div>
-                    <p className="mb-2 text-xs font-medium text-muted-foreground">章节顺序（按编排规范）</p>
+                    <p className="mb-2 text-xs font-medium text-muted-foreground">
+                      章节顺序（按编排规范）
+                    </p>
                     <ol className="divide-y rounded-2xl border bg-card">
                       {t.sections.map((s, i) => (
-                        <li key={s.value} className="flex items-baseline justify-between gap-4 px-4 py-2.5 text-sm">
+                        <li
+                          key={s.value}
+                          className="flex items-baseline justify-between gap-4 px-4 py-2.5 text-sm"
+                        >
                           <span>
-                            <span className="mr-3 text-muted-foreground tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                            <span className="mr-3 text-muted-foreground tabular-nums">
+                              {String(i + 1).padStart(2, '0')}
+                            </span>
                             {s.label}
                           </span>
                           <span className="text-xs text-muted-foreground">{s.pages}</span>
@@ -141,7 +183,12 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                   </div>
                 ) : (
                   <ul className="space-y-2 rounded-2xl border bg-card p-5 text-sm">
-                    {['项目信息封面与全屋点位图', '房间配置与设备清单（含点位代号）', '逐点安装核对表，现场打勾确认', '不出现任何单价与总价'].map((x) => (
+                    {[
+                      '项目信息封面与全屋点位图',
+                      '房间配置与设备清单（含点位代号）',
+                      '逐点安装核对表，现场打勾确认',
+                      '不出现任何单价与总价',
+                    ].map((x) => (
                       <li key={x} className="flex items-start gap-2">
                         <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                         {x}
@@ -154,18 +201,26 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
           </div>
         </section>
 
-        <section id="sample" aria-labelledby="sample-title" className="mt-16 scroll-mt-20 border-y bg-neutral-200/60 px-4 py-12 sm:px-6 lg:px-8 dark:bg-neutral-900">
+        <section
+          id="sample"
+          aria-labelledby="sample-title"
+          className="mt-16 scroll-mt-20 border-y bg-neutral-200/60 px-4 py-12 sm:px-6 lg:px-8 dark:bg-neutral-900"
+        >
           <div className="mx-auto max-w-6xl">
             <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="sample-title" className="text-lg font-medium">
                 整套样张
               </h2>
-              <p className="text-sm text-muted-foreground">示例：平台内置的三层别墅项目 · 页数随项目的图纸、房间与设备自动增减</p>
+              <p className="text-sm text-muted-foreground">
+                示例：平台内置的三层别墅项目 · 页数随项目的图纸、房间与设备自动增减
+              </p>
             </div>
             {docs ? (
               tpl.kind === 'owner' ? (
                 <ScaledStack width={1440}>
-                  <DeckRoot theme={theme}>{deckPreviewPages(docs, theme, { insights: true, sections: tpl.sections })}</DeckRoot>
+                  <DeckRoot theme={theme}>
+                    {deckPreviewPages(docs, theme, { insights: true, sections: tpl.sections })}
+                  </DeckRoot>
                 </ScaledStack>
               ) : (
                 <ScaledStack width={1123}>
@@ -177,7 +232,9 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                 </ScaledStack>
               )
             ) : (
-              <p className="rounded-2xl border border-dashed bg-background p-10 text-center text-sm text-muted-foreground">示例项目暂时不可用，请稍后再来看样张。</p>
+              <p className="rounded-2xl border border-dashed bg-background p-10 text-center text-sm text-muted-foreground">
+                示例项目暂时不可用，请稍后再来看样张。
+              </p>
             )}
           </div>
         </section>
@@ -189,7 +246,10 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                 <h2 id="others-title" className="text-lg font-medium">
                   再看看其他模板
                 </h2>
-                <Link href="/templates" className="text-sm text-muted-foreground hover:text-foreground">
+                <Link
+                  href="/templates"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
                   全部模板
                 </Link>
               </div>
@@ -202,7 +262,10 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
           </section>
         ) : null}
       </main>
-      <LandingFooter qrCodeUrl={company?.qrCode?.url ?? '/brand/wechat-contact-qr.jpg'} qrCaption={company?.qrCaption ?? '扫码添加微信'} />
+      <LandingFooter
+        qrCodeUrl={company?.qrCode?.url ?? '/brand/wechat-contact-qr.jpg'}
+        qrCaption={company?.qrCaption ?? '扫码添加微信'}
+      />
     </div>
   )
 }

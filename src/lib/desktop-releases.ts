@@ -23,7 +23,10 @@ const CACHE_MS = 60_000
 // 安装包目录是运行时挂载的数据目录：turbopackIgnore 告诉打包器不要追踪它，
 // 否则构建时会把整个项目都打进服务端产物。
 export function releasesDir() {
-  return path.resolve(/*turbopackIgnore: true*/ process.env.DESKTOP_RELEASES_DIR || path.join(/*turbopackIgnore: true*/ process.cwd(), 'desktop-releases'))
+  return path.resolve(
+    /*turbopackIgnore: true*/ process.env.DESKTOP_RELEASES_DIR ||
+      path.join(/*turbopackIgnore: true*/ process.cwd(), 'desktop-releases'),
+  )
 }
 
 export function releasesBaseUrl(): string | null {
@@ -40,7 +43,11 @@ export function releasesBaseUrl(): string | null {
 
 /** 只允许目录下的安装包和更新清单（单层文件名，防止路径穿越） */
 export function isReleaseFileName(name: string) {
-  return FILE_NAME.test(name) && !name.includes('..') && ALLOWED_EXTENSIONS.has(path.extname(name).toLowerCase())
+  return (
+    FILE_NAME.test(name) &&
+    !name.includes('..') &&
+    ALLOWED_EXTENSIONS.has(path.extname(name).toLowerCase())
+  )
 }
 
 export async function localReleaseFile(name: string) {
@@ -60,18 +67,26 @@ async function readFeed(name: string): Promise<string | null> {
   const base = releasesBaseUrl()
   if (!base) return null
   try {
-    const response = await fetch(`${base}/${name}`, { cache: 'no-store', signal: AbortSignal.timeout(5000) })
+    const response = await fetch(`${base}/${name}`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(5000),
+    })
     return response.ok ? await response.text() : null
   } catch {
     return null
   }
 }
 
-type Feed = { version: string | null; releaseDate: string | null; files: { url: string; size: number | null }[] }
+type Feed = {
+  version: string | null
+  releaseDate: string | null
+  files: { url: string; size: number | null }[]
+}
 
 /** 解析 electron-builder 生成的更新清单中需要的字段 */
 export function parseFeed(text: string): Feed {
-  const field = (name: string) => new RegExp(`^${name}:\\s*['"]?([^'"\\r\\n]+?)['"]?\\s*$`, 'm').exec(text)?.[1] ?? null
+  const field = (name: string) =>
+    new RegExp(`^${name}:\\s*['"]?([^'"\\r\\n]+?)['"]?\\s*$`, 'm').exec(text)?.[1] ?? null
   const files: Feed['files'] = []
   for (const line of text.split(/\r?\n/)) {
     const url = /^\s*-\s*url:\s*['"]?([^'"]+?)['"]?\s*$/.exec(line)
@@ -99,7 +114,13 @@ function toRelease(text: string | null, formats: DesktopFormat[]): DesktopPlatfo
   for (const file of feed.files) {
     const format = path.extname(file.url).slice(1).toLowerCase() as DesktopFormat
     if (!formats.includes(format) || !isReleaseFileName(file.url)) continue
-    assets.push({ file: file.url, url: `${DESKTOP_DOWNLOADS_PATH}/${file.url}`, size: file.size, arch: archOf(file.url), format })
+    assets.push({
+      file: file.url,
+      url: `${DESKTOP_DOWNLOADS_PATH}/${file.url}`,
+      size: file.size,
+      arch: archOf(file.url),
+      format,
+    })
   }
   return assets.length ? { version: feed.version, releaseDate: feed.releaseDate, assets } : null
 }

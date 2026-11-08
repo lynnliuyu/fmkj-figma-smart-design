@@ -50,7 +50,12 @@ export const Users: CollectionConfig = {
   },
   fields: [
     { name: 'name', label: '姓名', type: 'text', required: true },
-    { name: 'phone', label: '手机号', type: 'text', admin: { description: '会作为联系人显示在报价单上' } },
+    {
+      name: 'phone',
+      label: '手机号',
+      type: 'text',
+      admin: { description: '会作为联系人显示在报价单上' },
+    },
     {
       name: 'status',
       label: '状态',
@@ -71,7 +76,11 @@ export const Users: CollectionConfig = {
       type: 'number',
       defaultValue: 0,
       min: 0,
-      admin: { readOnly: true, position: 'sidebar', description: '在「积分流水」里新建一条记录来发放积分' },
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: '在「积分流水」里新建一条记录来发放积分',
+      },
       access: { update: () => false, create: () => false },
     },
     {
@@ -79,7 +88,8 @@ export const Users: CollectionConfig = {
       label: '个人抬头与默认设置',
       type: 'group',
       admin: {
-        description: '每个账号独立的报价单/合同抬头、联系方式、Logo、二维码与文档默认模板；未填写时回退使用系统默认抬头。',
+        description:
+          '每个账号独立的报价单/合同抬头、联系方式、Logo、二维码与文档默认模板；未填写时回退使用系统默认抬头。',
       },
       fields: [
         { name: 'name', label: '抬头名称', type: 'text', maxLength: 60 },
@@ -101,8 +111,19 @@ export const Users: CollectionConfig = {
         },
         { name: 'qrCaption', label: '二维码说明', type: 'text', maxLength: 40 },
         { name: 'quoteNotes', label: '新报价默认备注', type: 'textarea', maxLength: 2000 },
-        { name: 'contractTerms', label: '合同默认条款', type: 'textarea', maxLength: 5000, defaultValue: DEFAULT_CONTRACT_TERMS },
-        { name: 'printProductImages', label: '打印报价单时显示产品图片', type: 'checkbox', defaultValue: true },
+        {
+          name: 'contractTerms',
+          label: '合同默认条款',
+          type: 'textarea',
+          maxLength: 5000,
+          defaultValue: DEFAULT_CONTRACT_TERMS,
+        },
+        {
+          name: 'printProductImages',
+          label: '打印报价单时显示产品图片',
+          type: 'checkbox',
+          defaultValue: true,
+        },
         {
           name: 'documentDefaults',
           label: '文档默认模板',
@@ -118,7 +139,10 @@ export const Users: CollectionConfig = {
           name: 'costSettings',
           label: '报价成本与毛利设置',
           type: 'json',
-          admin: { description: '在系统「设置 → 报价成本与毛利」里修改：品牌拿货折扣、附加费用成本占比与毛利率底线，仅本人在报价台可见' },
+          admin: {
+            description:
+              '在系统「设置 → 报价成本与毛利」里修改：品牌拿货折扣、附加费用成本占比与毛利率底线，仅本人在报价台可见',
+          },
         },
       ],
     },

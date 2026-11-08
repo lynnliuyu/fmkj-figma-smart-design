@@ -11,7 +11,11 @@ import { getProject } from '../project-data'
 import { AfterSalesBoard } from './after-sales-board'
 
 /** 售后维保（插件）：质保倒计时、维保记录与配置备份。项目归档后仍可登记，仅查看的协作者只能浏览。 */
-export default async function ProjectAfterSalesPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectAfterSalesPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
   const { user, project, role, archived } = await getProject(id)
   const ownerId = relId(project.owner) || user.id
@@ -41,8 +45,18 @@ export default async function ProjectAfterSalesPage({ params }: { params: Promis
   // 配置备份可能有上百台设备：页面只需要数量和最近一次备份的前几台，完整台账在打印页查看
   const data = {
     ...full,
-    records: full.records.map((r) => (r.snapshot ? { ...r, snapshot: { ...r.snapshot, devices: [] } } : r)),
-    latestBackup: full.latestBackup?.snapshot ? { ...full.latestBackup, snapshot: { ...full.latestBackup.snapshot, devices: full.latestBackup.snapshot.devices.slice(0, 5) } } : full.latestBackup,
+    records: full.records.map((r) =>
+      r.snapshot ? { ...r, snapshot: { ...r.snapshot, devices: [] } } : r,
+    ),
+    latestBackup: full.latestBackup?.snapshot
+      ? {
+          ...full.latestBackup,
+          snapshot: {
+            ...full.latestBackup.snapshot,
+            devices: full.latestBackup.snapshot.devices.slice(0, 5),
+          },
+        }
+      : full.latestBackup,
   }
   return (
     <AfterSalesBoard

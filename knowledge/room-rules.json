@@ -2,11 +2,7 @@
   "scoringRule": "score = 已满足的(必备 core + 推荐 recommended)项数量 / 总(必备 core + 推荐 recommended)项数量 × 100（四舍五入，可选 optional 不计入分母）",
   "designRules": {
     "summaryText": "开关、插座、灯具只在图纸上已有准确点位符号时照图生成（source 标为 \"drawing\"）；图上没有就不要生成，不得凭经验推测。其余默认设计：全屋 WiFi（ap-node、network-panel）、窗帘电轨 curtain-track、智能网关 gateway、VRF 控制器 vrf-controller、人体传感器 motion-sensor、智能音箱 speaker、摄像头 camera（source 标为 \"design\"）。数量规范：VRF 控制器每层只放 1 个且放在客厅；智能音箱与中控屏每个区域只放其中一种、只放 1 个，不能共存；智能音箱一般只放客厅和书房；中控屏 touch-panel 要对照开关点位布置，图上没有开关点位时不要加入；摄像头一般只放 2 个——客厅 1 个、入户门口 1 个。",
-    "drawingOnlyCategories": [
-      "switch",
-      "socket",
-      "lighting"
-    ],
+    "drawingOnlyCategories": ["switch", "socket", "lighting"],
     "autoDesignTypes": [
       "ap-node",
       "network-panel",
@@ -17,17 +13,9 @@
       "speaker",
       "camera"
     ],
-    "needsSwitchTypes": [
-      "touch-panel"
-    ],
-    "speakerAreaTypes": [
-      "living",
-      "study"
-    ],
-    "onePerAreaTypes": [
-      "speaker",
-      "touch-panel"
-    ],
+    "needsSwitchTypes": ["touch-panel"],
+    "speakerAreaTypes": ["living", "study"],
+    "onePerAreaTypes": ["speaker", "touch-panel"],
     "vrfPerFloor": 1,
     "cameraPerFloor": 2
   },
@@ -41,9 +29,7 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "指纹 / 人脸开门，开锁即触发回家模式",
-          "matchingDevices": [
-            "smart-lock"
-          ]
+          "matchingDevices": ["smart-lock"]
         },
         {
           "label": "照明",
@@ -67,33 +53,21 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "进门自动亮灯，离开后自动关闭",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         },
         {
           "label": "场景面板",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "门口一键「回家 / 离家」",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "门铃 / 摄像头",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "访客识别、入户门状态提醒",
-          "matchingDevices": [
-            "contact-sensor",
-            "doorbell",
-            "camera"
-          ]
+          "matchingDevices": ["contact-sensor", "doorbell", "camera"]
         }
       ],
       "scenes": [
@@ -127,42 +101,28 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "分回路控制，支持会客、观影等场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "电动窗帘",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "观影、起床场景联动窗帘开合",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         },
         {
           "label": "中控屏 / 智能音箱",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "集中控制和语音控制全屋设备",
-          "matchingDevices": [
-            "speaker",
-            "touch-panel"
-          ]
+          "matchingDevices": ["speaker", "touch-panel"]
         },
         {
           "label": "温湿度 / 空调控制",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "按温湿度自动调节空调",
-          "matchingDevices": [
-            "temp-sensor",
-            "vrf-controller"
-          ]
+          "matchingDevices": ["temp-sensor", "vrf-controller"]
         }
       ],
       "scenes": [
@@ -196,27 +156,17 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "智能音箱",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "用餐背景音乐",
-          "matchingDevices": [
-            "speaker"
-          ]
+          "matchingDevices": ["speaker"]
         }
       ],
-      "scenes": [
-        "用餐模式：餐吊灯 80% 暖光，其余区域灯光调暗"
-      ]
+      "scenes": ["用餐模式：餐吊灯 80% 暖光，其余区域灯光调暗"]
     },
     "kitchen": {
       "areaType": "kitchen",
@@ -244,45 +194,31 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "烟雾 / 燃气报警",
           "level": "core",
           "levelLabel": "必备",
           "reason": "火情、燃气泄漏早期报警",
-          "matchingDevices": [
-            "smoke-sensor"
-          ]
+          "matchingDevices": ["smoke-sensor"]
         },
         {
           "label": "水浸传感器",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "水槽下方漏水及时告警",
-          "matchingDevices": [
-            "water-sensor"
-          ]
+          "matchingDevices": ["water-sensor"]
         },
         {
           "label": "人体传感器",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "双手占用时人来灯亮",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         }
       ],
-      "scenes": [
-        "安全联动：烟雾或燃气报警时推送手机，并联动声光提醒"
-      ]
+      "scenes": ["安全联动：烟雾或燃气报警时推送手机，并联动声光提醒"]
     },
     "bedroom": {
       "areaType": "bedroom",
@@ -310,41 +246,28 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "门口与床头双控",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "电动窗帘",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "定时开合，起床自然光唤醒",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         },
         {
           "label": "人体传感器",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "起夜自动亮起低亮度夜灯",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         },
         {
           "label": "温湿度 / 空调控制",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "睡眠时自动调节空调",
-          "matchingDevices": [
-            "temp-sensor",
-            "vrf-controller"
-          ]
+          "matchingDevices": ["temp-sensor", "vrf-controller"]
         }
       ],
       "scenes": [
@@ -378,37 +301,24 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "温湿度传感器",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "关注孩子房间温湿度",
-          "matchingDevices": [
-            "temp-sensor"
-          ]
+          "matchingDevices": ["temp-sensor"]
         },
         {
           "label": "电动窗帘",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "午睡、晚睡定时闭合",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         }
       ],
-      "scenes": [
-        "学习模式：书桌区域 4000K 中性光，亮度 80%",
-        "晚安模式：21:30 灯光渐暗，窗帘闭合"
-      ]
+      "scenes": ["学习模式：书桌区域 4000K 中性光，亮度 80%", "晚安模式：21:30 灯光渐暗，窗帘闭合"]
     },
     "study": {
       "areaType": "study",
@@ -436,27 +346,17 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "电动窗帘",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "视频会议时一键遮光",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         }
       ],
-      "scenes": [
-        "专注模式：主灯 4000K 全亮，音箱静音"
-      ]
+      "scenes": ["专注模式：主灯 4000K 全亮，音箱静音"]
     },
     "bathroom": {
       "areaType": "bathroom",
@@ -498,18 +398,14 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "地漏、洗衣机漏水告警",
-          "matchingDevices": [
-            "water-sensor"
-          ]
+          "matchingDevices": ["water-sensor"]
         },
         {
           "label": "浴霸 / 换气",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "洗浴前远程预热",
-          "matchingDevices": [
-            "other"
-          ]
+          "matchingDevices": ["other"]
         }
       ],
       "scenes": [
@@ -543,23 +439,17 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "遮阳、隐私，随日照自动开合",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         },
         {
           "label": "智能晾衣架",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "一键升降、烘干",
-          "matchingDevices": [
-            "other"
-          ]
+          "matchingDevices": ["other"]
         }
       ],
-      "scenes": [
-        "日落模式：日落后阳台灯自动亮起，22:00 关闭"
-      ]
+      "scenes": ["日落模式：日落后阳台灯自动亮起，22:00 关闭"]
     },
     "corridor": {
       "areaType": "corridor",
@@ -587,27 +477,17 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "夜间经过自动亮灯，不用摸黑找开关",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         },
         {
           "label": "开关",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "两端双控",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         }
       ],
-      "scenes": [
-        "夜间通行：22:00 后感应亮灯，亮度 30%"
-      ]
+      "scenes": ["夜间通行：22:00 后感应亮灯，亮度 30%"]
     },
     "stairs": {
       "areaType": "stairs",
@@ -635,27 +515,17 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "踏步灯逐级点亮，30 秒后熄灭",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         },
         {
           "label": "上下双控",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "楼上楼下都能控制",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         }
       ],
-      "scenes": [
-        "感应照明：有人上下楼时踏步灯逐级点亮，无人后自动熄灭"
-      ]
+      "scenes": ["感应照明：有人上下楼时踏步灯逐级点亮，无人后自动熄灭"]
     },
     "closet": {
       "areaType": "closet",
@@ -683,14 +553,10 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "进门即亮，离开即关",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         }
       ],
-      "scenes": [
-        "进门即亮：感应到有人时柜内灯带亮起"
-      ]
+      "scenes": ["进门即亮：感应到有人时柜内灯带亮起"]
     },
     "theater": {
       "areaType": "theater",
@@ -718,36 +584,24 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "电动窗帘",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "观影一键遮光",
-          "matchingDevices": [
-            "curtain-track"
-          ]
+          "matchingDevices": ["curtain-track"]
         },
         {
           "label": "中控屏",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "影音、灯光、窗帘集中控制",
-          "matchingDevices": [
-            "touch-panel"
-          ]
+          "matchingDevices": ["touch-panel"]
         }
       ],
-      "scenes": [
-        "影院模式：灯光渐暗至 5%，窗帘闭合，投影开启"
-      ]
+      "scenes": ["影院模式：灯光渐暗至 5%，窗帘闭合，投影开启"]
     },
     "leisure": {
       "areaType": "leisure",
@@ -775,27 +629,17 @@
           "level": "core",
           "levelLabel": "必备",
           "reason": "灯光可本地控制，也能接入场景",
-          "matchingDevices": [
-            "switch-1",
-            "switch-2",
-            "switch-3",
-            "switch-4",
-            "touch-panel"
-          ]
+          "matchingDevices": ["switch-1", "switch-2", "switch-3", "switch-4", "touch-panel"]
         },
         {
           "label": "智能音箱",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "背景音乐",
-          "matchingDevices": [
-            "speaker"
-          ]
+          "matchingDevices": ["speaker"]
         }
       ],
-      "scenes": [
-        "休闲模式：氛围灯 50%，播放背景音乐"
-      ]
+      "scenes": ["休闲模式：氛围灯 50%，播放背景音乐"]
     },
     "garage": {
       "areaType": "garage",
@@ -823,23 +667,17 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "停车自动亮灯",
-          "matchingDevices": [
-            "motion-sensor"
-          ]
+          "matchingDevices": ["motion-sensor"]
         },
         {
           "label": "摄像头",
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "车辆与出入安全",
-          "matchingDevices": [
-            "camera"
-          ]
+          "matchingDevices": ["camera"]
         }
       ],
-      "scenes": [
-        "到家联动：车库门打开时灯光自动亮起"
-      ]
+      "scenes": ["到家联动：车库门打开时灯光自动亮起"]
     },
     "utility": {
       "areaType": "utility",
@@ -867,23 +705,17 @@
           "level": "recommended",
           "levelLabel": "推荐",
           "reason": "热水器、洗衣机漏水告警",
-          "matchingDevices": [
-            "water-sensor"
-          ]
+          "matchingDevices": ["water-sensor"]
         },
         {
           "label": "烟雾报警",
           "level": "optional",
           "levelLabel": "可选",
           "reason": "设备间火情报警",
-          "matchingDevices": [
-            "smoke-sensor"
-          ]
+          "matchingDevices": ["smoke-sensor"]
         }
       ],
-      "scenes": [
-        "漏水告警：检测到漏水立即推送手机"
-      ]
+      "scenes": ["漏水告警：检测到漏水立即推送手机"]
     },
     "other": {
       "areaType": "other",

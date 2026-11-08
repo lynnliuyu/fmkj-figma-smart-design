@@ -10,7 +10,12 @@
 import { allStyles, DOC_KIND_LIST, DOC_KINDS } from '@/documents/registry'
 import { DEVICE_GROUPS } from '@/lib/device-types'
 import { PLUGINS } from '@/plugins'
-import { DEFAULT_TOOL_COST, INPUT_PER_1K, OUTPUT_PER_1K, TOOL_COSTS } from '@/plugins/ai-copilot/billing'
+import {
+  DEFAULT_TOOL_COST,
+  INPUT_PER_1K,
+  OUTPUT_PER_1K,
+  TOOL_COSTS,
+} from '@/plugins/ai-copilot/billing'
 import { AI_PROVIDER_PRESETS, type AiModelConfig } from '@/plugins/ai-copilot/templates'
 import { PROPOSAL_TEMPLATES } from '@/plugins/proposal/templates'
 
@@ -30,7 +35,8 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     step: '01',
     title: '项目信息与团队协作',
     routeLabel: '项目列表 -> 新建项目 / 项目概览',
-    summary: '录入客户姓名、电话、楼盘小区、房号、客户预算与主生态平台（米家 / Aqara / Apple Home / 华为鸿蒙智家 / KNX 等），作为后续自动选型、报价单与合同抬头的基准信息。',
+    summary:
+      '录入客户姓名、电话、楼盘小区、房号、客户预算与主生态平台（米家 / Aqara / Apple Home / 华为鸿蒙智家 / KNX 等），作为后续自动选型、报价单与合同抬头的基准信息。',
     bullets: [
       '自动命名：项目名称留空时，系统自动按「小区 + 房号」或客户姓名生成标准项目名。',
       '主平台绑定：选定主平台后，智能选型插件与 AI 助手会优先匹配兼容该生态的设备型号。',
@@ -42,7 +48,8 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     step: '02',
     title: '点位图设计工作台（fmkj-board-system）',
     routeLabel: '项目 -> 点位图',
-    summary: '支持多楼层图纸管理、DWG 转换导入、比例标定、多边形房间区域划分、标准化 SVG 设备/灯光图标放置与一键智能生成点位。',
+    summary:
+      '支持多楼层图纸管理、DWG 转换导入、比例标定、多边形房间区域划分、标准化 SVG 设备/灯光图标放置与一键智能生成点位。',
     bullets: [
       '上传图纸与比例标定：支持上传 PNG/JPG/WebP 户型图（自动裁切图框适配 3:2 标准图纸）或导入 DWG。点击工具栏「标定比例（C）」沿门洞或已知墙段拖一条线并输入实际米数，即可开启 25cm 真实比例网格与灯具按尺寸落图。',
       '多边形房间区域划分：点击工具栏「画区域（A）」，依次点击房间拐角可描出任意多边形轮廓（如 L 型走廊或异形客厅），也可直接拖拽画矩形区域。点位落入区域后自动按房间归类统计。',
@@ -56,7 +63,8 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     step: '03',
     title: '报价台（与点位图双向无缝联动）',
     routeLabel: '项目 -> 报价',
-    summary: '点位图画完即可一键生成或同步到报价单；在报价台可按系统或按房间核对明细、替换品牌型号、修改单价、设置优惠与附加服务费。',
+    summary:
+      '点位图画完即可一键生成或同步到报价单；在报价台可按系统或按房间核对明细、替换品牌型号、修改单价、设置优惠与附加服务费。',
     bullets: [
       '一键生成与增量同步：在点位图顶部点击「生成报价」或「同步到报价」，系统自动按点位数量汇总并匹配产品库默认型号；已手动在报价单改过的型号与单价在同步时会智能保留。',
       '替换产品与改价：点击任意报价行可从 728 款产品库中按品牌/平台搜索替换型号，或直接修改单价、数量、备注；支持设置整单抹零优惠与安装调试费、辅材费等附加项。',
@@ -70,7 +78,8 @@ export const CORE_WORKFLOW_GUIDES: WorkflowStepGuide[] = [
     step: '04',
     title: '施工合同与分期收款管理',
     routeLabel: '项目 -> 合同',
-    summary: '基于确认的报价单自动带入合同总金额、客户信息与公司抬头，配置分期付款节点、工期与质保条款。',
+    summary:
+      '基于确认的报价单自动带入合同总金额、客户信息与公司抬头，配置分期付款节点、工期与质保条款。',
     bullets: [
       '三阶段分期付款：默认支持签约首付、设备进场、完工验收三阶段比例设置（如 40% / 50% / 10%），自动校验比例合计为 100% 并计算各期金额。',
       '收款与状态追踪：支持逐期标记「已收款」及切换合同状态（草稿 / 已签署 / 履行中 / 已完结）。',
@@ -209,7 +218,8 @@ export const AI_TOOL_BILLING_ITEMS: {
     label: '按生态平台与预算档次一键选型',
     category: '项目与选型修改',
     cost: TOOL_COSTS.smart_select ?? DEFAULT_TOOL_COST,
-    description: '按指定生态平台（米家/Aqara/Apple Home/华为/KNX）和经济/标准/高端档次自动配齐整屋默认产品',
+    description:
+      '按指定生态平台（米家/Aqara/Apple Home/华为/KNX）和经济/标准/高端档次自动配齐整屋默认产品',
   },
 ]
 
@@ -222,10 +232,22 @@ export const BOARD_SHORTCUTS: { keys: string; action: string; scope: string }[] 
   { keys: 'G', action: '开启 / 关闭 25cm 比例网格', scope: '画布全局' },
   { keys: 'Shift + R', action: '显示 / 隐藏顶部与左侧标尺', scope: '画布全局' },
   { keys: 'R', action: '将选中点位顺时针旋转 90 度', scope: '选中点位时' },
-  { keys: '方向键 / Shift + 方向键', action: '微调选中对象位置（1 单位 / 10 单位）', scope: '选中对象时' },
-  { keys: 'Ctrl/Cmd + Z', action: '撤销上一步操作（含撤销「智能生成点位」覆盖）', scope: '编辑模式' },
+  {
+    keys: '方向键 / Shift + 方向键',
+    action: '微调选中对象位置（1 单位 / 10 单位）',
+    scope: '选中对象时',
+  },
+  {
+    keys: 'Ctrl/Cmd + Z',
+    action: '撤销上一步操作（含撤销「智能生成点位」覆盖）',
+    scope: '编辑模式',
+  },
   { keys: 'Ctrl/Cmd + Shift + Z', action: '重做上一步撤销的操作', scope: '编辑模式' },
-  { keys: 'Ctrl/Cmd + C / V', action: '复制选中点位或区域 / 粘贴到鼠标位置并自动重编号', scope: '编辑模式' },
+  {
+    keys: 'Ctrl/Cmd + C / V',
+    action: '复制选中点位或区域 / 粘贴到鼠标位置并自动重编号',
+    scope: '编辑模式',
+  },
   { keys: 'Ctrl/Cmd + D', action: '快速原地复制选中点位或区域', scope: '编辑模式' },
   { keys: 'Ctrl/Cmd + A', action: '全选当前可见范围内的所有设备点位', scope: '编辑模式' },
   { keys: 'Delete / Backspace', action: '删除选中的点位或区域', scope: '选中对象时' },

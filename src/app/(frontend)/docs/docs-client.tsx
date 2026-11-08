@@ -31,12 +31,7 @@ import { AppearanceMenuItems } from '@/components/appearance-menu'
 import { BrandLogo } from '@/components/landing/landing-chrome'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -264,7 +259,12 @@ function Callout({
   const Icon = type === 'warning' ? TriangleAlert : type === 'tip' ? Sparkles : Info
   return (
     <div className={cn('my-4 flex gap-3 rounded-xl border p-4 text-xs leading-relaxed', styles)}>
-      <Icon className={cn('mt-0.5 size-4 shrink-0', type === 'warning' ? 'text-amber-500' : 'text-primary')} />
+      <Icon
+        className={cn(
+          'mt-0.5 size-4 shrink-0',
+          type === 'warning' ? 'text-amber-500' : 'text-primary',
+        )}
+      />
       <div className="space-y-1">
         <p className="font-semibold">{title}</p>
         <div className="text-muted-foreground">{children}</div>
@@ -347,7 +347,9 @@ export function DocsClient({ manual }: { manual: ManualData }) {
             <Link href="/" className="shrink-0">
               <BrandLogo className="h-6 w-auto" />
             </Link>
-            <span aria-hidden className="text-muted-foreground/60">/</span>
+            <span aria-hidden className="text-muted-foreground/60">
+              /
+            </span>
             <button
               type="button"
               onClick={() => selectSection('overview')}
@@ -468,7 +470,9 @@ export function DocsClient({ manual }: { manual: ManualData }) {
               </div>
 
               {/* 渲染当前选中章节 */}
-              {activeId === 'overview' && <SectionOverview manual={manual} onNavigate={selectSection} />}
+              {activeId === 'overview' && (
+                <SectionOverview manual={manual} onNavigate={selectSection} />
+              )}
               {activeId === 'quickstart' && <SectionQuickstart onNavigate={selectSection} />}
               {activeId === 'multiplatform' && <SectionMultiplatform />}
               {activeId === 'projects' && <SectionProjects />}
@@ -584,7 +588,9 @@ export function DocsClient({ manual }: { manual: ManualData }) {
           </div>
           <div className="max-h-80 space-y-1 overflow-y-auto pr-1">
             {searchResults.length === 0 ? (
-              <p className="py-6 text-center text-xs text-muted-foreground">没有找到匹配的文档章节</p>
+              <p className="py-6 text-center text-xs text-muted-foreground">
+                没有找到匹配的文档章节
+              </p>
             ) : (
               searchResults.map((item) => (
                 <button
@@ -622,7 +628,9 @@ function SectionOverview({
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">繁梦空间（FMKJ）平台架构与文档总览</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          繁梦空间（FMKJ）平台架构与文档总览
+        </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
           面向个人全屋智能设计师、设计工作室与工程集成商的一体化方案设计、点位绘制、自动选型报价、合同与多模板交付平台。
         </p>
@@ -631,7 +639,10 @@ function SectionOverview({
       <section id="overview-intro" className="scroll-mt-20 space-y-3">
         <h2 className="text-lg font-semibold">产品定位</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          繁梦空间将传统智能家居方案中割裂的「CAD 看图描点 → Excel 统计数量查价格 → PPT 排版做方案 → Word 拟合同 → 施工交底表」整合为单一数据源驱动的闭环工作台。您在户型图上布置的每一个设备或灯具点位，都会实时同步驱动报价单、8 章 A4 横版客户提案、施工合同与现场交底清单。
+          繁梦空间将传统智能家居方案中割裂的「CAD 看图描点 → Excel 统计数量查价格 → PPT 排版做方案 →
+          Word 拟合同 →
+          施工交底表」整合为单一数据源驱动的闭环工作台。您在户型图上布置的每一个设备或灯具点位，都会实时同步驱动报价单、8
+          章 A4 横版客户提案、施工合同与现场交底清单。
         </p>
       </section>
 
@@ -639,12 +650,42 @@ function SectionOverview({
         <h2 className="text-lg font-semibold">五步核心业务闭环</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            { id: 'projects' as const, step: '01', title: '项目信息与协作', desc: '录入客户、楼盘、预算与主生态平台，支持分享链接与团队协同' },
-            { id: 'point-map' as const, step: '02', title: '点位图工作台', desc: '多边形房间划分、标准 SVG 图标落图、一键智能生成点位（可撤销）' },
-            { id: 'quotes' as const, step: '03', title: '报价台双向联动', desc: '点位实时同步报价、728 款产品库替换型号、单价修改与反向定位' },
-            { id: 'contracts' as const, step: '04', title: '施工合同管理', desc: '自动继承报价金额、三阶段分期付款比例校验与收款状态追踪' },
-            { id: 'archive' as const, step: '05', title: '归档与资料包导出', desc: '8 章横版提案、多风格报价、合同、交底单与一键合并 PDF / ZIP' },
-            { id: 'ai-billing' as const, step: 'AI', title: '国产大模型助手', desc: '侧边栏 AI 对话、户型图视觉识图、多步工具调用与透明积分计费' },
+            {
+              id: 'projects' as const,
+              step: '01',
+              title: '项目信息与协作',
+              desc: '录入客户、楼盘、预算与主生态平台，支持分享链接与团队协同',
+            },
+            {
+              id: 'point-map' as const,
+              step: '02',
+              title: '点位图工作台',
+              desc: '多边形房间划分、标准 SVG 图标落图、一键智能生成点位（可撤销）',
+            },
+            {
+              id: 'quotes' as const,
+              step: '03',
+              title: '报价台双向联动',
+              desc: '点位实时同步报价、728 款产品库替换型号、单价修改与反向定位',
+            },
+            {
+              id: 'contracts' as const,
+              step: '04',
+              title: '施工合同管理',
+              desc: '自动继承报价金额、三阶段分期付款比例校验与收款状态追踪',
+            },
+            {
+              id: 'archive' as const,
+              step: '05',
+              title: '归档与资料包导出',
+              desc: '8 章横版提案、多风格报价、合同、交底单与一键合并 PDF / ZIP',
+            },
+            {
+              id: 'ai-billing' as const,
+              step: 'AI',
+              title: '国产大模型助手',
+              desc: '侧边栏 AI 对话、户型图视觉识图、多步工具调用与透明积分计费',
+            },
           ].map((card) => (
             <button
               key={card.step}
@@ -674,21 +715,25 @@ function SectionOverview({
             <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               <strong className="text-foreground">直接展示标准设备图标：</strong>
-              全站画布、导出的 PNG 点位图与 8 章方案演示平面图统一直接显示标准化 SVG 设备与灯具图标，直观易读。
+              全站画布、导出的 PNG 点位图与 8 章方案演示平面图统一直接显示标准化 SVG
+              设备与灯具图标，直观易读。
             </span>
           </li>
           <li className="flex items-start gap-2">
             <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               <strong className="text-foreground">核心极简 + 外围插件化：</strong>
-              主导航只保留最核心的「信息 → 点位 → 报价 → 合同 → 归档」五步，DWG 转换、强弱电布线表、采购核验单等进阶工具全部收录在「能力中心」（共 {manual.plugins.length} 项）里，点开即用。
+              主导航只保留最核心的「信息 → 点位 → 报价 → 合同 → 归档」五步，DWG
+              转换、强弱电布线表、采购核验单等进阶工具全部收录在「能力中心」（共{' '}
+              {manual.plugins.length} 项）里，点开即用。
             </span>
           </li>
           <li className="flex items-start gap-2">
             <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               <strong className="text-foreground">文档与系统配置实时同步：</strong>
-              本文档中心（<code className="font-mono">/docs</code>）直接绑定系统的 AI 计费常量、后台启用的国产大模型列表与插件注册表，任何配置调整均会自动反映在文档表格中。
+              本文档中心（<code className="font-mono">/docs</code>）直接绑定系统的 AI
+              计费常量、后台启用的国产大模型列表与插件注册表，任何配置调整均会自动反映在文档表格中。
             </span>
           </li>
         </ul>
@@ -710,7 +755,13 @@ function SectionQuickstart({ onNavigate }: { onNavigate: (id: DocSectionId) => v
       <section id="qs-step1" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">步骤 1：新建项目并选定主生态平台</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          点击左侧导航栏顶部醒目的 <strong>「+ 新建项目」</strong>，填写客户姓名、小区楼盘与房号（项目名称留空会自动按「小区 + 房号」生成），并选择客户意向的主生态平台（如 <code className="font-mono">米家</code>、<code className="font-mono">Aqara Home</code>、<code className="font-mono">Apple Home</code>、<code className="font-mono">华为鸿蒙智家</code> 或 <code className="font-mono">KNX</code>）。
+          点击左侧导航栏顶部醒目的 <strong>「+ 新建项目」</strong>
+          ，填写客户姓名、小区楼盘与房号（项目名称留空会自动按「小区 +
+          房号」生成），并选择客户意向的主生态平台（如 <code className="font-mono">米家</code>、
+          <code className="font-mono">Aqara Home</code>、
+          <code className="font-mono">Apple Home</code>、
+          <code className="font-mono">华为鸿蒙智家</code> 或 <code className="font-mono">KNX</code>
+          ）。
         </p>
       </section>
 
@@ -720,10 +771,18 @@ function SectionQuickstart({ onNavigate }: { onNavigate: (id: DocSectionId) => v
           进入项目的 <strong>「点位图」</strong> 工作台：
         </p>
         <ol className="list-decimal space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li>点击右上角 <strong>「添加图纸」</strong> 上传 PNG/JPG 户型图（系统会自动识别并裁切图框适配标准画幅）。</li>
-          <li>按快捷键 <kbd className="rounded border bg-muted px-1 font-mono">A</kbd> 切换到「画区域」工具，沿着客厅、主卧、厨房、卫生间等房间轮廓点击描出区域。</li>
           <li>
-            您可以从右侧面板手动点选「智能设备」或「灯光设计」放置点位；也可以直接点击顶部的 <strong>「智能生成点位」</strong> 按钮，一键按房间类型自动排布全屋点位（如不满意可按 <kbd className="rounded border bg-muted px-1 font-mono">Ctrl/⌘ + Z</kbd> 一键撤销）。
+            点击右上角 <strong>「添加图纸」</strong> 上传 PNG/JPG
+            户型图（系统会自动识别并裁切图框适配标准画幅）。
+          </li>
+          <li>
+            按快捷键 <kbd className="rounded border bg-muted px-1 font-mono">A</kbd>{' '}
+            切换到「画区域」工具，沿着客厅、主卧、厨房、卫生间等房间轮廓点击描出区域。
+          </li>
+          <li>
+            您可以从右侧面板手动点选「智能设备」或「灯光设计」放置点位；也可以直接点击顶部的{' '}
+            <strong>「智能生成点位」</strong> 按钮，一键按房间类型自动排布全屋点位（如不满意可按{' '}
+            <kbd className="rounded border bg-muted px-1 font-mono">Ctrl/⌘ + Z</kbd> 一键撤销）。
           </li>
         </ol>
       </section>
@@ -734,8 +793,13 @@ function SectionQuickstart({ onNavigate }: { onNavigate: (id: DocSectionId) => v
           点位布置完成后，点击点位图右上角 <strong>「生成报价」</strong>：
         </p>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li>系统会自动按点位统计数量并匹配对应型号与单价，您可在报价台随时替换品牌型号或设置整单优惠。</li>
-          <li>切换到项目顶部的 <strong>「归档」</strong> 标签页，即可一键预览并导出 PDF 格式的《8 章横版方案演示》《报价单》《施工合同》与《施工交底核对清单》。</li>
+          <li>
+            系统会自动按点位统计数量并匹配对应型号与单价，您可在报价台随时替换品牌型号或设置整单优惠。
+          </li>
+          <li>
+            切换到项目顶部的 <strong>「归档」</strong> 标签页，即可一键预览并导出 PDF 格式的《8
+            章横版方案演示》《报价单》《施工合同》与《施工交底核对清单》。
+          </li>
         </ul>
       </section>
 
@@ -758,30 +822,43 @@ function SectionMultiplatform() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">多端协同（Web / 微信小程序 / 桌面客户端）</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          多端协同（Web / 微信小程序 / 桌面客户端）
+        </h1>
         <p className="text-sm text-muted-foreground">
-          同一套云端账号与 PostgreSQL 数据库，支持办公室大屏精细设计与工地现场手机端改点核对无缝衔接。
+          同一套云端账号与 PostgreSQL
+          数据库，支持办公室大屏精细设计与工地现场手机端改点核对无缝衔接。
         </p>
       </div>
 
       <section id="mp-qr" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 微信扫码免密登录电脑端</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在电脑浏览器或桌面客户端打开 <code className="font-mono">/login</code> 登录页，切换到 <strong>「微信扫码」</strong> 标签；打开手机微信小程序进入「我的 → 扫码登录电脑端」，扫描屏幕二维码并点击确认，电脑端即可在 1 秒内完成自动登录。
+          在电脑浏览器或桌面客户端打开 <code className="font-mono">/login</code> 登录页，切换到{' '}
+          <strong>「微信扫码」</strong> 标签；打开手机微信小程序进入「我的 →
+          扫码登录电脑端」，扫描屏幕二维码并点击确认，电脑端即可在 1 秒内完成自动登录。
         </p>
       </section>
 
       <section id="mp-mobile" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 微信小程序：竖版上下分屏大视野工作区</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          针对工地现场单手握持手机的操作习惯，小程序端点位图页面采用<strong>竖版上下分屏大高度工作区</strong>设计：上半屏为可双指缩放平移的高清点位画布，下半屏为房间筛选、设备点选放置与一键智能选型面板，在现场与业主或水电工沟通时可即时增删点位并同步刷新报价。
+          针对工地现场单手握持手机的操作习惯，小程序端点位图页面采用
+          <strong>竖版上下分屏大高度工作区</strong>
+          设计：上半屏为可双指缩放平移的高清点位画布，下半屏为房间筛选、设备点选放置与一键智能选型面板，在现场与业主或水电工沟通时可即时增删点位并同步刷新报价。
         </p>
       </section>
 
       <section id="mp-desktop" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">3. 桌面客户端与本地草稿防丢保护</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          可在公开导航栏 <Link href="/download" className="font-medium text-primary underline">/download</Link> 下载 macOS 与 Windows 桌面客户端。同时，点位图工作台内置 <strong>1 秒级 LocalStorage 本地草稿保护</strong>：当发生断网或意外关闭标签页时，重新打开项目会自动弹出草稿恢复提示条，点击「恢复」即可找回未保存的改动。
+          可在公开导航栏{' '}
+          <Link href="/download" className="font-medium text-primary underline">
+            /download
+          </Link>{' '}
+          下载 macOS 与 Windows 桌面客户端。同时，点位图工作台内置{' '}
+          <strong>1 秒级 LocalStorage 本地草稿保护</strong>
+          ：当发生断网或意外关闭标签页时，重新打开项目会自动弹出草稿恢复提示条，点击「恢复」即可找回未保存的改动。
         </p>
       </section>
     </article>
@@ -792,7 +869,9 @@ function SectionProjects() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">01. 项目管理与多人团队协作</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          01. 项目管理与多人团队协作
+        </h1>
         <p className="text-sm text-muted-foreground">
           管理进行中与已归档项目，支持业主只读分享链接与团队成员协同编辑。
         </p>
@@ -801,9 +880,19 @@ function SectionProjects() {
       <section id="proj-create" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">项目信息与自动命名规则</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>自动生成项目名称：</strong>新建项目时若不手填项目名称，系统会自动组合「小区/楼盘 + 房号」（如 <code className="font-mono">西溪壹号·3幢1201</code>）或「客户姓名 + 全屋智能项目」。</li>
-          <li><strong>主平台与预算：</strong>选定主平台（米家 / Aqara Home / Apple Home / 华为鸿蒙智家 / KNX / Control4 / 网络弱电）后，智能选型插件会以此为依据自动过滤兼容型号。</li>
-          <li><strong>归档与检索：</strong>完工交付后的项目可在「归档」页设为「已归档」，项目列表默认只展示进行中的项目，已归档项目随时可恢复为进行中。</li>
+          <li>
+            <strong>自动生成项目名称：</strong>新建项目时若不手填项目名称，系统会自动组合「小区/楼盘
+            + 房号」（如 <code className="font-mono">西溪壹号·3幢1201</code>）或「客户姓名 +
+            全屋智能项目」。
+          </li>
+          <li>
+            <strong>主平台与预算：</strong>选定主平台（米家 / Aqara Home / Apple Home / 华为鸿蒙智家
+            / KNX / Control4 / 网络弱电）后，智能选型插件会以此为依据自动过滤兼容型号。
+          </li>
+          <li>
+            <strong>归档与检索：</strong>
+            完工交付后的项目可在「归档」页设为「已归档」，项目列表默认只展示进行中的项目，已归档项目随时可恢复为进行中。
+          </li>
         </ul>
       </section>
 
@@ -813,8 +902,18 @@ function SectionProjects() {
           在项目概览页右上角点击 <strong>「分享 / 协作」</strong>：
         </p>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>业主只读分享链接（<code className="font-mono">/share/[token]</code>）：</strong>开启后任何人凭链接可在线查看项目的点位图、报价单与方案演示，无法修改数据；您可随时重置或关闭分享链接。</li>
-          <li><strong>团队成员协作链接（<code className="font-mono">/join/[id]</code>）：</strong>发送给团队其他设计师或安装工程师，对方登录并接受邀请后即可共同编辑该项目的点位图、报价与合同。</li>
+          <li>
+            <strong>
+              业主只读分享链接（<code className="font-mono">/share/[token]</code>）：
+            </strong>
+            开启后任何人凭链接可在线查看项目的点位图、报价单与方案演示，无法修改数据；您可随时重置或关闭分享链接。
+          </li>
+          <li>
+            <strong>
+              团队成员协作链接（<code className="font-mono">/join/[id]</code>）：
+            </strong>
+            发送给团队其他设计师或安装工程师，对方登录并接受邀请后即可共同编辑该项目的点位图、报价与合同。
+          </li>
         </ul>
       </section>
     </article>
@@ -825,7 +924,9 @@ function SectionPointMap({ onNavigate }: { onNavigate: (id: DocSectionId) => voi
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">02. 点位图画板（fmkj-board-system）</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          02. 点位图画板（fmkj-board-system）
+        </h1>
         <p className="text-sm text-muted-foreground">
           专为全屋智能与灯光设计打造的矢量画板引擎，支持多图纸、比例标定、任意多边形房间区域与标准图例导出。
         </p>
@@ -834,14 +935,21 @@ function SectionPointMap({ onNavigate }: { onNavigate: (id: DocSectionId) => voi
       <section id="pm-sheet" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 上传户型图与 DWG 转换</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          支持一个项目内添加多张楼层图纸（如「地下室」「一层平面图」「二层平面图」）。上传 PNG/JPG/WebP 图片时，内置裁剪器可自动去除 CAD 图框留白并归一化为 3:2 标准图纸；启用「DWG 转户型图」插件后可直接上传 <code className="font-mono">.dwg</code> 文件自动转换为高清底图。
+          支持一个项目内添加多张楼层图纸（如「地下室」「一层平面图」「二层平面图」）。上传
+          PNG/JPG/WebP 图片时，内置裁剪器可自动去除 CAD 图框留白并归一化为 3:2 标准图纸；启用「DWG
+          转户型图」插件后可直接上传 <code className="font-mono">.dwg</code>{' '}
+          文件自动转换为高清底图。
         </p>
       </section>
 
       <section id="pm-calibrate" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 比例标定与 25cm 真实网格</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          点击画布左上角工具栏的 <strong>「标定比例（快捷键 C）」</strong>，在图纸上沿着一段已知长度的门洞或墙体拖拽画一条线段，松开鼠标后输入真实米数（例如 <code className="font-mono">3.6</code> 米）。标定完成后，画布网格将精确按现实 <strong>25cm × 25cm</strong> 显示，且磁吸轨道灯、灯带等灯具支持开启「按比例」以真实物理尺寸落图。
+          点击画布左上角工具栏的 <strong>「标定比例（快捷键 C）」</strong>
+          ，在图纸上沿着一段已知长度的门洞或墙体拖拽画一条线段，松开鼠标后输入真实米数（例如{' '}
+          <code className="font-mono">3.6</code> 米）。标定完成后，画布网格将精确按现实{' '}
+          <strong>25cm × 25cm</strong>{' '}
+          显示，且磁吸轨道灯、灯带等灯具支持开启「按比例」以真实物理尺寸落图。
         </p>
       </section>
 
@@ -851,16 +959,28 @@ function SectionPointMap({ onNavigate }: { onNavigate: (id: DocSectionId) => voi
           点击左上角工具栏 <strong>「画区域（快捷键 A）」</strong>：
         </p>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>多边形描边：</strong>依次点击房间各个拐角顶点，最后点回起点或双击即可生成任意多边形房间（非常适合 L 形玄关、异形客厅或斜角阳台）。</li>
-          <li><strong>矩形拖拽：</strong>在画布空白处直接按住鼠标拖拽即可快速拉出矩形区域。</li>
-          <li><strong>自动归属统计：</strong>所有落在区域内部的设备点位（含贴墙 16px 内的开关插座）会自动归属到该房间，用于分房间报价与区域完整度审查。</li>
+          <li>
+            <strong>多边形描边：</strong>
+            依次点击房间各个拐角顶点，最后点回起点或双击即可生成任意多边形房间（非常适合 L
+            形玄关、异形客厅或斜角阳台）。
+          </li>
+          <li>
+            <strong>矩形拖拽：</strong>在画布空白处直接按住鼠标拖拽即可快速拉出矩形区域。
+          </li>
+          <li>
+            <strong>自动归属统计：</strong>所有落在区域内部的设备点位（含贴墙 16px
+            内的开关插座）会自动归属到该房间，用于分房间报价与区域完整度审查。
+          </li>
         </ul>
       </section>
 
       <section id="pm-place" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">4. 设备与灯光放置、导出规范</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          右侧侧栏提供「智能设备」与「灯光设计」两大符号库。点击任意图标即可在画布上连续点击放置（按右键或 <kbd className="rounded border bg-muted px-1 font-mono">Esc</kbd> 结束放置），也可直接拖拽图标到画布。导出 PNG 点位图时，图纸底部自动附带标准项目图例栏，且<strong>图上统一直接展示设备图标而非纯数字编号</strong>。
+          右侧侧栏提供「智能设备」与「灯光设计」两大符号库。点击任意图标即可在画布上连续点击放置（按右键或{' '}
+          <kbd className="rounded border bg-muted px-1 font-mono">Esc</kbd>{' '}
+          结束放置），也可直接拖拽图标到画布。导出 PNG 点位图时，图纸底部自动附带标准项目图例栏，且
+          <strong>图上统一直接展示设备图标而非纯数字编号</strong>。
         </p>
       </section>
 
@@ -884,7 +1004,9 @@ function SectionAutoPoints() {
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">03. 智能生成点位与一键撤销</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            03. 智能生成点位与一键撤销
+          </h1>
           <Badge>核心功能</Badge>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -895,14 +1017,26 @@ function SectionAutoPoints() {
       <section id="ap-trigger" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 按钮位置与覆盖确认提示</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在点位图工作台顶部操作栏（以及画布左上角浮动工具栏）点击带星光图标的 <strong>「智能生成点位」</strong> 按钮，系统会弹出确认对话框：
+          在点位图工作台顶部操作栏（以及画布左上角浮动工具栏）点击带星光图标的{' '}
+          <strong>「智能生成点位」</strong> 按钮，系统会弹出确认对话框：
         </p>
         <Callout type="warning" title="覆盖提示与数据安全保证">
-          弹窗会明确提示：<strong>「注意：此操作会覆盖目标图纸上的当前点位（生成后可随时点击『撤销』或按 Ctrl/⌘ + Z 恢复）」</strong>，并实时显示将覆盖的现有设备点位数与已划分的房间区域数。
+          弹窗会明确提示：
+          <strong>
+            「注意：此操作会覆盖目标图纸上的当前点位（生成后可随时点击『撤销』或按 Ctrl/⌘ + Z
+            恢复）」
+          </strong>
+          ，并实时显示将覆盖的现有设备点位数与已划分的房间区域数。
         </Callout>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>生成范围选择：</strong>当项目包含多层图纸时，可选择仅生成「当前图纸」或一次生成「全部图纸」。</li>
-          <li><strong>照明灯具开关：</strong>默认同时生成智能设备与照明灯具（吸顶灯、筒射灯、灯带）；若只需排布弱电与智能控制点位，可关闭「同时生成照明灯具点位」开关。</li>
+          <li>
+            <strong>生成范围选择：</strong>
+            当项目包含多层图纸时，可选择仅生成「当前图纸」或一次生成「全部图纸」。
+          </li>
+          <li>
+            <strong>照明灯具开关：</strong>
+            默认同时生成智能设备与照明灯具（吸顶灯、筒射灯、灯带）；若只需排布弱电与智能控制点位，可关闭「同时生成照明灯具点位」开关。
+          </li>
         </ul>
       </section>
 
@@ -923,13 +1057,19 @@ function SectionAutoPoints() {
             <tbody className="divide-y">
               <tr>
                 <td className="px-3.5 py-2 font-medium">玄关 / 入户</td>
-                <td className="px-3.5 py-2 text-muted-foreground">智能门锁、二键开关、人体传感器、入户摄像头</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  智能门锁、二键开关、人体传感器、入户摄像头
+                </td>
                 <td className="px-3.5 py-2 text-muted-foreground">筒灯 × 1</td>
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">客厅</td>
-                <td className="px-3.5 py-2 text-muted-foreground">智能网关（每层1台）、中控屏、电动窗帘、VRF空调控制（每层1台）、AP、网口、三键开关、客厅摄像头</td>
-                <td className="px-3.5 py-2 text-muted-foreground">吸顶主灯 × 1、筒灯 × 4、灯带 × 1</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  智能网关（每层1台）、中控屏、电动窗帘、VRF空调控制（每层1台）、AP、网口、三键开关、客厅摄像头
+                </td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  吸顶主灯 × 1、筒灯 × 4、灯带 × 1
+                </td>
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">餐厅</td>
@@ -938,22 +1078,30 @@ function SectionAutoPoints() {
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">厨房</td>
-                <td className="px-3.5 py-2 text-muted-foreground">一键开关、烟雾报警器、水浸传感器</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  一键开关、烟雾报警器、水浸传感器
+                </td>
                 <td className="px-3.5 py-2 text-muted-foreground">筒灯 × 2</td>
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">主卧 / 次卧</td>
-                <td className="px-3.5 py-2 text-muted-foreground">二键开关 × 2（双控）、电动窗帘、人体传感器、AP、温湿度传感器</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  二键开关 × 2（双控）、电动窗帘、人体传感器、AP、温湿度传感器
+                </td>
                 <td className="px-3.5 py-2 text-muted-foreground">吸顶灯 × 1、筒灯 × 2</td>
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">书房 / 儿童房</td>
-                <td className="px-3.5 py-2 text-muted-foreground">二键开关、电动窗帘、智能音箱/温湿度、网络面板</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  二键开关、电动窗帘、智能音箱/温湿度、网络面板
+                </td>
                 <td className="px-3.5 py-2 text-muted-foreground">吸顶灯 × 1、筒灯 × 2</td>
               </tr>
               <tr>
                 <td className="px-3.5 py-2 font-medium">卫生间</td>
-                <td className="px-3.5 py-2 text-muted-foreground">一键开关、人体传感器、水浸传感器</td>
+                <td className="px-3.5 py-2 text-muted-foreground">
+                  一键开关、人体传感器、水浸传感器
+                </td>
                 <td className="px-3.5 py-2 text-muted-foreground">筒灯 × 2</td>
               </tr>
             </tbody>
@@ -964,12 +1112,21 @@ function SectionAutoPoints() {
       <section id="ap-undo" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">3. 三种一键撤销恢复方式</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          生成操作完整推入画板历史栈（History Stack），您可以通过以下任意一种方式立即无损恢复覆盖前的所有点位：
+          生成操作完整推入画板历史栈（History
+          Stack），您可以通过以下任意一种方式立即无损恢复覆盖前的所有点位：
         </p>
         <ol className="list-decimal space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li>生成后页面右下角弹出的成功通知（Toast）上直接点击 <strong>「撤销」</strong> 按钮；</li>
-          <li>点击点位图顶部操作栏或画布左上角浮动工具栏的 <strong>「撤销（Undo）」</strong> 按钮；</li>
-          <li>直接按下键盘快捷键 <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono">Ctrl + Z</kbd>（macOS 为 <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono">⌘ + Z</kbd>）。</li>
+          <li>
+            生成后页面右下角弹出的成功通知（Toast）上直接点击 <strong>「撤销」</strong> 按钮；
+          </li>
+          <li>
+            点击点位图顶部操作栏或画布左上角浮动工具栏的 <strong>「撤销（Undo）」</strong> 按钮；
+          </li>
+          <li>
+            直接按下键盘快捷键{' '}
+            <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono">Ctrl + Z</kbd>（macOS
+            为 <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono">⌘ + Z</kbd>）。
+          </li>
         </ol>
       </section>
     </article>
@@ -980,7 +1137,9 @@ function SectionQuotes() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">04. 报价台与点位图双向无缝联动</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          04. 报价台与点位图双向无缝联动
+        </h1>
         <p className="text-sm text-muted-foreground">
           点位数量变动一键同步至报价单，支持 728 款产品库快速换型、自由改价与反向定位。
         </p>
@@ -989,23 +1148,36 @@ function SectionQuotes() {
       <section id="qt-sync" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 点位同步与手动改价保留机制</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在点位图修改点位后，点击右上角 <strong>「同步到报价」</strong>，系统会自动重新统计各类设备的最新数量与所属房间分布；同时，您在报价单里<strong>已经手动替换过的具体产品型号、修改过的单价以及填写的行备注会自动保留</strong>，不会被默认值冲掉。
+          在点位图修改点位后，点击右上角 <strong>「同步到报价」</strong>
+          ，系统会自动重新统计各类设备的最新数量与所属房间分布；同时，您在报价单里
+          <strong>已经手动替换过的具体产品型号、修改过的单价以及填写的行备注会自动保留</strong>
+          ，不会被默认值冲掉。
         </p>
       </section>
 
       <section id="qt-swap" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 替换产品型号、修改单价与整单优惠</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>替换型号：</strong>点击报价行右侧的「更换产品」，可在 728 款内置产品库中按品牌（Aqara、小米、华为、易来、领普等）、生态平台或关键词筛选替换。</li>
-          <li><strong>直接改价：</strong>支持直接在表格内修改任意设备的销售单价、数量与行说明。</li>
-          <li><strong>优惠与附加费：</strong>支持设置整单减免优惠金额，以及按固定金额或百分比添加「安装调试费」「线材辅料费」等附加服务费。</li>
+          <li>
+            <strong>替换型号：</strong>点击报价行右侧的「更换产品」，可在 728
+            款内置产品库中按品牌（Aqara、小米、华为、易来、领普等）、生态平台或关键词筛选替换。
+          </li>
+          <li>
+            <strong>直接改价：</strong>支持直接在表格内修改任意设备的销售单价、数量与行说明。
+          </li>
+          <li>
+            <strong>优惠与附加费：</strong>
+            支持设置整单减免优惠金额，以及按固定金额或百分比添加「安装调试费」「线材辅料费」等附加服务费。
+          </li>
         </ul>
       </section>
 
       <section id="qt-locate" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">3. 从报价单反跳点位图定位</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在报价单中核对某间房或某个点位代号（如 <code className="font-mono">K1</code>、<code className="font-mono">L12</code>）时，点击对应代号即可一键跳回点位图工作台，画布会自动平滑缩放并高亮聚焦到该点位或房间区域。
+          在报价单中核对某间房或某个点位代号（如 <code className="font-mono">K1</code>、
+          <code className="font-mono">L12</code>
+          ）时，点击对应代号即可一键跳回点位图工作台，画布会自动平滑缩放并高亮聚焦到该点位或房间区域。
         </p>
       </section>
     </article>
@@ -1016,7 +1188,9 @@ function SectionContracts() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">05. 施工合同与分期收款管理</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          05. 施工合同与分期收款管理
+        </h1>
         <p className="text-sm text-muted-foreground">
           基于确认报价单自动生成正式施工合同，规范管理三阶段付款比例与收款进度。
         </p>
@@ -1025,14 +1199,18 @@ function SectionContracts() {
       <section id="ct-stages" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 三阶段付款比例与金额自动核算</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          新建合同时自动关联项目最新确认的报价单总金额。默认提供三阶段付款节点（例如：<strong>签约首付 40% → 设备进场 50% → 完工验收 10%</strong>），系统强制校验各期比例之和必须等于 100%，并自动折算每期应付人民币金额与大写金额。
+          新建合同时自动关联项目最新确认的报价单总金额。默认提供三阶段付款节点（例如：
+          <strong>签约首付 40% → 设备进场 50% → 完工验收 10%</strong>
+          ），系统强制校验各期比例之和必须等于 100%，并自动折算每期应付人民币金额与大写金额。
         </p>
       </section>
 
       <section id="ct-terms" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 默认条款复用与签约收款状态流转</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          您可以在工作台左侧「设置」中预先配置贵司的标准合同条款、质保月数（默认 12 个月）与工期天数（默认 15 天）。合同支持「草稿 → 已签署 → 履行中 → 已完结」状态流转，并可逐期勾选「已收款」。
+          您可以在工作台左侧「设置」中预先配置贵司的标准合同条款、质保月数（默认 12
+          个月）与工期天数（默认 15 天）。合同支持「草稿 → 已签署 → 履行中 →
+          已完结」状态流转，并可逐期勾选「已收款」。
         </p>
       </section>
     </article>
@@ -1043,7 +1221,9 @@ function SectionArchive() {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">06. 归档导出与一键业主交付资料包</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          06. 归档导出与一键业主交付资料包
+        </h1>
         <p className="text-sm text-muted-foreground">
           在项目「归档」中心统一管理面向业主汇报与面向施工团队交底的全套 PDF 文档。
         </p>
@@ -1052,19 +1232,53 @@ function SectionArchive() {
       <section id="ar-docs" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 全套交付单据矩阵</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>8 章 A4 横版方案演示（<code className="font-mono">/print/projects/[id]/proposal</code>）：</strong>包含封面、设计理念、楼层点位平面图（直接显示设备图标）、AC+AP 网络与中控拓扑图、各房间配置清单、全屋智能联动场景、预算投资汇总与服务验收确认。</li>
-          <li><strong>多风格报价单（<code className="font-mono">/print/quotes/[id]</code>）：</strong>支持 6 种排版版式 × 7 套视觉风格一键切换并导出 PDF。</li>
-          <li><strong>正式施工合同（<code className="font-mono">/print/contracts/[id]</code>）：</strong>含甲乙方信息、设备汇总、分期付款表、质保条款与签字盖章区。</li>
-          <li><strong>A4 横版点位布置图（<code className="font-mono">/print/projects/[id]/plans</code>）：</strong>按楼层分页输出高清点位平面图与图例统计表。</li>
-          <li><strong>施工交底核对清单（<code className="font-mono">/print/projects/[id]/checklist</code>）：</strong>专为现场安装团队生成，<strong>自动隐去所有单价与总价信息</strong>，仅保留房间、点位代号、型号规格與安装打勾核对栏。</li>
-          <li><strong>工程扩展单据（需开启对应插件）：</strong>现场勘测单、强弱电布线与空开回路表、采购与备货核验单、场景与账号移交单。</li>
+          <li>
+            <strong>
+              8 章 A4 横版方案演示（<code className="font-mono">/print/projects/[id]/proposal</code>
+              ）：
+            </strong>
+            包含封面、设计理念、楼层点位平面图（直接显示设备图标）、AC+AP
+            网络与中控拓扑图、各房间配置清单、全屋智能联动场景、预算投资汇总与服务验收确认。
+          </li>
+          <li>
+            <strong>
+              多风格报价单（<code className="font-mono">/print/quotes/[id]</code>）：
+            </strong>
+            支持 6 种排版版式 × 7 套视觉风格一键切换并导出 PDF。
+          </li>
+          <li>
+            <strong>
+              正式施工合同（<code className="font-mono">/print/contracts/[id]</code>）：
+            </strong>
+            含甲乙方信息、设备汇总、分期付款表、质保条款与签字盖章区。
+          </li>
+          <li>
+            <strong>
+              A4 横版点位布置图（<code className="font-mono">/print/projects/[id]/plans</code>）：
+            </strong>
+            按楼层分页输出高清点位平面图与图例统计表。
+          </li>
+          <li>
+            <strong>
+              施工交底核对清单（<code className="font-mono">/print/projects/[id]/checklist</code>
+              ）：
+            </strong>
+            专为现场安装团队生成，<strong>自动隐去所有单价与总价信息</strong>
+            ，仅保留房间、点位代号、型号规格與安装打勾核对栏。
+          </li>
+          <li>
+            <strong>工程扩展单据（需开启对应插件）：</strong>
+            现场勘测单、强弱电布线与空开回路表、采购与备货核验单、场景与账号移交单。
+          </li>
         </ul>
       </section>
 
       <section id="ar-bundle" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 业主交付资料包（合并 PDF / ZIP 打包下载）</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在归档页勾选任意几份交付单据，点击 <strong>「合并导出单份 PDF」</strong> 或 <strong>「打包下载 ZIP 资料包」</strong>，系统会自动在服务端渲染并合成为标准命名的完整交付包。
+          在归档页勾选任意几份交付单据，点击 <strong>「合并导出单份 PDF」</strong> 或{' '}
+          <strong>「打包下载 ZIP 资料包」</strong>
+          ，系统会自动在服务端渲染并合成为标准命名的完整交付包。
         </p>
       </section>
     </article>
@@ -1077,28 +1291,40 @@ function SectionMembership() {
       <div className="space-y-2 border-b pb-5">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">AI 积分与充值</h1>
         <p className="text-sm text-muted-foreground">
-          平台已取消会员分级：项目数、协作成员、AI 模型、方案模板与插件全部对所有账号开放，使用 AI 能力时统一按积分扣除。
+          平台已取消会员分级：项目数、协作成员、AI 模型、方案模板与插件全部对所有账号开放，使用 AI
+          能力时统一按积分扣除。
         </p>
       </div>
 
       <section id="mb-balance" className="scroll-mt-20 space-y-3">
         <h2 className="text-base font-semibold">1. 积分余额与流水</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          前往工作台 <Link href="/membership" className="font-medium text-primary underline">/membership</Link> 页面，或在左下角头像菜单点击「积分与账单」，即可查看当前 AI 积分余额与最近 30 条积分流水。每次 AI 对话会按「模型倍率 × Token 用量 + 工具调用附加积分」扣减，并记入流水（余额与流水见 <code className="font-mono">src/collections/AiCreditLedger.ts</code>）。
+          前往工作台{' '}
+          <Link href="/membership" className="font-medium text-primary underline">
+            /membership
+          </Link>{' '}
+          页面，或在左下角头像菜单点击「积分与账单」，即可查看当前 AI 积分余额与最近 30
+          条积分流水。每次 AI 对话会按「模型倍率 × Token 用量 +
+          工具调用附加积分」扣减，并记入流水（余额与流水见{' '}
+          <code className="font-mono">src/collections/AiCreditLedger.ts</code>）。
         </p>
       </section>
 
       <section id="mb-redeem" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">2. 兑换码充值</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          在「积分与账单」页或头像菜单的兑换弹窗中，输入格式如 <code className="font-mono">FMKJ-XXXX-XXXX-XXXX</code> 的兑换码即可直接充值 AI 积分，余额实时到账，您已创建的所有项目、点位图与报价数据不受影响。
+          在「积分与账单」页或头像菜单的兑换弹窗中，输入格式如{' '}
+          <code className="font-mono">FMKJ-XXXX-XXXX-XXXX</code> 的兑换码即可直接充值 AI
+          积分，余额实时到账，您已创建的所有项目、点位图与报价数据不受影响。
         </p>
       </section>
 
       <section id="mb-tasks" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">3. 绑定与成长任务奖励</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          「积分与账单」页还提供一次性任务奖励：绑定电子邮箱赠 10 积分、绑定微信小程序赠 10 积分、关注官方公众号赠 5 积分、完善报价抬头赠 5 积分、生成首份报价单赠 5 积分。每项任务每个账号终生仅可领取一次，达成条件后自动或点击领取记入积分流水。
+          「积分与账单」页还提供一次性任务奖励：绑定电子邮箱赠 10 积分、绑定微信小程序赠 10
+          积分、关注官方公众号赠 5 积分、完善报价抬头赠 5 积分、生成首份报价单赠 5
+          积分。每项任务每个账号终生仅可领取一次，达成条件后自动或点击领取记入积分流水。
         </p>
       </section>
     </article>
@@ -1111,19 +1337,30 @@ function SectionAiModels({ manual }: { manual: ManualData }) {
       <div className="space-y-2 border-b pb-5">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">纯国产 AI 大模型矩阵</h1>
         <p className="text-sm text-muted-foreground">
-          全站仅选用国内合规优质大模型（DeepSeek、阿里通义千问 Qwen、字节豆包、智谱 GLM、月之暗面 Kimi），所有模型对所有账号开放，按计费倍率扣减 AI 积分。
+          全站仅选用国内合规优质大模型（DeepSeek、阿里通义千问 Qwen、字节豆包、智谱 GLM、月之暗面
+          Kimi），所有模型对所有账号开放，按计费倍率扣减 AI 积分。
         </p>
       </div>
 
       <section id="am-policy" className="scroll-mt-20 space-y-2">
         <h2 className="text-base font-semibold">1. 模型倍率与后台统一管控说明</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">
-          <li><strong>高速档（1x 倍率）：</strong>面向日常高速对话、产品库检索与基础点位规划。</li>
-          <li><strong>视觉多模态与长文本档（2x 倍率）：</strong>面向复杂 CAD/户型图点位视觉识别、高定提案话术润色与长清单核对。</li>
-          <li><strong>深度推理旗舰档（3x 倍率）：</strong>面向多层别墅全案点位回路审查、跨生态协议架构规划与整案预算精算优化。</li>
+          <li>
+            <strong>高速档（1x 倍率）：</strong>面向日常高速对话、产品库检索与基础点位规划。
+          </li>
+          <li>
+            <strong>视觉多模态与长文本档（2x 倍率）：</strong>面向复杂
+            CAD/户型图点位视觉识别、高定提案话术润色与长清单核对。
+          </li>
+          <li>
+            <strong>深度推理旗舰档（3x 倍率）：</strong>
+            面向多层别墅全案点位回路审查、跨生态协议架构规划与整案预算精算优化。
+          </li>
         </ul>
         <Callout type="note" title="后台统一管控（客户不可自行修改模型配置）">
-          平台上开放给客户使用的模型列表、接口渠道与计费倍率，均由平台超级管理员在 Payload 管理后台（<code className="font-mono">/admin/globals/ai-settings</code>）统一维护，下表实时同步自后台当前配置。
+          平台上开放给客户使用的模型列表、接口渠道与计费倍率，均由平台超级管理员在 Payload
+          管理后台（<code className="font-mono">/admin/globals/ai-settings</code>
+          ）统一维护，下表实时同步自后台当前配置。
         </Callout>
       </section>
 
@@ -1149,7 +1386,9 @@ function SectionAiModels({ manual }: { manual: ManualData }) {
                     </code>
                   </td>
                   <td className="px-3 py-2.5 text-muted-foreground">{m.provider}</td>
-                  <td className="px-3 py-2.5 text-center font-mono font-semibold tabular-nums">{m.cost}x</td>
+                  <td className="px-3 py-2.5 text-center font-mono font-semibold tabular-nums">
+                    {m.cost}x
+                  </td>
                   <td className="px-4 py-2.5 text-muted-foreground">{m.description}</td>
                 </tr>
               ))}
@@ -1165,9 +1404,13 @@ function SectionAiBilling({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">AI 积分计费公式与工具调用费率</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          AI 积分计费公式与工具调用费率
+        </h1>
         <p className="text-sm text-muted-foreground">
-          本章节直接引用计费引擎常量（<code className="font-mono">src/plugins/ai-copilot/billing.ts</code>），透明公示每一分积分的计算方式。
+          本章节直接引用计费引擎常量（
+          <code className="font-mono">src/plugins/ai-copilot/billing.ts</code>
+          ），透明公示每一分积分的计算方式。
         </p>
       </div>
 
@@ -1175,16 +1418,22 @@ function SectionAiBilling({ manual }: { manual: ManualData }) {
         <h2 className="text-base font-semibold">1. Token 与模型倍率计费公式</h2>
         <div className="rounded-xl border border-primary/25 bg-primary/[0.03] p-4 space-y-3">
           <p className="font-mono text-xs font-semibold text-foreground">
-            单次对话扣除积分 = 向上取整( 模型计费倍率 × [ (输入 Tokens ÷ 1000) × {manual.billing.inputPer1k} + (输出 Tokens ÷ 1000) × {manual.billing.outputPer1k} ] + Σ 工具调用附加积分 )
+            单次对话扣除积分 = 向上取整( 模型计费倍率 × [ (输入 Tokens ÷ 1000) ×{' '}
+            {manual.billing.inputPer1k} + (输出 Tokens ÷ 1000) × {manual.billing.outputPer1k} ] + Σ
+            工具调用附加积分 )
           </p>
           <div className="grid gap-2.5 sm:grid-cols-3 text-xs">
             <div className="rounded-lg border bg-background p-3">
               <p className="text-muted-foreground">输入 Token 单价（1x 基准）</p>
-              <p className="mt-1 text-sm font-bold tabular-nums">{manual.billing.inputPer1k} 积分 / 1K Tokens</p>
+              <p className="mt-1 text-sm font-bold tabular-nums">
+                {manual.billing.inputPer1k} 积分 / 1K Tokens
+              </p>
             </div>
             <div className="rounded-lg border bg-background p-3">
               <p className="text-muted-foreground">输出 Token 单价（含深度思考链）</p>
-              <p className="mt-1 text-sm font-bold tabular-nums">{manual.billing.outputPer1k} 积分 / 1K Tokens</p>
+              <p className="mt-1 text-sm font-bold tabular-nums">
+                {manual.billing.outputPer1k} 积分 / 1K Tokens
+              </p>
             </div>
             <div className="rounded-lg border bg-background p-3">
               <p className="text-muted-foreground">最低扣费与失败保护</p>
@@ -1197,7 +1446,8 @@ function SectionAiBilling({ manual }: { manual: ManualData }) {
       <section id="ab-tools" className="scroll-mt-20 space-y-3">
         <h2 className="text-base font-semibold">2. 14 项系统工具调用附加费率表</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          当 AI 助手替您执行系统操作（如查询产品库、上传户型图识别、一键选型或生成报价单）时，会按所调用的工具累加以下附加积分：
+          当 AI
+          助手替您执行系统操作（如查询产品库、上传户型图识别、一键选型或生成报价单）时，会按所调用的工具累加以下附加积分：
         </p>
         <div className="overflow-hidden rounded-xl border">
           <table className="w-full text-left text-xs">
@@ -1241,9 +1491,12 @@ function SectionPlugins({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">能力中心全览（共 {manual.plugins.length} 项）</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          能力中心全览（共 {manual.plugins.length} 项）
+        </h1>
         <p className="text-sm text-muted-foreground">
-          外围能力统一收录在「能力中心」（<code className="font-mono">/plugins</code>），点开即用、按 AI 积分计费，不需要安装或启停。
+          外围能力统一收录在「能力中心」（<code className="font-mono">/plugins</code>
+          ），点开即用、按 AI 积分计费，不需要安装或启停。
         </p>
       </div>
 
@@ -1277,7 +1530,9 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">方案演示模板与报价视觉风格</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          方案演示模板与报价视觉风格
+        </h1>
         <p className="text-sm text-muted-foreground">
           同一份项目数据可随时切换不同的提案主题与报价单视觉风格，满足从现代极简到顶奢新中式别墅的汇报需求。
         </p>
@@ -1285,7 +1540,9 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
 
       <section id="tp-proposal" className="scroll-mt-20 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-semibold">1. 方案演示模板与施工交底（共 {manual.proposalTemplates.length} 套）</h2>
+          <h2 className="text-base font-semibold">
+            1. 方案演示模板与施工交底（共 {manual.proposalTemplates.length} 套）
+          </h2>
           <Button asChild variant="outline" size="xs">
             <Link href="/templates">
               打开方案模板库（看封面与整套样张）
@@ -1309,13 +1566,17 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
                     <Link href={`/templates/${t.id}`} className="font-semibold hover:underline">
                       {t.name}
                     </Link>
-                    <code className="ml-1.5 font-mono text-[10px] text-muted-foreground">{t.id}</code>
+                    <code className="ml-1.5 font-mono text-[10px] text-muted-foreground">
+                      {t.id}
+                    </code>
                   </td>
                   <td className="px-3 py-2.5">{t.audience}</td>
                   <td className="px-4 py-2.5 text-muted-foreground">
                     <span>{t.occasion}</span>
                     {t.highlights.length ? (
-                      <span className="mt-0.5 block text-[11px]">特点：{t.highlights.join(' · ')}</span>
+                      <span className="mt-0.5 block text-[11px]">
+                        特点：{t.highlights.join(' · ')}
+                      </span>
                     ) : null}
                   </td>
                 </tr>
@@ -1326,7 +1587,9 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
       </section>
 
       <section id="tp-styles" className="scroll-mt-20 space-y-3">
-        <h2 className="text-base font-semibold">2. 报价单与合同视觉风格包（共 {manual.docStyles.length} 套）</h2>
+        <h2 className="text-base font-semibold">
+          2. 报价单与合同视觉风格包（共 {manual.docStyles.length} 套）
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {manual.docStyles.map((s) => (
             <div key={s.id} className="rounded-xl border p-3.5 text-xs">
@@ -1349,7 +1612,9 @@ function SectionDevices({ manual }: { manual: ManualData }) {
   return (
     <article className="space-y-6">
       <div className="space-y-2 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">设备图例分类与点位编号规则</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          设备图例分类与点位编号规则
+        </h1>
         <p className="text-sm text-muted-foreground">
           画布放置点位时会自动按所属设备大类的字母前缀递增生成唯一点位代号（删掉中间点位也不会重号）。
         </p>
@@ -1391,7 +1656,8 @@ function SectionShortcuts({ manual }: { manual: ManualData }) {
       <div className="space-y-2 border-b pb-5">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">点位图画板快捷键速查表</h1>
         <p className="text-sm text-muted-foreground">
-          在点位图工作台（<code className="font-mono">/projects/[id]/point-map</code>）中使用键盘快捷键可大幅提升绘图效率。
+          在点位图工作台（<code className="font-mono">/projects/[id]/point-map</code>
+          ）中使用键盘快捷键可大幅提升绘图效率。
         </p>
       </div>
 

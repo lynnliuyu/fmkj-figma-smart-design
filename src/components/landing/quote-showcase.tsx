@@ -9,7 +9,16 @@ import { ProductThumb } from '@/components/product-thumb'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DocFacts, DocFooter, DocHeader, DocRoot, DocSectionHeading, DocSignatures, DocTitle, docTable } from '@/documents/parts'
+import {
+  DocFacts,
+  DocFooter,
+  DocHeader,
+  DocRoot,
+  DocSectionHeading,
+  DocSignatures,
+  DocTitle,
+  docTable,
+} from '@/documents/parts'
 import { docVars } from '@/documents/theme'
 import type { DocLayout, DocStyle } from '@/documents/types'
 import type { CompanyInfo } from '@/lib/cached-data'
@@ -39,7 +48,9 @@ export function QuoteShowcase({
   layouts: DocLayout[]
   company: CompanyInfo
 }) {
-  const [styleId, setStyleId] = useState(() => (styles.some((s) => s.id === 'qixu') ? 'qixu' : (styles[0]?.id ?? '')))
+  const [styleId, setStyleId] = useState(() =>
+    styles.some((s) => s.id === 'qixu') ? 'qixu' : (styles[0]?.id ?? ''),
+  )
   const [layoutId, setLayoutId] = useState<string>('system')
   const [zoomOpen, setZoomOpen] = useState(false)
   const active = styles.find((s) => s.id === styleId) ?? styles[0]!
@@ -58,7 +69,10 @@ export function QuoteShowcase({
             <span className="text-muted-foreground">{activeLayout?.label}</span>
           </div>
           <Tabs value={layoutId} onValueChange={setLayoutId}>
-            <TabsList aria-label="报价单版式" className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto">
+            <TabsList
+              aria-label="报价单版式"
+              className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+            >
               {layouts.map((l) => (
                 <TabsTrigger
                   key={l.value}
@@ -79,7 +93,10 @@ export function QuoteShowcase({
             <span className="text-muted-foreground">{active.name}</span>
           </div>
           <Tabs value={styleId} onValueChange={setStyleId}>
-            <TabsList aria-label="报价单风格" className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto">
+            <TabsList
+              aria-label="报价单风格"
+              className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+            >
               {styles.map((s) => (
                 <TabsTrigger
                   key={s.id}
@@ -87,7 +104,11 @@ export function QuoteShowcase({
                   aria-controls="quote-preview"
                   className="h-9 justify-start gap-2.5 px-3 font-normal data-[state=active]:font-medium data-[state=active]:shadow-sm"
                 >
-                  <span aria-hidden style={docVars(s)} className="size-2.5 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40" />
+                  <span
+                    aria-hidden
+                    style={docVars(s)}
+                    className="size-2.5 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40"
+                  />
                   {s.name}
                 </TabsTrigger>
               ))}
@@ -115,11 +136,28 @@ export function QuoteShowcase({
           aria-label={`报价单样张（${activeLayout?.label ?? '标准版'} · ${active.name}风格）：${quote.title}，合计 ${money(quote.total)}`}
           className="cursor-zoom-in"
         >
-          <QuoteSheet style={active} layout={layoutId} quote={quote} data={data} company={company} />
+          <QuoteSheet
+            style={active}
+            layout={layoutId}
+            quote={quote}
+            data={data}
+            company={company}
+          />
         </div>
         {/* 专供「下载方案与报价 PDF」使用的完整展开版（固定标准桌面 A4 宽度，包含全部系统与全部设备明细） */}
-        <div aria-hidden className="pointer-events-none fixed top-0 -left-[9999px] -z-10 w-[794px] opacity-0">
-          <QuoteSheet style={active} layout={layoutId} quote={quote} data={data} company={company} expanded exportPage />
+        <div
+          aria-hidden
+          className="pointer-events-none fixed top-0 -left-[9999px] -z-10 w-[794px] opacity-0"
+        >
+          <QuoteSheet
+            style={active}
+            layout={layoutId}
+            quote={quote}
+            data={data}
+            company={company}
+            expanded
+            exportPage
+          />
         </div>
       </div>
 
@@ -157,7 +195,14 @@ export function QuoteShowcase({
             </div>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto bg-muted/60 p-4 sm:p-8">
-            <QuoteSheet style={active} layout={layoutId} quote={quote} data={data} company={company} expanded />
+            <QuoteSheet
+              style={active}
+              layout={layoutId}
+              quote={quote}
+              data={data}
+              company={company}
+              expanded
+            />
           </div>
         </DialogContent>
       </Dialog>
@@ -183,9 +228,11 @@ function QuoteSheet({
   exportPage?: boolean
 }) {
   const t = docTable(style)
-  const address = [data.project.community, data.project.address].filter(Boolean).join(' ') || data.project.name
+  const address =
+    [data.project.community, data.project.address].filter(Boolean).join(' ') || data.project.name
   const quoteLabel = quoteShortTitle(quote.title, data.project.name)
-  const showImages = layout !== 'compact' && layout !== 'budget' && quote.lines.some((l) => Boolean(l.image))
+  const showImages =
+    layout !== 'compact' && layout !== 'budget' && quote.lines.some((l) => Boolean(l.image))
 
   // 按系统分组（用于按系统版、预算概览、图文版）
   const systems = useMemo(() => {
@@ -197,7 +244,12 @@ function QuoteSheet({
       rows: indexed.filter(({ item }) => categoryOfType(item.type)?.slug === c.slug),
     })).filter((g) => g.rows.length > 0)
     const ungrouped = indexed.filter(({ item }) => !categoryOfType(item.type))
-    const all = [...groups, ...(ungrouped.length ? [{ key: 'other', name: '其他', color: '#525252', rows: ungrouped }] : [])]
+    const all = [
+      ...groups,
+      ...(ungrouped.length
+        ? [{ key: 'other', name: '其他', color: '#525252', rows: ungrouped }]
+        : []),
+    ]
     return all.map((g) => ({
       ...g,
       subtotal: g.rows.reduce((s, { item }) => s + item.price * item.qty, 0),
@@ -212,7 +264,26 @@ function QuoteSheet({
   const floors = useMemo(() => {
     const lineByType = new Map(quote.lines.map((l) => [l.type, l]))
     return data.sheets.map((sh) => {
-      const roomMap = new Map<string, { name: string; pointCount: number; subtotal: number; lines: Map<string, { type: string; name: string; sku: string; unit: string; price: number; qty: number; subtotal: number }> }>()
+      const roomMap = new Map<
+        string,
+        {
+          name: string
+          pointCount: number
+          subtotal: number
+          lines: Map<
+            string,
+            {
+              type: string
+              name: string
+              sku: string
+              unit: string
+              price: number
+              qty: number
+              subtotal: number
+            }
+          >
+        }
+      >()
       for (const pt of sh.points) {
         const roomName = pt.room || '公共区域'
         let r = roomMap.get(roomName)
@@ -260,8 +331,17 @@ function QuoteSheet({
   const deskCell = exportPage ? 'table-cell' : 'hidden sm:table-cell'
 
   return (
-    <DocRoot style={style} className={cn('mx-auto overflow-hidden rounded-md shadow-sm ring-1 ring-foreground/10', expanded ? 'max-w-4xl' : 'max-w-3xl')}>
-      <div data-export-page={exportPage ? 'flow' : undefined} className={cn('bg-doc-paper text-xs leading-relaxed', exportPage ? 'p-8' : 'p-4 sm:p-8')}>
+    <DocRoot
+      style={style}
+      className={cn(
+        'mx-auto overflow-hidden rounded-md shadow-sm ring-1 ring-foreground/10',
+        expanded ? 'max-w-4xl' : 'max-w-3xl',
+      )}
+    >
+      <div
+        data-export-page={exportPage ? 'flow' : undefined}
+        className={cn('bg-doc-paper text-xs leading-relaxed', exportPage ? 'p-8' : 'p-4 sm:p-8')}
+      >
         <DocHeader style={style} company={company} meta="报价单样张" />
         <div className="mt-6">
           <DocTitle
@@ -280,7 +360,10 @@ function QuoteSheet({
             ['项目', data.project.name],
             ['地址', address],
             ['主平台', data.project.platform || '—'],
-            ['规模', `${data.sheets.length} 层 · ${data.roomCount} 个房间 · ${data.pointCount} 个点位`],
+            [
+              '规模',
+              `${data.sheets.length} 层 · ${data.roomCount} 个房间 · ${data.pointCount} 个点位`,
+            ],
             ['有效期', '30 天'],
           ]}
         />
@@ -289,7 +372,12 @@ function QuoteSheet({
           {layout === 'system' ? (
             <div className="space-y-5">
               <section>
-                <DocSectionHeading style={style} className="mb-2" title="系统汇总" note={`${systems.length} 个系统 · ${quote.lines.length} 行设备`} />
+                <DocSectionHeading
+                  style={style}
+                  className="mb-2"
+                  title="系统汇总"
+                  note={`${systems.length} 个系统 · ${quote.lines.length} 行设备`}
+                />
                 <table className="w-full border-collapse text-[11.5px]">
                   <thead>
                     <tr className={t.head}>
@@ -305,19 +393,31 @@ function QuoteSheet({
                       <tr key={g.key} className={t.row(i)}>
                         <td className={cn(t.td, 'py-1.5')}>
                           <span className="flex items-center gap-2">
-                            <span className="size-2 rounded-full" style={{ backgroundColor: g.color }} />
+                            <span
+                              className="size-2 rounded-full"
+                              style={{ backgroundColor: g.color }}
+                            />
                             {g.name}
                           </span>
                         </td>
-                        <td className={cn(t.td, deskCell, 'py-1.5 text-right tabular-nums')}>{g.rows.length}</td>
+                        <td className={cn(t.td, deskCell, 'py-1.5 text-right tabular-nums')}>
+                          {g.rows.length}
+                        </td>
                         <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{g.quantity}</td>
-                        <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{yuan(g.subtotal)}</td>
+                        <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                          {yuan(g.subtotal)}
+                        </td>
                         <td className={cn(t.td, deskCell, 'py-1.5')}>
                           <span className="flex items-center gap-2">
                             <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-doc-stripe">
-                              <span className="block h-full rounded-full" style={{ width: share(g.subtotal), backgroundColor: g.color }} />
+                              <span
+                                className="block h-full rounded-full"
+                                style={{ width: share(g.subtotal), backgroundColor: g.color }}
+                              />
                             </span>
-                            <span className="w-8 text-right text-[10.5px] text-doc-muted tabular-nums">{share(g.subtotal)}</span>
+                            <span className="w-8 text-right text-[10.5px] text-doc-muted tabular-nums">
+                              {share(g.subtotal)}
+                            </span>
                           </span>
                         </td>
                       </tr>
@@ -332,7 +432,10 @@ function QuoteSheet({
                     className="mb-2"
                     title={
                       <span className="flex items-center gap-2">
-                        <span className="size-2 rounded-full" style={{ backgroundColor: g.color }} />
+                        <span
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: g.color }}
+                        />
                         {g.name}系统
                       </span>
                     }
@@ -342,9 +445,13 @@ function QuoteSheet({
                     <thead>
                       <tr className={t.head}>
                         <th className={cn(t.th, deskCell, 'w-11 whitespace-nowrap')}>序号</th>
-                        {showImages ? <th className={cn(t.th, deskCell, 'w-12 whitespace-nowrap')}>图片</th> : null}
+                        {showImages ? (
+                          <th className={cn(t.th, deskCell, 'w-12 whitespace-nowrap')}>图片</th>
+                        ) : null}
                         <th className={t.th}>产品</th>
-                        {expanded ? <th className={cn(t.th, 'w-36 whitespace-nowrap')}>型号</th> : null}
+                        {expanded ? (
+                          <th className={cn(t.th, 'w-36 whitespace-nowrap')}>型号</th>
+                        ) : null}
                         <th className={cn(t.th, 'w-20 text-right whitespace-nowrap')}>单价</th>
                         <th className={cn(t.th, 'w-16 text-right whitespace-nowrap')}>数量</th>
                         <th className={cn(t.th, 'w-24 text-right whitespace-nowrap')}>金额</th>
@@ -353,24 +460,51 @@ function QuoteSheet({
                     <tbody>
                       {g.rows.map(({ item, i }, k) => (
                         <tr key={`${item.sku}-${i}`} className={t.row(k)}>
-                          <td className={cn(t.td, deskCell, 'py-1.5 text-doc-muted tabular-nums')}>{i + 1}</td>
+                          <td className={cn(t.td, deskCell, 'py-1.5 text-doc-muted tabular-nums')}>
+                            {i + 1}
+                          </td>
                           {showImages ? (
                             <td className={cn(t.td, deskCell, 'py-1')}>
-                              <ProductThumb src={item.image} alt={item.name} size={96} loading="lazy" className="size-8" />
+                              <ProductThumb
+                                src={item.image}
+                                alt={item.name}
+                                size={96}
+                                loading="lazy"
+                                className="size-8"
+                              />
                             </td>
                           ) : null}
                           <td className={cn(t.td, 'py-1.5')}>
-                            <span className={cn('flex min-w-0 gap-1.5', expanded ? 'items-start' : 'items-center')}>
+                            <span
+                              className={cn(
+                                'flex min-w-0 gap-1.5',
+                                expanded ? 'items-start' : 'items-center',
+                              )}
+                            >
                               <PointMarker type={item.type} className="size-3.5 shrink-0" />
                               <span className={expanded ? undefined : 'truncate'}>{item.name}</span>
                             </span>
                           </td>
-                          {expanded ? <td className={cn(t.td, 'py-1.5 break-all text-doc-muted')}>{item.sku}</td> : null}
-                          <td className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}>{yuan(item.price)}</td>
-                          <td className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}>
+                          {expanded ? (
+                            <td className={cn(t.td, 'py-1.5 break-all text-doc-muted')}>
+                              {item.sku}
+                            </td>
+                          ) : null}
+                          <td
+                            className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}
+                          >
+                            {yuan(item.price)}
+                          </td>
+                          <td
+                            className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}
+                          >
                             {item.qty} {item.unit}
                           </td>
-                          <td className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}>{yuan(item.price * item.qty)}</td>
+                          <td
+                            className={cn(t.td, 'py-1.5 text-right whitespace-nowrap tabular-nums')}
+                          >
+                            {yuan(item.price * item.qty)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -379,7 +513,12 @@ function QuoteSheet({
               ))}
               {!expanded && systems.length > 3 ? (
                 <p className="text-center text-[11px] text-doc-muted">
-                  …… 另有 {systems.slice(3).map((s) => `${s.name}系统`).join('、')}（完整版包含全部 {systems.length} 个系统分表）
+                  …… 另有{' '}
+                  {systems
+                    .slice(3)
+                    .map((s) => `${s.name}系统`)
+                    .join('、')}
+                  （完整版包含全部 {systems.length} 个系统分表）
                 </p>
               ) : null}
             </div>
@@ -388,8 +527,12 @@ function QuoteSheet({
               <section className="grid grid-cols-1 items-end gap-4 rounded-doc border border-doc-rule p-4 sm:grid-cols-[1fr_auto]">
                 <div>
                   <div className="text-[11.5px] text-doc-muted">报价合计</div>
-                  <div className="doc-numeral mt-1 text-[30px] leading-none text-doc-accent">{yuan(quote.total)}</div>
-                  <div className="mt-2 text-[11.5px] text-doc-muted">大写：{rmbUpper(quote.total)}</div>
+                  <div className="doc-numeral mt-1 text-[30px] leading-none text-doc-accent">
+                    {yuan(quote.total)}
+                  </div>
+                  <div className="mt-2 text-[11.5px] text-doc-muted">
+                    大写：{rmbUpper(quote.total)}
+                  </div>
                 </div>
                 <div className="space-y-1 text-left text-[11.5px] sm:text-right">
                   <div>
@@ -414,26 +557,47 @@ function QuoteSheet({
                 </div>
               </section>
               <section>
-                <DocSectionHeading style={style} className="mb-2" title="各系统预算" note="按设备类别汇总" />
+                <DocSectionHeading
+                  style={style}
+                  className="mb-2"
+                  title="各系统预算"
+                  note="按设备类别汇总"
+                />
                 <div className="space-y-2 text-[11.5px]">
                   {systems.map((g) => (
-                    <div key={g.key} className="grid grid-cols-[6rem_1fr_5.5rem_2.5rem] items-center gap-2.5">
+                    <div
+                      key={g.key}
+                      className="grid grid-cols-[6rem_1fr_5.5rem_2.5rem] items-center gap-2.5"
+                    >
                       <span className="flex items-center gap-1.5">
-                        <span className="size-2 rounded-full" style={{ backgroundColor: g.color }} />
+                        <span
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: g.color }}
+                        />
                         {g.name}
                       </span>
                       <span className="h-2 overflow-hidden rounded-full bg-doc-stripe">
-                        <span className="block h-full rounded-full" style={{ width: share(g.subtotal), backgroundColor: g.color }} />
+                        <span
+                          className="block h-full rounded-full"
+                          style={{ width: share(g.subtotal), backgroundColor: g.color }}
+                        />
                       </span>
                       <span className="text-right tabular-nums">{yuan(g.subtotal)}</span>
-                      <span className="text-right text-doc-muted tabular-nums">{share(g.subtotal)}</span>
+                      <span className="text-right text-doc-muted tabular-nums">
+                        {share(g.subtotal)}
+                      </span>
                     </div>
                   ))}
                 </div>
               </section>
               {floors.length ? (
                 <section>
-                  <DocSectionHeading style={style} className="mb-2" title="各楼层设备" note="按点位图统计" />
+                  <DocSectionHeading
+                    style={style}
+                    className="mb-2"
+                    title="各楼层设备"
+                    note="按点位图统计"
+                  />
                   <table className="w-full border-collapse text-[11.5px]">
                     <thead>
                       <tr className={t.head}>
@@ -447,9 +611,15 @@ function QuoteSheet({
                       {floors.map((f, i) => (
                         <tr key={f.sheetId} className={t.row(i)}>
                           <td className={cn(t.td, 'py-1.5')}>{f.floorName}</td>
-                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{f.rooms.length}</td>
-                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{f.pointCount}</td>
-                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{yuan(f.subtotal)}</td>
+                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                            {f.rooms.length}
+                          </td>
+                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                            {f.pointCount}
+                          </td>
+                          <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                            {yuan(f.subtotal)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -457,15 +627,24 @@ function QuoteSheet({
                 </section>
               ) : null}
               <section>
-                <DocSectionHeading style={style} className="mb-2" title="参考付款节点" note="签订合同后以合同约定为准" />
+                <DocSectionHeading
+                  style={style}
+                  className="mb-2"
+                  title="参考付款节点"
+                  note="签订合同后以合同约定为准"
+                />
                 <table className="w-full border-collapse text-[11.5px]">
                   <tbody>
                     {DEFAULT_PAYMENTS.map((p, i) => (
                       <tr key={p.name} className={t.row(i)}>
                         <td className={cn(t.td, 'w-8 py-1.5 tabular-nums')}>{i + 1}</td>
                         <td className={cn(t.td, 'py-1.5')}>{p.name}</td>
-                        <td className={cn(t.td, 'w-14 py-1.5 text-right tabular-nums')}>{p.percent}%</td>
-                        <td className={cn(t.td, 'w-28 py-1.5 text-right tabular-nums')}>{yuan(paymentAmounts(quote.total, DEFAULT_PAYMENTS)[i] ?? 0)}</td>
+                        <td className={cn(t.td, 'w-14 py-1.5 text-right tabular-nums')}>
+                          {p.percent}%
+                        </td>
+                        <td className={cn(t.td, 'w-28 py-1.5 text-right tabular-nums')}>
+                          {yuan(paymentAmounts(quote.total, DEFAULT_PAYMENTS)[i] ?? 0)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -481,7 +660,10 @@ function QuoteSheet({
                     className="mb-2"
                     title={
                       <span className="flex items-center gap-2">
-                        <span className="size-2 rounded-full" style={{ backgroundColor: g.color }} />
+                        <span
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: g.color }}
+                        />
                         {g.name}
                       </span>
                     }
@@ -489,11 +671,28 @@ function QuoteSheet({
                   />
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {g.rows.map(({ item, i }) => (
-                      <div key={`${item.sku}-${i}`} className="flex gap-3 rounded-doc border border-doc-rule p-2">
-                        <ProductThumb src={item.image} alt={item.name} size={120} loading="lazy" className="size-14 shrink-0" />
+                      <div
+                        key={`${item.sku}-${i}`}
+                        className="flex gap-3 rounded-doc border border-doc-rule p-2"
+                      >
+                        <ProductThumb
+                          src={item.image}
+                          alt={item.name}
+                          size={120}
+                          loading="lazy"
+                          className="size-14 shrink-0"
+                        />
                         <div className="flex min-w-0 flex-1 flex-col text-[11px]">
-                          {item.brandName ? <BrandLogo name={item.brandName} logo={item.brandLogo ?? null} className="h-3 max-w-14" /> : null}
-                          <div className="doc-strong mt-0.5 line-clamp-1 leading-snug">{item.name}</div>
+                          {item.brandName ? (
+                            <BrandLogo
+                              name={item.brandName}
+                              logo={item.brandLogo ?? null}
+                              className="h-3 max-w-14"
+                            />
+                          ) : null}
+                          <div className="doc-strong mt-0.5 line-clamp-1 leading-snug">
+                            {item.name}
+                          </div>
                           <div className="truncate text-[10px] text-doc-muted">{item.sku}</div>
                           <div className="mt-auto flex justify-between pt-1 tabular-nums">
                             <span className="text-doc-muted">
@@ -510,7 +709,12 @@ function QuoteSheet({
               ))}
               {!expanded && systems.length > 3 ? (
                 <p className="text-center text-[11px] text-doc-muted">
-                  …… 另有 {systems.slice(3).map((s) => s.name).join('、')} 等系统产品卡片
+                  …… 另有{' '}
+                  {systems
+                    .slice(3)
+                    .map((s) => s.name)
+                    .join('、')}{' '}
+                  等系统产品卡片
                 </p>
               ) : null}
             </div>
@@ -534,17 +738,25 @@ function QuoteSheet({
                   </div>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {(expanded ? floor.rooms : floor.rooms.slice(0, 4)).map((r) => (
-                      <div key={r.name} className="rounded-doc border border-doc-rule p-2.5 text-[11px]">
+                      <div
+                        key={r.name}
+                        className="rounded-doc border border-doc-rule p-2.5 text-[11px]"
+                      >
                         <div className="doc-strong mb-1.5 flex items-baseline justify-between border-b border-doc-rule/60 pb-1">
                           <span>
                             {r.name}
-                            <span className="doc-body ml-1 text-doc-muted">（{r.pointCount} 点位）</span>
+                            <span className="doc-body ml-1 text-doc-muted">
+                              （{r.pointCount} 点位）
+                            </span>
                           </span>
                           <span className="tabular-nums">{yuan(r.subtotal)}</span>
                         </div>
                         <div className="divide-y divide-doc-rule/60">
                           {(expanded ? r.lines : r.lines.slice(0, 4)).map((l) => (
-                            <div key={l.type} className="flex items-center gap-1.5 py-1 first:pt-0 last:pb-0">
+                            <div
+                              key={l.type}
+                              className="flex items-center gap-1.5 py-1 first:pt-0 last:pb-0"
+                            >
                               <PointMarker type={l.type} className="size-3.5 shrink-0" />
                               <div className="min-w-0 flex-1 truncate">{l.name}</div>
                               <div className="shrink-0 text-right tabular-nums">
@@ -560,16 +772,28 @@ function QuoteSheet({
               ))}
               {!expanded && floors.length > 2 ? (
                 <p className="text-center text-[11px] text-doc-muted">
-                  …… 另有 {floors.slice(2).map((f) => f.floorName).join('、')} 房间配置及整单产品汇总表
+                  …… 另有{' '}
+                  {floors
+                    .slice(2)
+                    .map((f) => f.floorName)
+                    .join('、')}{' '}
+                  房间配置及整单产品汇总表
                 </p>
               ) : null}
             </div>
           ) : (
-            <table className={cn('w-full table-fixed border-collapse', layout === 'compact' ? 'text-[11px]' : 'text-[11.5px]')}>
+            <table
+              className={cn(
+                'w-full table-fixed border-collapse',
+                layout === 'compact' ? 'text-[11px]' : 'text-[11.5px]',
+              )}
+            >
               <thead>
                 <tr className={t.head}>
                   <th className={cn(t.th, deskCell, 'w-11 whitespace-nowrap')}>序号</th>
-                  {showImages ? <th className={cn(t.th, deskCell, 'w-12 whitespace-nowrap')}>图片</th> : null}
+                  {showImages ? (
+                    <th className={cn(t.th, deskCell, 'w-12 whitespace-nowrap')}>图片</th>
+                  ) : null}
                   <th className={t.th}>产品</th>
                   {expanded ? <th className={cn(t.th, 'w-36 whitespace-nowrap')}>型号</th> : null}
                   <th className={cn(t.th, 'w-20 text-right whitespace-nowrap')}>单价</th>
@@ -579,25 +803,54 @@ function QuoteSheet({
               </thead>
               <tbody>
                 {quote.lines.map((item, i) => (
-                  <tr key={`${item.sku}-${i}`} className={cn(t.row(i), i >= mobileRows && 'max-sm:hidden')}>
-                    <td className={cn(t.td, deskCell, 'text-doc-muted tabular-nums', layout === 'compact' ? 'py-1' : 'py-2')}>{i + 1}</td>
+                  <tr
+                    key={`${item.sku}-${i}`}
+                    className={cn(t.row(i), i >= mobileRows && 'max-sm:hidden')}
+                  >
+                    <td
+                      className={cn(
+                        t.td,
+                        deskCell,
+                        'text-doc-muted tabular-nums',
+                        layout === 'compact' ? 'py-1' : 'py-2',
+                      )}
+                    >
+                      {i + 1}
+                    </td>
                     {showImages ? (
                       <td className={cn(t.td, deskCell, 'py-1')}>
-                        <ProductThumb src={item.image} alt={item.name} size={96} loading="lazy" className="size-8" />
+                        <ProductThumb
+                          src={item.image}
+                          alt={item.name}
+                          size={96}
+                          loading="lazy"
+                          className="size-8"
+                        />
                       </td>
                     ) : null}
                     <td className={cn(t.td, layout === 'compact' ? 'py-1' : 'py-2')}>
-                      <span className={cn('flex min-w-0 gap-2', expanded ? 'items-start' : 'items-center')}>
+                      <span
+                        className={cn(
+                          'flex min-w-0 gap-2',
+                          expanded ? 'items-start' : 'items-center',
+                        )}
+                      >
                         <PointMarker type={item.type} className="size-4 shrink-0" />
                         <span className={expanded ? undefined : 'truncate'}>{item.name}</span>
                       </span>
                     </td>
-                    {expanded ? <td className={cn(t.td, 'break-all text-doc-muted')}>{item.sku}</td> : null}
-                    <td className={cn(t.td, 'text-right whitespace-nowrap tabular-nums')}>{yuan(item.price)}</td>
+                    {expanded ? (
+                      <td className={cn(t.td, 'break-all text-doc-muted')}>{item.sku}</td>
+                    ) : null}
+                    <td className={cn(t.td, 'text-right whitespace-nowrap tabular-nums')}>
+                      {yuan(item.price)}
+                    </td>
                     <td className={cn(t.td, 'text-right whitespace-nowrap tabular-nums')}>
                       {item.qty} {item.unit}
                     </td>
-                    <td className={cn(t.td, 'text-right whitespace-nowrap tabular-nums')}>{yuan(item.price * item.qty)}</td>
+                    <td className={cn(t.td, 'text-right whitespace-nowrap tabular-nums')}>
+                      {yuan(item.price * item.qty)}
+                    </td>
                   </tr>
                 ))}
                 {folded > 0 ? (
@@ -626,7 +879,10 @@ function QuoteSheet({
           </div>
         ) : null}
 
-        <DocSignatures className="mt-8" parties={[{ label: '客户确认签字' }, { label: `${company.name} 盖章` }]} />
+        <DocSignatures
+          className="mt-8"
+          parties={[{ label: '客户确认签字' }, { label: `${company.name} 盖章` }]}
+        />
         <DocFooter className="mt-6" left={address} center="QUOTATION · V1.0" right={company.name} />
       </div>
     </DocRoot>

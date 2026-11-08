@@ -30,9 +30,33 @@ type Platform = 'windows' | 'mac' | 'other'
 type Detected = { platform: Platform; arch: DesktopArch }
 
 const TARGETS = [
-  { id: 'windows', platform: 'windows', arch: 'x64', title: 'Windows', cta: '下载 Windows 版', note: 'Windows 10 / 11 · 64 位', icon: Monitor },
-  { id: 'mac-arm64', platform: 'mac', arch: 'arm64', title: 'macOS · Apple 芯片', cta: '下载 Mac 版（Apple 芯片）', note: 'M1 – M4 系列 · macOS 12 及以上', icon: Laptop },
-  { id: 'mac-x64', platform: 'mac', arch: 'x64', title: 'macOS · Intel 芯片', cta: '下载 Mac 版（Intel）', note: 'Intel 处理器 · macOS 12 及以上', icon: Laptop },
+  {
+    id: 'windows',
+    platform: 'windows',
+    arch: 'x64',
+    title: 'Windows',
+    cta: '下载 Windows 版',
+    note: 'Windows 10 / 11 · 64 位',
+    icon: Monitor,
+  },
+  {
+    id: 'mac-arm64',
+    platform: 'mac',
+    arch: 'arm64',
+    title: 'macOS · Apple 芯片',
+    cta: '下载 Mac 版（Apple 芯片）',
+    note: 'M1 – M4 系列 · macOS 12 及以上',
+    icon: Laptop,
+  },
+  {
+    id: 'mac-x64',
+    platform: 'mac',
+    arch: 'x64',
+    title: 'macOS · Intel 芯片',
+    cta: '下载 Mac 版（Intel）',
+    note: 'Intel 处理器 · macOS 12 及以上',
+    icon: Laptop,
+  },
 ] as const
 
 type Target = (typeof TARGETS)[number]
@@ -47,7 +71,10 @@ function loadManifest() {
 }
 
 function useDesktopReleases() {
-  const [state, setState] = React.useState<{ loading: boolean; manifest: DesktopReleaseManifest | null }>({ loading: true, manifest: null })
+  const [state, setState] = React.useState<{
+    loading: boolean
+    manifest: DesktopReleaseManifest | null
+  }>({ loading: true, manifest: null })
   React.useEffect(() => {
     let active = true
     loadManifest().then((manifest) => {
@@ -61,7 +88,10 @@ function useDesktopReleases() {
 }
 
 type UADataNavigator = Navigator & {
-  userAgentData?: { platform?: string; getHighEntropyValues?: (hints: string[]) => Promise<{ architecture?: string }> }
+  userAgentData?: {
+    platform?: string
+    getHighEntropyValues?: (hints: string[]) => Promise<{ architecture?: string }>
+  }
 }
 
 function useDetectedPlatform() {
@@ -69,7 +99,11 @@ function useDetectedPlatform() {
   React.useEffect(() => {
     const nav = navigator as UADataNavigator
     const source = `${nav.userAgentData?.platform ?? ''} ${navigator.platform} ${navigator.userAgent}`
-    const platform: Platform = /windows|win32|win64/i.test(source) ? 'windows' : /mac/i.test(source) && !/iphone|ipad/i.test(source) ? 'mac' : 'other'
+    const platform: Platform = /windows|win32|win64/i.test(source)
+      ? 'windows'
+      : /mac/i.test(source) && !/iphone|ipad/i.test(source)
+        ? 'mac'
+        : 'other'
     // 2020 年后的 Mac 基本都是 Apple 芯片；Chrome / Edge 能读到真实架构时再修正
     setDetected({ platform, arch: platform === 'mac' ? 'arm64' : 'x64' })
     if (platform === 'mac' && nav.userAgentData?.getHighEntropyValues) {
@@ -94,7 +128,11 @@ function useDesktopBridge() {
 
 function recommendedTarget(detected: Detected | null): Target | null {
   if (!detected || detected.platform === 'other') return null
-  return TARGETS.find((target) => target.platform === detected.platform && target.arch === detected.arch) ?? null
+  return (
+    TARGETS.find(
+      (target) => target.platform === detected.platform && target.arch === detected.arch,
+    ) ?? null
+  )
 }
 
 function assetFor(manifest: DesktopReleaseManifest | null, target: Target) {
@@ -113,7 +151,12 @@ export function DesktopHeroActions() {
         <Badge variant="outline" className="h-9 rounded-full bg-card px-4 text-sm">
           你正在使用桌面客户端 v{bridge.version}
         </Badge>
-        <Button size="lg" variant="outline" className="h-11 rounded-full px-6 text-base" onClick={() => void bridge.checkForUpdates()}>
+        <Button
+          size="lg"
+          variant="outline"
+          className="h-11 rounded-full px-6 text-base"
+          onClick={() => void bridge.checkForUpdates()}
+        >
           <RefreshCw data-icon="inline-start" />
           检查更新
         </Button>
@@ -138,7 +181,11 @@ export function DesktopHeroActions() {
     return (
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-3">
-          <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+          <Button
+            asChild
+            size="lg"
+            className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+          >
             <Link href={asset.url} prefetch={false} download>
               <Download data-icon="inline-start" />
               {target.cta}
@@ -158,7 +205,11 @@ export function DesktopHeroActions() {
   return (
     <div className="mt-8">
       <div className="flex flex-wrap items-center gap-3">
-        <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+        <Button
+          asChild
+          size="lg"
+          className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+        >
           <Link href="/projects">
             使用网页版
             <ArrowRight data-icon="inline-end" />
@@ -185,7 +236,13 @@ export function DesktopPlatformCards() {
         const isRecommended = recommended?.id === target.id
         const Icon = target.icon
         return (
-          <div key={target.id} className={cn('flex flex-col rounded-2xl border border-border bg-card p-6', isRecommended && 'border-primary/60 ring-1 ring-primary/40')}>
+          <div
+            key={target.id}
+            className={cn(
+              'flex flex-col rounded-2xl border border-border bg-card p-6',
+              isRecommended && 'border-primary/60 ring-1 ring-primary/40',
+            )}
+          >
             <div className="flex items-center justify-between gap-3">
               <Icon aria-hidden className="size-5 text-muted-foreground" />
               {isRecommended ? (
@@ -218,7 +275,12 @@ export function DesktopPlatformCards() {
                     <dd className="mt-1 font-medium">{DESKTOP_FORMAT_LABELS[asset.format]}</dd>
                   </div>
                 </dl>
-                <Button asChild size="lg" variant={isRecommended ? 'default' : 'outline'} className="w-full rounded-full">
+                <Button
+                  asChild
+                  size="lg"
+                  variant={isRecommended ? 'default' : 'outline'}
+                  className="w-full rounded-full"
+                >
                   <Link href={asset.url} prefetch={false} download>
                     <Download data-icon="inline-start" />
                     下载

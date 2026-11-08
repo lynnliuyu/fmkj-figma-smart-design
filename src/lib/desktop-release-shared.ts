@@ -36,7 +36,11 @@ export const DESKTOP_FORMAT_LABELS: Record<DesktopFormat, string> = {
  * 选出某平台、某芯片架构推荐下载的文件：架构完全匹配优先，其次通用包；
  * 安装程序 / DMG 优先于 ZIP。strict 为 true 时不回退到其它架构。
  */
-export function pickDesktopAsset(release: DesktopPlatformRelease | null | undefined, arch: DesktopArch, strict = false): DesktopAsset | null {
+export function pickDesktopAsset(
+  release: DesktopPlatformRelease | null | undefined,
+  arch: DesktopArch,
+  strict = false,
+): DesktopAsset | null {
   if (!release) return null
   const score = (asset: DesktopAsset) => {
     const archScore = asset.arch === arch ? 0 : asset.arch === 'universal' ? 1 : strict ? null : 2

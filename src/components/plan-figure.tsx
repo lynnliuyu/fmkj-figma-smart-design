@@ -8,7 +8,15 @@ import type { PlanAreaShape } from '@/lib/point-scene'
 import { MARKER, SHEET } from '@/lib/sheet-spec'
 import { cn } from '@/lib/utils'
 
-export type PlanPoint = { id: string; deviceType: string; code: string; rx: number | null; ry: number | null; image?: string | null; angle?: number }
+export type PlanPoint = {
+  id: string
+  deviceType: string
+  code: string
+  rx: number | null
+  ry: number | null
+  image?: string | null
+  angle?: number
+}
 /** 区域：比例坐标的外接框，多边形区域带 poly 轮廓（用 planAreaOf 生成） */
 export type PlanArea = PlanAreaShape
 
@@ -24,7 +32,9 @@ export function planAreaOutline(a: PlanArea): [number, number][] {
   )
 }
 export const planAreaLabelAt = (a: PlanArea): [number, number] =>
-  planAreaOutline(a).reduce((best, q) => (q[1] < best[1] - 1e-4 || (Math.abs(q[1] - best[1]) <= 1e-4 && q[0] < best[0]) ? q : best))
+  planAreaOutline(a).reduce((best, q) =>
+    q[1] < best[1] - 1e-4 || (Math.abs(q[1] - best[1]) <= 1e-4 && q[0] < best[0]) ? q : best,
+  )
 
 /**
  * 方案图：标准图纸 + 点位（矢量，打印清晰）。
@@ -62,12 +72,36 @@ export function PlanFigure({
   const productClipPrefix = useId().replace(/:/g, '')
   const placed = points.filter((p) => p.rx !== null && p.ry !== null)
   const displayEffects = effects
-    ? buildPointDisplayEffects(placed.map((p) => ({ id: p.id, deviceType: p.deviceType, x: p.rx! * W, y: p.ry! * H, angle: p.angle })), MARKER.size * W / SHEET.width)
+    ? buildPointDisplayEffects(
+        placed.map((p) => ({
+          id: p.id,
+          deviceType: p.deviceType,
+          x: p.rx! * W,
+          y: p.ry! * H,
+          angle: p.angle,
+        })),
+        (MARKER.size * W) / SHEET.width,
+      )
     : []
   return (
     <div className={cn('relative aspect-[3/2] overflow-hidden bg-white', className)}>
-      <svg viewBox={`0 0 ${W} ${H}`} className="pointer-events-none absolute inset-0 size-full" role="img" aria-label="点位方案图">
-        {sheetUrl ? <image href={sheetUrl} x={0} y={0} width={W} height={H} opacity={dim} preserveAspectRatio="xMidYMid meet" /> : null}
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="pointer-events-none absolute inset-0 size-full"
+        role="img"
+        aria-label="点位方案图"
+      >
+        {sheetUrl ? (
+          <image
+            href={sheetUrl}
+            x={0}
+            y={0}
+            width={W}
+            height={H}
+            opacity={dim}
+            preserveAspectRatio="xMidYMid meet"
+          />
+        ) : null}
         {effects ? <PointDisplayEffects effects={displayEffects} idPrefix="plan-figure" /> : null}
         {showAreas
           ? areas.map((a) => {
@@ -84,7 +118,16 @@ export function PlanFigure({
                     strokeWidth={2.4}
                     strokeLinejoin="round"
                   />
-                  <text x={lx * W + 12} y={ly * H + 34} fontSize={26} fontWeight={600} fill="#475569" stroke="#fff" strokeWidth={6} paintOrder="stroke">
+                  <text
+                    x={lx * W + 12}
+                    y={ly * H + 34}
+                    fontSize={26}
+                    fontWeight={600}
+                    fill="#475569"
+                    stroke="#fff"
+                    strokeWidth={6}
+                    paintOrder="stroke"
+                  >
                     {a.name}
                   </text>
                 </g>
@@ -107,13 +150,37 @@ export function PlanFigure({
                       <circle cx={cx} cy={cy} r={(S - 14) / 2} />
                     </clipPath>
                   </defs>
-                  <image href={p.image!} x={cx - (S - 14) / 2} y={cy - (S - 14) / 2} width={S - 14} height={S - 14} preserveAspectRatio="xMidYMid meet" clipPath={`url(#${productClipPrefix}-${index})`} />
+                  <image
+                    href={p.image!}
+                    x={cx - (S - 14) / 2}
+                    y={cy - (S - 14) / 2}
+                    width={S - 14}
+                    height={S - 14}
+                    preserveAspectRatio="xMidYMid meet"
+                    clipPath={`url(#${productClipPrefix}-${index})`}
+                  />
                 </>
               ) : (
-                <image href={markerSrc(p.deviceType)} x={cx - S / 2} y={cy - S / 2} width={S} height={S} />
+                <image
+                  href={markerSrc(p.deviceType)}
+                  x={cx - S / 2}
+                  y={cy - S / 2}
+                  width={S}
+                  height={S}
+                />
               )}
               {showCodes && typeLabel ? (
-                <text x={cx} y={cy + S / 2 + 24} textAnchor="middle" fontSize={22} fontWeight={700} fill={color} stroke="#fff" strokeWidth={6} paintOrder="stroke">
+                <text
+                  x={cx}
+                  y={cy + S / 2 + 24}
+                  textAnchor="middle"
+                  fontSize={22}
+                  fontWeight={700}
+                  fill={color}
+                  stroke="#fff"
+                  strokeWidth={6}
+                  paintOrder="stroke"
+                >
                   {typeLabel}
                 </text>
               ) : null}

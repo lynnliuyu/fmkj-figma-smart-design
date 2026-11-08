@@ -12,5 +12,8 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const user = await appAuth.getCurrentUser()
   if (!user) return Response.json({ ok: false, error: '登录已过期，请重新登录' }, { status: 401 })
-  return Response.json({ ok: true, ...recognitionStatusPayload(request) }, { headers: { 'Cache-Control': 'no-store' } })
+  return Response.json(
+    { ok: true, ...recognitionStatusPayload(request) },
+    { headers: { 'Cache-Control': 'no-store' } },
+  )
 }

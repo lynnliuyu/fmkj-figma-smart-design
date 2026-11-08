@@ -43,7 +43,9 @@ describe('contractStatusLabel', () => {
 describe('paymentPercentTotal', () => {
   it('合计各期比例并保留两位小数', () => {
     expect(paymentPercentTotal([{ percent: 50 }, { percent: 40 }, { percent: 10 }])).toBe(100)
-    expect(paymentPercentTotal([{ percent: 33.33 }, { percent: 33.33 }, { percent: 33.34 }])).toBe(100)
+    expect(paymentPercentTotal([{ percent: 33.33 }, { percent: 33.33 }, { percent: 33.34 }])).toBe(
+      100,
+    )
   })
 
   it('缺失的 percent 按 0 计', () => {
@@ -54,11 +56,17 @@ describe('paymentPercentTotal', () => {
 
 describe('paymentAmounts', () => {
   it('按比例拆分合同金额', () => {
-    expect(paymentAmounts(68000, [{ percent: 50 }, { percent: 40 }, { percent: 10 }])).toEqual([34000, 27200, 6800])
+    expect(paymentAmounts(68000, [{ percent: 50 }, { percent: 40 }, { percent: 10 }])).toEqual([
+      34000, 27200, 6800,
+    ])
   })
 
   it('比例合计为 100 时，最后一期补齐分位误差，保证总和等于合同金额', () => {
-    const amounts = paymentAmounts(0.01, [{ percent: 33.33 }, { percent: 33.33 }, { percent: 33.34 }])
+    const amounts = paymentAmounts(0.01, [
+      { percent: 33.33 },
+      { percent: 33.33 },
+      { percent: 33.34 },
+    ])
     expect(amounts).toEqual([0, 0, 0.01])
     expect(amounts.reduce((s, n) => s + n, 0)).toBeCloseTo(0.01, 10)
   })

@@ -86,7 +86,10 @@ export async function redeemCodeForUser(user: User, rawCode: unknown): Promise<R
       usedCount: nextUsedCount,
       status: nextUsedCount >= maxUses ? 'disabled' : 'active',
       redeemedBy: [
-        ...redeemedList.map((r) => ({ user: relId(r.user)!, redeemedAt: r.redeemedAt ?? new Date().toISOString() })),
+        ...redeemedList.map((r) => ({
+          user: relId(r.user)!,
+          redeemedAt: r.redeemedAt ?? new Date().toISOString(),
+        })),
         { user: user.id, redeemedAt: new Date().toISOString() },
       ],
     } as never,

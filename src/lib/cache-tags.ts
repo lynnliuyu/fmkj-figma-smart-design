@@ -1,5 +1,9 @@
 import { invalidateTag } from '@/lib/memo-cache'
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterChangeHook } from 'payload'
+import type {
+  CollectionAfterChangeHook,
+  CollectionAfterDeleteHook,
+  GlobalAfterChangeHook,
+} from 'payload'
 
 /** 缓存标签：产品库（含品牌、分类、图片）、员工名单、公司信息。 */
 export const CACHE_TAGS = {

@@ -52,7 +52,12 @@ export type SymbolGeom = {
  * - 按真实尺寸且图纸已标定：sizeCm 换算成场景单位（宽 × 深，深为 null 时宽 = 图形长边）；
  * - 其余固定显示尺寸（NTS）；线形灯具按长度示意（60cm 起，最长 5 倍）。
  */
-export function symbolGeom(o: Pick<SymbolObj, 'x' | 'y' | 'angle' | 'sizeCm' | 'real'>, look: SymbolLook, view: Pick<ViewSettings, 'symbolStyle' | 'symbolSize'>, mmPerUnit: number | null): SymbolGeom {
+export function symbolGeom(
+  o: Pick<SymbolObj, 'x' | 'y' | 'angle' | 'sizeCm' | 'real'>,
+  look: SymbolLook,
+  view: Pick<ViewSettings, 'symbolStyle' | 'symbolSize'>,
+  mmPerUnit: number | null,
+): SymbolGeom {
   const marker = view.symbolStyle === 'marker' || !look.art
   let w: number
   let h: number
@@ -87,11 +92,21 @@ export function symbolGeom(o: Pick<SymbolObj, 'x' | 'y' | 'angle' | 'sizeCm' | '
   const imgH = h + 2 * pad * L
   // 标记样式不旋转（实心圆标记转了没有意义）
   const aabb = rotatedAabb({ x: o.x, y: o.y }, w, h, marker ? 0 : o.angle)
-  return { w, h, real, imgW, imgH, aabb, labelY: aabb.y + aabb.h + LABEL_GAP + LABEL_SIZE * 0.82, marker }
+  return {
+    w,
+    h,
+    real,
+    imgW,
+    imgH,
+    aabb,
+    labelY: aabb.y + aabb.h + LABEL_GAP + LABEL_SIZE * 0.82,
+    marker,
+  }
 }
 
 /** 代号文字宽度（估算：中日韩字符 1 em，其余 0.62 em） */
-export const textWidth = (text: string, size: number) => [...text].reduce((w, ch) => w + (/[\u0000-\u00ff]/.test(ch) ? size * 0.62 : size), 0)
+export const textWidth = (text: string, size: number) =>
+  [...text].reduce((w, ch) => w + (/[\u0000-\u00ff]/.test(ch) ? size * 0.62 : size), 0)
 
 export const labelBox = (o: Pick<SymbolObj, 'x' | 'code'>, g: SymbolGeom): Box => {
   const w = textWidth(o.code, LABEL_SIZE) + 2

@@ -5,7 +5,13 @@
  * - 开关控灯关联：按房间自动推断，同一房间里的每盏灯连到最近的开关；有灯却没有开关（也没有人体传感器）的灯具标红提示。
  * 半径按图纸标定换算成真实米数；图纸未标定时按标准图纸（户型宽约 14 m）估算，并用虚线和「估算」标注。
  */
-import type { OverlayCircle, OverlayLink, OverlayMark, OverlayShapes, PackOverlay } from '@/board/core/pack'
+import type {
+  OverlayCircle,
+  OverlayLink,
+  OverlayMark,
+  OverlayShapes,
+  PackOverlay,
+} from '@/board/core/pack'
 import { pointInPolygon, polyArea } from '@/board/core/geometry'
 import { areaPoly, areasOf, sheetAt, symbolsOf } from '@/board/core/ops'
 import type { AreaObj, BoardDoc, SymbolObj } from '@/board/core/types'
@@ -24,13 +30,24 @@ export const COVERAGE_SPECS: Record<string, { meters: number; color: string; lab
 /** 未标定图纸的估算比例：标准图纸 1200 单位宽、四周留白 3.5%，按户型宽约 14 m 计 */
 export const ESTIMATED_MM_PER_UNIT = 14_000 / (SHEET.width * (1 - 2 * SHEET.padding))
 
-const deviceTypeOf = (o: SymbolObj) => (typeof o.data.deviceType === 'string' ? o.data.deviceType : '')
+const deviceTypeOf = (o: SymbolObj) =>
+  typeof o.data.deviceType === 'string' ? o.data.deviceType : ''
 const categoryOf = (o: SymbolObj) => categoryOfType(deviceTypeOf(o))?.slug ?? null
-const dist2 = (a: { x: number; y: number }, b: { x: number; y: number }) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2
+const dist2 = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+  (a.x - b.x) ** 2 + (a.y - b.y) ** 2
 
 function displayEffects(doc: BoardDoc): OverlayShapes {
   return {
-    effects: buildPointDisplayEffects(symbolsOf(doc).map((o) => ({ id: o.id, deviceType: deviceTypeOf(o), x: o.x, y: o.y, angle: o.angle })), 24),
+    effects: buildPointDisplayEffects(
+      symbolsOf(doc).map((o) => ({
+        id: o.id,
+        deviceType: deviceTypeOf(o),
+        x: o.x,
+        y: o.y,
+        angle: o.angle,
+      })),
+      24,
+    ),
   }
 }
 
@@ -41,7 +58,15 @@ function coverage(doc: BoardDoc): OverlayShapes {
     if (!spec) continue
     const mm = sheetAt(doc, o.x, o.y)?.mmPerUnit ?? null
     const r = (spec.meters * 1000) / (mm ?? ESTIMATED_MM_PER_UNIT)
-    circles.push({ id: o.id, x: o.x, y: o.y, r, color: spec.color, label: `${o.code ? `${o.code} ` : ''}${spec.label} ≈${spec.meters}m${mm ? '' : '（估算）'}`, estimated: !mm })
+    circles.push({
+      id: o.id,
+      x: o.x,
+      y: o.y,
+      r,
+      color: spec.color,
+      label: `${o.code ? `${o.code} ` : ''}${spec.label} ≈${spec.meters}m${mm ? '' : '（估算）'}`,
+      estimated: !mm,
+    })
   }
   return { circles }
 }
@@ -51,7 +76,8 @@ function areaIndex(doc: BoardDoc) {
   const areas = areasOf(doc)
     .map((a) => ({ a, poly: areaPoly(a), size: Math.abs(polyArea(areaPoly(a))) }))
     .sort((x, y) => x.size - y.size)
-  return (o: SymbolObj): AreaObj | null => areas.find((x) => pointInPolygon({ x: o.x, y: o.y }, x.poly))?.a ?? null
+  return (o: SymbolObj): AreaObj | null =>
+    areas.find((x) => pointInPolygon({ x: o.x, y: o.y }, x.poly))?.a ?? null
 }
 
 /** 能自动控制灯光的设备：房间里有它们时，没有墙壁开关也不算漏配 */
@@ -72,7 +98,10 @@ export function inferLightLinks(doc: BoardDoc) {
   const hasAreas = areasOf(doc).length > 0
   const mmAt = (o: SymbolObj) => sheetAt(doc, o.x, o.y)?.mmPerUnit ?? ESTIMATED_MM_PER_UNIT
   const switches = syms.filter((o) => categoryOf(o) === 'switch')
-  const groups = new Map<string, { switches: SymbolObj[]; lights: SymbolObj[]; controlled: boolean; reach2: number | null }>()
+  const groups = new Map<
+    string,
+    { switches: SymbolObj[]; lights: SymbolObj[]; controlled: boolean; reach2: number | null }
+  >()
   for (const o of syms) {
     const cat = categoryOf(o)
     const controller = LIGHT_CONTROLLERS.has(deviceTypeOf(o))
@@ -113,7 +142,12 @@ export function inferLightLinks(doc: BoardDoc) {
     for (const light of g.lights) {
       const inRoom = loose ? null : nearest(light, g.switches, g.reach2)
       if (inRoom) {
-        links.push({ id: `${inRoom.id}->${light.id}`, from: { x: inRoom.x, y: inRoom.y }, to: { x: light.x, y: light.y }, color: '#2563eb' })
+        links.push({
+          id: `${inRoom.id}->${light.id}`,
+          from: { x: inRoom.x, y: inRoom.y },
+          to: { x: light.x, y: light.y },
+          color: '#2563eb',
+        })
         continue
       }
       if (g.controlled && !loose) continue
@@ -124,7 +158,13 @@ export function inferLightLinks(doc: BoardDoc) {
         switches.filter((s) => sheetAt(doc, s.x, s.y)?.id === sheetId),
         reach * reach,
       )
-      if (outside) links.push({ id: `${outside.id}->${light.id}`, from: { x: outside.x, y: outside.y }, to: { x: light.x, y: light.y }, color: '#60a5fa' })
+      if (outside)
+        links.push({
+          id: `${outside.id}->${light.id}`,
+          from: { x: outside.x, y: outside.y },
+          to: { x: light.x, y: light.y },
+          color: '#60a5fa',
+        })
       else orphans.push(light)
     }
   }
@@ -139,12 +179,33 @@ export function unswitchedLights(doc: BoardDoc) {
 
 function lightLinks(doc: BoardDoc): OverlayShapes {
   const { links, orphans } = inferLightLinks(doc)
-  const marks: OverlayMark[] = orphans.map((o) => ({ id: o.id, x: o.x, y: o.y, color: '#dc2626', title: `${o.code || '灯具'} 所在房间没有开关或人体传感器` }))
+  const marks: OverlayMark[] = orphans.map((o) => ({
+    id: o.id,
+    x: o.x,
+    y: o.y,
+    color: '#dc2626',
+    title: `${o.code || '灯具'} 所在房间没有开关或人体传感器`,
+  }))
   return { links, marks }
 }
 
 export const SMART_HOME_OVERLAYS: PackOverlay[] = [
-  { id: 'display-effects', name: '展示效果', hint: '无线波纹、人体扇形、传感器提示与灯光光晕', build: displayEffects },
-  { id: 'coverage', name: '信号覆盖圈', hint: '吸顶 AP 8m · 面板 AP / 路由 6m · 网关 10m', build: coverage },
-  { id: 'light-links', name: '开关控灯关联', hint: '按房间推断，无开关的灯具标红', build: lightLinks },
+  {
+    id: 'display-effects',
+    name: '展示效果',
+    hint: '无线波纹、人体扇形、传感器提示与灯光光晕',
+    build: displayEffects,
+  },
+  {
+    id: 'coverage',
+    name: '信号覆盖圈',
+    hint: '吸顶 AP 8m · 面板 AP / 路由 6m · 网关 10m',
+    build: coverage,
+  },
+  {
+    id: 'light-links',
+    name: '开关控灯关联',
+    hint: '按房间推断，无开关的灯具标红',
+    build: lightLinks,
+  },
 ]

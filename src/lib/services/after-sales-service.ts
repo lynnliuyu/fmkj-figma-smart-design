@@ -21,7 +21,9 @@ import { loadProjectDocs, type ProjectDocsData } from '@/lib/project-docs'
 import type { User } from '@/payload-types'
 
 /** 售后维保业务规则（网页 Server Action 与打印页共用）。 */
-export type AfterSalesResult<T = object> = ({ ok: true } & T) | { ok: false; error: string; fieldErrors?: Record<string, string> }
+export type AfterSalesResult<T = object> =
+  | ({ ok: true } & T)
+  | { ok: false; error: string; fieldErrors?: Record<string, string> }
 
 export type ServiceRecordInput = {
   type: string
@@ -65,13 +67,20 @@ function failure(error: unknown, fallback: string) {
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/
 /** 只有日期的字段按上海中午存储，避免跨时区显示成前一天 */
 const dayToIso = (day: string) => new Date(`${day}T12:00:00+08:00`).toISOString()
-const validDay = (v: unknown) => typeof v === 'string' && DAY_RE.test(v) && !Number.isNaN(new Date(`${v}T12:00:00+08:00`).getTime())
+const validDay = (v: unknown) =>
+  typeof v === 'string' &&
+  DAY_RE.test(v) &&
+  !Number.isNaN(new Date(`${v}T12:00:00+08:00`).getTime())
 const text = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
 /** 校验并整理表单输入（只接受白名单字段）；配置备份只能由系统生成 */
-export function normalizeServiceInput(input: ServiceRecordInput, opts: { allowBackup?: boolean } = {}) {
+export function normalizeServiceInput(
+  input: ServiceRecordInput,
+  opts: { allowBackup?: boolean } = {},
+) {
   const fieldErrors: Record<string, string> = {}
-  if (!isServiceRecordType(input.type) || (input.type === 'backup' && !opts.allowBackup)) fieldErrors.type = '请选择记录类型'
+  if (!isServiceRecordType(input.type) || (input.type === 'backup' && !opts.allowBackup))
+    fieldErrors.type = '请选择记录类型'
   const title = text(input.title, 120)
   if (!title) fieldErrors.title = '请填写摘要'
   if (!validDay(input.serviceDate)) fieldErrors.serviceDate = '请选择服务日期'
@@ -80,7 +89,8 @@ export function normalizeServiceInput(input: ServiceRecordInput, opts: { allowBa
   let fee: number | null = null
   if (billing === 'paid') {
     const n = typeof input.fee === 'string' ? Number(input.fee) : input.fee
-    if (typeof n !== 'number' || !Number.isFinite(n) || n < 0 || n > 10_000_000) fieldErrors.fee = '请填写有效的收费金额'
+    if (typeof n !== 'number' || !Number.isFinite(n) || n < 0 || n > 10_000_000)
+      fieldErrors.fee = '请填写有效的收费金额'
     else fee = Math.round(n * 100) / 100
   }
   const nextVisit = input.nextVisitAt ? String(input.nextVisitAt) : ''
@@ -160,17 +170,29 @@ export async function loadAfterSales(user: User, projectId: string) {
   ])
   const list = records.docs.map((r) => presentServiceRecord(r as unknown as RawRecord))
   // 最早的一次交付验收作为质保起算日
-  const acceptance = list.filter((r) => r.type === 'acceptance' && r.status === 'done' && r.serviceDate).sort((a, b) => a.serviceDate.localeCompare(b.serviceDate))[0] ?? null
+  const acceptance =
+    list
+      .filter((r) => r.type === 'acceptance' && r.status === 'done' && r.serviceDate)
+      .sort((a, b) => a.serviceDate.localeCompare(b.serviceDate))[0] ?? null
   const contract = contracts.docs[0] ?? null
   const warranty = warrantyInfo(contract, acceptance?.serviceDate ?? null)
   const today = toShanghaiDay(new Date())!
-  const upcoming = list
-    .flatMap((r) => [r.nextVisitAt, r.status === 'scheduled' ? r.serviceDate : null])
-    .filter((d): d is string => Boolean(d && d >= today))
-    .sort()[0] ?? null
+  const upcoming =
+    list
+      .flatMap((r) => [r.nextVisitAt, r.status === 'scheduled' ? r.serviceDate : null])
+      .filter((d): d is string => Boolean(d && d >= today))
+      .sort()[0] ?? null
   return {
     records: list,
-    contract: contract ? { id: String(contract.id), number: contract.number, status: contract.status, signedAt: toShanghaiDay(contract.signedAt), warrantyMonths: contract.warrantyMonths ?? null } : null,
+    contract: contract
+      ? {
+          id: String(contract.id),
+          number: contract.number,
+          status: contract.status,
+          signedAt: toShanghaiDay(contract.signedAt),
+          warrantyMonths: contract.warrantyMonths ?? null,
+        }
+      : null,
     warranty,
     acceptance,
     nextVisit: upcoming,
@@ -179,39 +201,92 @@ export async function loadAfterSales(user: User, projectId: string) {
       repairs: list.filter((r) => r.type === 'repair' || r.type === 'remote').length,
       replacements: list.filter((r) => r.type === 'replacement').length,
       open: list.filter((r) => r.status !== 'done').length,
-      paidTotal: Math.round(list.reduce((s, r) => s + (r.billing === 'paid' ? (r.fee ?? 0) : 0), 0) * 100) / 100,
+      paidTotal:
+        Math.round(list.reduce((s, r) => s + (r.billing === 'paid' ? (r.fee ?? 0) : 0), 0) * 100) /
+        100,
     },
   }
 }
 export type AfterSalesData = Awaited<ReturnType<typeof loadAfterSales>>
 
-export async function saveServiceRecord(user: User, projectId: string, input: ServiceRecordInput, id?: string | null): Promise<AfterSalesResult<{ id: string }>> {
+export async function saveServiceRecord(
+  user: User,
+  projectId: string,
+  input: ServiceRecordInput,
+  id?: string | null,
+): Promise<AfterSalesResult<{ id: string }>> {
   const payload = await getPayloadClient()
   let existingType: string | null = null
   if (id) {
-    const existing = await payload.findByID({ collection: 'service-records', id, depth: 0, user, overrideAccess: false, select: { project: true, type: true } }).catch(() => null)
-    if (!existing || relId(existing.project) !== String(projectId)) return { ok: false, error: '记录不存在或已被删除' }
+    const existing = await payload
+      .findByID({
+        collection: 'service-records',
+        id,
+        depth: 0,
+        user,
+        overrideAccess: false,
+        select: { project: true, type: true },
+      })
+      .catch(() => null)
+    if (!existing || relId(existing.project) !== String(projectId))
+      return { ok: false, error: '记录不存在或已被删除' }
     existingType = existing.type ?? null
   }
   // 配置备份只能由系统生成；编辑已有备份时保持类型不变
-  const normalized = normalizeServiceInput(existingType === 'backup' ? { ...input, type: 'backup' } : input, { allowBackup: existingType === 'backup' })
-  if (!normalized.ok) return { ok: false, error: Object.values(normalized.fieldErrors)[0] ?? '请检查填写的内容', fieldErrors: normalized.fieldErrors }
-  if (existingType && existingType !== 'backup' && normalized.data.type === 'backup') return { ok: false, error: '不能把记录改成配置备份' }
+  const normalized = normalizeServiceInput(
+    existingType === 'backup' ? { ...input, type: 'backup' } : input,
+    { allowBackup: existingType === 'backup' },
+  )
+  if (!normalized.ok)
+    return {
+      ok: false,
+      error: Object.values(normalized.fieldErrors)[0] ?? '请检查填写的内容',
+      fieldErrors: normalized.fieldErrors,
+    }
+  if (existingType && existingType !== 'backup' && normalized.data.type === 'backup')
+    return { ok: false, error: '不能把记录改成配置备份' }
   try {
     const doc = id
-      ? await payload.update({ collection: 'service-records', id, data: normalized.data, user, overrideAccess: false, depth: 0, select: { title: true } })
-      : await payload.create({ collection: 'service-records', data: { ...normalized.data, project: projectId }, user, overrideAccess: false, depth: 0, select: { title: true } })
+      ? await payload.update({
+          collection: 'service-records',
+          id,
+          data: normalized.data,
+          user,
+          overrideAccess: false,
+          depth: 0,
+          select: { title: true },
+        })
+      : await payload.create({
+          collection: 'service-records',
+          data: { ...normalized.data, project: projectId },
+          user,
+          overrideAccess: false,
+          depth: 0,
+          select: { title: true },
+        })
     return { ok: true, id: String(doc.id) }
   } catch (error) {
     return { ok: false, error: failure(error, '保存失败，请稍后重试') }
   }
 }
 
-export async function setServiceRecordStatus(user: User, id: string, status: string): Promise<AfterSalesResult> {
+export async function setServiceRecordStatus(
+  user: User,
+  id: string,
+  status: string,
+): Promise<AfterSalesResult> {
   if (!isServiceRecordStatus(status)) return { ok: false, error: '状态无效' }
   try {
     const payload = await getPayloadClient()
-    await payload.update({ collection: 'service-records', id, data: { status }, user, overrideAccess: false, depth: 0, select: { status: true } })
+    await payload.update({
+      collection: 'service-records',
+      id,
+      data: { status },
+      user,
+      overrideAccess: false,
+      depth: 0,
+      select: { status: true },
+    })
     return { ok: true }
   } catch (error) {
     return { ok: false, error: failure(error, '更新失败，请稍后重试') }
@@ -254,20 +329,28 @@ export function snapshotFromDocs(d: ProjectDocsData): ServiceSnapshot {
     version: 1,
     takenAt: new Date().toISOString(),
     platform: d.project.platform ?? null,
-    quote: finalQuote ? { id: finalQuote.id, title: finalQuote.title, total: finalQuote.total } : null,
+    quote: finalQuote
+      ? { id: finalQuote.id, title: finalQuote.title, total: finalQuote.total }
+      : null,
     totals: { devices: d.points.length, rooms: d.rooms.length, sheets: d.sheets.length },
     devices,
   }
 }
 
 /** 按当前点位图与定稿报价生成全屋设备台账快照 */
-export async function buildServiceSnapshot(user: User, projectId: string): Promise<ServiceSnapshot | null> {
+export async function buildServiceSnapshot(
+  user: User,
+  projectId: string,
+): Promise<ServiceSnapshot | null> {
   const d = await loadProjectDocs(projectId, user, 'all', null).catch(() => null)
   return d ? snapshotFromDocs(d) : null
 }
 
 /** 留存一份配置备份（设备台账快照） */
-export async function createConfigBackup(user: User, projectId: string): Promise<AfterSalesResult<{ id: string; devices: number }>> {
+export async function createConfigBackup(
+  user: User,
+  projectId: string,
+): Promise<AfterSalesResult<{ id: string; devices: number }>> {
   const snapshot = await buildServiceSnapshot(user, projectId)
   if (!snapshot) return { ok: false, error: '项目不存在或无权访问' }
   if (!snapshot.devices.length) return { ok: false, error: '点位图里还没有设备，布置点位后再备份' }
@@ -283,7 +366,9 @@ export async function createConfigBackup(user: User, projectId: string): Promise
         serviceDate: dayToIso(today),
         status: 'done',
         billing: 'free',
-        detail: snapshot.quote ? `依据报价：${snapshot.quote.title}（¥${snapshot.quote.total.toLocaleString('zh-CN')}）` : '依据当前点位图与项目默认型号',
+        detail: snapshot.quote
+          ? `依据报价：${snapshot.quote.title}（¥${snapshot.quote.total.toLocaleString('zh-CN')}）`
+          : '依据当前点位图与项目默认型号',
         snapshot: snapshot as never,
       },
       user,

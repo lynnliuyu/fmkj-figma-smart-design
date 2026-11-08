@@ -16,7 +16,13 @@ export default async function PointMapPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ quoteId?: string; sheet?: string; area?: string; point?: string; scope?: string }>
+  searchParams: Promise<{
+    quoteId?: string
+    sheet?: string
+    area?: string
+    point?: string
+    scope?: string
+  }>
 }) {
   const { id } = await params
   const sp = await searchParams
@@ -24,7 +30,14 @@ export default async function PointMapPage({
   // 点位图、报价列表、产品库并行读取
   const [scene, deals, catalog, flags] = await Promise.all([
     payload
-      .findByID({ collection: 'projects', id: project.id, depth: 0, user, overrideAccess: false, select: { pointMap: true, defaultProducts: true, updatedAt: true } })
+      .findByID({
+        collection: 'projects',
+        id: project.id,
+        depth: 0,
+        user,
+        overrideAccess: false,
+        select: { pointMap: true, defaultProducts: true, updatedAt: true },
+      })
       .catch(() => null),
     getProjectDeals(id),
     getCatalog(),
@@ -47,7 +60,9 @@ export default async function PointMapPage({
   }))
 
   // 打开时整理场景：旧点位换成新版图标、旧户型图补上图纸信息
-  const { warnings, repaired, ...initialScene } = normalizeScene(scene.pointMap as Partial<StoredScene> | null)
+  const { warnings, repaired, ...initialScene } = normalizeScene(
+    scene.pointMap as Partial<StoredScene> | null,
+  )
 
   return (
     <PointMapEditor
@@ -60,7 +75,12 @@ export default async function PointMapPage({
       needsSave={repaired > 0 && !readOnly}
       products={products}
       initialDefaults={parseDefaults(scene.defaultProducts)}
-      quotes={deals.quotes.map((q) => ({ id: String(q.id), title: q.title, status: q.status, total: q.total ?? 0 }))}
+      quotes={deals.quotes.map((q) => ({
+        id: String(q.id),
+        title: q.title,
+        status: q.status,
+        total: q.total ?? 0,
+      }))}
       initialFocus={{
         quoteId: typeof sp.quoteId === 'string' ? sp.quoteId : null,
         sheet: typeof sp.sheet === 'string' ? sp.sheet : null,

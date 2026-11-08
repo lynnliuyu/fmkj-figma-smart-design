@@ -22,7 +22,13 @@ const TTL: Record<MpTokenKind, number> = {
 
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex')
 
-type TokenData = { userId?: string | null; openid?: string | null; unionid?: string | null; redirect?: string | null; client?: string | null }
+type TokenData = {
+  userId?: string | null
+  openid?: string | null
+  unionid?: string | null
+  redirect?: string | null
+  client?: string | null
+}
 
 /** 签发令牌，返回原文（只此一次）。顺手清理已过期的记录。 */
 export async function issueToken(kind: MpTokenKind, data: TokenData) {
@@ -46,13 +52,22 @@ export async function issueToken(kind: MpTokenKind, data: TokenData) {
     depth: 0,
   })
   void payload
-    .delete({ collection: 'mp-sessions', where: { expiresAt: { less_than: new Date().toISOString() } }, overrideAccess: true, depth: 0 })
+    .delete({
+      collection: 'mp-sessions',
+      where: { expiresAt: { less_than: new Date().toISOString() } },
+      overrideAccess: true,
+      depth: 0,
+    })
     .catch(() => null)
   return { token, expiresAt }
 }
 
 /** 读取令牌记录；过期的直接删除。consume=true 时读取后立即删除（一次性票据）。 */
-export async function readToken(token: string | null | undefined, kind: MpTokenKind, opts: { consume?: boolean } = {}) {
+export async function readToken(
+  token: string | null | undefined,
+  kind: MpTokenKind,
+  opts: { consume?: boolean } = {},
+) {
   if (!token || token.length < 20 || token.length > 200) return null
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
@@ -65,21 +80,33 @@ export async function readToken(token: string | null | undefined, kind: MpTokenK
   const doc = docs[0]
   if (!doc) return null
   const expired = new Date(doc.expiresAt).getTime() < Date.now()
-  if (expired || opts.consume) await payload.delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 }).catch(() => null)
+  if (expired || opts.consume)
+    await payload
+      .delete({ collection: 'mp-sessions', id: doc.id, overrideAccess: true, depth: 0 })
+      .catch(() => null)
   return expired ? null : doc
 }
 
 export async function revokeToken(token: string | null | undefined) {
   if (!token) return
   const payload = await getPayloadClient()
-  await payload.delete({ collection: 'mp-sessions', where: { tokenHash: { equals: hashToken(token) } }, overrideAccess: true, depth: 0 }).catch(() => null)
+  await payload
+    .delete({
+      collection: 'mp-sessions',
+      where: { tokenHash: { equals: hashToken(token) } },
+      overrideAccess: true,
+      depth: 0,
+    })
+    .catch(() => null)
 }
 
 /** 启用中的成员；带上 collection，Local API 的访问控制据此识别成员身份。 */
 export async function loadActiveUser(userId: string | null | undefined): Promise<MpUser | null> {
   if (!userId) return null
   const payload = await getPayloadClient()
-  const user = (await payload.findByID({ collection: 'users', id: userId, depth: 0, overrideAccess: true }).catch(() => null)) as User | null
+  const user = (await payload
+    .findByID({ collection: 'users', id: userId, depth: 0, overrideAccess: true })
+    .catch(() => null)) as User | null
   if (!user || user.status !== 'active') return null
   return { ...user, collection: 'users' }
 }
@@ -91,18 +118,27 @@ export function bearerToken(request: Request) {
 }
 
 /** 用会话令牌换成员；超过一天未用的会话刷新有效期（滑动续期）。 */
-export async function userFromToken(token: string | null | undefined, kind: 'session' | 'web' = 'session'): Promise<MpUser | null> {
+export async function userFromToken(
+  token: string | null | undefined,
+  kind: 'session' | 'web' = 'session',
+): Promise<MpUser | null> {
   const session = await readToken(token, kind)
   if (!session) return null
   const user = await loadActiveUser(relId(session.user))
   if (!user) return null
-  if ((kind === 'session' || kind === 'web') && (!session.lastUsedAt || Date.now() - new Date(session.lastUsedAt).getTime() > 24 * HOUR)) {
+  if (
+    (kind === 'session' || kind === 'web') &&
+    (!session.lastUsedAt || Date.now() - new Date(session.lastUsedAt).getTime() > 24 * HOUR)
+  ) {
     const payload = await getPayloadClient()
     await payload
       .update({
         collection: 'mp-sessions',
         id: session.id,
-        data: { lastUsedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + TTL[kind]).toISOString() },
+        data: {
+          lastUsedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + TTL[kind]).toISOString(),
+        },
         overrideAccess: true,
         depth: 0,
       })
@@ -115,8 +151,10 @@ export const getMpUser = (request: Request) => userFromToken(bearerToken(request
 
 /* ---------------- 微信 ---------------- */
 
-export const wechatConfigured = () => Boolean(process.env.WECHAT_MP_APPID && process.env.WECHAT_MP_SECRET)
-export const wechatOpenConfigured = () => Boolean(process.env.WECHAT_OPEN_APPID && process.env.WECHAT_OPEN_SECRET)
+export const wechatConfigured = () =>
+  Boolean(process.env.WECHAT_MP_APPID && process.env.WECHAT_MP_SECRET)
+export const wechatOpenConfigured = () =>
+  Boolean(process.env.WECHAT_OPEN_APPID && process.env.WECHAT_OPEN_SECRET)
 
 /**
  * 电脑网页的「小程序扫码登录」只能在小程序连接的那台服务器上完成：自托管部署（docker-compose 要求设置 PUBLIC_URL）。
@@ -135,8 +173,14 @@ const WECHAT_ERRORS: Record<number, string> = {
 }
 
 /** wx.login 的 code 换 openid（session_key 只在服务端使用，不保存、不返回）。 */
-export async function code2Session(code: string): Promise<{ ok: true; openid: string; unionid: string | null } | { ok: false; error: string }> {
-  if (!wechatConfigured()) return { ok: false, error: '服务器还没有配置小程序 AppID 和 AppSecret（WECHAT_MP_APPID / WECHAT_MP_SECRET）' }
+export async function code2Session(
+  code: string,
+): Promise<{ ok: true; openid: string; unionid: string | null } | { ok: false; error: string }> {
+  if (!wechatConfigured())
+    return {
+      ok: false,
+      error: '服务器还没有配置小程序 AppID 和 AppSecret（WECHAT_MP_APPID / WECHAT_MP_SECRET）',
+    }
   const params = new URLSearchParams({
     appid: process.env.WECHAT_MP_APPID!,
     secret: process.env.WECHAT_MP_SECRET!,
@@ -144,11 +188,21 @@ export async function code2Session(code: string): Promise<{ ok: true; openid: st
     grant_type: 'authorization_code',
   })
   try {
-    const res = await fetch(`https://api.weixin.qq.com/sns/jscode2session?${params.toString()}`, { signal: AbortSignal.timeout(8000) })
-    const data = (await res.json().catch(() => null)) as { openid?: string; unionid?: string; errcode?: number; errmsg?: string } | null
+    const res = await fetch(`https://api.weixin.qq.com/sns/jscode2session?${params.toString()}`, {
+      signal: AbortSignal.timeout(8000),
+    })
+    const data = (await res.json().catch(() => null)) as {
+      openid?: string
+      unionid?: string
+      errcode?: number
+      errmsg?: string
+    } | null
     if (!data?.openid) {
       if (data?.errcode) console.error('[mp] jscode2session', data.errcode, data.errmsg)
-      return { ok: false, error: (data?.errcode && WECHAT_ERRORS[data.errcode]) || '微信登录失败，请稍后重试' }
+      return {
+        ok: false,
+        error: (data?.errcode && WECHAT_ERRORS[data.errcode]) || '微信登录失败，请稍后重试',
+      }
     }
     return { ok: true, openid: data.openid, unionid: data.unionid ?? null }
   } catch {
@@ -158,7 +212,13 @@ export async function code2Session(code: string): Promise<{ ok: true; openid: st
 
 export async function findBinding(openid: string, unionid?: string | null) {
   const payload = await getPayloadClient()
-  const { docs } = await payload.find({ collection: 'wechat-accounts', where: { openid: { equals: openid } }, limit: 1, depth: 0, overrideAccess: true })
+  const { docs } = await payload.find({
+    collection: 'wechat-accounts',
+    where: { openid: { equals: openid } },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  })
   if (docs[0]) return docs[0]
   if (unionid) {
     const byUnion = await payload.find({
@@ -173,14 +233,21 @@ export async function findBinding(openid: string, unionid?: string | null) {
   return null
 }
 
-export async function bindOpenid(userId: string, openid: string, unionid: string | null, nickname?: string | null) {
+export async function bindOpenid(
+  userId: string,
+  openid: string,
+  unionid: string | null,
+  nickname?: string | null,
+) {
   const payload = await getPayloadClient()
   const existing = await findBinding(openid, unionid)
   const prevUserId = existing ? relId(existing.user) : null
 
   // 如果该微信号之前一键生成过一个临时微信小号（@wx.fmkj.local），当用户主动用已有网页邮箱账号登录并改绑时，自动停用该临时小号
   if (prevUserId && prevUserId !== userId) {
-    const prevUser = (await payload.findByID({ collection: 'users', id: prevUserId, depth: 0, overrideAccess: true }).catch(() => null)) as User | null
+    const prevUser = (await payload
+      .findByID({ collection: 'users', id: prevUserId, depth: 0, overrideAccess: true })
+      .catch(() => null)) as User | null
     if (prevUser && prevUser.email?.endsWith('@wx.fmkj.local')) {
       await payload
         .update({
@@ -194,10 +261,26 @@ export async function bindOpenid(userId: string, openid: string, unionid: string
     }
   }
 
-  const data = { user: userId, unionid, lastLoginAt: new Date().toISOString(), ...(nickname ? { nickname: nickname.slice(0, 40) } : {}) }
+  const data = {
+    user: userId,
+    unionid,
+    lastLoginAt: new Date().toISOString(),
+    ...(nickname ? { nickname: nickname.slice(0, 40) } : {}),
+  }
   const record = existing
-    ? await payload.update({ collection: 'wechat-accounts', id: existing.id, data, overrideAccess: true, depth: 0 })
-    : await payload.create({ collection: 'wechat-accounts', data: { openid, ...data }, overrideAccess: true, depth: 0 })
+    ? await payload.update({
+        collection: 'wechat-accounts',
+        id: existing.id,
+        data,
+        overrideAccess: true,
+        depth: 0,
+      })
+    : await payload.create({
+        collection: 'wechat-accounts',
+        data: { openid, ...data },
+        overrideAccess: true,
+        depth: 0,
+      })
 
   // 绑定微信成功后，自动发放「绑定微信小程序」+10 积分奖励（按 userId 幂等，每个账号限领一次；同一微信号换绑其他账号不再重复发放）
   await grantTaskCreditIfEligible(userId, 'bind_wechat', { openid }).catch(() => null)
@@ -208,11 +291,17 @@ export async function bindOpenid(userId: string, openid: string, unionid: string
  * 微信小程序新用户一键自动注册：
  * 当 openid 尚未绑定任何账号时，自动创建新成员账号，并通过 bindOpenid 自动发放「绑定微信小程序 +10 积分」与克隆示例项目。
  */
-export async function autoRegisterWechatUser(openid: string, unionid: string | null, nickname?: string | null): Promise<MpUser> {
+export async function autoRegisterWechatUser(
+  openid: string,
+  unionid: string | null,
+  nickname?: string | null,
+): Promise<MpUser> {
   const payload = await getPayloadClient()
   const shortHash = createHash('sha256').update(openid).digest('hex').slice(0, 8)
   const email = `wx_${shortHash}@wx.fmkj.local`
-  const displayName = (nickname && nickname.trim() ? nickname.trim().slice(0, 32) : '') || `微信用户${shortHash.slice(0, 4).toUpperCase()}`
+  const displayName =
+    (nickname && nickname.trim() ? nickname.trim().slice(0, 32) : '') ||
+    `微信用户${shortHash.slice(0, 4).toUpperCase()}`
 
   // 如果已存在同占位邮箱的账号，直接复用并绑定
   const existing = await payload
@@ -242,7 +331,9 @@ export async function autoRegisterWechatUser(openid: string, unionid: string | n
   }
 
   await bindOpenid(String(user.id), openid, unionid, displayName)
-  const refreshed = (await payload.findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true }).catch(() => user)) as User
+  const refreshed = (await payload
+    .findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true })
+    .catch(() => user)) as User
   return { ...refreshed, collection: 'users' }
 }
 
@@ -250,8 +341,14 @@ export async function autoRegisterWechatUser(openid: string, unionid: string | n
 export async function presentMe(user: MpUser) {
   const payload = await getPayloadClient()
   const { tasks: creditTasks } = await loadAndSyncUserCreditTasks(user).catch(() => ({ tasks: [] }))
-  const fresh = (await payload.findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true }).catch(() => user)) as User
-  const { totalDocs } = await payload.count({ collection: 'wechat-accounts', where: { user: { equals: user.id } }, overrideAccess: true })
+  const fresh = (await payload
+    .findByID({ collection: 'users', id: user.id, depth: 0, overrideAccess: true })
+    .catch(() => user)) as User
+  const { totalDocs } = await payload.count({
+    collection: 'wechat-accounts',
+    where: { user: { equals: user.id } },
+    overrideAccess: true,
+  })
   return {
     id: String(fresh.id),
     name: fresh.name,

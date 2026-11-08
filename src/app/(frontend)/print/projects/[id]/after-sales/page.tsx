@@ -2,9 +2,25 @@ import { notFound, redirect } from 'next/navigation'
 
 import { PointMarker } from '@/components/point-marker'
 import { PrintToolbar } from '@/components/print-toolbar'
-import { DocArticle, DocFacts, DocFooter, DocHeader, DocRoot, DocSectionHeading, DocSignatures, DocTitle, docTable } from '@/documents/parts'
+import {
+  DocArticle,
+  DocFacts,
+  DocFooter,
+  DocHeader,
+  DocRoot,
+  DocSectionHeading,
+  DocSignatures,
+  DocTitle,
+  docTable,
+} from '@/documents/parts'
 import { resolveDocSetup } from '@/documents/registry'
-import { longDay, serviceBillingLabel, serviceStatusLabel, serviceTypeLabel, WARRANTY_STATUS_LABEL } from '@/lib/after-sales'
+import {
+  longDay,
+  serviceBillingLabel,
+  serviceStatusLabel,
+  serviceTypeLabel,
+  WARRANTY_STATUS_LABEL,
+} from '@/lib/after-sales'
 import { appAuth } from '@/lib/app-auth'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { projectDisplayName } from '@/lib/project-name'
@@ -16,7 +32,11 @@ export const metadata = { title: '售后维保卡与配置备份单', robots: { 
 const yuan = (n: number) => `¥${n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}`
 /** 房间名通常已带楼层（如「一层 · 厨房」），只有不带时才补上楼层 */
 const placeOf = (floor: string | null, room: string | null) =>
-  room ? (floor && !room.startsWith(floor) ? `${floor} · ${room}` : room) : [floor, '公共区'].filter(Boolean).join(' · ')
+  room
+    ? floor && !room.startsWith(floor)
+      ? `${floor} · ${room}`
+      : room
+    : [floor, '公共区'].filter(Boolean).join(' · ')
 
 /** 售后维保卡：质保起止与服务承诺、全屋设备台账（配置备份）、维保记录，交付时打印给业主留存。 */
 export default async function AfterSalesPrintPage({
@@ -40,16 +60,25 @@ export default async function AfterSalesPrintPage({
 
   const { style, company } = setup
   const t = docTable(style)
-  const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
+  const date = new Date().toLocaleDateString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const base = `/print/projects/${id}/after-sales`
   const address = [d.project.community, d.project.address].filter(Boolean).join(' ')
   const projectName = projectDisplayName(d.project.name)
   const w = sales.warranty
 
   // 设备台账：指定的备份 → 最近一次备份 → 按当前点位图实时生成
-  const chosen = (sp.backup ? sales.records.find((r) => r.id === sp.backup && r.snapshot) : null) ?? sales.latestBackup
+  const chosen =
+    (sp.backup ? sales.records.find((r) => r.id === sp.backup && r.snapshot) : null) ??
+    sales.latestBackup
   const snapshot = chosen?.snapshot ?? snapshotFromDocs(d)
-  const snapshotNote = chosen?.snapshot ? `配置备份于 ${chosen.serviceDate}` : '按当前点位图实时生成（建议在维保页留存配置备份）'
+  const snapshotNote = chosen?.snapshot
+    ? `配置备份于 ${chosen.serviceDate}`
+    : '按当前点位图实时生成（建议在维保页留存配置备份）'
   const records = sales.records.filter((r) => r.type !== 'backup').slice(0, 40)
   const servicePhone = d.owner?.phone || company.phone || '—'
 
@@ -68,7 +97,17 @@ export default async function AfterSalesPrintPage({
         exportName={`${projectName}-售后维保卡`}
         groups={
           setup.styles.length > 1
-            ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: `${base}?${new URLSearchParams({ style: s.id, ...(sp.backup ? { backup: sp.backup } : {}) }).toString()}` })) }]
+            ? [
+                {
+                  label: '风格',
+                  value: style.id,
+                  options: setup.styles.map((s) => ({
+                    value: s.id,
+                    label: s.name,
+                    href: `${base}?${new URLSearchParams({ style: s.id, ...(sp.backup ? { backup: sp.backup } : {}) }).toString()}`,
+                  })),
+                },
+              ]
             : []
         }
       />
@@ -93,15 +132,30 @@ export default async function AfterSalesPrintPage({
               ['联系电话', d.project.customerPhone],
               ['项目地址', address || projectName],
               ['合同编号', sales.contract?.number ?? '—'],
-              ['质保期限', w.start ? `${longDay(w.start)} — ${longDay(w.end)}（${w.months} 个月）` : `${w.months} 个月（交付验收后起算）`],
-              ['质保状态', w.status === 'none' ? WARRANTY_STATUS_LABEL.none : `${WARRANTY_STATUS_LABEL[w.status]}${w.daysLeft !== null && w.daysLeft >= 0 ? ` · 剩余 ${w.daysLeft} 天` : ''}`],
+              [
+                '质保期限',
+                w.start
+                  ? `${longDay(w.start)} — ${longDay(w.end)}（${w.months} 个月）`
+                  : `${w.months} 个月（交付验收后起算）`,
+              ],
+              [
+                '质保状态',
+                w.status === 'none'
+                  ? WARRANTY_STATUS_LABEL.none
+                  : `${WARRANTY_STATUS_LABEL[w.status]}${w.daysLeft !== null && w.daysLeft >= 0 ? ` · 剩余 ${w.daysLeft} 天` : ''}`,
+              ],
               ['智能生态平台', d.project.platform ?? '全屋智能'],
               ['售后服务电话', servicePhone],
             ]}
           />
 
           <section data-pdf-block className="mt-6 break-inside-avoid">
-            <DocSectionHeading style={style} className="mb-2" title="一、质保权益与服务承诺" note="以双方签订的合同条款为准" />
+            <DocSectionHeading
+              style={style}
+              className="mb-2"
+              title="一、质保权益与服务承诺"
+              note="以双方签订的合同条款为准"
+            />
             <ol className="space-y-1.5 rounded-doc border border-doc-rule p-3.5 text-[11.5px] leading-relaxed">
               {promises.map((line, i) => (
                 <li key={line} className="flex gap-2">
@@ -113,7 +167,12 @@ export default async function AfterSalesPrintPage({
           </section>
 
           <section className="mt-6">
-            <DocSectionHeading style={style} className="mb-2" title="二、全屋设备台账" note={`${snapshot.totals.devices} 台设备 · ${snapshotNote}`} />
+            <DocSectionHeading
+              style={style}
+              className="mb-2"
+              title="二、全屋设备台账"
+              note={`${snapshot.totals.devices} 台设备 · ${snapshotNote}`}
+            />
             {snapshot.devices.length ? (
               <table className="w-full table-fixed border-collapse text-[11px]">
                 <thead>
@@ -127,7 +186,9 @@ export default async function AfterSalesPrintPage({
                 <tbody>
                   {snapshot.devices.map((dev, idx) => (
                     <tr key={`${dev.code}-${idx}`} className={t.row(idx)}>
-                      <td className={cn(t.td, 'py-1 font-mono font-semibold text-doc-accent')}>{dev.code}</td>
+                      <td className={cn(t.td, 'py-1 font-mono font-semibold text-doc-accent')}>
+                        {dev.code}
+                      </td>
                       <td className={cn(t.td, 'py-1 truncate')}>{placeOf(dev.floor, dev.room)}</td>
                       <td className={cn(t.td, 'py-1')}>
                         <span className="flex items-center gap-1.5">
@@ -135,18 +196,29 @@ export default async function AfterSalesPrintPage({
                           <span className="truncate">{dev.typeName}</span>
                         </span>
                       </td>
-                      <td className={cn(t.td, 'py-1 truncate text-doc-muted')}>{dev.product ? `${dev.product}${dev.sku ? `（${dev.sku}）` : ''}` : '按方案配置'}</td>
+                      <td className={cn(t.td, 'py-1 truncate text-doc-muted')}>
+                        {dev.product
+                          ? `${dev.product}${dev.sku ? `（${dev.sku}）` : ''}`
+                          : '按方案配置'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <p className="rounded-doc border border-dashed border-doc-rule p-4 text-center text-[11px] text-doc-muted">点位图里还没有设备</p>
+              <p className="rounded-doc border border-dashed border-doc-rule p-4 text-center text-[11px] text-doc-muted">
+                点位图里还没有设备
+              </p>
             )}
           </section>
 
           <section className="mt-6">
-            <DocSectionHeading style={style} className="mb-2" title="三、维保记录" note={records.length ? `共 ${records.length} 条` : '交付后的巡检、检修与更换记录'} />
+            <DocSectionHeading
+              style={style}
+              className="mb-2"
+              title="三、维保记录"
+              note={records.length ? `共 ${records.length} 条` : '交付后的巡检、检修与更换记录'}
+            />
             <table className="w-full table-fixed border-collapse text-[11px]">
               <thead>
                 <tr className={t.head}>
@@ -159,37 +231,50 @@ export default async function AfterSalesPrintPage({
                 </tr>
               </thead>
               <tbody>
-                {records.length ? (
-                  records.map((r, idx) => (
-                    <tr key={r.id} className={t.row(idx)}>
-                      <td className={cn(t.td, 'py-1.5 tabular-nums')}>{r.serviceDate}</td>
-                      <td className={cn(t.td, 'py-1.5')}>{serviceTypeLabel(r.type)}</td>
-                      <td className={cn(t.td, 'py-1.5')}>
-                        <span className="doc-strong">{r.title}</span>
-                        {r.devices ? <span className="block text-doc-muted">{r.devices}</span> : null}
-                      </td>
-                      <td className={cn(t.td, 'py-1.5')}>{r.billing === 'paid' && r.fee !== null ? yuan(r.fee) : serviceBillingLabel(r.billing)}</td>
-                      <td className={cn(t.td, 'py-1.5 truncate')}>{r.technician || '—'}</td>
-                      <td className={cn(t.td, 'py-1.5 text-center')}>{serviceStatusLabel(r.status)}</td>
-                    </tr>
-                  ))
-                ) : (
-                  // 空白行供现场手写登记
-                  Array.from({ length: 4 }, (_, idx) => (
-                    <tr key={idx} className={t.row(idx)}>
-                      {Array.from({ length: 6 }, (__, c) => (
-                        <td key={c} className={cn(t.td, 'h-7')} />
-                      ))}
-                    </tr>
-                  ))
-                )}
+                {records.length
+                  ? records.map((r, idx) => (
+                      <tr key={r.id} className={t.row(idx)}>
+                        <td className={cn(t.td, 'py-1.5 tabular-nums')}>{r.serviceDate}</td>
+                        <td className={cn(t.td, 'py-1.5')}>{serviceTypeLabel(r.type)}</td>
+                        <td className={cn(t.td, 'py-1.5')}>
+                          <span className="doc-strong">{r.title}</span>
+                          {r.devices ? (
+                            <span className="block text-doc-muted">{r.devices}</span>
+                          ) : null}
+                        </td>
+                        <td className={cn(t.td, 'py-1.5')}>
+                          {r.billing === 'paid' && r.fee !== null
+                            ? yuan(r.fee)
+                            : serviceBillingLabel(r.billing)}
+                        </td>
+                        <td className={cn(t.td, 'py-1.5 truncate')}>{r.technician || '—'}</td>
+                        <td className={cn(t.td, 'py-1.5 text-center')}>
+                          {serviceStatusLabel(r.status)}
+                        </td>
+                      </tr>
+                    ))
+                  : // 空白行供现场手写登记
+                    Array.from({ length: 4 }, (_, idx) => (
+                      <tr key={idx} className={t.row(idx)}>
+                        {Array.from({ length: 6 }, (__, c) => (
+                          <td key={c} className={cn(t.td, 'h-7')} />
+                        ))}
+                      </tr>
+                    ))}
               </tbody>
             </table>
           </section>
 
           <section data-pdf-block className="mt-8 break-inside-avoid">
-            <DocSignatures parties={[{ label: '业主确认签字' }, { label: `${company.name} 售后服务` }]} />
-            <DocFooter className="mt-6" left={address || projectName} center={date} right={company.name} />
+            <DocSignatures
+              parties={[{ label: '业主确认签字' }, { label: `${company.name} 售后服务` }]}
+            />
+            <DocFooter
+              className="mt-6"
+              left={address || projectName}
+              center={date}
+              right={company.name}
+            />
           </section>
         </DocArticle>
       </DocRoot>

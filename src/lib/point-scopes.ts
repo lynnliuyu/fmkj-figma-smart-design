@@ -18,7 +18,8 @@ export const POINT_SCOPES = [
 export type PointScope = (typeof POINT_SCOPES)[number]['value']
 
 export const isPointScope = (v: unknown): v is PointScope => POINT_SCOPES.some((s) => s.value === v)
-export const pointScopeLabel = (s: PointScope) => POINT_SCOPES.find((x) => x.value === s)?.fullLabel ?? '全部点位'
+export const pointScopeLabel = (s: PointScope) =>
+  POINT_SCOPES.find((x) => x.value === s)?.fullLabel ?? '全部点位'
 
 export function inferScopeFromTitle(title: string | null | undefined): PointScope {
   if (!title) return 'all'
@@ -33,6 +34,7 @@ export function inPointScope(deviceType: string | null | undefined, scope: Point
   const cat = categoryOfType(deviceType)?.slug ?? 'other'
   if (scope === 'no-light') return cat !== 'lighting'
   if (scope === 'switch') return cat === 'switch' || deviceType === 'touch-panel'
-  if (scope === 'switch-light') return cat === 'switch' || cat === 'lighting' || deviceType === 'touch-panel'
+  if (scope === 'switch-light')
+    return cat === 'switch' || cat === 'lighting' || deviceType === 'touch-panel'
   return true
 }

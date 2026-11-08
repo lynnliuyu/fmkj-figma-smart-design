@@ -17,16 +17,25 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const { id } = await params
   const project = await payload
-    .findByID({ collection: 'projects', id, depth: 0, user, overrideAccess: false, select: { name: true, owner: true } })
+    .findByID({
+      collection: 'projects',
+      id,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { name: true, owner: true },
+    })
     .catch(() => null)
   if (!project) return fail(404, '项目不存在或已被删除')
-  if (!(await getPluginFlags(relId(project.owner) || user.id))['dwg-import']) return fail(404, '「DWG 导入」插件已关闭')
+  if (!(await getPluginFlags(relId(project.owner) || user.id))['dwg-import'])
+    return fail(404, '「DWG 导入」插件已关闭')
 
   const form = await request.formData().catch(() => null)
   const file = form?.get('file')
   if (!(file instanceof File) || file.size === 0) return fail(400, '请选择 DWG 文件')
   if (!/\.dwg$/i.test(file.name)) return fail(400, '只支持 .dwg 文件')
-  if (file.size > settings.maxBytes) return fail(413, `文件超过 ${Math.round(settings.maxBytes / 1024 / 1024)}MB`)
+  if (file.size > settings.maxBytes)
+    return fail(413, `文件超过 ${Math.round(settings.maxBytes / 1024 / 1024)}MB`)
 
   try {
     const png = await convertDwg(settings, file)

@@ -14,7 +14,9 @@ import { getPayload } from 'payload'
 const [collection, email] = process.argv.slice(2)
 const password = process.env.NEW_PASSWORD
 if ((collection !== 'admins' && collection !== 'users') || !email || !password) {
-  console.error('用法：NEW_PASSWORD=新密码 payload run scripts/set-password.ts <admins|users> <邮箱>')
+  console.error(
+    '用法：NEW_PASSWORD=新密码 payload run scripts/set-password.ts <admins|users> <邮箱>',
+  )
   process.exit(1)
 }
 if (password.length < 6) {
@@ -29,12 +31,23 @@ if (payload.db.name !== 'postgres') {
   process.exit(1)
 }
 
-const found = await payload.find({ collection, where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })
+const found = await payload.find({
+  collection,
+  where: { email: { equals: email } },
+  limit: 1,
+  depth: 0,
+  overrideAccess: true,
+})
 if (found.docs.length) {
   await payload.update({
     collection,
     id: found.docs[0].id,
-    data: { password, lockUntil: null, loginAttempts: 0, ...(collection === 'users' ? { status: 'active' } : {}) } as never,
+    data: {
+      password,
+      lockUntil: null,
+      loginAttempts: 0,
+      ...(collection === 'users' ? { status: 'active' } : {}),
+    } as never,
     overrideAccess: true,
   })
   console.log(`已更新 ${collection} 密码：${email}`)

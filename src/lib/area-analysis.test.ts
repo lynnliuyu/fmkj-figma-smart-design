@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import type { AreaType } from './area-types'
-import { analyzeArea, analyzeAreas, floorTagFromSheetName, groupRooms, roomKey } from './area-analysis'
+import {
+  analyzeArea,
+  analyzeAreas,
+  floorTagFromSheetName,
+  groupRooms,
+  roomKey,
+} from './area-analysis'
 
 type TestArea = { id: string; name: string; areaType: AreaType; sheetId: string | null }
 
@@ -17,7 +23,11 @@ const area = (
   sheetId,
 })
 
-const point = (deviceType: string, areaId: string | null, sheetId: string | null = null) => ({ deviceType, areaId, sheetId })
+const point = (deviceType: string, areaId: string | null, sheetId: string | null = null) => ({
+  deviceType,
+  areaId,
+  sheetId,
+})
 
 describe('roomKey', () => {
   it('去除所有空白（空格、全角空格、Tab、换行）', () => {
@@ -96,17 +106,26 @@ describe('groupRooms', () => {
       ['q1', '一层'],
       ['q2', '二层'],
     ])
-    const groups = groupRooms([area('a', '楼梯', 'living', 'q1'), area('b', '楼梯', 'living', 'q2')], floorById)
+    const groups = groupRooms(
+      [area('a', '楼梯', 'living', 'q1'), area('b', '楼梯', 'living', 'q2')],
+      floorById,
+    )
     expect(groups.map((g) => g.map((x) => x.id))).toEqual([['a'], ['b']])
   })
 
   it('没有楼层映射时退回 sheetId 本身做分组键', () => {
-    const groups = groupRooms([area('a', '客厅', 'living', 'q1'), area('b', '客厅', 'living', 'q2')])
+    const groups = groupRooms([
+      area('a', '客厅', 'living', 'q1'),
+      area('b', '客厅', 'living', 'q2'),
+    ])
     expect(groups.map((g) => g.map((x) => x.id))).toEqual([['a'], ['b']])
   })
 
   it('无 sheetId 的区域按名称合并（没有楼层信息）', () => {
-    const groups = groupRooms([area('a', '客厅', 'living', null), area('b', '客厅', 'living', null)])
+    const groups = groupRooms([
+      area('a', '客厅', 'living', null),
+      area('b', '客厅', 'living', null),
+    ])
     expect(groups.map((g) => g.map((x) => x.id))).toEqual([['a', 'b']])
   })
 
@@ -115,7 +134,10 @@ describe('groupRooms', () => {
       ['sB1', floorTagFromSheetName('B1F')],
       ['sF1', floorTagFromSheetName('1F')],
     ])
-    const groups = groupRooms([area('b1', '楼梯', 'stairs', 'sB1'), area('f1', '楼梯', 'stairs', 'sF1')], floorById)
+    const groups = groupRooms(
+      [area('b1', '楼梯', 'stairs', 'sB1'), area('f1', '楼梯', 'stairs', 'sF1')],
+      floorById,
+    )
     // 地下室与一层标签不同，必须分成两组（曾被错误合并为 [['b1','f1']]）
     expect(groups.map((g) => g.map((x) => x.id))).toEqual([['b1'], ['f1']])
   })
@@ -123,10 +145,18 @@ describe('groupRooms', () => {
 
 describe('analyzeArea', () => {
   it('统计点位并区分已满足 / 缺失项', () => {
-    const r = analyzeArea(area('a1', '客厅'), [point('downlight', 'a1'), point('switch-1', 'a1')], [area('a1', '客厅')])
+    const r = analyzeArea(
+      area('a1', '客厅'),
+      [point('downlight', 'a1'), point('switch-1', 'a1')],
+      [area('a1', '客厅')],
+    )
     expect(r.total).toBe(1 + 1)
     expect(r.met.map((m) => m.label)).toEqual(['照明', '智能开关 / 面板'])
-    expect(r.missing.map((m) => m.label)).toEqual(['电动窗帘', '中控屏 / 智能音箱', '温湿度 / 空调控制'])
+    expect(r.missing.map((m) => m.label)).toEqual([
+      '电动窗帘',
+      '中控屏 / 智能音箱',
+      '温湿度 / 空调控制',
+    ])
     // 必配 2 项（照明 / 控制）已满足，加权基准 4 项 → 50
     expect(r.score).toBe(50)
     expect(r.warnings).toEqual([])
@@ -167,13 +197,20 @@ describe('analyzeArea', () => {
   })
 
   it('灯多而键位少时建议增键或改场景面板', () => {
-    const points = [...Array.from({ length: 10 }, () => point('downlight', 'a1')), point('switch-1', 'a1')]
+    const points = [
+      ...Array.from({ length: 10 }, () => point('downlight', 'a1')),
+      point('switch-1', 'a1'),
+    ]
     const r = analyzeArea(area('a1', '客厅'), points, [area('a1', '客厅')])
     expect(r.warnings).toEqual(['10 个灯具只有 1 个开关键位，建议增加键位或改用场景面板分组控制'])
   })
 
   it('其他区域（不在 siblings 里）的点位不计入', () => {
-    const r = analyzeArea(area('a1', '客厅'), [point('downlight', 'other-area')], [area('a1', '客厅')])
+    const r = analyzeArea(
+      area('a1', '客厅'),
+      [point('downlight', 'other-area')],
+      [area('a1', '客厅')],
+    )
     expect(r.total).toBe(0)
   })
 
@@ -189,7 +226,11 @@ describe('analyzeArea', () => {
 describe('analyzeAreas', () => {
   it('合并后的区域共用同一个分析结果（按区域 id 都能取到）', () => {
     const areas = [area('a', '客厅', 'living', 'q1'), area('b', '客厅', 'living', 'q1')]
-    const result = analyzeAreas(areas, [point('downlight', 'a', 'q1')], [{ id: 'q1', name: '一层灯光图' }])
+    const result = analyzeAreas(
+      areas,
+      [point('downlight', 'a', 'q1')],
+      [{ id: 'q1', name: '一层灯光图' }],
+    )
     expect([...result.keys()]).toEqual(['a', 'b'])
     expect(result.get('a')).toBe(result.get('b'))
     expect(result.get('a')?.areaIds).toEqual(['a', 'b'])

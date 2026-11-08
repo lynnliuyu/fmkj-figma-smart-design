@@ -74,7 +74,13 @@ git fetch --prune && git status -sb   # 落后 / 领先远端？
 发现的问题写进 `memory/learnings.jsonl`（append-only），一行一条：
 
 ```json
-{"date":"YYYY-MM-DD","area":"ci|repo|issue|docs|prod","finding":"...","action":"...","status":"open|fixed"}
+{
+  "date": "YYYY-MM-DD",
+  "area": "ci|repo|issue|docs|prod",
+  "finding": "...",
+  "action": "...",
+  "status": "open|fixed"
+}
 ```
 
 踩过的坑也写这里，下一个接手的人（或 agent）就不用重踩。

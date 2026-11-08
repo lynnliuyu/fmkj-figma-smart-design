@@ -20,7 +20,8 @@ export function resolveFinalQuote<Q extends { id: string | number; status?: stri
   quotes: Q[],
   o: { contractQuoteId?: string | null; finalQuoteId?: string | null },
 ): { quote: Q | null; source: FinalQuoteSource | null } {
-  const byId = (id?: string | null) => (id ? quotes.find((q) => String(q.id) === String(id)) : undefined)
+  const byId = (id?: string | null) =>
+    id ? quotes.find((q) => String(q.id) === String(id)) : undefined
   const contract = byId(o.contractQuoteId)
   if (contract) return { quote: contract, source: 'contract' }
   const chosen = byId(o.finalQuoteId)

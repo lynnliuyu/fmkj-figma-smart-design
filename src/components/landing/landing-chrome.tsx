@@ -20,8 +20,24 @@ const NAV = [
 export function BrandLogo({ className }: { className?: string }) {
   return (
     <>
-      <Image src="/brand/fmkj-logo.svg" alt={APP_NAME} width={436} height={120} unoptimized loading="eager" className={cn('dark:hidden', className)} />
-      <Image src="/brand/fmkj-logo-white.svg" alt={APP_NAME} width={436} height={120} unoptimized loading="eager" className={cn('hidden dark:block', className)} />
+      <Image
+        src="/brand/fmkj-logo.svg"
+        alt={APP_NAME}
+        width={436}
+        height={120}
+        unoptimized
+        loading="eager"
+        className={cn('dark:hidden', className)}
+      />
+      <Image
+        src="/brand/fmkj-logo-white.svg"
+        alt={APP_NAME}
+        width={436}
+        height={120}
+        unoptimized
+        loading="eager"
+        className={cn('hidden dark:block', className)}
+      />
     </>
   )
 }
@@ -36,7 +52,12 @@ export function LandingNav() {
         </Link>
         <nav aria-label="首页导航" className="hidden items-center gap-0.5 md:flex">
           {NAV.map((item) => (
-            <Button key={item.href} asChild variant="ghost" className="rounded-full px-3 font-normal text-muted-foreground hover:text-foreground">
+            <Button
+              key={item.href}
+              asChild
+              variant="ghost"
+              className="rounded-full px-3 font-normal text-muted-foreground hover:text-foreground"
+            >
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
@@ -45,7 +66,10 @@ export function LandingNav() {
           <Button asChild variant="ghost" className="rounded-full px-3 font-normal">
             <Link href="/login">登录</Link>
           </Button>
-          <Button asChild className="rounded-full bg-foreground px-4 text-background hover:bg-foreground/85">
+          <Button
+            asChild
+            className="rounded-full bg-foreground px-4 text-background hover:bg-foreground/85"
+          >
             <Link href="/projects">进入工作台</Link>
           </Button>
         </div>
@@ -81,7 +105,9 @@ export function LandingFooter({
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-12 lg:px-8">
         <div className="md:col-span-4">
           <BrandLogo className="h-8 w-auto" />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">{APP_DESCRIPTION}</p>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            {APP_DESCRIPTION}
+          </p>
         </div>
         {groups.map((group) => (
           <nav key={group.title} aria-label={group.title} className="md:col-span-2">
@@ -89,7 +115,10 @@ export function LandingFooter({
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
               {group.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="rounded-sm transition-colors hover:text-foreground">
+                  <Link
+                    href={link.href}
+                    className="rounded-sm transition-colors hover:text-foreground"
+                  >
                     {link.label}
                   </Link>
                 </li>

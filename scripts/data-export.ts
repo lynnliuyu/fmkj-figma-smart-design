@@ -39,13 +39,29 @@ export const COLLECTIONS = [
 export const GLOBALS = ['company-settings', 'ai-settings', 'membership-settings'] as const
 
 // Figma 平台附加的字段，自建服务器的表结构里没有，导出时去掉。
-const PLATFORM_FIELDS = new Set(['createdBy', 'updatedBy', '_h_folders', '_h_tags', 'prefix', '_objectKey', 'original', 'thumbnailURL', 'sessions',
+const PLATFORM_FIELDS = new Set([
+  'createdBy',
+  'updatedBy',
+  '_h_folders',
+  '_h_tags',
+  'prefix',
+  '_objectKey',
+  'original',
+  'thumbnailURL',
+  'sessions',
   // 密码密文格式与自托管 Payload 不兼容，且属于敏感数据，不导出；上线后用 set-password.ts 重设。
-  'hash', 'salt', 'loginAttempts', 'lockUntil', 'resetPasswordToken', 'resetPasswordExpiration'])
+  'hash',
+  'salt',
+  'loginAttempts',
+  'lockUntil',
+  'resetPasswordToken',
+  'resetPasswordExpiration',
+])
 
 const outDir = path.resolve(process.argv[2] || './data-export')
 
-const clean = (doc: Record<string, unknown>) => Object.fromEntries(Object.entries(doc).filter(([k]) => !PLATFORM_FIELDS.has(k)))
+const clean = (doc: Record<string, unknown>) =>
+  Object.fromEntries(Object.entries(doc).filter(([k]) => !PLATFORM_FIELDS.has(k)))
 
 const payload = await getPayload({ config })
 fs.mkdirSync(path.join(outDir, 'files'), { recursive: true })
@@ -55,7 +71,14 @@ for (const slug of COLLECTIONS) {
   if (!payload.collections[slug]) continue
   const docs: Record<string, unknown>[] = []
   for (let page = 1; ; page++) {
-    const res = await payload.find({ collection: slug, depth: 0, limit: 200, page, overrideAccess: true, showHiddenFields: true })
+    const res = await payload.find({
+      collection: slug,
+      depth: 0,
+      limit: 200,
+      page,
+      overrideAccess: true,
+      showHiddenFields: true,
+    })
     docs.push(...(res.docs as unknown as Record<string, unknown>[]).map(clean))
     if (!res.hasNextPage) break
   }
@@ -64,7 +87,8 @@ for (const slug of COLLECTIONS) {
 }
 
 // 下载图片原文件。url 可能是相对路径（/api/media/file/...），按站点地址补全。
-const base = process.env.FIGMA_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+const base =
+  process.env.FIGMA_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 let ok = 0
 const failed: string[] = []
 await Promise.all(
@@ -75,7 +99,10 @@ await Promise.all(
       const ext = path.extname(m.filename || '') || '.bin'
       const dest = path.join(outDir, 'files', `${m.id}${ext}`)
       // 重复运行时跳过已下载的文件
-      if (fs.existsSync(dest) && fs.statSync(dest).size > 0) { ok++; continue }
+      if (fs.existsSync(dest) && fs.statSync(dest).size > 0) {
+        ok++
+        continue
+      }
       let lastError = ''
       // 存储服务偶尔返回 5xx，最多重试 4 次，间隔递增
       for (let attempt = 0; attempt < 5; attempt++) {
@@ -103,6 +130,9 @@ for (const slug of GLOBALS) {
   const doc = await payload.findGlobal({ slug, depth: 0, overrideAccess: true }).catch(() => null)
   if (doc) globals[slug] = clean(doc as unknown as Record<string, unknown>)
 }
-fs.writeFileSync(path.join(outDir, 'data.json'), JSON.stringify({ exportedAt: new Date().toISOString(), collections: data, globals }, null, 2))
+fs.writeFileSync(
+  path.join(outDir, 'data.json'),
+  JSON.stringify({ exportedAt: new Date().toISOString(), collections: data, globals }, null, 2),
+)
 console.log(`已导出到 ${outDir}`)
 process.exit(0)

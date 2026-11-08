@@ -12,7 +12,12 @@ export const GET = mpRoute<{ id: string }>(async ({ request, user, params }) => 
   if (!d) return fail(404, '项目不存在或已被删除')
   const flags = await getPluginFlags(d.owner?.id ?? user.id)
   return ok({
-    project: { id: String(d.project.id), name: d.project.name, status: d.project.status, platform: d.project.platform ?? null },
+    project: {
+      id: String(d.project.id),
+      name: d.project.name,
+      status: d.project.status,
+      platform: d.project.platform ?? null,
+    },
     scope,
     readOnly: d.project.status === 'archived',
     smartSelect: Boolean(flags['smart-select']),

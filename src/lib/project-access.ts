@@ -22,7 +22,10 @@ export type CollaboratorItem = {
 export function parseShareConfig(raw: unknown): ShareConfig {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     const r = raw as Record<string, unknown>
-    const token = typeof r.token === 'string' && r.token.trim().length >= 12 ? r.token.trim() : randomBytes(16).toString('base64url')
+    const token =
+      typeof r.token === 'string' && r.token.trim().length >= 12
+        ? r.token.trim()
+        : randomBytes(16).toString('base64url')
     const role: CollaboratorRole = r.role === 'edit' ? 'edit' : 'read'
     const enabled = r.enabled !== false
     return { enabled, token, role }

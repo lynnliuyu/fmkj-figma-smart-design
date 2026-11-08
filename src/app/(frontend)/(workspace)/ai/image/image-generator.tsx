@@ -7,7 +7,16 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 type Model = { id: string; name: string; description: string; sizes: string[]; cost: number }
-type Result = { mediaId: string; url: string; width: number; height: number; model: string; size: string; cost: number; balance: number | null }
+type Result = {
+  mediaId: string
+  url: string
+  width: number
+  height: number
+  model: string
+  size: string
+  cost: number
+  balance: number | null
+}
 
 const EXAMPLES = [
   '现代简约全屋智能客厅，暖白墙面、浅木地板、无主灯设计、隐藏灯带，真实室内摄影，16:9',
@@ -44,7 +53,9 @@ export function ImageGenerator({ models, configured }: { models: Model[]; config
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, model: modelId, size }),
       })
-      const data = (await res.json().catch(() => null)) as (Result & { ok?: boolean; error?: string }) | null
+      const data = (await res.json().catch(() => null)) as
+        | (Result & { ok?: boolean; error?: string })
+        | null
       if (!res.ok || !data?.ok) throw new Error(data?.error || '生成失败')
       setResult(data)
     } catch (e) {
@@ -72,30 +83,66 @@ export function ImageGenerator({ models, configured }: { models: Model[]; config
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">模型</label>
-            <select value={modelId} onChange={(e) => { setModelId(e.target.value); const m = models.find((x) => x.id === e.target.value); setSize(m?.sizes[0] ?? size) }} className="mt-1.5 h-9 w-full rounded-lg border bg-background px-2 text-sm">
-              {models.map((m) => <option key={m.id} value={m.id}>{m.name} · {m.cost} 积分</option>)}
+            <select
+              value={modelId}
+              onChange={(e) => {
+                setModelId(e.target.value)
+                const m = models.find((x) => x.id === e.target.value)
+                setSize(m?.sizes[0] ?? size)
+              }}
+              className="mt-1.5 h-9 w-full rounded-lg border bg-background px-2 text-sm"
+            >
+              {models.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} · {m.cost} 积分
+                </option>
+              ))}
             </select>
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">尺寸</label>
-            <select value={size} onChange={(e) => setSize(e.target.value)} className="mt-1.5 h-9 w-full rounded-lg border bg-background px-2 text-sm">
-              {(model?.sizes ?? ['1024*1024']).map((s) => <option key={s} value={s}>{s.replace('*', ' × ')}</option>)}
+            <select
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="mt-1.5 h-9 w-full rounded-lg border bg-background px-2 text-sm"
+            >
+              {(model?.sizes ?? ['1024*1024']).map((s) => (
+                <option key={s} value={s}>
+                  {s.replace('*', ' × ')}
+                </option>
+              ))}
             </select>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex, i) => (
-            <button key={i} type="button" onClick={() => setPrompt(ex)} className="rounded-full border bg-background px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-muted">示例 {i + 1}</button>
+            <button
+              key={i}
+              type="button"
+              onClick={() => setPrompt(ex)}
+              className="rounded-full border bg-background px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-muted"
+            >
+              示例 {i + 1}
+            </button>
           ))}
         </div>
         {!configured ? (
-          <p className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-800">服务器未配置 AI_BAILIAN_TOKEN_PLAN_KEY，暂时不能生成。</p>
+          <p className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            服务器未配置 AI_BAILIAN_TOKEN_PLAN_KEY，暂时不能生成。
+          </p>
         ) : null}
-        <Button type="button" onClick={() => void generate()} disabled={!configured || busy || !prompt.trim()} className="h-11 w-full gap-2">
+        <Button
+          type="button"
+          onClick={() => void generate()}
+          disabled={!configured || busy || !prompt.trim()}
+          className="h-11 w-full gap-2"
+        >
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
           {busy ? `生成中… ${elapsed}s` : `生成图片 · ${model?.cost ?? 5} 积分`}
         </Button>
-        <p className="text-[11px] leading-relaxed text-muted-foreground">生图通常需要 30–90 秒。生成成功后才扣积分，失败不扣。</p>
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          生图通常需要 30–90 秒。生成成功后才扣积分，失败不扣。
+        </p>
       </div>
 
       <div className="flex min-h-[420px] flex-col rounded-2xl border bg-muted/25 p-4">
@@ -108,14 +155,29 @@ export function ImageGenerator({ models, configured }: { models: Model[]; config
         ) : result ? (
           <div className="flex h-full flex-col gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={result.url} alt="AI 生成图片" className="max-h-[420px] w-full rounded-xl border bg-white object-contain" />
+            <img
+              src={result.url}
+              alt="AI 生成图片"
+              className="max-h-[420px] w-full rounded-xl border bg-white object-contain"
+            />
             <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-              <span>{result.width}×{result.height} · {result.size.replace('*', ' × ')}</span>
-              <span>{result.balance != null ? `余额 ${result.balance} 积分` : `扣 ${result.cost} 积分`}</span>
+              <span>
+                {result.width}×{result.height} · {result.size.replace('*', ' × ')}
+              </span>
+              <span>
+                {result.balance != null ? `余额 ${result.balance} 积分` : `扣 ${result.cost} 积分`}
+              </span>
             </div>
             <div className="flex gap-2">
-              <Button asChild size="sm" variant="outline" className="gap-1.5"><a href={result.url} download><Download className="size-3.5" />下载原图</a></Button>
-              <Button size="sm" variant="ghost" onClick={() => setResult(null)}>再生成一张</Button>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <a href={result.url} download>
+                  <Download className="size-3.5" />
+                  下载原图
+                </a>
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setResult(null)}>
+                再生成一张
+              </Button>
             </div>
           </div>
         ) : (
@@ -125,7 +187,15 @@ export function ImageGenerator({ models, configured }: { models: Model[]; config
             <p className="text-xs">建议描述空间、风格、材质、光线和镜头</p>
           </div>
         )}
-        {error ? <p className={cn('mt-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive')}>{error}</p> : null}
+        {error ? (
+          <p
+            className={cn(
+              'mt-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive',
+            )}
+          >
+            {error}
+          </p>
+        ) : null}
       </div>
     </div>
   )

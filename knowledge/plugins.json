@@ -8,12 +8,7 @@
       "tagline": "在任何页面直接问 AI，让它帮你识图、选型、写说明",
       "description": "侧边栏常驻 AI 助手，支持户型图识别、技能模板与跨插件自动执行。",
       "where": "左侧边栏「对话」模式、独立页 /ai",
-      "provides": [
-        "侧边栏常驻对话",
-        "对话技能模板",
-        "多模型与积分",
-        "跨插件联动"
-      ],
+      "provides": ["侧边栏常驻对话", "对话技能模板", "多模型与积分", "跨插件联动"],
       "ai": {
         "permissions": [
           "projects:read",
@@ -74,9 +69,7 @@
           "plan_points_with_vision",
           "generate_image"
         ],
-        "skills": [
-          "tpl-competitor-quote"
-        ]
+        "skills": ["tpl-competitor-quote"]
       }
     },
     {
@@ -87,21 +80,10 @@
       "tagline": "报价单、合同换上更多高级排版风格",
       "description": "为报价单、点位图、合同和交底清单解锁 6 套扩展视觉风格（与方案模板配套）。",
       "where": "打印页顶部「风格」切换、设置 → 文档模板",
-      "provides": [
-        "栖序雅致",
-        "墨金臻选",
-        "原木自然",
-        "商务蓝",
-        "东方雅韵",
-        "科技"
-      ],
+      "provides": ["栖序雅致", "墨金臻选", "原木自然", "商务蓝", "东方雅韵", "科技"],
       "ai": {
-        "permissions": [
-          "documents:read"
-        ],
-        "guidance": [
-          "生成打印或导出链接时，可根据客户偏好传入 style 参数切换文档视觉风格。"
-        ],
+        "permissions": ["documents:read"],
+        "guidance": ["生成打印或导出链接时，可根据客户偏好传入 style 参数切换文档视觉风格。"],
         "knowledge": [
           {
             "id": "doc-styles-catalog",
@@ -129,15 +111,9 @@
       "tagline": "点位和预算一键变成给业主看的横版方案",
       "description": "将点位图、房间分析与预算一键生成 A4 横版提案并导出 PDF。",
       "where": "项目 → 点位「打印 / 方案」、项目 → 归档",
-      "provides": [
-        "方案预览",
-        "服务交付页"
-      ],
+      "provides": ["方案预览", "服务交付页"],
       "ai": {
-        "permissions": [
-          "templates:read",
-          "documents:read"
-        ],
+        "permissions": ["templates:read", "documents:read"],
         "guidance": [
           "当用户询问「哪个方案模板适合我的客户」「怎么选提案风格」或需要汇报方案时，调用 recommend_proposal_template 根据客户画像、汇报时机和预算敏感度推荐最匹配的方案模板，并附上预览链接。"
         ],
@@ -168,13 +144,8 @@
             ]
           }
         ],
-        "tools": [
-          "recommend_proposal_template"
-        ],
-        "skills": [
-          "tpl-qixu-handover",
-          "tpl-proposal-pick"
-        ]
+        "tools": ["recommend_proposal_template"],
+        "skills": ["tpl-qixu-handover", "tpl-proposal-pick"]
       }
     },
     {
@@ -185,15 +156,9 @@
       "tagline": "逐个房间检查漏配，顺手推荐联动场景",
       "description": "按房间类型评估点位完整度，提供缺失提醒与联动场景建议。",
       "where": "项目 → 点位「区域」面板、方案演示",
-      "provides": [
-        "配置完整度",
-        "补充建议",
-        "场景推荐"
-      ],
+      "provides": ["配置完整度", "补充建议", "场景推荐"],
       "ai": {
-        "permissions": [
-          "point-map:read"
-        ],
+        "permissions": ["point-map:read"],
         "guidance": [
           "当用户询问某房间的点位是否合理、是否有遗漏、或者需要生成水电施工交底注意事项时，先调用 room_insights 获取每个房间的完整度评分与缺失项，再给出结构化建议。"
         ],
@@ -213,13 +178,8 @@
             ]
           }
         ],
-        "tools": [
-          "room_insights"
-        ],
-        "skills": [
-          "tpl-room-audit",
-          "tpl-wiring-deep"
-        ]
+        "tools": ["room_insights"],
+        "skills": ["tpl-room-audit", "tpl-wiring-deep"]
       }
     },
     {
@@ -230,14 +190,9 @@
       "tagline": "按平台和预算档位，一键给全屋选好型号",
       "description": "按生态平台与预算档位，一键匹配全屋各设备类型的默认型号。",
       "where": "项目 → 点位「统计与默认型号」",
-      "provides": [
-        "一键选型"
-      ],
+      "provides": ["一键选型"],
       "ai": {
-        "permissions": [
-          "catalog:read",
-          "defaults:write"
-        ],
+        "permissions": ["catalog:read", "defaults:write"],
         "guidance": [
           "当用户要求按平台（米家、Aqara、Apple Home、华为、KNX）和预算档次（经济、标准、高端）配单或推荐型号时，调用 smart_select 工具。"
         ],
@@ -254,12 +209,8 @@
             ]
           }
         ],
-        "tools": [
-          "smart_select"
-        ],
-        "skills": [
-          "tpl-smart-select"
-        ]
+        "tools": ["smart_select"],
+        "skills": ["tpl-smart-select"]
       }
     },
     {
@@ -270,16 +221,9 @@
       "tagline": "让 AI 读图纸，自动生成点位",
       "description": "识别标准图纸中的开关插座与点位符号，支持导入导出点位 JSON。",
       "where": "项目 → 点位「AI 识别」标签页",
-      "provides": [
-        "识别提示词",
-        "导入识别结果",
-        "导出点位 JSON"
-      ],
+      "provides": ["识别提示词", "导入识别结果", "导出点位 JSON"],
       "ai": {
-        "permissions": [
-          "point-map:read",
-          "point-map:write"
-        ],
+        "permissions": ["point-map:read", "point-map:write"],
         "guidance": [
           "当用户需要将外部识图 JSON 导入项目时，调用 import_points_json；当用户询问如何用视觉大模型识别户型图点位时，按 fmkj-points 协议输出标准 JSON 结构说明。"
         ],
@@ -307,10 +251,7 @@
           }
         ],
         "tools": [],
-        "skills": [
-          "tpl-switch-plan-recognition",
-          "tpl-blueprint-vision"
-        ]
+        "skills": ["tpl-switch-plan-recognition", "tpl-blueprint-vision"]
       }
     },
     {
@@ -321,13 +262,9 @@
       "tagline": "CAD 图纸直接导入成户型底图",
       "description": "上传 CAD DWG 图纸并自动转换为标准户型底图。",
       "where": "项目 → 点位「导入 DWG」",
-      "provides": [
-        "导入 DWG"
-      ],
+      "provides": ["导入 DWG"],
       "ai": {
-        "permissions": [
-          "point-map:write"
-        ],
+        "permissions": ["point-map:write"],
         "guidance": [
           "用户询问 CAD .dwg 文件如何导入时，引导其在点位图工作台顶部点击「导入 DWG」自动转换为 3:2 标准户型底图。"
         ],
@@ -353,17 +290,9 @@
       "tagline": "质保、检修与配置备份都有记录",
       "description": "按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。",
       "where": "项目 → 归档 →「售后维保」、项目工具箱",
-      "provides": [
-        "质保倒计时",
-        "维保记录",
-        "配置备份",
-        "售后维保卡"
-      ],
+      "provides": ["质保倒计时", "维保记录", "配置备份", "售后维保卡"],
       "ai": {
-        "permissions": [
-          "projects:read",
-          "contracts:read"
-        ],
+        "permissions": ["projects:read", "contracts:read"],
         "guidance": [
           "解答售后质保问题时：质保起算日优先取项目「交付验收」维保记录的日期，没有时取合同签订日期；质保月数取合同 warrantyMonths（未填写按 12 个月）。",
           "用户需要登记检修、设备更换或留存配置备份时，引导其打开项目的售后维保页（/projects/[id]/after-sales）；交付时可提供售后维保卡打印链接（/print/projects/[id]/after-sales）。"

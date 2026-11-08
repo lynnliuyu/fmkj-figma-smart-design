@@ -4,11 +4,25 @@ import { PlanFigure } from '@/components/plan-figure'
 import { PointMarker } from '@/components/point-marker'
 import { PrintToolbar } from '@/components/print-toolbar'
 import { ProductThumb } from '@/components/product-thumb'
-import { DocEmpty, DocFooter, DocHeader, DocRoot, DocSheetPage, DocTitle, docTable } from '@/documents/parts'
+import {
+  DocEmpty,
+  DocFooter,
+  DocHeader,
+  DocRoot,
+  DocSheetPage,
+  DocTitle,
+  docTable,
+} from '@/documents/parts'
 import { docToolbarGroups, resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf, DEVICE_TYPE_ORDER } from '@/lib/device-types'
-import { docNumber, isPointScope, loadProjectDocs, POINT_SCOPES, scopeTitle } from '@/lib/project-docs'
+import {
+  docNumber,
+  isPointScope,
+  loadProjectDocs,
+  POINT_SCOPES,
+  scopeTitle,
+} from '@/lib/project-docs'
 import { cn } from '@/lib/utils'
 import { planAreaOf } from '@/lib/point-scene'
 
@@ -37,7 +51,12 @@ export default async function PlansPrintPage({
   const sheets = d.sheets.filter((s) => scope === 'all' || d.points.some((p) => p.sheetId === s.id))
   const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })
   const docNo = docNumber(d, 'DW')
-  const place = [[d.project.community, d.project.address].filter(Boolean).join(' '), d.project.customerName].filter(Boolean).join(' / ')
+  const place = [
+    [d.project.community, d.project.address].filter(Boolean).join(' '),
+    d.project.customerName,
+  ]
+    .filter(Boolean)
+    .join(' / ')
   const t = docTable(style)
   const usedTypes = DEVICE_TYPE_ORDER.filter((type) => d.points.some((p) => p.deviceType === type))
   const withSummary = sheets.length > 1 && usedTypes.length > 0
@@ -68,12 +87,24 @@ export default async function PlansPrintPage({
               ]
             : []),
           ...docToolbarGroups(setup, href),
-          { label: '范围', value: scope, options: POINT_SCOPES.map((s) => ({ value: s.value, label: s.label, href: href({ scope: s.value }) })) },
+          {
+            label: '范围',
+            value: scope,
+            options: POINT_SCOPES.map((s) => ({
+              value: s.value,
+              label: s.label,
+              href: href({ scope: s.value }),
+            })),
+          },
         ]}
       />
       <DocRoot style={style}>
         <div className="space-y-6 py-6 print:space-y-0 print:py-0">
-          {sheets.length === 0 ? <DocEmpty projectId={id}>还没有图纸或点位。先上传户型图并布置设备，这里会每张图纸出一页点位图。</DocEmpty> : null}
+          {sheets.length === 0 ? (
+            <DocEmpty projectId={id}>
+              还没有图纸或点位。先上传户型图并布置设备，这里会每张图纸出一页点位图。
+            </DocEmpty>
+          ) : null}
           {sheets.map((sheet, i) => {
             const pts = d.points.filter((p) => p.sheetId === sheet.id)
             const areas = d.areas
@@ -84,7 +115,10 @@ export default async function PlansPrintPage({
             const figure = (
               <PlanFigure
                 sheetUrl={sheet.url}
-                points={pts.map((p) => ({ ...p, image: p.productId ? d.productById.get(p.productId)?.image?.url : null }))}
+                points={pts.map((p) => ({
+                  ...p,
+                  image: p.productId ? d.productById.get(p.productId)?.image?.url : null,
+                }))}
                 areas={areas}
                 mode={markers}
                 effects
@@ -96,10 +130,23 @@ export default async function PlansPrintPage({
               <DocSheetPage key={sheet.id} className="px-[9mm] py-[7mm]">
                 <DocHeader style={style} company={company} meta={`${d.project.name} · ${date}`} />
                 <div className="mt-3">
-                  <DocTitle style={style} no={pad(i + 1)} title={`${sheet.name} · ${kind}`} subtitle={`${pts.length} 个点位 · ${rooms} 个房间 · ${types.length} 类设备`} tag="FLOOR PLAN" />
+                  <DocTitle
+                    style={style}
+                    no={pad(i + 1)}
+                    title={`${sheet.name} · ${kind}`}
+                    subtitle={`${pts.length} 个点位 · ${rooms} 个房间 · ${types.length} 类设备`}
+                    tag="FLOOR PLAN"
+                  />
                 </div>
-                <div className={cn('mt-3 grid min-h-0 flex-1 gap-[4mm]', layout === 'clean' ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_52mm]')}>
-                  <div className="flex min-h-0 items-center justify-center overflow-hidden rounded-doc border border-doc-rule bg-white p-[1.5mm]">{figure}</div>
+                <div
+                  className={cn(
+                    'mt-3 grid min-h-0 flex-1 gap-[4mm]',
+                    layout === 'clean' ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_52mm]',
+                  )}
+                >
+                  <div className="flex min-h-0 items-center justify-center overflow-hidden rounded-doc border border-doc-rule bg-white p-[1.5mm]">
+                    {figure}
+                  </div>
                   {layout === 'clean' ? null : (
                     <div className="min-h-0 overflow-hidden text-[10px]">
                       <table className="w-full border-collapse">
@@ -112,25 +159,52 @@ export default async function PlansPrintPage({
                         <tbody>
                           {types.slice(0, 16).map((type, r) => {
                             const list = pts.filter((p) => p.deviceType === type)
-                            const product = list[0]?.productId ? d.productById.get(list[0].productId) : null
+                            const product = list[0]?.productId
+                              ? d.productById.get(list[0].productId)
+                              : null
                             return (
                               <tr key={type} className={t.row(r)}>
                                 <td className={cn(t.td, 'py-1')}>
                                   <span className="flex items-center gap-1.5">
-                                    {markers === 'product' && product?.image ? <ProductThumb src={product.image.url} alt={product.name} className="size-5 rounded-full" /> : <PointMarker type={type} className="size-4" />}
+                                    {markers === 'product' && product?.image ? (
+                                      <ProductThumb
+                                        src={product.image.url}
+                                        alt={product.name}
+                                        className="size-5 rounded-full"
+                                      />
+                                    ) : (
+                                      <PointMarker type={type} className="size-4" />
+                                    )}
                                     <span className="min-w-0">
-                                      <span className="doc-strong block">{deviceTypeOf(type)?.name}</span>
-                                      {markers === 'product' ? <span className="block truncate text-[8.5px] text-doc-muted">{product ? product.name : '待选型'}</span> : null}
+                                      <span className="doc-strong block">
+                                        {deviceTypeOf(type)?.name}
+                                      </span>
+                                      {markers === 'product' ? (
+                                        <span className="block truncate text-[8.5px] text-doc-muted">
+                                          {product ? product.name : '待选型'}
+                                        </span>
+                                      ) : null}
                                     </span>
                                   </span>
                                 </td>
-                                <td className={cn(t.td, 'py-1 text-right tabular-nums text-doc-accent')}>{list.length}</td>
+                                <td
+                                  className={cn(
+                                    t.td,
+                                    'py-1 text-right tabular-nums text-doc-accent',
+                                  )}
+                                >
+                                  {list.length}
+                                </td>
                               </tr>
                             )
                           })}
                         </tbody>
                       </table>
-                      {types.length > 16 ? <p className="mt-1 text-[9px] text-doc-muted">另有 {types.length - 16} 类设备</p> : null}
+                      {types.length > 16 ? (
+                        <p className="mt-1 text-[9px] text-doc-muted">
+                          另有 {types.length - 16} 类设备
+                        </p>
+                      ) : null}
                     </div>
                   )}
                 </div>
@@ -144,7 +218,12 @@ export default async function PlansPrintPage({
                     ))}
                   </div>
                 ) : null}
-                <DocFooter className="mt-3" left={place || d.project.name} center={`${docNo}  /  ${date}`} right={`${pad(i + 1)} / ${pad(totalPages)}`} />
+                <DocFooter
+                  className="mt-3"
+                  left={place || d.project.name}
+                  center={`${docNo}  /  ${date}`}
+                  right={`${pad(i + 1)} / ${pad(totalPages)}`}
+                />
               </DocSheetPage>
             )
           })}
@@ -152,7 +231,13 @@ export default async function PlansPrintPage({
             <DocSheetPage>
               <DocHeader style={style} company={company} meta={`${d.project.name} · ${date}`} />
               <div className="mt-4">
-                <DocTitle style={style} no={pad(totalPages)} title="点位统计" subtitle={`共 ${d.points.length} 个点位，按图纸和设备类型统计`} tag="SUMMARY" />
+                <DocTitle
+                  style={style}
+                  no={pad(totalPages)}
+                  title="点位统计"
+                  subtitle={`共 ${d.points.length} 个点位，按图纸和设备类型统计`}
+                  tag="SUMMARY"
+                />
               </div>
               <div className="mt-5 min-h-0 flex-1 overflow-hidden">
                 <table className="w-full border-collapse text-[10.5px]">
@@ -160,7 +245,9 @@ export default async function PlansPrintPage({
                     <tr className={t.head}>
                       <th className={t.th}>设备</th>
                       {sheets.map((s) => (
-                        <th key={s.id} className={cn(t.th, 'text-right')}>{s.name}</th>
+                        <th key={s.id} className={cn(t.th, 'text-right')}>
+                          {s.name}
+                        </th>
                       ))}
                       <th className={cn(t.th, 'text-right')}>合计</th>
                     </tr>
@@ -175,24 +262,66 @@ export default async function PlansPrintPage({
                           </span>
                         </td>
                         {sheets.map((s) => {
-                          const n = d.points.filter((p) => p.sheetId === s.id && p.deviceType === type).length
-                          return <td key={s.id} className={cn(t.td, 'py-1 text-right tabular-nums', !n && 'text-doc-muted')}>{n || '—'}</td>
+                          const n = d.points.filter(
+                            (p) => p.sheetId === s.id && p.deviceType === type,
+                          ).length
+                          return (
+                            <td
+                              key={s.id}
+                              className={cn(
+                                t.td,
+                                'py-1 text-right tabular-nums',
+                                !n && 'text-doc-muted',
+                              )}
+                            >
+                              {n || '—'}
+                            </td>
+                          )
                         })}
-                        <td className={cn(t.td, 'doc-strong py-1 text-right tabular-nums text-doc-accent')}>{d.points.filter((p) => p.deviceType === type).length}</td>
+                        <td
+                          className={cn(
+                            t.td,
+                            'doc-strong py-1 text-right tabular-nums text-doc-accent',
+                          )}
+                        >
+                          {d.points.filter((p) => p.deviceType === type).length}
+                        </td>
                       </tr>
                     ))}
                     <tr className="border-t-2 border-doc-ink">
                       <td className={cn(t.td, 'doc-strong py-1.5')}>合计</td>
                       {sheets.map((s) => (
-                        <td key={s.id} className={cn(t.td, 'doc-strong py-1.5 text-right tabular-nums')}>{d.points.filter((p) => p.sheetId === s.id).length}</td>
+                        <td
+                          key={s.id}
+                          className={cn(t.td, 'doc-strong py-1.5 text-right tabular-nums')}
+                        >
+                          {d.points.filter((p) => p.sheetId === s.id).length}
+                        </td>
                       ))}
-                      <td className={cn(t.td, 'doc-strong py-1.5 text-right tabular-nums text-doc-accent')}>{d.points.length}</td>
+                      <td
+                        className={cn(
+                          t.td,
+                          'doc-strong py-1.5 text-right tabular-nums text-doc-accent',
+                        )}
+                      >
+                        {d.points.length}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
-                {usedTypes.length > 22 ? <p className="mt-1 text-[9px] text-doc-muted">另有 {usedTypes.length - 22} 类设备未逐行列出，已计入合计；完整清单见点位交底清单。</p> : null}
+                {usedTypes.length > 22 ? (
+                  <p className="mt-1 text-[9px] text-doc-muted">
+                    另有 {usedTypes.length - 22}{' '}
+                    类设备未逐行列出，已计入合计；完整清单见点位交底清单。
+                  </p>
+                ) : null}
               </div>
-              <DocFooter className="mt-3" left={place || d.project.name} center={`${docNo}  /  ${date}`} right={`${pad(totalPages)} / ${pad(totalPages)}`} />
+              <DocFooter
+                className="mt-3"
+                left={place || d.project.name}
+                center={`${docNo}  /  ${date}`}
+                right={`${pad(totalPages)} / ${pad(totalPages)}`}
+              />
             </DocSheetPage>
           ) : null}
         </div>

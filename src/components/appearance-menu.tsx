@@ -43,7 +43,10 @@ export function AppearanceMenuItems() {
       <DropdownMenuRadioGroup value={accent} onValueChange={(v) => isAccent(v) && setAccent(v)}>
         {ACCENTS.map((a) => (
           <DropdownMenuRadioItem key={a.id} value={a.id}>
-            <span aria-hidden className={cn('size-3.5 rounded-full ring-1 ring-foreground/10', ACCENT_SWATCH[a.id])} />
+            <span
+              aria-hidden
+              className={cn('size-3.5 rounded-full ring-1 ring-foreground/10', ACCENT_SWATCH[a.id])}
+            />
             {a.label}
           </DropdownMenuRadioItem>
         ))}
@@ -57,7 +60,12 @@ export function AppearanceMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm" aria-label="外观：颜色模式与主题风格" className="text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="外观：颜色模式与主题风格"
+          className="text-muted-foreground hover:text-foreground"
+        >
           <Palette className="size-4" />
         </Button>
       </DropdownMenuTrigger>

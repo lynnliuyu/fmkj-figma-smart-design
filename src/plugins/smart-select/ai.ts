@@ -32,7 +32,11 @@ export const smartSelectAiSpec: PluginAiSpec = {
       parameters: {
         type: 'object',
         properties: {
-          tier: { type: 'string', enum: SELECTION_TIERS.map((t) => t.value), description: 'economy 经济 / standard 标准 / premium 高端' },
+          tier: {
+            type: 'string',
+            enum: SELECTION_TIERS.map((t) => t.value),
+            description: 'economy 经济 / standard 标准 / premium 高端',
+          },
           apply: { type: 'boolean', description: '是否直接写入当前项目的默认型号（默认 true）' },
         },
         required: ['tier'],
@@ -49,8 +53,18 @@ export const smartSelectAiSpec: PluginAiSpec = {
       recommendedModelId: 'deepseek-flash',
       requiredPlugins: ['smart-select', 'room-insights'],
       variables: [
-        { key: 'platform', label: '主平台', defaultValue: '米家', options: ['米家', 'Aqara Home', 'Apple Home', '华为鸿蒙智家', 'KNX'] },
-        { key: 'tier', label: '配置档次', defaultValue: '标准档', options: ['经济档', '标准档', '高端档'] },
+        {
+          key: 'platform',
+          label: '主平台',
+          defaultValue: '米家',
+          options: ['米家', 'Aqara Home', 'Apple Home', '华为鸿蒙智家', 'KNX'],
+        },
+        {
+          key: 'tier',
+          label: '配置档次',
+          defaultValue: '标准档',
+          options: ['经济档', '标准档', '高端档'],
+        },
       ],
       promptTemplate:
         '请调用「智能选型」插件，以【{platform}】为主平台、按【{tier}】预算标准，为当前项目的开关、窗帘、门锁、传感器与网关推荐默认型号组合，并说明选型理由。',

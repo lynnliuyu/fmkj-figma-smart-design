@@ -37,7 +37,10 @@ async function build(file, type) {
   const ink = lerp(color, [0, 0, 0], 0.3)
   const tint = lerp(color, [255, 255, 255], 0.78)
   // 1. 裁边 + 居中
-  const trimmed = await sharp(file).ensureAlpha().trim({ threshold: 10 }).toBuffer({ resolveWithObject: true })
+  const trimmed = await sharp(file)
+    .ensureAlpha()
+    .trim({ threshold: 10 })
+    .toBuffer({ resolveWithObject: true })
   const { width: tw, height: th } = trimmed.info
   const L = Math.max(tw, th)
   const body = Math.round(N / (1 + 2 * SYMBOL_ASSET_PAD))
@@ -45,7 +48,13 @@ async function build(file, type) {
   const bh = Math.max(1, Math.round((th / L) * body))
   const { data } = await sharp(trimmed.data)
     .resize(bw, bh, { kernel: 'lanczos3' })
-    .extend({ top: Math.floor((N - bh) / 2), bottom: Math.ceil((N - bh) / 2), left: Math.floor((N - bw) / 2), right: Math.ceil((N - bw) / 2), background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .extend({
+      top: Math.floor((N - bh) / 2),
+      bottom: Math.ceil((N - bh) / 2),
+      left: Math.floor((N - bw) / 2),
+      right: Math.ceil((N - bw) / 2),
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .raw()
     .toBuffer({ resolveWithObject: true })
   const px = new Float32Array(data)
@@ -62,19 +71,22 @@ async function build(file, type) {
   for (let i = 0; i < px.length; i += 4) {
     if (px[i + 3] < 128) continue
     solid++
-    if (Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]) > 40) colored++
+    if (Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]) > 40)
+      colored++
   }
   const gray = colored < solid * 0.05 || categoryOfType(type)?.slug === 'lock'
   // 3. 线条：比图标自身平均亮度明显更暗的像素
   let sum = 0
-  for (let i = 0; i < px.length; i += 4) if (px[i + 3] >= 128) sum += lum(px[i], px[i + 1], px[i + 2])
+  for (let i = 0; i < px.length; i += 4)
+    if (px[i + 3] >= 128) sum += lum(px[i], px[i + 1], px[i + 2])
   const avg = sum / Math.max(1, solid)
   // 细长图形（短边不到长边 30%，如灯带、轨道灯）整体当作线条，加粗更多
   const thin = Math.min(tw, th) / L < 0.3
   const isLine = new Uint8Array(N * N)
   for (let p = 0; p < N * N; p++) {
     const i = p * 4
-    if (px[i + 3] >= 128 && (thin || lum(px[i], px[i + 1], px[i + 2]) < Math.min(avg - 25, 170))) isLine[p] = 1
+    if (px[i + 3] >= 128 && (thin || lum(px[i], px[i + 1], px[i + 2]) < Math.min(avg - 25, 170)))
+      isLine[p] = 1
   }
   for (let p = 0; p < N * N; p++) {
     const i = p * 4
@@ -131,7 +143,14 @@ async function build(file, type) {
           for (let dx = -H; dx <= H; dx++) {
             const xx = x + dx
             const yy = y + dy
-            if (xx >= 0 && yy >= 0 && xx < N && yy < N && dx * dx + dy * dy <= H * H && alpha[yy * N + xx]) {
+            if (
+              xx >= 0 &&
+              yy >= 0 &&
+              xx < N &&
+              yy < N &&
+              dx * dx + dy * dy <= H * H &&
+              alpha[yy * N + xx]
+            ) {
               halo = 1
               break
             }
@@ -144,7 +163,9 @@ async function build(file, type) {
       rgba[i + 2] = oa ? Math.round((out[i + 2] * a + 255 * ba * (1 - a)) / oa) : 0
       rgba[i + 3] = Math.round(oa * 255)
     }
-  const png = await sharp(rgba, { raw: { width: N, height: N, channels: 4 } }).png({ compressionLevel: 9, palette: true, quality: 95 }).toBuffer()
+  const png = await sharp(rgba, { raw: { width: N, height: N, channels: 4 } })
+    .png({ compressionLevel: 9, palette: true, quality: 95 })
+    .toBuffer()
   return { png, gw: +(tw / L).toFixed(4), gh: +(th / L).toFixed(4) }
 }
 

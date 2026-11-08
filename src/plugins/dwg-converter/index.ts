@@ -41,7 +41,9 @@ export const dwgConverterPlugin =
     return { ...config, custom: { ...config.custom, dwgConverter: settings } }
   }
 
-export function getDwgSettings(config: { custom?: Record<string, unknown> }): DwgConverterSettings | null {
+export function getDwgSettings(config: {
+  custom?: Record<string, unknown>
+}): DwgConverterSettings | null {
   const s = config.custom?.dwgConverter as DwgConverterSettings | undefined
   return s?.enabled ? s : null
 }
@@ -68,13 +70,18 @@ export async function convertDwg(settings: DwgConverterSettings, file: File): Pr
       signal: AbortSignal.timeout(settings.timeoutMs),
     })
   } catch (error) {
-    if ((error as Error)?.name === 'TimeoutError') throw new DwgConvertError('转换超时，请简化图纸后重试', 504)
+    if ((error as Error)?.name === 'TimeoutError')
+      throw new DwgConvertError('转换超时，请简化图纸后重试', 504)
     throw new DwgConvertError('转换服务暂时无法连接，请稍后重试', 502)
   }
   if (!res.ok) {
     const detail = (await res.json().catch(() => null)) as { error?: string } | null
-    throw new DwgConvertError(detail?.error ? `转换失败：${detail.error}` : '转换失败，请确认文件是有效的 DWG', 502)
+    throw new DwgConvertError(
+      detail?.error ? `转换失败：${detail.error}` : '转换失败，请确认文件是有效的 DWG',
+      502,
+    )
   }
-  if (!res.headers.get('content-type')?.includes('image/png')) throw new DwgConvertError('转换服务返回的不是 PNG 图片', 502)
+  if (!res.headers.get('content-type')?.includes('image/png'))
+    throw new DwgConvertError('转换服务返回的不是 PNG 图片', 502)
   return Buffer.from(await res.arrayBuffer())
 }

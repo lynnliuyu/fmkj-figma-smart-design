@@ -27,7 +27,9 @@ export function revalidateTemplatePages(slugs: (string | null | undefined)[] | '
     safeRevalidate('/templates/[slug]/slides', 'page')
     return
   }
-  for (const slug of new Set(slugs.filter((v): v is string => typeof v === 'string' && v.length > 0))) {
+  for (const slug of new Set(
+    slugs.filter((v): v is string => typeof v === 'string' && v.length > 0),
+  )) {
     safeRevalidate(`/templates/${slug}`)
     safeRevalidate(`/templates/${slug}/slides`)
   }

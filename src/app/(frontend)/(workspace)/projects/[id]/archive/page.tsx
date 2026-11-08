@@ -17,7 +17,11 @@ import { quoteStatusLabel, yuan } from '@/lib/quotes'
 import { cn } from '@/lib/utils'
 import { buildTemplateGallery, getTemplatePreviewDocs } from '@/plugins/proposal/preview'
 import { loadProposalTemplates } from '@/plugins/proposal/registry'
-import { DEFAULT_PROPOSAL_TEMPLATE, ownerTemplates, resolveProposalTemplate } from '@/plugins/proposal/templates'
+import {
+  DEFAULT_PROPOSAL_TEMPLATE,
+  ownerTemplates,
+  resolveProposalTemplate,
+} from '@/plugins/proposal/templates'
 import { getPluginFlags } from '@/plugins/state'
 
 import { getProject, getProjectDeals } from '../project-data'
@@ -33,28 +37,54 @@ import { parseShareConfig } from '@/lib/project-access'
 /** 归档：核对资料 → 确认定稿（一份报价、一份方案）→ 打包交付资料 → 归档（项目转为只读）。 */
 export default async function ProjectArchivePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const [{ user, payload, project, archived, role, readOnly }, { quotes, contract }] = await Promise.all([getProject(id), getProjectDeals(id)])
+  const [{ user, payload, project, archived, role, readOnly }, { quotes, contract }] =
+    await Promise.all([getProject(id), getProjectDeals(id)])
   // 分享配置只有 CMS 管理员有字段读权限：成员身份读到的项目里没有这个字段，必须以系统身份读取，
   // 否则每次打开归档页都会误判为「没有链接」而重新生成，已经发给业主的预览链接就失效了
   const shareDoc = await payload
-    .findByID({ collection: 'projects', id: project.id, depth: 0, overrideAccess: true, select: { shareConfig: true } as never })
+    .findByID({
+      collection: 'projects',
+      id: project.id,
+      depth: 0,
+      overrideAccess: true,
+      select: { shareConfig: true } as never,
+    })
     .catch(() => null)
   const rawShare = (shareDoc as { shareConfig?: unknown } | null)?.shareConfig
   const shareConfig = parseShareConfig(rawShare)
   if (!rawShare || typeof (rawShare as { token?: unknown })?.token !== 'string') {
-    await payload.update({ collection: 'projects', id: project.id, data: { shareConfig } as never, overrideAccess: true, depth: 0 }).catch(() => null)
+    await payload
+      .update({
+        collection: 'projects',
+        id: project.id,
+        data: { shareConfig } as never,
+        overrideAccess: true,
+        depth: 0,
+      })
+      .catch(() => null)
   }
   const ownerId = relId(project.owner) || user.id
   const [flags, templates, company, fullSceneDoc, previewDocs] = await Promise.all([
     getPluginFlags(ownerId),
     loadProposalTemplates(user),
     getCompanyInfo(ownerId),
-    payload.findByID({ collection: 'projects', id: project.id, depth: 0, overrideAccess: true, select: { pointMap: true } }).catch(() => null),
+    payload
+      .findByID({
+        collection: 'projects',
+        id: project.id,
+        depth: 0,
+        overrideAccess: true,
+        select: { pointMap: true },
+      })
+      .catch(() => null),
     getTemplatePreviewDocs().catch(() => null),
   ])
   const pid = String(project.id)
   const points = project.pointCount ?? 0
-  const final = resolveFinalQuote(quotes, { contractQuoteId: relId(contract?.quote), finalQuoteId: relId(project.finalQuote) })
+  const final = resolveFinalQuote(quotes, {
+    contractQuoteId: relId(contract?.quote),
+    finalQuoteId: relId(project.finalQuote),
+  })
   const finalQuote = final.quote
   // 售后维保插件：质保倒计时与维保记录摘要（项目归档后仍持续使用）
   const afterSales = flags['after-sales'] ? await loadAfterSales(user, pid).catch(() => null) : null
@@ -73,9 +103,33 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
     .map(([type, count]) => ({ type, name: deviceTypeOf(type)?.name ?? '设备', count }))
   const hasLighting = allPoints.some((p) => categoryOfType(p.deviceType)?.slug === 'lighting')
   const sceneIdeas = [
-    ...(hasLighting ? [{ name: '观影模式', title: '灯光退场，电影开场。', description: '观影场景 · 从客厅灯光开始讨论' }] : []),
-    ...(allPoints.some((p) => p.deviceType === 'curtain-track') ? [{ name: '睡眠模式', title: '把一天，留在灯光之外。', description: '睡眠场景 · 窗帘与休息习惯一起确认' }] : []),
-    ...(hasLighting && allPoints.some((p) => p.deviceType === 'motion-sensor') ? [{ name: '起夜模式', title: '夜里起身，脚下有光。', description: '夜间引导 · 感应与低亮度照明意向' }] : []),
+    ...(hasLighting
+      ? [
+          {
+            name: '观影模式',
+            title: '灯光退场，电影开场。',
+            description: '观影场景 · 从客厅灯光开始讨论',
+          },
+        ]
+      : []),
+    ...(allPoints.some((p) => p.deviceType === 'curtain-track')
+      ? [
+          {
+            name: '睡眠模式',
+            title: '把一天，留在灯光之外。',
+            description: '睡眠场景 · 窗帘与休息习惯一起确认',
+          },
+        ]
+      : []),
+    ...(hasLighting && allPoints.some((p) => p.deviceType === 'motion-sensor')
+      ? [
+          {
+            name: '起夜模式',
+            title: '夜里起身，脚下有光。',
+            description: '夜间引导 · 感应与低亮度照明意向',
+          },
+        ]
+      : []),
   ]
   const posterData: SocialPosterData = {
     title: socialCaseTitle(project.community, [project.customerName, project.customerPhone]),
@@ -89,17 +143,34 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
     qrCodeUrl: company.qrCode?.url ?? '/brand/wechat-contact-qr.jpg',
     miniAppCodeUrl: miniAppCodeForCompany(company.name),
     sheets: allSheets.map((sheet, index) => ({
-          name: socialSheetTitle(sheet.name, index),
-          url: sheet.url!,
-          points: allPoints
-            .filter((p) => p.sheetId === sheet.id && p.rx !== null && p.ry !== null)
-            .map((p) => ({ id: p.id, deviceType: p.deviceType, code: p.code, rx: p.rx, ry: p.ry, angle: p.angle })),
-          areas: allAreas.filter((a) => a.sheetId === sheet.id).map((a) => planAreaOf(a, sheet)),
+      name: socialSheetTitle(sheet.name, index),
+      url: sheet.url!,
+      points: allPoints
+        .filter((p) => p.sheetId === sheet.id && p.rx !== null && p.ry !== null)
+        .map((p) => ({
+          id: p.id,
+          deviceType: p.deviceType,
+          code: p.code,
+          rx: p.rx,
+          ry: p.ry,
+          angle: p.angle,
         })),
+      areas: allAreas.filter((a) => a.sheetId === sheet.id).map((a) => planAreaOf(a, sheet)),
+    })),
     topTypes,
     scenePhotos: sceneIdeas.flatMap((idea) => {
       const photo = nightScenePhotoForScene(idea.name)
-      return photo ? [{ key: photo.key, title: idea.title, description: idea.description, url: photo.url, alt: photo.alt }] : []
+      return photo
+        ? [
+            {
+              key: photo.key,
+              title: idea.title,
+              description: idea.description,
+              url: photo.url,
+              alt: photo.alt,
+            },
+          ]
+        : []
     }),
   }
   const payments = contract?.payments ?? []
@@ -115,17 +186,31 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
   const qTitle = (q: { title: string }) => quoteShortTitle(q.title, project.name)
 
   const checks = [
-    { label: '点位图', done: points > 0, note: points ? `${points} 个点位` : '还没有布置点位', href: `/projects/${pid}/point-map` },
+    {
+      label: '点位图',
+      done: points > 0,
+      note: points ? `${points} 个点位` : '还没有布置点位',
+      href: `/projects/${pid}/point-map`,
+    },
     {
       label: '定稿报价',
-      done: Boolean(finalQuote && (final.source === 'contract' || final.source === 'chosen' || finalQuote.status === 'accepted')),
-      note: finalQuote ? `${qTitle(finalQuote)} · ${FINAL_QUOTE_SOURCE_LABEL[final.source!]} · ${yuan(finalQuote.total)}` : '还没有报价',
+      done: Boolean(
+        finalQuote &&
+        (final.source === 'contract' ||
+          final.source === 'chosen' ||
+          finalQuote.status === 'accepted'),
+      ),
+      note: finalQuote
+        ? `${qTitle(finalQuote)} · ${FINAL_QUOTE_SOURCE_LABEL[final.source!]} · ${yuan(finalQuote.total)}`
+        : '还没有报价',
       href: finalQuote ? `/projects/${pid}/quotes/${finalQuote.id}` : `/projects/${pid}/quotes`,
     },
     {
       label: '合同',
       done: contract?.status === 'signed',
-      note: contract ? `${contract.number} · ${contractStatusLabel(contract.status)}${contract.signedAt ? ` · ${fmtLongDate(contract.signedAt)}` : ''}` : '还没有合同',
+      note: contract
+        ? `${contract.number} · ${contractStatusLabel(contract.status)}${contract.signedAt ? ` · ${fmtLongDate(contract.signedAt)}` : ''}`
+        : '还没有合同',
       href: `/projects/${pid}/contract`,
     },
     {
@@ -145,12 +230,26 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
     flags.proposal && points && tpl
       ? `/print/projects/${pid}/proposal?${new URLSearchParams({
           template: tpl.value,
-          ...(finalQuote ? { quoteId: String(finalQuote.id), scope: inferScopeFromTitle(finalQuote.title) } : {}),
+          ...(finalQuote
+            ? { quoteId: String(finalQuote.id), scope: inferScopeFromTitle(finalQuote.title) }
+            : {}),
         }).toString()}`
       : null
   const docs: DeliveryDoc[] = [
-    { key: 'plans', title: '点位图', note: points ? `${points} 个点位` : '未布置点位', url: points ? `/print/projects/${pid}/plans` : null, defaultOn: true },
-    { key: 'checklist', title: '点位交底清单', note: points ? '' : '未布置点位', url: points ? `/print/projects/${pid}/checklist` : null, defaultOn: true },
+    {
+      key: 'plans',
+      title: '点位图',
+      note: points ? `${points} 个点位` : '未布置点位',
+      url: points ? `/print/projects/${pid}/plans` : null,
+      defaultOn: true,
+    },
+    {
+      key: 'checklist',
+      title: '点位交底清单',
+      note: points ? '' : '未布置点位',
+      url: points ? `/print/projects/${pid}/checklist` : null,
+      defaultOn: true,
+    },
     {
       key: 'quote',
       title: '定稿报价单',
@@ -169,7 +268,13 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
           },
         ]
       : []),
-    { key: 'contract', title: '合同', note: contract ? contract.number : '未生成合同', url: contract ? `/print/contracts/${contract.id}` : null, defaultOn: true },
+    {
+      key: 'contract',
+      title: '合同',
+      note: contract ? contract.number : '未生成合同',
+      url: contract ? `/print/contracts/${contract.id}` : null,
+      defaultOn: true,
+    },
     ...(flags.proposal && construction
       ? [
           {
@@ -186,7 +291,9 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
           {
             key: 'after-sales' as const,
             title: '售后维保卡',
-            note: afterSales?.warranty.end ? `质保至 ${afterSales.warranty.end}` : '质保权益、设备台账与报修方式',
+            note: afterSales?.warranty.end
+              ? `质保至 ${afterSales.warranty.end}`
+              : '质保权益、设备台账与报修方式',
             url: `/print/projects/${pid}/after-sales`,
             defaultOn: false,
           },
@@ -194,9 +301,12 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
       : []),
   ]
   const otherQuotes = quotes.filter((q) => String(q.id) !== String(finalQuote?.id ?? ''))
-  const otherTemplates = flags.proposal && points ? deckTemplates.filter((t) => t.value !== tpl?.value) : []
+  const otherTemplates =
+    flags.proposal && points ? deckTemplates.filter((t) => t.value !== tpl?.value) : []
   // 交付方案模板选择器：缩略图用示例别墅（各项目共用缓存），预览样张用本项目的数据
-  const gallery = flags.proposal ? buildTemplateGallery(deckTemplates, previewDocs, { insights: flags['room-insights'] }) : null
+  const gallery = flags.proposal
+    ? buildTemplateGallery(deckTemplates, previewDocs, { insights: flags['room-insights'] })
+    : null
   const previewLinks = Object.fromEntries(
     deckTemplates.map((t) => [
       t.value,
@@ -209,7 +319,11 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
           <h2 className="text-xl font-semibold tracking-tight">归档</h2>
-          {archived ? <p className="text-sm text-muted-foreground">已于 {fmtLongDate(project.archivedAt)} 归档（只读）</p> : null}
+          {archived ? (
+            <p className="text-sm text-muted-foreground">
+              已于 {fmtLongDate(project.archivedAt)} 归档（只读）
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {points > 0 ? <SocialPosterDialog data={posterData} /> : null}
@@ -222,8 +336,15 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
         projectName={projectDisplayName(project.name)}
         editable={!readOnly}
         docs={docs}
-        quotes={quotes.map((q) => ({ value: String(q.id), label: `${qTitle(q)} · ${yuan(q.total)}` }))}
-        finalQuote={{ id: finalQuote ? String(finalQuote.id) : null, sourceLabel: final.source ? FINAL_QUOTE_SOURCE_LABEL[final.source] : null, locked: final.source === 'contract' }}
+        quotes={quotes.map((q) => ({
+          value: String(q.id),
+          label: `${qTitle(q)} · ${yuan(q.total)}`,
+        }))}
+        finalQuote={{
+          id: finalQuote ? String(finalQuote.id) : null,
+          sourceLabel: final.source ? FINAL_QUOTE_SOURCE_LABEL[final.source] : null,
+          locked: final.source === 'contract',
+        }}
         betaDoc={<BetaDocLink label="场景移交" href={`/print/projects/${pid}/handover`} />}
         proposalPicker={
           gallery && deckTemplates.length ? (
@@ -241,7 +362,12 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
           company: company.name,
           customer: project.customerName ?? '',
           address: [project.community, project.address].filter(Boolean).join(' '),
-          date: new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' }),
+          date: new Date().toLocaleDateString('zh-CN', {
+            timeZone: 'Asia/Shanghai',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
         }}
       />
 
@@ -250,8 +376,12 @@ export default async function ProjectArchivePage({ params }: { params: Promise<{
       {role !== 'read' ? (
         <section className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed px-5 py-4">
           <div className="text-sm">
-            <div className="font-medium">{archived ? '恢复为进行中项目' : ready ? '资料已齐备，可归档' : '归档项目'}</div>
-            <div className="text-xs text-muted-foreground">{archived ? '恢复后可继续编辑点位、报价和合同' : '归档后转为只读，仍可查看与导出资料'}</div>
+            <div className="font-medium">
+              {archived ? '恢复为进行中项目' : ready ? '资料已齐备，可归档' : '归档项目'}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {archived ? '恢复后可继续编辑点位、报价和合同' : '归档后转为只读，仍可查看与导出资料'}
+            </div>
           </div>
           <ArchiveButton projectId={pid} archived={archived} primary={ready} />
         </section>

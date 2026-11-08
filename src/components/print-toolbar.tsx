@@ -3,15 +3,44 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Check, ChevronDown, ChevronLeft, Copy, ExternalLink, FileDown, FolderDown, ImageDown, Loader2, Lock, SlidersHorizontal } from 'lucide-react'
+import {
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  Copy,
+  ExternalLink,
+  FileDown,
+  FolderDown,
+  ImageDown,
+  Loader2,
+  Lock,
+  SlidersHorizontal,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { COLLECT_MESSAGE, type CollectResult } from '@/lib/doc-collect'
-import { downloadBlob, exportPagesAsPdfBundle, renderPagesToJpegs, renderPagesToPngDataUrls, waitForPageAssets } from '@/lib/export-pdf'
+import {
+  downloadBlob,
+  exportPagesAsPdfBundle,
+  renderPagesToJpegs,
+  renderPagesToPngDataUrls,
+  waitForPageAssets,
+} from '@/lib/export-pdf'
 import { cn } from '@/lib/utils'
 
 type Option = { value: string; label: string; href: string }
@@ -78,7 +107,8 @@ export function PrintToolbar({
         window.visualViewport?.width || 9999,
         window.screen?.width || 9999,
       )
-      const fitFor = (w: number) => (vw > 0 && vw < w + 16 ? Math.max(0.22, (vw - 16) / w).toFixed(4) : '1')
+      const fitFor = (w: number) =>
+        vw > 0 && vw < w + 16 ? Math.max(0.22, (vw - 16) / w).toFixed(4) : '1'
       root.style.setProperty('--paper-zoom', fitFor(794))
       root.style.setProperty('--sheet-zoom', fitFor(1123))
       root.style.setProperty('--deck-zoom', fitFor(1440))
@@ -108,10 +138,16 @@ export function PrintToolbar({
           headers: { 'Content-Type': 'application/pdf' },
           body: bundle.blob,
         })
-        const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; previewUrl?: string } | null
+        const data = (await res.json().catch(() => null)) as {
+          ok?: boolean
+          url?: string
+          previewUrl?: string
+        } | null
         if (res.ok && data?.ok && data.url) {
           downloadUrl = new URL(data.url, window.location.origin).toString()
-          previewUrl = data.previewUrl ? new URL(data.previewUrl, window.location.origin).toString() : downloadUrl
+          previewUrl = data.previewUrl
+            ? new URL(data.previewUrl, window.location.origin).toString()
+            : downloadUrl
         }
       } catch {
         // ignore upload fallback error
@@ -146,16 +182,27 @@ export function PrintToolbar({
       }
       // 交付资料包：渲染 PDF 页并发回打开这个页面的资料包页面
       const key = searchParams.get('collect') ?? ''
-      const reply = (msg: CollectResult, transfer: Transferable[] = []) => window.parent.postMessage(msg, window.location.origin, transfer)
+      const reply = (msg: CollectResult, transfer: Transferable[] = []) =>
+        window.parent.postMessage(msg, window.location.origin, transfer)
       void (async () => {
         try {
           if (locked) throw new Error(locked.message)
           await waitForPageAssets()
-          const pages = await renderPagesToJpegs([...document.querySelectorAll<HTMLElement>('[data-export-page]')])
+          const pages = await renderPagesToJpegs([
+            ...document.querySelectorAll<HTMLElement>('[data-export-page]'),
+          ])
           if (!pages.length) throw new Error('页面没有可导出的内容')
-          reply({ type: COLLECT_MESSAGE, key, ok: true, pages }, pages.map((p) => p.bytes.buffer as ArrayBuffer))
+          reply(
+            { type: COLLECT_MESSAGE, key, ok: true, pages },
+            pages.map((p) => p.bytes.buffer as ArrayBuffer),
+          )
         } catch (e) {
-          reply({ type: COLLECT_MESSAGE, key, ok: false, error: e instanceof Error ? e.message : '生成失败' })
+          reply({
+            type: COLLECT_MESSAGE,
+            key,
+            ok: false,
+            error: e instanceof Error ? e.message : '生成失败',
+          })
         }
       })()
     }, 500)
@@ -170,7 +217,10 @@ export function PrintToolbar({
       for (const [i, url] of urls.entries()) {
         const a = document.createElement('a')
         a.href = url
-        a.download = urls.length > 1 ? `${exportName}-${String(i + 1).padStart(2, '0')}.jpg` : `${exportName}.jpg`
+        a.download =
+          urls.length > 1
+            ? `${exportName}-${String(i + 1).padStart(2, '0')}.jpg`
+            : `${exportName}.jpg`
         a.style.display = 'none'
         document.body.appendChild(a)
         a.click()
@@ -202,7 +252,16 @@ export function PrintToolbar({
       await copyDownloadUrl()
       return
     }
-    const picker = (window as unknown as { showSaveFilePicker?: (opts: unknown) => Promise<{ createWritable: () => Promise<{ write: (b: Blob) => Promise<void>; close: () => Promise<void> }> }> }).showSaveFilePicker
+    const picker = (
+      window as unknown as {
+        showSaveFilePicker?: (opts: unknown) => Promise<{
+          createWritable: () => Promise<{
+            write: (b: Blob) => Promise<void>
+            close: () => Promise<void>
+          }>
+        }>
+      }
+    ).showSaveFilePicker
     if (typeof picker === 'function') {
       try {
         const handle = await picker({
@@ -245,20 +304,45 @@ export function PrintToolbar({
 
   return (
     <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur-xs print:hidden">
-      <div className={cn('mx-auto flex h-11 items-center justify-between gap-1.5 overflow-x-auto px-2.5 [scrollbar-width:none] sm:gap-2 sm:px-4', wide ? 'max-w-[1440px]' : 'max-w-[297mm]')}>
+      <div
+        className={cn(
+          'mx-auto flex h-11 items-center justify-between gap-1.5 overflow-x-auto px-2.5 [scrollbar-width:none] sm:gap-2 sm:px-4',
+          wide ? 'max-w-[1440px]' : 'max-w-[297mm]',
+        )}
+      >
         {isMpView ? null : (
-          <Button asChild variant="ghost" size="sm" className="-ml-2 shrink-0 text-muted-foreground">
-            <Link href={back.href}><ChevronLeft className="size-4" />{back.label}</Link>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="-ml-2 shrink-0 text-muted-foreground"
+          >
+            <Link href={back.href}>
+              <ChevronLeft className="size-4" />
+              {back.label}
+            </Link>
           </Button>
         )}
 
-        <div className={cn('flex min-w-0 items-center gap-1.5 sm:gap-2', isMpView && 'w-full justify-between')}>
-          {note && !locked ? <span className="hidden rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground sm:inline-block">{note}</span> : null}
+        <div
+          className={cn(
+            'flex min-w-0 items-center gap-1.5 sm:gap-2',
+            isMpView && 'w-full justify-between',
+          )}
+        >
+          {note && !locked ? (
+            <span className="hidden rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground sm:inline-block">
+              {note}
+            </span>
+          ) : null}
           {locked ? (
             <span className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
               <Lock className="size-3.5" />
               <span className="hidden sm:inline">{locked.message}</span>
-              <Link href={locked.href} className="font-medium text-primary underline-offset-4 hover:underline">
+              <Link
+                href={locked.href}
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
                 升级
               </Link>
             </span>
@@ -309,30 +393,43 @@ export function PrintToolbar({
           ) : null}
 
           {isMpView ? (
-            <Button size="sm" className="ml-auto h-8 shrink-0 gap-1.5 px-2.5 text-xs" disabled={busy !== null || Boolean(locked)} onClick={() => void exportPdf()}>
-              {busy !== null ? <Loader2 className="size-3.5 animate-spin" /> : <FileDown className="size-3.5" />}
+            <Button
+              size="sm"
+              className="ml-auto h-8 shrink-0 gap-1.5 px-2.5 text-xs"
+              disabled={busy !== null || Boolean(locked)}
+              onClick={() => void exportPdf()}
+            >
+              {busy !== null ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <FileDown className="size-3.5" />
+              )}
               {busy ? '生成中…' : '导出 PDF'}
             </Button>
           ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="h-8" disabled={busy !== null || Boolean(locked)}>
-                {busy !== null ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
-                {busy === 'pdf' ? '生成 PDF 中…' : busy === 'img' ? '生成图片中…' : '导出 PDF'}
-                <ChevronDown className="size-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onSelect={() => void exportPdf()}>
-                <FileDown className="size-4" />
-                导出 PDF
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => void exportImages()}>
-                <ImageDown className="size-4" />
-                导出图片
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="h-8" disabled={busy !== null || Boolean(locked)}>
+                  {busy !== null ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <FileDown className="size-4" />
+                  )}
+                  {busy === 'pdf' ? '生成 PDF 中…' : busy === 'img' ? '生成图片中…' : '导出 PDF'}
+                  <ChevronDown className="size-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onSelect={() => void exportPdf()}>
+                  <FileDown className="size-4" />
+                  导出 PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => void exportImages()}>
+                  <ImageDown className="size-4" />
+                  导出图片
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
@@ -344,7 +441,8 @@ export function PrintToolbar({
               {exportResult?.kind === 'img' ? '高清图片已生成' : 'PDF 文档已生成'}
             </DialogTitle>
             <DialogDescription className="text-xs leading-relaxed">
-              {exportResult?.fileName}（共 {exportResult?.pageCount} 页{exportResult?.sizeKb ? ` · 约 ${exportResult.sizeKb} KB` : ''}）
+              {exportResult?.fileName}（共 {exportResult?.pageCount} 页
+              {exportResult?.sizeKb ? ` · 约 ${exportResult.sizeKb} KB` : ''}）
             </DialogDescription>
           </DialogHeader>
 
@@ -352,15 +450,19 @@ export function PrintToolbar({
             <p className="font-medium text-foreground">文件导出到哪里了？</p>
             <ul className="list-disc space-y-1.5 pl-4 text-muted-foreground">
               {!isMpView ? (
-              <li>
-                <strong className="text-foreground">电脑浏览器</strong>：已自动下载到系统默认的
-                <strong className="text-foreground">「下载 (Downloads)」文件夹</strong>（可在浏览器右上角下载图标中查看，或点击下方「选择位置另存为」指定目录）。
-              </li>
+                <li>
+                  <strong className="text-foreground">电脑浏览器</strong>：已自动下载到系统默认的
+                  <strong className="text-foreground">「下载 (Downloads)」文件夹</strong>
+                  （可在浏览器右上角下载图标中查看，或点击下方「选择位置另存为」指定目录）。
+                </li>
               ) : null}
               <li>
-                <strong className="text-foreground">微信小程序 / 手机端</strong>：受微信内置浏览器限制无法直接静默写入系统文件夹。您可以点击下方
-                <strong className="text-foreground">「复制 PDF 下载链接」</strong>发到微信聊天/手机浏览器打开保存，或直接
-                <strong className="text-foreground">长按下方预览图</strong>保存到手机相册、转发给客户。
+                <strong className="text-foreground">微信小程序 / 手机端</strong>
+                ：受微信内置浏览器限制无法直接静默写入系统文件夹。您可以点击下方
+                <strong className="text-foreground">「复制 PDF 下载链接」</strong>
+                发到微信聊天/手机浏览器打开保存，或直接
+                <strong className="text-foreground">长按下方预览图</strong>
+                保存到手机相册、转发给客户。
               </li>
             </ul>
           </div>
@@ -368,13 +470,18 @@ export function PrintToolbar({
           {exportResult?.kind === 'pdf' ? (
             <div className="flex flex-wrap gap-2">
               {!isMpView ? (
-              <Button type="button" size="sm" onClick={() => void savePdfWithPicker()}>
-                <FolderDown className="size-4" />
-                下载 / 选择位置另存为
-              </Button>
+                <Button type="button" size="sm" onClick={() => void savePdfWithPicker()}>
+                  <FolderDown className="size-4" />
+                  下载 / 选择位置另存为
+                </Button>
               ) : null}
               {exportResult.downloadUrl ? (
-                <Button type="button" variant={isMpView ? 'default' : 'secondary'} size="sm" onClick={() => void copyDownloadUrl()}>
+                <Button
+                  type="button"
+                  variant={isMpView ? 'default' : 'secondary'}
+                  size="sm"
+                  onClick={() => void copyDownloadUrl()}
+                >
                   {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
                   {copied ? '已复制下载链接' : '复制 PDF 下载链接'}
                 </Button>
@@ -395,7 +502,12 @@ export function PrintToolbar({
               <p className="text-xs font-medium text-muted-foreground">
                 页面高清预览（手机 / 小程序内可直接长按下方图片保存到相册或转发给微信好友）：
               </p>
-              <div className={cn('space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5', isMpView ? 'max-h-[48vh]' : 'max-h-64')}>
+              <div
+                className={cn(
+                  'space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5',
+                  isMpView ? 'max-h-[48vh]' : 'max-h-64',
+                )}
+              >
                 {exportResult.previewImages.map((src, idx) => (
                   <div key={idx} className="overflow-hidden rounded-lg border bg-white shadow-2xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

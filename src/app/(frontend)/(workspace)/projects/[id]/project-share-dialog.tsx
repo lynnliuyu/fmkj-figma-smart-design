@@ -2,15 +2,40 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Copy, Eye, Link2, Loader2, LogOut, PencilLine, RefreshCw, Shield, Trash2, Users } from 'lucide-react'
+import {
+  Check,
+  Copy,
+  Eye,
+  Link2,
+  Loader2,
+  LogOut,
+  PencilLine,
+  RefreshCw,
+  Shield,
+  Trash2,
+  Users,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import type { CollaboratorRole, ProjectRole, ShareConfig } from '@/lib/project-access'
 import { cn } from '@/lib/utils'
@@ -68,7 +93,11 @@ export function ProjectShareDialog({
       ? `${window.location.origin}/join/${projectId}?token=${state.shareConfig.token}`
       : ''
 
-  const updateConfig = async (patch: { enabled?: boolean; role?: CollaboratorRole; resetToken?: boolean }) => {
+  const updateConfig = async (patch: {
+    enabled?: boolean
+    role?: CollaboratorRole
+    resetToken?: boolean
+  }) => {
     if (!state || busy) return
     setBusy(true)
     try {
@@ -77,20 +106,28 @@ export function ProjectShareDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'config', ...patch }),
       })
-      const data = (await res.json().catch(() => null)) as { ok?: boolean; shareConfig?: ShareConfig; error?: string } | null
+      const data = (await res.json().catch(() => null)) as {
+        ok?: boolean
+        shareConfig?: ShareConfig
+        error?: string
+      } | null
       if (!res.ok || !data?.ok || !data.shareConfig) {
         toast.error(data?.error ?? '修改失败')
         return
       }
       setState((prev) => (prev ? { ...prev, shareConfig: data.shareConfig! } : prev))
       if (patch.resetToken) toast.success('已重置协作链接，旧链接已失效')
-      else if (patch.role) toast.success(`协作链接权限已设为「${patch.role === 'edit' ? '可编辑' : '仅查看'}」`)
+      else if (patch.role)
+        toast.success(`协作链接权限已设为「${patch.role === 'edit' ? '可编辑' : '仅查看'}」`)
     } finally {
       setBusy(false)
     }
   }
 
-  const updateCollaborator = async (userId: string, patch: { role?: CollaboratorRole; remove?: boolean }) => {
+  const updateCollaborator = async (
+    userId: string,
+    patch: { role?: CollaboratorRole; remove?: boolean },
+  ) => {
     if (!state || busy) return
     setBusy(true)
     try {
@@ -99,7 +136,11 @@ export function ProjectShareDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'collaborator', userId, ...patch }),
       })
-      const data = (await res.json().catch(() => null)) as { ok?: boolean; collaborators?: CollaboratorView[]; error?: string } | null
+      const data = (await res.json().catch(() => null)) as {
+        ok?: boolean
+        collaborators?: CollaboratorView[]
+        error?: string
+      } | null
       if (!res.ok || !data?.ok || !data.collaborators) {
         toast.error(data?.error ?? '操作失败')
         return
@@ -153,7 +194,9 @@ export function ProjectShareDialog({
         <Button variant="outline" size="xs" className="h-7 gap-1.5 px-2.5 text-xs">
           <Users className="size-3.5" />
           <span>协作</span>
-          {count > 0 ? <span className="rounded-full bg-muted px-1.5 text-xs tabular-nums">{count}</span> : null}
+          {count > 0 ? (
+            <span className="rounded-full bg-muted px-1.5 text-xs tabular-nums">{count}</span>
+          ) : null}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
@@ -201,7 +244,8 @@ export function ProjectShareDialog({
                         onClick={() => void updateConfig({ role: 'read' })}
                         className={cn(
                           'flex items-center gap-2 rounded-lg border bg-background p-2.5 text-left text-xs transition-colors',
-                          state.shareConfig.role === 'read' && 'border-primary bg-primary/5 ring-1 ring-primary',
+                          state.shareConfig.role === 'read' &&
+                            'border-primary bg-primary/5 ring-1 ring-primary',
                         )}
                       >
                         <Eye className="size-4 shrink-0 text-muted-foreground" />
@@ -216,20 +260,32 @@ export function ProjectShareDialog({
                         onClick={() => void updateConfig({ role: 'edit' })}
                         className={cn(
                           'flex items-center gap-2 rounded-lg border bg-background p-2.5 text-left text-xs transition-colors',
-                          state.shareConfig.role === 'edit' && 'border-primary bg-primary/5 ring-1 ring-primary',
+                          state.shareConfig.role === 'edit' &&
+                            'border-primary bg-primary/5 ring-1 ring-primary',
                         )}
                       >
                         <PencilLine className="size-4 shrink-0 text-muted-foreground" />
                         <div>
                           <div className="font-medium">可编辑</div>
-                          <div className="text-xs text-muted-foreground">共同编辑点位、报价与合同</div>
+                          <div className="text-xs text-muted-foreground">
+                            共同编辑点位、报价与合同
+                          </div>
                         </div>
                       </button>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Input readOnly value={shareUrl} className="h-8 bg-background font-mono text-xs" />
-                      <Button type="button" size="sm" className="h-8 shrink-0" onClick={() => void copyLink()}>
+                      <Input
+                        readOnly
+                        value={shareUrl}
+                        className="h-8 bg-background font-mono text-xs"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-8 shrink-0"
+                        onClick={() => void copyLink()}
+                      >
                         {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
                         {copied ? '已复制' : '复制链接'}
                       </Button>
@@ -253,13 +309,19 @@ export function ProjectShareDialog({
 
             {/* 成员与权限列表 */}
             <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">项目成员（{state.collaborators.length + 1}）</div>
+              <div className="text-xs font-medium text-muted-foreground">
+                项目成员（{state.collaborators.length + 1}）
+              </div>
               <div className="divide-y rounded-xl border">
                 {/* 创建者 */}
                 <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-xs">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{state.owner.name}</div>
-                    {state.owner.email ? <div className="truncate text-xs text-muted-foreground">{state.owner.email}</div> : null}
+                    {state.owner.email ? (
+                      <div className="truncate text-xs text-muted-foreground">
+                        {state.owner.email}
+                      </div>
+                    ) : null}
                   </div>
                   <Badge variant="outline" className="shrink-0 gap-1 text-xs">
                     <Shield className="size-3 text-primary" />
@@ -269,17 +331,24 @@ export function ProjectShareDialog({
 
                 {/* 协作者列表 */}
                 {state.collaborators.map((c) => (
-                  <div key={c.userId} className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-xs">
+                  <div
+                    key={c.userId}
+                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-xs"
+                  >
                     <div className="min-w-0 flex-1">
                       <div className="truncate font-medium">{c.name}</div>
-                      {c.email ? <div className="truncate text-xs text-muted-foreground">{c.email}</div> : null}
+                      {c.email ? (
+                        <div className="truncate text-xs text-muted-foreground">{c.email}</div>
+                      ) : null}
                     </div>
                     {isOwner ? (
                       <div className="flex shrink-0 items-center gap-1.5">
                         <Select
                           value={c.role}
                           disabled={busy}
-                          onValueChange={(v) => void updateCollaborator(c.userId, { role: v as CollaboratorRole })}
+                          onValueChange={(v) =>
+                            void updateCollaborator(c.userId, { role: v as CollaboratorRole })
+                          }
                         >
                           <SelectTrigger className="h-7 w-24 text-xs">
                             <SelectValue />
@@ -319,7 +388,13 @@ export function ProjectShareDialog({
 
             {!isOwner ? (
               <div className="flex justify-end border-t pt-3">
-                <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => void leaveProject()}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={busy}
+                  onClick={() => void leaveProject()}
+                >
                   <LogOut className="size-3.5" />
                   退出该项目协作
                 </Button>

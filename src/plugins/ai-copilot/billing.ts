@@ -80,9 +80,7 @@ export class UsageMeter {
       const cached = Math.max(
         0,
         Math.trunc(
-          usage.prompt_tokens_details?.cached_tokens ??
-            usage.prompt_cache_hit_tokens ??
-            0,
+          usage.prompt_tokens_details?.cached_tokens ?? usage.prompt_cache_hit_tokens ?? 0,
         ),
       )
       this.inputTokens += prompt
@@ -110,8 +108,10 @@ export class UsageMeter {
 
   /** 仅 tokens 部分折算的积分（未取整、不含工具费），多模型合计时使用。 */
   tokenCredits(modelOrMultiplier: PricedModel | number, at: Date = new Date()): number {
-    const model: PricedModel = typeof modelOrMultiplier === 'number' ? { cost: modelOrMultiplier } : modelOrMultiplier
-    const multiplier = Number.isFinite(model?.cost) && Number(model.cost) > 0 ? Number(model.cost) : 1
+    const model: PricedModel =
+      typeof modelOrMultiplier === 'number' ? { cost: modelOrMultiplier } : modelOrMultiplier
+    const multiplier =
+      Number.isFinite(model?.cost) && Number(model.cost) > 0 ? Number(model.cost) : 1
     const pricing = model?.pricing
     const hasPricing = Boolean(pricing && (pricing.peak.input > 0 || pricing.peak.output > 0))
     if (hasPricing && pricing) {
@@ -124,12 +124,17 @@ export class UsageMeter {
       return multiplier * (costCny / CREDIT_VALUE_CNY)
     }
     // 旧公式：模型未配置价格时的兼容路径
-    return multiplier * ((this.inputTokens / 1000) * INPUT_PER_1K + (this.outputTokens / 1000) * OUTPUT_PER_1K)
+    return (
+      multiplier *
+      ((this.inputTokens / 1000) * INPUT_PER_1K + (this.outputTokens / 1000) * OUTPUT_PER_1K)
+    )
   }
 
   summary() {
     const t = this.tools.length ? ` · 工具 ${this.tools.length} 次` : ''
-    const c = this.cachedInputTokens ? `（缓存命中 ${this.cachedInputTokens.toLocaleString('en-US')}）` : ''
+    const c = this.cachedInputTokens
+      ? `（缓存命中 ${this.cachedInputTokens.toLocaleString('en-US')}）`
+      : ''
     return `输入 ${this.inputTokens.toLocaleString('en-US')}${c} / 输出 ${this.outputTokens.toLocaleString('en-US')} tokens${t}${this.estimated ? '（部分估算）' : ''}`
   }
 }
@@ -150,7 +155,11 @@ export class UsageLedger {
   private meters = new Map<string, { model: LedgerModel; meter: UsageMeter }>()
   readonly tools: string[] = []
 
-  add(model: LedgerModel, usage: TokenUsage | null | undefined, fallback?: { input: string; output: string }) {
+  add(
+    model: LedgerModel,
+    usage: TokenUsage | null | undefined,
+    fallback?: { input: string; output: string },
+  ) {
     let entry = this.meters.get(model.id)
     if (!entry) {
       entry = { model, meter: new UsageMeter() }

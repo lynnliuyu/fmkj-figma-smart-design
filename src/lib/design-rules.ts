@@ -16,17 +16,28 @@ import { deviceTypeOf } from './device-types'
  */
 export const DRAWING_ONLY_CATEGORIES = new Set(['switch', 'socket', 'lighting'])
 
-export const AUTO_DESIGN_TYPES = ['ap-node', 'network-panel', 'curtain-track', 'gateway', 'vrf-controller', 'motion-sensor', 'speaker', 'camera'] as const
+export const AUTO_DESIGN_TYPES = [
+  'ap-node',
+  'network-panel',
+  'curtain-track',
+  'gateway',
+  'vrf-controller',
+  'motion-sensor',
+  'speaker',
+  'camera',
+] as const
 
 /** 中控屏对照开关点位布置：同一张图纸上没有开关点位时不加入设计 */
 export const NEEDS_SWITCH_TYPES = new Set(['touch-panel'])
 
 /** 智能音箱一般只放在这些区域类型（客厅、书房） */
 export const SPEAKER_AREA_TYPES = new Set(['living', 'study'])
-export const isSpeakerArea = (areaType: string | null | undefined, name = '') => SPEAKER_AREA_TYPES.has(areaType ?? '') || /客厅|起居|书房/.test(name)
+export const isSpeakerArea = (areaType: string | null | undefined, name = '') =>
+  SPEAKER_AREA_TYPES.has(areaType ?? '') || /客厅|起居|书房/.test(name)
 
 /** 该设备类型是否只能照图识别（不能由 AI 凭空设计） */
-export const isDrawingOnlyType = (deviceType: string) => DRAWING_ONLY_CATEGORIES.has(deviceTypeOf(deviceType)?.category ?? '')
+export const isDrawingOnlyType = (deviceType: string) =>
+  DRAWING_ONLY_CATEGORIES.has(deviceTypeOf(deviceType)?.category ?? '')
 
 export const DESIGN_RULE_TEXT =
   '开关、插座、灯具只在图纸上已有准确点位符号时照图生成（source 标为 "drawing"）；图上没有就不要生成，不得凭经验推测。' +

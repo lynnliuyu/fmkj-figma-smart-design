@@ -35,7 +35,11 @@ const ROOM_NAME_MAP: { re: RegExp; name: string; type: string }[] = [
 function inferDeviceFromDxfBlock(blockName: string, layerName: string): string | null {
   const s = `${blockName} ${layerName}`.toLowerCase()
   // 忽略图框、标题栏、轴网、尺寸、家具图块
-  if (/title|border|图框|标题|dim|标注|axis|轴|furn|家具|bed|床|sofa|沙发|table|餐桌|toilet|马桶|sink|盆栽|plant|door|门|window|窗/i.test(s)) {
+  if (
+    /title|border|图框|标题|dim|标注|axis|轴|furn|家具|bed|床|sofa|沙发|table|餐桌|toilet|马桶|sink|盆栽|plant|door|门|window|窗/i.test(
+      s,
+    )
+  ) {
     return null
   }
   if (/四联|四极|四位|4gang|4-gang|sw[-_]?4|k4|开关4/i.test(s)) return 'switch-4'
@@ -97,21 +101,44 @@ export async function parseDxfAndRenderFloorPlan(
 
   const flushEntity = () => {
     if (!currentEntity) return
-    if (currentEntity === 'LINE' && Number.isFinite(x1) && Number.isFinite(y1) && Number.isFinite(x2) && Number.isFinite(y2)) {
+    if (
+      currentEntity === 'LINE' &&
+      Number.isFinite(x1) &&
+      Number.isFinite(y1) &&
+      Number.isFinite(x2) &&
+      Number.isFinite(y2)
+    ) {
       lines.push({ x1, y1, x2, y2, layer })
     } else if (currentEntity === 'LWPOLYLINE' && polyPts.length >= 2) {
       for (let i = 0; i < polyPts.length - 1; i++) {
-        lines.push({ x1: polyPts[i].x, y1: polyPts[i].y, x2: polyPts[i + 1].x, y2: polyPts[i + 1].y, layer })
+        lines.push({
+          x1: polyPts[i].x,
+          y1: polyPts[i].y,
+          x2: polyPts[i + 1].x,
+          y2: polyPts[i + 1].y,
+          layer,
+        })
       }
       if (polyClosed && polyPts.length >= 3) {
         const last = polyPts[polyPts.length - 1]
         lines.push({ x1: last.x, y1: last.y, x2: polyPts[0].x, y2: polyPts[0].y, layer })
       }
-    } else if (currentEntity === 'CIRCLE' && Number.isFinite(x1) && Number.isFinite(y1) && Number.isFinite(r) && r > 0) {
+    } else if (
+      currentEntity === 'CIRCLE' &&
+      Number.isFinite(x1) &&
+      Number.isFinite(y1) &&
+      Number.isFinite(r) &&
+      r > 0
+    ) {
       circles.push({ cx: x1, cy: y1, r, layer })
     } else if (currentEntity === 'INSERT' && Number.isFinite(x1) && Number.isFinite(y1) && name) {
       inserts.push({ name, layer, x: x1, y: y1 })
-    } else if ((currentEntity === 'TEXT' || currentEntity === 'MTEXT') && Number.isFinite(x1) && Number.isFinite(y1) && textVal) {
+    } else if (
+      (currentEntity === 'TEXT' || currentEntity === 'MTEXT') &&
+      Number.isFinite(x1) &&
+      Number.isFinite(y1) &&
+      textVal
+    ) {
       texts.push({ text: decodeDxfText(textVal), layer, x: x1, y: y1 })
     }
     currentEntity = ''
@@ -152,7 +179,8 @@ export async function parseDxfAndRenderFloorPlan(
     if (code === 8) layer = val
     else if (code === 2) name = val
     else if (code === 1 || code === 3) textVal += val
-    else if (code === 70 && currentEntity === 'LWPOLYLINE') polyClosed = (parseInt(val, 10) & 1) === 1
+    else if (code === 70 && currentEntity === 'LWPOLYLINE')
+      polyClosed = (parseInt(val, 10) & 1) === 1
     else if (code === 10) {
       const num = parseFloat(val)
       if (currentEntity === 'LWPOLYLINE') pendingPolyX = num
@@ -214,7 +242,9 @@ export async function parseDxfAndRenderFloorPlan(
     const rx = toPxX(t.x) / W
     const ry = toPxY(t.y) / H
     if (rx < 0.05 || rx > 0.95 || ry < 0.05 || ry > 0.92) continue
-    const uniqueName = seenRooms.has(matched.name) ? `${matched.name}-${areas.length + 1}` : matched.name
+    const uniqueName = seenRooms.has(matched.name)
+      ? `${matched.name}-${areas.length + 1}`
+      : matched.name
     seenRooms.add(uniqueName)
     const rw = 0.18
     const rh = 0.2
@@ -232,7 +262,8 @@ export async function parseDxfAndRenderFloorPlan(
 
   // 2. 提取开关、灯具与各类智能点位（INSERT 图块 + 标注文字 K1/K2/K3）
   const rawPoints: DetectedCadPoint[] = []
-  const dedup = (rx: number, ry: number) => rawPoints.some((p) => Math.hypot(p.x - rx, p.y - ry) < 0.014)
+  const dedup = (rx: number, ry: number) =>
+    rawPoints.some((p) => Math.hypot(p.x - rx, p.y - ry) < 0.014)
 
   for (const ins of inserts) {
     if (ins.x < minX || ins.x > maxX || ins.y < minY || ins.y > maxY) continue
@@ -247,7 +278,11 @@ export async function parseDxfAndRenderFloorPlan(
         ? 'light'
         : 'other'
     const matchedArea = areas.find(
-      (a) => rx >= a.rect[0] && rx <= a.rect[0] + a.rect[2] && ry >= a.rect[1] && ry <= a.rect[1] + a.rect[3],
+      (a) =>
+        rx >= a.rect[0] &&
+        rx <= a.rect[0] + a.rect[2] &&
+        ry >= a.rect[1] &&
+        ry <= a.rect[1] + a.rect[3],
     )
     rawPoints.push({
       type: dt,
@@ -308,7 +343,8 @@ export async function parseDxfAndRenderFloorPlan(
   const switchPoints = rawPoints.filter((p) => p.category === 'switch')
   const lightPoints = rawPoints.filter((p) => p.category === 'light')
   const summary = buildCadDetectionSummary(rawPoints, areas)
-  const preferSwitchesOnly = Boolean(opts.sheetName && /开关/.test(opts.sheetName)) && switchPoints.length > 0
+  const preferSwitchesOnly =
+    Boolean(opts.sheetName && /开关/.test(opts.sheetName)) && switchPoints.length > 0
 
   return {
     png,

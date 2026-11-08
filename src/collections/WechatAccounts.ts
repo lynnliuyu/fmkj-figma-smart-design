@@ -14,7 +14,8 @@ export const WechatAccounts: CollectionConfig = {
     useAsTitle: 'openid',
     defaultColumns: ['openid', 'user', 'nickname', 'lastLoginAt'],
     group: '账号',
-    description: '成员在微信小程序里绑定的微信账号。删除记录即解除绑定，成员下次需要重新用账号密码绑定。',
+    description:
+      '成员在微信小程序里绑定的微信账号。删除记录即解除绑定，成员下次需要重新用账号密码绑定。',
   },
   access: {
     read: cmsAdminOnly,
@@ -23,10 +24,30 @@ export const WechatAccounts: CollectionConfig = {
     delete: cmsAdminOnly,
   },
   fields: [
-    { name: 'openid', label: 'OpenID', type: 'text', required: true, unique: true, index: true, admin: { readOnly: true } },
+    {
+      name: 'openid',
+      label: 'OpenID',
+      type: 'text',
+      required: true,
+      unique: true,
+      index: true,
+      admin: { readOnly: true },
+    },
     { name: 'unionid', label: 'UnionID', type: 'text', index: true, admin: { readOnly: true } },
-    { name: 'user', label: '成员', type: 'relationship', relationTo: 'users', required: true, index: true },
+    {
+      name: 'user',
+      label: '成员',
+      type: 'relationship',
+      relationTo: 'users',
+      required: true,
+      index: true,
+    },
     { name: 'nickname', label: '微信昵称', type: 'text' },
-    { name: 'lastLoginAt', label: '最近登录', type: 'date', admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
+    {
+      name: 'lastLoginAt',
+      label: '最近登录',
+      type: 'date',
+      admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+    },
   ],
 }

@@ -26,9 +26,19 @@ export type ManagedScene = {
 export async function loadScenes(payload: Payload, user: User | null): Promise<ManagedScene[]> {
   await ensureBuiltinLibrarySeeded(payload)
   const access = user ? { user, overrideAccess: false } : { overrideAccess: true }
-  const res = await payload.find({ collection: 'scenes', where: { enabled: { equals: true } }, sort: 'sortOrder', limit: 200, depth: 1, ...access })
+  const res = await payload.find({
+    collection: 'scenes',
+    where: { enabled: { equals: true } },
+    sort: 'sortOrder',
+    limit: 200,
+    depth: 1,
+    ...access,
+  })
   return res.docs.map((d) => {
-    const img = d.image && typeof d.image === 'object' && d.image.url ? { url: d.image.url, alt: d.image.alt || d.name } : null
+    const img =
+      d.image && typeof d.image === 'object' && d.image.url
+        ? { url: d.image.url, alt: d.image.alt || d.name }
+        : null
     return {
       id: String(d.id),
       name: d.name,
@@ -51,12 +61,19 @@ export async function loadScenes(payload: Payload, user: User | null): Promise<M
  * 方案用的场景库：后台有启用的场景用后台的；一条都没有（或读取失败）时用内置场景库，
  * 保证「生活场景」章节和房间场景不会空白。
  */
-export async function loadSceneLibrary(payload: Payload, user: User | null): Promise<{ scenes: ManagedScene[]; source: 'library' | 'builtin' }> {
+export async function loadSceneLibrary(
+  payload: Payload,
+  user: User | null,
+): Promise<{ scenes: ManagedScene[]; source: 'library' | 'builtin' }> {
   const managed = await loadScenes(payload, user).catch(() => [])
-  return managed.length ? { scenes: managed, source: 'library' } : { scenes: BUILTIN_SCENES, source: 'builtin' }
+  return managed.length
+    ? { scenes: managed, source: 'library' }
+    : { scenes: BUILTIN_SCENES, source: 'builtin' }
 }
 
-const devicesOk = (s: ManagedScene, types: Set<string>) => s.requiredDevices.every((t) => types.has(t)) && (!s.anyDevices.length || s.anyDevices.some((t) => types.has(t)))
+const devicesOk = (s: ManagedScene, types: Set<string>) =>
+  s.requiredDevices.every((t) => types.has(t)) &&
+  (!s.anyDevices.length || s.anyDevices.some((t) => types.has(t)))
 
 type RoomLike = { areaType: string; points: { deviceType: string }[] }
 
@@ -74,7 +91,11 @@ export function assignScenes(scenes: ManagedScene[], rooms: RoomLike[]): string[
     if (s.scope === 'house') {
       if (!devicesOk(s, all)) continue
       const related = [...s.requiredDevices, ...s.anyDevices]
-      let i = rooms.findIndex((r) => (!s.roomTypes.length || s.roomTypes.includes(r.areaType)) && r.points.some((p) => related.includes(p.deviceType)))
+      let i = rooms.findIndex(
+        (r) =>
+          (!s.roomTypes.length || s.roomTypes.includes(r.areaType)) &&
+          r.points.some((p) => related.includes(p.deviceType)),
+      )
       if (i < 0) i = rooms.findIndex((r) => r.points.length)
       if (i >= 0) out[i].push(line)
       continue

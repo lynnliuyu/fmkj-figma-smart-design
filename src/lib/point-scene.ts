@@ -15,7 +15,13 @@
 import { areaTypeLabel, inferAreaType, isAreaType, type AreaType } from './area-types'
 import { BUILTIN_DEMO_SHEETS } from './builtin-demo-sheets'
 import { categoryOfType, deviceTypeOf, isDeviceType } from './device-types'
-import { BLANK_SHEET_FILE_ID, BLANK_SHEET_URL, isMarkerFileId, markerFileId, markerUrl } from './point-markers'
+import {
+  BLANK_SHEET_FILE_ID,
+  BLANK_SHEET_URL,
+  isMarkerFileId,
+  markerFileId,
+  markerUrl,
+} from './point-markers'
 import { MARKER, SHEET, sheetOrigin } from './sheet-spec'
 
 export type SceneEl = {
@@ -34,9 +40,25 @@ export type SceneEl = {
   [key: string]: unknown
 }
 export type SceneFile = { id: string; dataURL: string; mimeType: string; created?: number }
-export type StoredScene = { elements: SceneEl[]; appState?: Record<string, unknown>; files: Record<string, SceneFile> }
+export type StoredScene = {
+  elements: SceneEl[]
+  appState?: Record<string, unknown>
+  files: Record<string, SceneFile>
+}
 
-export type SheetInfo = { id: string; elementId: string; index: number; name: string; x: number; y: number; width: number; height: number; fileId: string | null; url: string | null; missing: boolean }
+export type SheetInfo = {
+  id: string
+  elementId: string
+  index: number
+  name: string
+  x: number
+  y: number
+  width: number
+  height: number
+  fileId: string | null
+  url: string | null
+  missing: boolean
+}
 export type AreaInfo = {
   id: string
   name: string
@@ -68,16 +90,28 @@ export type PointInfo = {
 }
 
 const live = (els: readonly SceneEl[]) => els.filter((e) => e && !e.isDeleted)
-const kindOf = (el: SceneEl) => (typeof el.customData?.kind === 'string' ? (el.customData.kind as string) : null)
+const kindOf = (el: SceneEl) =>
+  typeof el.customData?.kind === 'string' ? (el.customData.kind as string) : null
 const str = (v: unknown) => (typeof v === 'string' ? v : '')
 
-export const isPointElement = (el: SceneEl) => el.type === 'image' && (isDeviceType(el.customData?.deviceType) || (typeof el.customData?.productId === 'string' && !!el.customData.productId))
+export const isPointElement = (el: SceneEl) =>
+  el.type === 'image' &&
+  (isDeviceType(el.customData?.deviceType) ||
+    (typeof el.customData?.productId === 'string' && !!el.customData.productId))
 
-export const randomId = (prefix = '') => prefix + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6)
+export const randomId = (prefix = '') =>
+  prefix + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6)
 
 /** 图纸：带 kind=sheet 的图片；旧版本上传的户型图（锁定的大图、没有 customData）也算。 */
-export function sceneSheets(elements: readonly SceneEl[], files: Record<string, SceneFile> = {}): SheetInfo[] {
-  const sheets = live(elements).filter((e) => e.type === 'image' && (kindOf(e) === 'sheet' || (!isPointElement(e) && !kindOf(e) && e.width >= 400)))
+export function sceneSheets(
+  elements: readonly SceneEl[],
+  files: Record<string, SceneFile> = {},
+): SheetInfo[] {
+  const sheets = live(elements).filter(
+    (e) =>
+      e.type === 'image' &&
+      (kindOf(e) === 'sheet' || (!isPointElement(e) && !kindOf(e) && e.width >= 400)),
+  )
   return sheets
     .slice()
     .sort((a, b) => a.x - b.x || a.y - b.y)
@@ -100,8 +134,16 @@ export function sceneSheets(elements: readonly SceneEl[], files: Record<string, 
     })
 }
 
-const contains = (r: { x: number; y: number; width: number; height: number }, x: number, y: number) => x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + r.height
-const rectDistSq = (r: { x: number; y: number; width: number; height: number }, x: number, y: number) => {
+const contains = (
+  r: { x: number; y: number; width: number; height: number },
+  x: number,
+  y: number,
+) => x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + r.height
+const rectDistSq = (
+  r: { x: number; y: number; width: number; height: number },
+  x: number,
+  y: number,
+) => {
   const dx = x < r.x ? r.x - x : x > r.x + r.width ? x - (r.x + r.width) : 0
   const dy = y < r.y ? r.y - y : y > r.y + r.height ? y - (r.y + r.height) : 0
   return dx * dx + dy * dy
@@ -110,19 +152,32 @@ const rectDistSq = (r: { x: number; y: number; width: number; height: number }, 
 /* ---------------- 区域轮廓（多边形） ---------------- */
 
 /** 读取区域元素里的多边形顶点（customData.polygon，相对元素 x / y），换成场景坐标；没有或无效时返回 null */
-export function areaPolygon(el: { x: number; y: number; customData?: Record<string, unknown> }): [number, number][] | null {
+export function areaPolygon(el: {
+  x: number
+  y: number
+  customData?: Record<string, unknown>
+}): [number, number][] | null {
   const raw = el.customData?.polygon
   if (!Array.isArray(raw) || raw.length < 3) return null
   const pts: [number, number][] = []
   for (const q of raw) {
-    if (!Array.isArray(q) || typeof q[0] !== 'number' || typeof q[1] !== 'number' || !Number.isFinite(q[0]) || !Number.isFinite(q[1])) return null
+    if (
+      !Array.isArray(q) ||
+      typeof q[0] !== 'number' ||
+      typeof q[1] !== 'number' ||
+      !Number.isFinite(q[0]) ||
+      !Number.isFinite(q[1])
+    )
+      return null
     pts.push([el.x + q[0], el.y + q[1]])
   }
   return pts
 }
 
 /** 区域轮廓顶点：多边形取顶点，矩形取四个角 */
-export const areaOutline = (a: Pick<AreaInfo, 'x' | 'y' | 'width' | 'height' | 'poly'>): [number, number][] =>
+export const areaOutline = (
+  a: Pick<AreaInfo, 'x' | 'y' | 'width' | 'height' | 'poly'>,
+): [number, number][] =>
   a.poly ?? [
     [a.x, a.y],
     [a.x + a.width, a.y],
@@ -151,14 +206,16 @@ function segDistSq(x: number, y: number, [ax, ay]: [number, number], [bx, by]: [
 }
 
 /** 点是否在区域内（多边形区域按轮廓判断） */
-export const areaContains = (a: AreaInfo, x: number, y: number) => contains(a, x, y) && (!a.poly || inPolygon(a.poly, x, y))
+export const areaContains = (a: AreaInfo, x: number, y: number) =>
+  contains(a, x, y) && (!a.poly || inPolygon(a.poly, x, y))
 
 /** 点在区域外时到区域边界的距离平方（在区域内为 0） */
 function areaDistSq(a: AreaInfo, x: number, y: number) {
   if (!a.poly) return rectDistSq(a, x, y)
   if (inPolygon(a.poly, x, y)) return 0
   let d = Infinity
-  for (let i = 0; i < a.poly.length; i++) d = Math.min(d, segDistSq(x, y, a.poly[i], a.poly[(i + 1) % a.poly.length]))
+  for (let i = 0; i < a.poly.length; i++)
+    d = Math.min(d, segDistSq(x, y, a.poly[i], a.poly[(i + 1) % a.poly.length]))
   return d
 }
 
@@ -175,13 +232,28 @@ export function areaSize(a: Pick<AreaInfo, 'width' | 'height' | 'poly'>) {
 }
 
 /** 区域名的位置：轮廓最上方（同高取最左）的顶点，矩形就是左上角 */
-export function areaLabelAnchor(a: Pick<AreaInfo, 'x' | 'y' | 'width' | 'height' | 'poly'>): [number, number] {
-  return areaOutline(a).reduce((best, q) => (q[1] < best[1] - 0.5 || (Math.abs(q[1] - best[1]) <= 0.5 && q[0] < best[0]) ? q : best))
+export function areaLabelAnchor(
+  a: Pick<AreaInfo, 'x' | 'y' | 'width' | 'height' | 'poly'>,
+): [number, number] {
+  return areaOutline(a).reduce((best, q) =>
+    q[1] < best[1] - 0.5 || (Math.abs(q[1] - best[1]) <= 0.5 && q[0] < best[0]) ? q : best,
+  )
 }
 
 /** 打印图、方案图用的区域：相对所在图纸的比例坐标（0–1），多边形区域带轮廓 */
-export type PlanAreaShape = { id: string; name: string; x0: number; y0: number; x1: number; y1: number; poly?: [number, number][] }
-export function planAreaOf(a: AreaInfo, sheet: { x: number; y: number; width: number; height: number }): PlanAreaShape {
+export type PlanAreaShape = {
+  id: string
+  name: string
+  x0: number
+  y0: number
+  x1: number
+  y1: number
+  poly?: [number, number][]
+}
+export function planAreaOf(
+  a: AreaInfo,
+  sheet: { x: number; y: number; width: number; height: number },
+): PlanAreaShape {
   const fx = (x: number) => (x - sheet.x) / sheet.width
   const fy = (y: number) => (y - sheet.y) / sheet.height
   return {
@@ -217,7 +289,11 @@ export function sceneAreas(elements: readonly SceneEl[], sheets: SheetInfo[]): A
     })
 }
 
-export function scenePoints(elements: readonly SceneEl[], sheets: SheetInfo[], areas: AreaInfo[]): PointInfo[] {
+export function scenePoints(
+  elements: readonly SceneEl[],
+  sheets: SheetInfo[],
+  areas: AreaInfo[],
+): PointInfo[] {
   return live(elements)
     .filter(isPointElement)
     .map((e) => {
@@ -225,18 +301,27 @@ export function scenePoints(elements: readonly SceneEl[], sheets: SheetInfo[], a
       const cy = e.y + e.height / 2
       const sheet = sheets.find((s) => contains(s, cx, cy)) ?? null
       // 落在多个区域里时取面积最小的（例如套间里的卫生间）
-      let area = areas.filter((a) => areaContains(a, cx, cy)).sort((a, b) => areaSize(a) - areaSize(b))[0] ?? null
+      let area =
+        areas.filter((a) => areaContains(a, cx, cy)).sort((a, b) => areaSize(a) - areaSize(b))[0] ??
+        null
       // 贴墙放置的点位（如开关、插座、路由）中心点可能偏移区域边框几个像素，自动归入同图纸内距离 16px 以内的最近区域
       if (!area) {
         const candidates = areas
           .filter((a) => (!sheet || a.sheetId === sheet.id) && areaDistSq(a, cx, cy) <= 16 * 16)
-          .sort((a, b) => areaDistSq(a, cx, cy) - areaDistSq(b, cx, cy) || areaSize(a) - areaSize(b))
+          .sort(
+            (a, b) => areaDistSq(a, cx, cy) - areaDistSq(b, cx, cy) || areaSize(a) - areaSize(b),
+          )
         area = candidates[0] ?? null
       }
-      const productId = typeof e.customData?.productId === 'string' && e.customData.productId ? (e.customData.productId as string) : null
+      const productId =
+        typeof e.customData?.productId === 'string' && e.customData.productId
+          ? (e.customData.productId as string)
+          : null
       return {
         id: e.id,
-        deviceType: isDeviceType(e.customData?.deviceType) ? (e.customData!.deviceType as string) : 'other',
+        deviceType: isDeviceType(e.customData?.deviceType)
+          ? (e.customData!.deviceType as string)
+          : 'other',
         productId,
         code: str(e.customData?.pointCode),
         angle: typeof e.angle === 'number' && Number.isFinite(e.angle) ? e.angle : 0,
@@ -253,7 +338,11 @@ export function scenePoints(elements: readonly SceneEl[], sheets: SheetInfo[], a
 /** 一次算出图纸、区域、点位 */
 export function analyzeScene(scene: Partial<StoredScene> | null | undefined) {
   const elements = ((scene?.elements ?? []) as SceneEl[]).filter((e) => e && typeof e === 'object')
-  const files = Object.fromEntries(Object.entries((scene?.files ?? {}) as Record<string, SceneFile | null>).filter((e): e is [string, SceneFile] => !!e[1]))
+  const files = Object.fromEntries(
+    Object.entries((scene?.files ?? {}) as Record<string, SceneFile | null>).filter(
+      (e): e is [string, SceneFile] => !!e[1],
+    ),
+  )
   const sheets = sceneSheets(elements, files)
   const areas = sceneAreas(elements, sheets)
   const points = scenePoints(elements, sheets, areas)
@@ -271,10 +360,18 @@ export function nextPointCode(deviceType: string, usedCodes: Iterable<string>) {
   return `${prefix}${max + 1}`
 }
 
-const textWidth = (text: string, size: number) => [...text].reduce((w, ch) => w + (/[\u0000-\u00ff]/.test(ch) ? size * 0.62 : size), 0)
+const textWidth = (text: string, size: number) =>
+  [...text].reduce((w, ch) => w + (/[\u0000-\u00ff]/.test(ch) ? size * 0.62 : size), 0)
 
 /** 一个点位 = 标记图片 + 代号文字（同一组，一起拖动）。cx/cy 是标记中心。 */
-export function buildPointElements(opts: { deviceType: string; cx: number; cy: number; code: string; productId?: string | null; size?: number }): SceneEl[] {
+export function buildPointElements(opts: {
+  deviceType: string
+  cx: number
+  cy: number
+  code: string
+  productId?: string | null
+  size?: number
+}): SceneEl[] {
   const size = opts.size ?? MARKER.size
   const type = isDeviceType(opts.deviceType) ? opts.deviceType : 'other'
   const color = categoryOfType(type)?.color ?? '#525252'
@@ -291,7 +388,11 @@ export function buildPointElements(opts: { deviceType: string; cx: number; cy: n
       groupIds: [group],
       fileId: markerFileId(type),
       status: 'saved',
-      customData: { deviceType: type, pointCode: opts.code, ...(opts.productId ? { productId: opts.productId } : {}) },
+      customData: {
+        deviceType: type,
+        pointCode: opts.code,
+        ...(opts.productId ? { productId: opts.productId } : {}),
+      },
     },
     {
       id: randomId(),
@@ -313,7 +414,13 @@ export function buildPointElements(opts: { deviceType: string; cx: number; cy: n
 }
 
 /** 标准图纸：图片（锁定、半透明）+ 上方的图纸名。 */
-export function buildSheetElements(opts: { index: number; name: string; fileId: string; mediaId?: string | null; sheetId?: string }): SceneEl[] {
+export function buildSheetElements(opts: {
+  index: number
+  name: string
+  fileId: string
+  mediaId?: string | null
+  sheetId?: string
+}): SceneEl[] {
   const { x, y } = sheetOrigin(opts.index)
   const sheetId = opts.sheetId ?? randomId('sh-')
   return [
@@ -328,7 +435,12 @@ export function buildSheetElements(opts: { index: number; name: string; fileId: 
       opacity: SHEET.opacity,
       fileId: opts.fileId,
       status: 'saved',
-      customData: { kind: 'sheet', sheetId, name: opts.name, ...(opts.mediaId ? { mediaId: opts.mediaId } : {}) },
+      customData: {
+        kind: 'sheet',
+        sheetId,
+        name: opts.name,
+        ...(opts.mediaId ? { mediaId: opts.mediaId } : {}),
+      },
     },
     {
       id: randomId(),
@@ -401,7 +513,11 @@ export function buildAreaElements(opts: {
   ]
 }
 
-export const markerFile = (type: string): SceneFile => ({ id: markerFileId(type), dataURL: markerUrl(type), mimeType: 'image/svg+xml' })
+export const markerFile = (type: string): SceneFile => ({
+  id: markerFileId(type),
+  dataURL: markerUrl(type),
+  mimeType: 'image/svg+xml',
+})
 
 const DEMO_MEDIA_URL_MAP: Record<string, string> = {
   '/api/media/file/gy-1f-light-original.png': '/demo-plans/gy-1f-light.png',
@@ -415,7 +531,9 @@ function buildUpgradedDemoScene(): { elements: SceneEl[]; files: Record<string, 
   BUILTIN_DEMO_SHEETS.forEach((sheet, idx) => {
     const fileId = `sheet-file-${sheet.id}`
     files[fileId] = { id: fileId, dataURL: sheet.url, mimeType: 'image/png' }
-    elements.push(...buildSheetElements({ index: idx, name: sheet.name, fileId, sheetId: sheet.id }))
+    elements.push(
+      ...buildSheetElements({ index: idx, name: sheet.name, fileId, sheetId: sheet.id }),
+    )
     const origin = sheetOrigin(idx)
     for (const a of sheet.areas) {
       const ax = origin.x + Math.round(a.x0 * SHEET.width)
@@ -423,9 +541,17 @@ function buildUpgradedDemoScene(): { elements: SceneEl[]; files: Record<string, 
       const aw = Math.max(20, Math.round((a.x1 - a.x0) * SHEET.width))
       const ah = Math.max(20, Math.round((a.y1 - a.y0) * SHEET.height))
       const polygon = a.poly
-        ? a.poly.map(([px, py]) => [Math.round((px - a.x0) * SHEET.width), Math.round((py - a.y0) * SHEET.height)] as [number, number])
+        ? a.poly.map(
+            ([px, py]) =>
+              [Math.round((px - a.x0) * SHEET.width), Math.round((py - a.y0) * SHEET.height)] as [
+                number,
+                number,
+              ],
+          )
         : undefined
-      elements.push(...buildAreaElements({ name: a.name, x: ax, y: ay, width: aw, height: ah, polygon }))
+      elements.push(
+        ...buildAreaElements({ name: a.name, x: ax, y: ay, width: aw, height: ah, polygon }),
+      )
     }
     for (const p of sheet.points) {
       const mId = markerFileId(p.type)
@@ -451,18 +577,27 @@ function buildUpgradedDemoScene(): { elements: SceneEl[]; files: Record<string, 
  * - 自部署旧版内置示例场景（sh-demo-1f + blank-sheet.svg）自动升级为真实三层别墅户型图与 137 个点位；
  * - 返回无法自动修复的问题（例如户型图图片丢失）。
  */
-export function normalizeScene(scene: Partial<StoredScene> | null | undefined): StoredScene & { warnings: string[]; repaired: number } {
+export function normalizeScene(
+  scene: Partial<StoredScene> | null | undefined,
+): StoredScene & { warnings: string[]; repaired: number } {
   // 忽略被清除（null）或格式不对的文件
   let files: Record<string, SceneFile> = Object.fromEntries(
-    Object.entries((scene?.files ?? {}) as Record<string, SceneFile | null>).filter((e): e is [string, SceneFile] => !!e[1] && typeof e[1].dataURL === 'string'),
+    Object.entries((scene?.files ?? {}) as Record<string, SceneFile | null>).filter(
+      (e): e is [string, SceneFile] => !!e[1] && typeof e[1].dataURL === 'string',
+    ),
   )
-  let elements = ((scene?.elements ?? []) as SceneEl[]).filter((e) => e && typeof e === 'object' && !e.isDeleted)
+  let elements = ((scene?.elements ?? []) as SceneEl[]).filter(
+    (e) => e && typeof e === 'object' && !e.isDeleted,
+  )
   const warnings: string[] = []
   let sheetNo = 0
   let repaired = 0
 
   // 检测自部署旧版空白示例母版（sh-demo-1f），自动替换为真实三层户型图与 137 个点位
-  if (files['sheet-file-sh-demo-1f'] || elements.some((e) => e.customData?.sheetId === 'sh-demo-1f')) {
+  if (
+    files['sheet-file-sh-demo-1f'] ||
+    elements.some((e) => e.customData?.sheetId === 'sh-demo-1f')
+  ) {
     const upgraded = buildUpgradedDemoScene()
     files = upgraded.files
     elements = upgraded.elements
@@ -479,7 +614,9 @@ export function normalizeScene(scene: Partial<StoredScene> | null | undefined): 
 
   const out = elements.map((el) => {
     if (isPointElement(el)) {
-      const type = isDeviceType(el.customData?.deviceType) ? (el.customData!.deviceType as string) : 'other'
+      const type = isDeviceType(el.customData?.deviceType)
+        ? (el.customData!.deviceType as string)
+        : 'other'
       const fileId = markerFileId(type)
       if (!files[fileId]) files[fileId] = markerFile(type)
       if (el.fileId === fileId) return el
@@ -489,7 +626,11 @@ export function normalizeScene(scene: Partial<StoredScene> | null | undefined): 
     if (el.type === 'image' && !kindOf(el) && el.width >= 400) {
       sheetNo++
       repaired++
-      return { ...el, locked: true, customData: { ...el.customData, kind: 'sheet', sheetId: el.id, name: `图纸 ${sheetNo}` } }
+      return {
+        ...el,
+        locked: true,
+        customData: { ...el.customData, kind: 'sheet', sheetId: el.id, name: `图纸 ${sheetNo}` },
+      }
     }
     return el
   })
@@ -530,14 +671,20 @@ const round = (n: unknown) => (typeof n === 'number' ? Math.round(n * 10) / 10 :
  * 压缩场景用于保存：去掉已删除元素和默认值字段、坐标保留一位小数、只保留用到的文件。
  * 点位标记文件统一指向静态图标地址。结果仍是 Excalidraw 可直接读取的场景。
  */
-export function compactScene(elements: readonly SceneEl[], files: Record<string, SceneFile>, appState?: Record<string, unknown>): StoredScene {
+export function compactScene(
+  elements: readonly SceneEl[],
+  files: Record<string, SceneFile>,
+  appState?: Record<string, unknown>,
+): StoredScene {
   const out: SceneEl[] = []
   for (const el of live(elements)) {
     const c: Record<string, unknown> = {}
     for (const [k, v] of Object.entries(el)) {
       if (DROP.has(k) || v === undefined) continue
-      if (k in RESTORE_DEFAULTS && JSON.stringify(RESTORE_DEFAULTS[k]) === JSON.stringify(v)) continue
-      if ((k === 'groupIds' || k === 'boundElements') && (!Array.isArray(v) || v.length === 0)) continue
+      if (k in RESTORE_DEFAULTS && JSON.stringify(RESTORE_DEFAULTS[k]) === JSON.stringify(v))
+        continue
+      if ((k === 'groupIds' || k === 'boundElements') && (!Array.isArray(v) || v.length === 0))
+        continue
       if (k === 'boundElements' && v === null) continue
       if (k === 'scale' && Array.isArray(v) && v[0] === 1 && v[1] === 1) continue
       if (k === 'originalText' && v === el.text) continue
@@ -556,19 +703,32 @@ export function compactScene(elements: readonly SceneEl[], files: Record<string,
   for (const el of out) {
     const id = typeof el.fileId === 'string' ? el.fileId : null
     if (!id || kept[id]) continue
-    const type = isPointElement(el) && isDeviceType(el.customData?.deviceType) ? (el.customData!.deviceType as string) : null
+    const type =
+      isPointElement(el) && isDeviceType(el.customData?.deviceType)
+        ? (el.customData!.deviceType as string)
+        : null
     if (isMarkerFileId(id) && type) kept[id] = markerFile(type)
     // 画布里是内嵌数据，存回静态地址（否则保存时会被当成插入的图片上传到媒体库）
-    else if (id === BLANK_SHEET_FILE_ID && files[id]) kept[id] = { id, dataURL: BLANK_SHEET_URL, mimeType: 'image/svg+xml' }
+    else if (id === BLANK_SHEET_FILE_ID && files[id])
+      kept[id] = { id, dataURL: BLANK_SHEET_URL, mimeType: 'image/svg+xml' }
     else if (files[id]) kept[id] = { id, dataURL: files[id].dataURL, mimeType: files[id].mimeType }
   }
-  return { elements: out, appState: { viewBackgroundColor: appState?.viewBackgroundColor ?? '#ffffff' }, files: kept }
+  return {
+    elements: out,
+    appState: { viewBackgroundColor: appState?.viewBackgroundColor ?? '#ffffff' },
+    files: kept,
+  }
 }
 
 /** 还内嵌着图片数据（data:）的文件：保存前需要先上传到媒体库，换成地址。 */
-export const inlineFileIds = (scene: StoredScene) => Object.values(scene.files).filter((f) => f.dataURL.startsWith('data:')).map((f) => f.id)
+export const inlineFileIds = (scene: StoredScene) =>
+  Object.values(scene.files)
+    .filter((f) => f.dataURL.startsWith('data:'))
+    .map((f) => f.id)
 
 /** 点位代号用的显示名，例如「L12 筒灯」 */
-export const pointTitle = (p: Pick<PointInfo, 'code' | 'deviceType'>) => `${p.code} ${deviceTypeOf(p.deviceType)?.name ?? '设备'}`.trim()
+export const pointTitle = (p: Pick<PointInfo, 'code' | 'deviceType'>) =>
+  `${p.code} ${deviceTypeOf(p.deviceType)?.name ?? '设备'}`.trim()
 
-export const areaTitle = (a: Pick<AreaInfo, 'name' | 'areaType'>) => (a.name === areaTypeLabel(a.areaType) ? a.name : `${a.name}（${areaTypeLabel(a.areaType)}）`)
+export const areaTitle = (a: Pick<AreaInfo, 'name' | 'areaType'>) =>
+  a.name === areaTypeLabel(a.areaType) ? a.name : `${a.name}（${areaTypeLabel(a.areaType)}）`

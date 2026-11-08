@@ -8,16 +8,35 @@ type LegendPoint = { deviceType: string }
 export function legendGroups(points: LegendPoint[]) {
   const counts = new Map<string, number>()
   for (const p of points) counts.set(p.deviceType, (counts.get(p.deviceType) ?? 0) + 1)
-  const groups = new Map<string, { slug: string; name: string; code: string; color: string; order: number; rows: { type: string; name: string; count: number }[] }>()
+  const groups = new Map<
+    string,
+    {
+      slug: string
+      name: string
+      code: string
+      color: string
+      order: number
+      rows: { type: string; name: string; count: number }[]
+    }
+  >()
   for (const [type, count] of counts) {
     const c = categoryOfType(type)
     const slug = c?.slug ?? 'other'
     const cat = DEVICE_CATEGORIES.find((x) => x.slug === slug)
-    const g = groups.get(slug) ?? { slug, name: cat?.name ?? '其他', code: cat?.code ?? '', color: cat?.color ?? '#525252', order: cat?.sortOrder ?? 999, rows: [] }
+    const g = groups.get(slug) ?? {
+      slug,
+      name: cat?.name ?? '其他',
+      code: cat?.code ?? '',
+      color: cat?.color ?? '#525252',
+      order: cat?.sortOrder ?? 999,
+      rows: [],
+    }
     g.rows.push({ type, name: deviceTypeOf(type)?.name ?? '设备', count })
     groups.set(slug, g)
   }
-  return [...groups.values()].sort((a, b) => a.order - b.order).map((g) => ({ ...g, rows: g.rows.sort((a, b) => b.count - a.count) }))
+  return [...groups.values()]
+    .sort((a, b) => a.order - b.order)
+    .map((g) => ({ ...g, rows: g.rows.sort((a, b) => b.count - a.count) }))
 }
 
 /**
@@ -26,12 +45,27 @@ export function legendGroups(points: LegendPoint[]) {
  * inline：一行流式排列，用于横版提案页。
  * 图标为内嵌 SVG DataURL，导出 PDF / PNG 不漏图。
  */
-export function PlanLegend({ points, variant = 'table', columns = 3, className }: { points: LegendPoint[]; variant?: 'table' | 'inline'; columns?: 2 | 3 | 4; className?: string }) {
+export function PlanLegend({
+  points,
+  variant = 'table',
+  columns = 3,
+  className,
+}: {
+  points: LegendPoint[]
+  variant?: 'table' | 'inline'
+  columns?: 2 | 3 | 4
+  className?: string
+}) {
   const groups = legendGroups(points)
   if (!groups.length) return null
   if (variant === 'inline') {
     return (
-      <div className={cn('flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[11px] leading-none', className)}>
+      <div
+        className={cn(
+          'flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[11px] leading-none',
+          className,
+        )}
+      >
         <span className="doc-strong tracking-[0.12em]">图例</span>
         {groups.flatMap((g) =>
           g.rows.map((r) => (
@@ -51,22 +85,36 @@ export function PlanLegend({ points, variant = 'table', columns = 3, className }
     <div className={cn('text-[10.5px]', className)}>
       <div className="mb-1.5 flex items-baseline justify-between">
         <span className="doc-strong text-[11px] tracking-[0.2em]">图例 · LEGEND</span>
-        <span className="text-doc-muted">{groups.reduce((s, g) => s + g.rows.length, 0)} 种设备 · {points.length} 个点位</span>
+        <span className="text-doc-muted">
+          {groups.reduce((s, g) => s + g.rows.length, 0)} 种设备 · {points.length} 个点位
+        </span>
       </div>
       <div className={cn(cols, 'gap-2.5')}>
         {groups.map((g) => (
-          <div key={g.slug} className="mb-2.5 break-inside-avoid overflow-hidden rounded-doc border border-doc-rule bg-white text-[#2a2a2a]">
-            <div className="flex items-center gap-1.5 border-b border-doc-rule px-2 py-1" style={{ background: `${g.color}14` }}>
+          <div
+            key={g.slug}
+            className="mb-2.5 break-inside-avoid overflow-hidden rounded-doc border border-doc-rule bg-white text-[#2a2a2a]"
+          >
+            <div
+              className="flex items-center gap-1.5 border-b border-doc-rule px-2 py-1"
+              style={{ background: `${g.color}14` }}
+            >
               <span className="size-2 rounded-full" style={{ background: g.color }} />
               <span className="font-semibold">{g.name}</span>
               {g.code ? (
-                <span className="ml-auto font-mono text-[9.5px] font-semibold" style={{ color: g.color }}>
+                <span
+                  className="ml-auto font-mono text-[9.5px] font-semibold"
+                  style={{ color: g.color }}
+                >
                   {g.code}
                 </span>
               ) : null}
             </div>
             {g.rows.map((r, i) => (
-              <div key={r.type} className={cn('flex items-center', i > 0 && 'border-t border-doc-rule/70')}>
+              <div
+                key={r.type}
+                className={cn('flex items-center', i > 0 && 'border-t border-doc-rule/70')}
+              >
                 <div className="flex w-8 shrink-0 items-center justify-center self-stretch border-r border-doc-rule/70 py-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={markerSrc(r.type)} alt="" className="size-[18px]" />

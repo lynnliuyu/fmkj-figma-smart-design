@@ -5,7 +5,15 @@ import { categoryOfType, DEVICE_TYPE_OPTIONS, isDeviceType } from '@/lib/device-
 
 import { cmsAdminOnly, cmsAdminOrMember } from '@/lib/access'
 
-export const PRODUCT_PLATFORMS = ['Apple Home', '米家', '华为', '涂鸦', 'Matter', 'KNX', '通用'] as const
+export const PRODUCT_PLATFORMS = [
+  'Apple Home',
+  '米家',
+  '华为',
+  '涂鸦',
+  'Matter',
+  'KNX',
+  '通用',
+] as const
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -64,7 +72,13 @@ export const Products: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'brand', label: '品牌', type: 'relationship', relationTo: 'brands', required: true },
+        {
+          name: 'brand',
+          label: '品牌',
+          type: 'relationship',
+          relationTo: 'brands',
+          required: true,
+        },
         {
           name: 'category',
           label: '分类（自动）',

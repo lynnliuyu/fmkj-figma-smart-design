@@ -5,8 +5,10 @@ export const CONTRACT_STATUSES = [
   { value: 'signed', label: '已签订' },
 ] as const
 export type ContractStatus = (typeof CONTRACT_STATUSES)[number]['value']
-export const isContractStatus = (v: unknown): v is ContractStatus => CONTRACT_STATUSES.some((s) => s.value === v)
-export const contractStatusLabel = (v?: string | null) => CONTRACT_STATUSES.find((s) => s.value === v)?.label ?? '待签订'
+export const isContractStatus = (v: unknown): v is ContractStatus =>
+  CONTRACT_STATUSES.some((s) => s.value === v)
+export const contractStatusLabel = (v?: string | null) =>
+  CONTRACT_STATUSES.find((s) => s.value === v)?.label ?? '待签订'
 
 export type PaymentTerm = { name: string; percent: number; received?: boolean | null }
 
@@ -31,7 +33,8 @@ export const DEFAULT_CONTRACT_TERMS = [
 
 const round2 = (n: number) => Math.round(n * 100) / 100
 
-export const paymentPercentTotal = (payments: { percent?: number | null }[]) => round2(payments.reduce((s, p) => s + (p.percent ?? 0), 0))
+export const paymentPercentTotal = (payments: { percent?: number | null }[]) =>
+  round2(payments.reduce((s, p) => s + (p.percent ?? 0), 0))
 
 /** 各期金额：按比例计算，最后一期补齐分位误差，保证合计等于合同金额。 */
 export function paymentAmounts(amount: number, payments: { percent?: number | null }[]) {
@@ -47,7 +50,10 @@ export function paymentAmounts(amount: number, payments: { percent?: number | nu
 export function rmbUpper(amount: number): string {
   if (!Number.isFinite(amount) || amount < 0) return ''
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
-  const unit = [['元', '万', '亿', '万亿'], ['', '拾', '佰', '仟']]
+  const unit = [
+    ['元', '万', '亿', '万亿'],
+    ['', '拾', '佰', '仟'],
+  ]
   const cents = Math.round(amount * 100)
   const jiao = Math.floor(cents / 10) % 10
   const fen = cents % 10
@@ -63,16 +69,25 @@ export function rmbUpper(amount: number): string {
   }
   if (n > 0) return '' // 超出可表示范围，宁可不显示也不静默丢弃高位
   int = int.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零')
-  const frac = (jiao ? `${digit[jiao]}角` : '') + (fen ? `${int && !jiao ? '零' : ''}${digit[fen]}分` : '')
+  const frac =
+    (jiao ? `${digit[jiao]}角` : '') + (fen ? `${int && !jiao ? '零' : ''}${digit[fen]}分` : '')
   if (!int && !frac) return '零元整'
   return int + (frac || '整')
 }
 
 /** 北京时间的日期（YYYY-MM-DD）。 */
-export const shanghaiDate = (d = new Date()) => d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' })
+export const shanghaiDate = (d = new Date()) =>
+  d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' })
 
 /** 合同编号前缀：HT + 日期，例如 HT20261030；同一天按顺序编号 HT20261030-01、-02 … */
 export const contractNumberPrefix = (d = new Date()) => `HT${shanghaiDate(d).replaceAll('-', '')}`
 
 export const fmtLongDate = (iso?: string | null) =>
-  iso ? new Date(iso).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' }) : ''
+  iso
+    ? new Date(iso).toLocaleDateString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : ''

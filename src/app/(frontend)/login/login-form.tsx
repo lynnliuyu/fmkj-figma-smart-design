@@ -111,32 +111,35 @@ export function LoginForm({
     'loading',
   )
 
-  const createQr = useCallback(async (modeOverride?: 'wxacode' | 'qrcode') => {
-    const activeMode = modeOverride ?? qrPreferMode
-    setQrStatus('loading')
-    setError('')
-    try {
-      const res = await fetch('/auth/wechat/qr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ redirectTo, preferMode: activeMode }),
-      })
-      const data = (await res.json().catch(() => null)) as {
-        ok?: boolean
-        ticket?: string
-        qrImage?: string
-      } | null
-      if (!res.ok || !data?.ok || !data.ticket || !data.qrImage) {
+  const createQr = useCallback(
+    async (modeOverride?: 'wxacode' | 'qrcode') => {
+      const activeMode = modeOverride ?? qrPreferMode
+      setQrStatus('loading')
+      setError('')
+      try {
+        const res = await fetch('/auth/wechat/qr', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ redirectTo, preferMode: activeMode }),
+        })
+        const data = (await res.json().catch(() => null)) as {
+          ok?: boolean
+          ticket?: string
+          qrImage?: string
+        } | null
+        if (!res.ok || !data?.ok || !data.ticket || !data.qrImage) {
+          setQrStatus('expired')
+          return
+        }
+        setQrTicket(data.ticket)
+        setQrImage(data.qrImage)
+        setQrStatus('pending')
+      } catch {
         setQrStatus('expired')
-        return
       }
-      setQrTicket(data.ticket)
-      setQrImage(data.qrImage)
-      setQrStatus('pending')
-    } catch {
-      setQrStatus('expired')
-    }
-  }, [redirectTo, qrPreferMode])
+    },
+    [redirectTo, qrPreferMode],
+  )
 
   useEffect(() => {
     if (qrAvailable && loginTab === 'wechat') void createQr()
@@ -181,8 +184,14 @@ export function LoginForm({
     setLoading(true)
     setError('')
     try {
-      if (typeof document !== 'undefined' && window.self !== window.top && 'requestStorageAccess' in document) {
-        await (document as Document & { requestStorageAccess?: () => Promise<void> }).requestStorageAccess?.().catch(() => {})
+      if (
+        typeof document !== 'undefined' &&
+        window.self !== window.top &&
+        'requestStorageAccess' in document
+      ) {
+        await (document as Document & { requestStorageAccess?: () => Promise<void> })
+          .requestStorageAccess?.()
+          .catch(() => {})
       }
       const response = await fetch('/auth/login', {
         method: 'POST',
@@ -230,8 +239,14 @@ export function LoginForm({
     setLoading(true)
     setError('')
     try {
-      if (typeof document !== 'undefined' && window.self !== window.top && 'requestStorageAccess' in document) {
-        await (document as Document & { requestStorageAccess?: () => Promise<void> }).requestStorageAccess?.().catch(() => {})
+      if (
+        typeof document !== 'undefined' &&
+        window.self !== window.top &&
+        'requestStorageAccess' in document
+      ) {
+        await (document as Document & { requestStorageAccess?: () => Promise<void> })
+          .requestStorageAccess?.()
+          .catch(() => {})
       }
       const response = await fetch('/auth/register', {
         method: 'POST',
@@ -543,7 +558,11 @@ export function LoginForm({
   return (
     <div className="space-y-7">
       <h1 className="text-center text-3xl font-medium tracking-tight">
-        {authMode === 'register' ? '注册繁梦空间' : authMode === 'reset' ? '重置登录密码' : '登录繁梦空间'}
+        {authMode === 'register'
+          ? '注册繁梦空间'
+          : authMode === 'reset'
+            ? '重置登录密码'
+            : '登录繁梦空间'}
       </h1>
 
       {authMode === 'register' ? (

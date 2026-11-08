@@ -9,7 +9,15 @@ import { Button } from '@/components/ui/button'
 
 import { setProjectArchived } from './actions'
 
-export function ArchiveButton({ projectId, archived, primary }: { projectId: string; archived: boolean; primary: boolean }) {
+export function ArchiveButton({
+  projectId,
+  archived,
+  primary,
+}: {
+  projectId: string
+  archived: boolean
+  primary: boolean
+}) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   return (
@@ -25,7 +33,13 @@ export function ArchiveButton({ projectId, archived, primary }: { projectId: str
         })
       }
     >
-      {pending ? <Loader2 className="size-4 animate-spin" /> : archived ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />}
+      {pending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : archived ? (
+        <ArchiveRestore className="size-4" />
+      ) : (
+        <Archive className="size-4" />
+      )}
       {archived ? '恢复项目' : '归档项目'}
     </Button>
   )

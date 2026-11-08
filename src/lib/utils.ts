@@ -7,8 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getPageNumbers(currentPage: number, totalPages: number) {
   const delta = 1
-  const range: Array<number | "..."> = []
-  const rangeWithDots: Array<number | "..."> = []
+  const range: Array<number | '...'> = []
+  const rangeWithDots: Array<number | '...'> = []
   let previous: number | undefined
 
   for (let page = 1; page <= totalPages; page += 1) {
@@ -22,16 +22,16 @@ export function getPageNumbers(currentPage: number, totalPages: number) {
   }
 
   for (const page of range) {
-    if (previous !== undefined && typeof page === "number") {
+    if (previous !== undefined && typeof page === 'number') {
       if (page - previous === 2) {
         rangeWithDots.push(previous + 1)
       } else if (page - previous !== 1) {
-        rangeWithDots.push("...")
+        rangeWithDots.push('...')
       }
     }
 
     rangeWithDots.push(page)
-    previous = typeof page === "number" ? page : previous
+    previous = typeof page === 'number' ? page : previous
   }
 
   return rangeWithDots

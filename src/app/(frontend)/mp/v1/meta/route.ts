@@ -10,7 +10,11 @@ import { PROJECT_PLATFORMS } from '@/lib/projects'
 import { QUOTE_STATUSES } from '@/lib/quotes'
 import { PLUGINS } from '@/plugins'
 import { aiConfigured } from '@/plugins/ai-copilot/server'
-import { DEFAULT_AI_TEMPLATES, enabledAiModels, fillPromptTemplate } from '@/plugins/ai-copilot/templates'
+import {
+  DEFAULT_AI_TEMPLATES,
+  enabledAiModels,
+  fillPromptTemplate,
+} from '@/plugins/ai-copilot/templates'
 import { SELECTION_TIERS } from '@/plugins/smart-select/auto-select'
 import { getPluginFlags } from '@/plugins/state'
 
@@ -19,12 +23,21 @@ export const GET = mpRoute(async ({ user }) => {
   const [company, flags] = await Promise.all([getCompanyInfo(user.id), getPluginFlags(user.id)])
   const activeAiModels = enabledAiModels(company.aiModels)
   return ok({
-    categories: DEVICE_CATEGORIES.map((c) => ({ slug: c.slug, name: c.name, code: c.code, color: c.color })),
+    categories: DEVICE_CATEGORIES.map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      code: c.code,
+      color: c.color,
+    })),
     deviceTypes: DEVICE_TYPE_ORDER.map((t) => presentType(t)),
     platforms: PROJECT_PLATFORMS,
     quoteStatuses: QUOTE_STATUSES.map((s) => ({ value: s.value, label: s.label })),
     contractStatuses: CONTRACT_STATUSES.map((s) => ({ value: s.value, label: s.label })),
-    pointScopes: POINT_SCOPES.map((s) => ({ value: s.value, label: s.label, fullLabel: s.fullLabel })),
+    pointScopes: POINT_SCOPES.map((s) => ({
+      value: s.value,
+      label: s.label,
+      fullLabel: s.fullLabel,
+    })),
     areaTypes: AREA_TYPES.map((a) => ({ value: a.value, label: a.label })),
     selectionTiers: SELECTION_TIERS.map((t) => ({ value: t.value, label: t.label })),
     aiModels: activeAiModels.map((m) => {

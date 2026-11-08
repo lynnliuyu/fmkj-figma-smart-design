@@ -8,6 +8,10 @@ import { fail, mpRoute, ok, readJson, text } from '@/lib/mp/http'
 export const POST = mpRoute(async ({ request, user }) => {
   const path = text((await readJson(request)).path, 300)
   if (!/^\/print\/[\w\-/]+(\?[\w\-=&%.]*)?$/.test(path)) return fail(400, '只能打开打印页面')
-  const { token } = await issueToken('web-ticket', { userId: String(user.id), redirect: path, client: 'web-view' })
+  const { token } = await issueToken('web-ticket', {
+    userId: String(user.id),
+    redirect: path,
+    client: 'web-view',
+  })
   return ok({ url: `/mp/web-login?ticket=${encodeURIComponent(token)}` })
 })

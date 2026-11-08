@@ -21,7 +21,12 @@ export type CostSettings = {
   minMarginPercent: number
 }
 
-export const DEFAULT_COST_SETTINGS: CostSettings = { brandRates: [], defaultRate: null, feeCostPercent: 0, minMarginPercent: 25 }
+export const DEFAULT_COST_SETTINGS: CostSettings = {
+  brandRates: [],
+  defaultRate: null,
+  feeCostPercent: 0,
+  minMarginPercent: 25,
+}
 export const RATE_MIN = 0.05
 export const RATE_MAX = 1
 
@@ -44,7 +49,10 @@ export function parseCostSettings(raw: unknown): CostSettings {
       if (brand && rate !== null) byBrand.set(brand, round2(rate * 1000) / 1000)
     }
   }
-  const defaultRate = r.defaultRate === null || r.defaultRate === undefined || r.defaultRate === '' ? null : clampNum(r.defaultRate, RATE_MIN, RATE_MAX)
+  const defaultRate =
+    r.defaultRate === null || r.defaultRate === undefined || r.defaultRate === ''
+      ? null
+      : clampNum(r.defaultRate, RATE_MIN, RATE_MAX)
   return {
     brandRates: [...byBrand].map(([brand, rate]) => ({ brand, rate })),
     defaultRate: defaultRate === null ? null : round2(defaultRate * 1000) / 1000,
@@ -58,15 +66,32 @@ export const rateLabel = (rate: number) => `${round2(rate * 10).toString()} 折`
 
 export type CostSource = 'brand' | 'catalog' | 'default'
 export type UnitCost = { cost: number; source: CostSource; rate?: number }
-export type CostProduct = { id: string; price: number; cost?: number | null; brandSlug?: string | null }
+export type CostProduct = {
+  id: string
+  price: number
+  cost?: number | null
+  brandSlug?: string | null
+}
 
 /** 一个产品的单位成本（找不到依据时返回 null） */
-export function unitCostOf(product: CostProduct | undefined, settings: CostSettings): UnitCost | null {
+export function unitCostOf(
+  product: CostProduct | undefined,
+  settings: CostSettings,
+): UnitCost | null {
   if (!product) return null
-  const brandRate = product.brandSlug ? settings.brandRates.find((b) => b.brand === product.brandSlug)?.rate : undefined
-  if (brandRate !== undefined && product.price > 0) return { cost: round2(product.price * brandRate), source: 'brand', rate: brandRate }
-  if (typeof product.cost === 'number' && Number.isFinite(product.cost) && product.cost >= 0) return { cost: product.cost, source: 'catalog' }
-  if (settings.defaultRate !== null && product.price > 0) return { cost: round2(product.price * settings.defaultRate), source: 'default', rate: settings.defaultRate }
+  const brandRate = product.brandSlug
+    ? settings.brandRates.find((b) => b.brand === product.brandSlug)?.rate
+    : undefined
+  if (brandRate !== undefined && product.price > 0)
+    return { cost: round2(product.price * brandRate), source: 'brand', rate: brandRate }
+  if (typeof product.cost === 'number' && Number.isFinite(product.cost) && product.cost >= 0)
+    return { cost: product.cost, source: 'catalog' }
+  if (settings.defaultRate !== null && product.price > 0)
+    return {
+      cost: round2(product.price * settings.defaultRate),
+      source: 'default',
+      rate: settings.defaultRate,
+    }
   return null
 }
 
@@ -90,7 +115,13 @@ export type MarginSummary = {
 }
 
 /** 整单毛利：营收取报价总额（含附加费用、扣除优惠），成本 = 产品成本 + 附加费用 × 成本占比 */
-export function marginSummary(lines: MarginLine[], products: Map<string, CostProduct>, feeTotal: number, revenue: number, settings: CostSettings): MarginSummary {
+export function marginSummary(
+  lines: MarginLine[],
+  products: Map<string, CostProduct>,
+  feeTotal: number,
+  revenue: number,
+  settings: CostSettings,
+): MarginSummary {
   let productCost = 0
   let missing = 0
   const sources: Record<CostSource, number> = { brand: 0, catalog: 0, default: 0 }
@@ -110,5 +141,17 @@ export function marginSummary(lines: MarginLine[], products: Map<string, CostPro
   const min = settings.minMarginPercent / 100
   const floorPrice = round2(min < 1 ? cost / (1 - min) : cost)
   const headroom = round2(revenue - floorPrice)
-  return { productCost: round2(productCost), feeCost: round2(feeCost), cost, revenue, profit, rate, missing, floorPrice, headroom, belowFloor: revenue > 0 && headroom < -0.005, sources }
+  return {
+    productCost: round2(productCost),
+    feeCost: round2(feeCost),
+    cost,
+    revenue,
+    profit,
+    rate,
+    missing,
+    floorPrice,
+    headroom,
+    belowFloor: revenue > 0 && headroom < -0.005,
+    sources,
+  }
 }

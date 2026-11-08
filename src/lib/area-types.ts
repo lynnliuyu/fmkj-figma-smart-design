@@ -26,11 +26,29 @@ export type AreaType = (typeof AREA_TYPES)[number]['value']
 const byValue = new Map<string, (typeof AREA_TYPES)[number]>(AREA_TYPES.map((t) => [t.value, t]))
 
 export const isAreaType = (v: unknown): v is AreaType => typeof v === 'string' && byValue.has(v)
-export const areaTypeLabel = (v: string | null | undefined) => (v && byValue.get(v)?.label) || '其他'
+export const areaTypeLabel = (v: string | null | undefined) =>
+  (v && byValue.get(v)?.label) || '其他'
 
 /** 按区域名称推断类型，例如「主卧卫生间」→ 卫生间（越具体的词越靠前判断）。 */
 export function inferAreaType(name: string): AreaType {
-  const order: AreaType[] = ['bathroom', 'closet', 'kids', 'study', 'theater', 'leisure', 'kitchen', 'dining', 'living', 'bedroom', 'entrance', 'balcony', 'stairs', 'corridor', 'garage', 'utility']
+  const order: AreaType[] = [
+    'bathroom',
+    'closet',
+    'kids',
+    'study',
+    'theater',
+    'leisure',
+    'kitchen',
+    'dining',
+    'living',
+    'bedroom',
+    'entrance',
+    'balcony',
+    'stairs',
+    'corridor',
+    'garage',
+    'utility',
+  ]
   for (const v of order) if (byValue.get(v)!.keywords.test(name)) return v
   return 'other'
 }

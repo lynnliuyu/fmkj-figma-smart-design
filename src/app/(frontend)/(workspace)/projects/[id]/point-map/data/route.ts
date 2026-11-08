@@ -28,33 +28,63 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
   if (!scene || !Array.isArray(scene.elements)) return fail(400, '点位图数据格式无效')
   const elements = (scene.elements as unknown[]).filter(
-    (e): e is SceneEl => !!e && typeof e === 'object' && typeof (e as SceneEl).id === 'string' && typeof (e as SceneEl).type === 'string',
+    (e): e is SceneEl =>
+      !!e &&
+      typeof e === 'object' &&
+      typeof (e as SceneEl).id === 'string' &&
+      typeof (e as SceneEl).type === 'string',
   )
   const files: Record<string, SceneFile> = {}
   if (scene.files && typeof scene.files === 'object' && !Array.isArray(scene.files)) {
     for (const [key, f] of Object.entries(scene.files as Record<string, unknown>)) {
       const file = f as Partial<SceneFile> | null
       if (!file || typeof file.dataURL !== 'string' || typeof file.mimeType !== 'string') continue
-      if (file.dataURL.startsWith('data:') && file.dataURL.length > MAX_INLINE) return fail(400, '有图片还没有上传到媒体库，请重新保存')
+      if (file.dataURL.startsWith('data:') && file.dataURL.length > MAX_INLINE)
+        return fail(400, '有图片还没有上传到媒体库，请重新保存')
       files[key] = { id: key, dataURL: file.dataURL, mimeType: file.mimeType }
     }
   }
   // 服务端再压缩一次，保证存进数据库的格式统一
-  const pointMap = compactScene(elements, files, scene.appState && typeof scene.appState === 'object' ? scene.appState : {})
+  const pointMap = compactScene(
+    elements,
+    files,
+    scene.appState && typeof scene.appState === 'object' ? scene.appState : {},
+  )
   const bytes = Buffer.byteLength(JSON.stringify(pointMap))
   if (bytes > MAX_BYTES) {
-    return fail(413, `点位图数据 ${Math.round(bytes / 1024)}KB，超过 ${Math.round(MAX_BYTES / 1024)}KB 上限。请删除不用的元素，或把不同楼层拆到新项目里`)
+    return fail(
+      413,
+      `点位图数据 ${Math.round(bytes / 1024)}KB，超过 ${Math.round(MAX_BYTES / 1024)}KB 上限。请删除不用的元素，或把不同楼层拆到新项目里`,
+    )
   }
 
   const { id } = await params
   const payload = await getPayloadClient()
   // 托管数据库更新 JSON 时会合并对象：不再使用的图片键显式写成 null，避免旧文件一直留在场景里
-  const stored = await payload.findByID({ collection: 'projects', id, depth: 0, user, overrideAccess: false, select: { pointMap: true } }).catch(() => null)
+  const stored = await payload
+    .findByID({
+      collection: 'projects',
+      id,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { pointMap: true },
+    })
+    .catch(() => null)
   const oldFiles = (stored?.pointMap as { files?: Record<string, unknown> } | null)?.files
   const filesToSave: Record<string, SceneFile | null> = { ...pointMap.files }
-  if (oldFiles && typeof oldFiles === 'object') for (const key of Object.keys(oldFiles)) if (!(key in filesToSave)) filesToSave[key] = null
+  if (oldFiles && typeof oldFiles === 'object')
+    for (const key of Object.keys(oldFiles)) if (!(key in filesToSave)) filesToSave[key] = null
   try {
-    const doc = await payload.update({ collection: 'projects', id, data: { pointMap: { ...pointMap, files: filesToSave } as never }, user, overrideAccess: false, depth: 0, select: { updatedAt: true } })
+    const doc = await payload.update({
+      collection: 'projects',
+      id,
+      data: { pointMap: { ...pointMap, files: filesToSave } as never },
+      user,
+      overrideAccess: false,
+      depth: 0,
+      select: { updatedAt: true },
+    })
     return Response.json({ ok: true, savedAt: doc.updatedAt, bytes })
   } catch (error) {
     const status = (error as { status?: number })?.status

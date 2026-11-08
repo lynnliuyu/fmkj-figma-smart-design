@@ -5,8 +5,20 @@ import type { AppPlugin, PluginId } from './types'
 
 export type { AppPlugin, PluginCategory, PluginId, PluginStage } from './types'
 export { PLUGIN_CATEGORIES, PLUGIN_STAGES } from './types'
-export { PLUGIN_AI_SPECS, allAiSkillSpecs, allAiToolSpecs, validatePluginAiPermissions } from './ai-catalog'
-export { AI_PERMISSIONS, type AiKnowledgeEntry, type AiPermission, type AiSkillSpec, type AiToolSpec, type PluginAiSpec } from './ai-types'
+export {
+  PLUGIN_AI_SPECS,
+  allAiSkillSpecs,
+  allAiToolSpecs,
+  validatePluginAiPermissions,
+} from './ai-catalog'
+export {
+  AI_PERMISSIONS,
+  type AiKnowledgeEntry,
+  type AiPermission,
+  type AiSkillSpec,
+  type AiToolSpec,
+  type PluginAiSpec,
+} from './ai-types'
 
 /**
  * 已安装的插件。新增插件：在 src/plugins/<id>/ 写好功能，再在这里登记清单。
@@ -97,7 +109,10 @@ const RAW_PLUGINS: AppPlugin[] = [
     status: 'ready',
     where: '项目 → 点位「导入 DWG」',
     provides: ['导入 DWG'],
-    payload: dwgConverterPlugin({ endpoint: process.env.DWG_CONVERTER_URL, token: process.env.DWG_CONVERTER_TOKEN }),
+    payload: dwgConverterPlugin({
+      endpoint: process.env.DWG_CONVERTER_URL,
+      token: process.env.DWG_CONVERTER_TOKEN,
+    }),
   },
   {
     id: 'after-sales',
@@ -106,7 +121,8 @@ const RAW_PLUGINS: AppPlugin[] = [
     entry: { label: '售后维保', href: (id) => `/projects/${id}/after-sales` },
     tagline: '质保、检修与配置备份都有记录',
     name: '售后维保记录',
-    description: '按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。',
+    description:
+      '按合同质保期自动倒计时，登记交付验收、巡检、上门检修与设备更换，留存全屋设备台账作为配置备份，并打印售后维保卡。',
     status: 'ready',
     where: '项目 → 归档 →「售后维保」、项目工具箱',
     provides: ['质保倒计时', '维保记录', '配置备份', '售后维保卡'],

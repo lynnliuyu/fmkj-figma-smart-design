@@ -4,8 +4,21 @@ import { relId } from '@/lib/access'
 import { getCatalog, getCompanyInfo } from '@/lib/cached-data'
 import { DEVICE_TYPE_ORDER } from '@/lib/device-types'
 import { getPayloadClient } from '@/lib/payload'
-import { fillDefaultProducts, isPointData, parseDefaults, pointDeviceType, summarizePoints, type PointCustomData } from '@/lib/point-map-items'
-import { inferScopeFromTitle, inPointScope, isPointScope, POINT_SCOPES, type PointScope } from '@/lib/point-scopes'
+import {
+  fillDefaultProducts,
+  isPointData,
+  parseDefaults,
+  pointDeviceType,
+  summarizePoints,
+  type PointCustomData,
+} from '@/lib/point-map-items'
+import {
+  inferScopeFromTitle,
+  inPointScope,
+  isPointScope,
+  POINT_SCOPES,
+  type PointScope,
+} from '@/lib/point-scopes'
 import { QUOTE_STATUSES } from '@/lib/quotes'
 import type { Media, User } from '@/payload-types'
 
@@ -25,17 +38,30 @@ export function quoteFailure(error: unknown, fallback: string) {
   return fallback
 }
 
-const mediaId = (v: unknown) => (v && typeof v === 'object' ? String((v as Media).id) : typeof v === 'string' ? v : null)
-const scopeSuffix = (scope: PointScope) => (scope === 'all' ? '' : `（${POINT_SCOPES.find((s) => s.value === scope)!.label}）`)
+const mediaId = (v: unknown) =>
+  v && typeof v === 'object' ? String((v as Media).id) : typeof v === 'string' ? v : null
+const scopeSuffix = (scope: PointScope) =>
+  scope === 'all' ? '' : `（${POINT_SCOPES.find((s) => s.value === scope)!.label}）`
 
 /** 新报价的默认名称：「项目名 智能家居报价」，第二份起加「第 N 版」（打印报价单的标题直接用它） */
 function defaultQuoteTitle(projectName: string | null | undefined, n: number) {
-  const name = (projectName ?? '').replace(/^【[^】]*】/, '').trim().slice(0, 80) || '项目'
+  const name =
+    (projectName ?? '')
+      .replace(/^【[^】]*】/, '')
+      .trim()
+      .slice(0, 80) || '项目'
   return `${name}${/智能/.test(name) ? '' : ' 智能家居'}报价${n > 1 ? ` · 第${n}版` : ''}`
 }
 
-function scopedPoints(pointMap: unknown, scope: PointScope, byId: Map<string, { id: string; deviceType: string | null; status?: string }>) {
-  const elements = ((pointMap as { elements?: unknown[] } | null)?.elements ?? []) as { isDeleted?: boolean; customData?: PointCustomData }[]
+function scopedPoints(
+  pointMap: unknown,
+  scope: PointScope,
+  byId: Map<string, { id: string; deviceType: string | null; status?: string }>,
+) {
+  const elements = ((pointMap as { elements?: unknown[] } | null)?.elements ?? []) as {
+    isDeleted?: boolean
+    customData?: PointCustomData
+  }[]
   return elements
     .filter((el) => !el?.isDeleted && isPointData(el?.customData))
     .map((el) => el.customData!)
@@ -50,21 +76,38 @@ export async function createQuoteForProject(
   user: User,
   projectId: string,
   rawScope: unknown,
-): Promise<{ ok: true; quoteId: string; pending: number } | { ok: false; error: string; status: number }> {
+): Promise<
+  { ok: true; quoteId: string; pending: number } | { ok: false; error: string; status: number }
+> {
   const scope: PointScope = isPointScope(rawScope) ? rawScope : 'all'
   const payload = await getPayloadClient()
   const project = await payload
-    .findByID({ collection: 'projects', id: projectId, depth: 0, user, overrideAccess: false, select: { name: true, owner: true, platform: true, pointMap: true, defaultProducts: true } })
+    .findByID({
+      collection: 'projects',
+      id: projectId,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { name: true, owner: true, platform: true, pointMap: true, defaultProducts: true },
+    })
     .catch(() => null)
   if (!project) return { ok: false, error: '项目不存在或已被删除', status: 404 }
 
   const catalog = await getCatalog()
   const byId = new Map(catalog.map((p) => [p.id, p]))
-  const defaults = fillDefaultProducts(parseDefaults(project.defaultProducts), catalog, project.platform)
+  const defaults = fillDefaultProducts(
+    parseDefaults(project.defaultProducts),
+    catalog,
+    project.platform,
+  )
   const summary = summarizePoints(scopedPoints(project.pointMap, scope, byId), byId, defaults)
   const items = [...summary.products.entries()]
     .map(([id, row]) => ({ p: byId.get(id)!, row }))
-    .sort((a, b) => DEVICE_TYPE_ORDER.indexOf(a.p.deviceType ?? a.row.deviceType) - DEVICE_TYPE_ORDER.indexOf(b.p.deviceType ?? b.row.deviceType))
+    .sort(
+      (a, b) =>
+        DEVICE_TYPE_ORDER.indexOf(a.p.deviceType ?? a.row.deviceType) -
+        DEVICE_TYPE_ORDER.indexOf(b.p.deviceType ?? b.row.deviceType),
+    )
     .map(({ p, row }) => ({
       product: p.id,
       deviceType: (p.deviceType ?? row.deviceType) as never,
@@ -77,11 +120,24 @@ export async function createQuoteForProject(
     }))
 
   const company = await getCompanyInfo(relId(project.owner) || user.id)
-  const existing = await payload.count({ collection: 'quotes', where: { project: { equals: project.id } }, user, overrideAccess: false })
+  const existing = await payload.count({
+    collection: 'quotes',
+    where: { project: { equals: project.id } },
+    user,
+    overrideAccess: false,
+  })
   try {
     const quote = await payload.create({
       collection: 'quotes',
-      data: { title: `${defaultQuoteTitle(project.name, existing.totalDocs + 1)}${scopeSuffix(scope)}`, project: project.id, status: 'draft', items, fees: [], discount: 0, notes: company.quoteNotes ?? null },
+      data: {
+        title: `${defaultQuoteTitle(project.name, existing.totalDocs + 1)}${scopeSuffix(scope)}`,
+        project: project.id,
+        status: 'draft',
+        items,
+        fees: [],
+        discount: 0,
+        notes: company.quoteNotes ?? null,
+      },
       user,
       overrideAccess: false,
       depth: 0,
@@ -101,19 +157,33 @@ export async function syncQuoteWithPointMap(
   user: User,
   quoteId: string,
   explicitScope?: unknown,
-): Promise<{ ok: true; quoteId: string; pending: number; total: number; scope: PointScope } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; quoteId: string; pending: number; total: number; scope: PointScope }
+  | { ok: false; error: string }
+> {
   const payload = await getPayloadClient()
-  const quote = await payload.findByID({ collection: 'quotes', id: quoteId, depth: 0, user, overrideAccess: false }).catch(() => null)
+  const quote = await payload
+    .findByID({ collection: 'quotes', id: quoteId, depth: 0, user, overrideAccess: false })
+    .catch(() => null)
   if (!quote) return { ok: false, error: '报价不存在或已被删除' }
-  const projectId = typeof quote.project === 'object' ? String(quote.project.id) : String(quote.project ?? '')
+  const projectId =
+    typeof quote.project === 'object' ? String(quote.project.id) : String(quote.project ?? '')
   if (!projectId) return { ok: false, error: '该报价未关联项目' }
-  const project = await payload.findByID({ collection: 'projects', id: projectId, depth: 0, user, overrideAccess: false }).catch(() => null)
+  const project = await payload
+    .findByID({ collection: 'projects', id: projectId, depth: 0, user, overrideAccess: false })
+    .catch(() => null)
   if (!project) return { ok: false, error: '关联的项目不存在' }
 
-  const scope: PointScope = isPointScope(explicitScope) ? explicitScope : inferScopeFromTitle(quote.title)
+  const scope: PointScope = isPointScope(explicitScope)
+    ? explicitScope
+    : inferScopeFromTitle(quote.title)
   const catalog = await getCatalog()
   const byId = new Map(catalog.map((p) => [p.id, p]))
-  const defaults = fillDefaultProducts(parseDefaults(project.defaultProducts), catalog, project.platform)
+  const defaults = fillDefaultProducts(
+    parseDefaults(project.defaultProducts),
+    catalog,
+    project.platform,
+  )
   const summary = summarizePoints(scopedPoints(project.pointMap, scope, byId), byId, defaults)
 
   const storedItems = quote.items ?? []
@@ -126,10 +196,17 @@ export async function syncQuoteWithPointMap(
   }
 
   const entries = [...summary.products.entries()].map(([id, row]) => ({ p: byId.get(id)!, row }))
-  entries.sort((a, b) => DEVICE_TYPE_ORDER.indexOf(a.p.deviceType ?? a.row.deviceType) - DEVICE_TYPE_ORDER.indexOf(b.p.deviceType ?? b.row.deviceType))
+  entries.sort(
+    (a, b) =>
+      DEVICE_TYPE_ORDER.indexOf(a.p.deviceType ?? a.row.deviceType) -
+      DEVICE_TYPE_ORDER.indexOf(b.p.deviceType ?? b.row.deviceType),
+  )
   const nextItems = entries.map(({ p, row }) => {
     const exact = byProductId.get(p.id)
-    const sameType = !exact && row.fromDefault === row.count && row.deviceType ? byDeviceType.get(row.deviceType) : undefined
+    const sameType =
+      !exact && row.fromDefault === row.count && row.deviceType
+        ? byDeviceType.get(row.deviceType)
+        : undefined
     const keep = exact ?? sameType
     if (keep) {
       return {
@@ -178,7 +255,15 @@ export type QuoteInput = {
   status: string
   discount: number
   notes: string
-  items: { id?: string | null; product?: string | null; name: string; sku?: string | null; unit?: string | null; price: number; quantity: number }[]
+  items: {
+    id?: string | null
+    product?: string | null
+    name: string
+    sku?: string | null
+    unit?: string | null
+    price: number
+    quantity: number
+  }[]
   fees: { name: string; amount: number }[]
 }
 export type SaveQuoteResult = { ok: true; total: number } | { ok: false; error: string }
@@ -187,18 +272,35 @@ const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : N
 const text = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
 /** 保存报价：逐项校验白名单字段，合计由集合 hook 在服务端重新计算。 */
-export async function saveQuoteInput(user: User, id: string, input: QuoteInput): Promise<SaveQuoteResult> {
+export async function saveQuoteInput(
+  user: User,
+  id: string,
+  input: QuoteInput,
+): Promise<SaveQuoteResult> {
   const title = text(input?.title, 120)
   if (!title) return { ok: false, error: '请填写报价名称' }
-  const status = QUOTE_STATUSES.some((s) => s.value === input?.status) ? (input.status as 'draft') : null
+  const status = QUOTE_STATUSES.some((s) => s.value === input?.status)
+    ? (input.status as 'draft')
+    : null
   if (!status) return { ok: false, error: '报价状态无效' }
   const discount = num(input?.discount ?? 0)
   if (!(discount >= 0)) return { ok: false, error: '优惠金额需为非负数字' }
-  if (!Array.isArray(input?.items) || !Array.isArray(input?.fees)) return { ok: false, error: '报价数据格式无效' }
-  if (input.items.length > 300 || input.fees.length > 50) return { ok: false, error: '明细条数过多' }
+  if (!Array.isArray(input?.items) || !Array.isArray(input?.fees))
+    return { ok: false, error: '报价数据格式无效' }
+  if (input.items.length > 300 || input.fees.length > 50)
+    return { ok: false, error: '明细条数过多' }
 
   const payload = await getPayloadClient()
-  const stored = await payload.findByID({ collection: 'quotes', id, depth: 0, user, overrideAccess: false, select: { items: true } }).catch(() => null)
+  const stored = await payload
+    .findByID({
+      collection: 'quotes',
+      id,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { items: true },
+    })
+    .catch(() => null)
   if (!stored) return { ok: false, error: '报价不存在或已被删除' }
   const storedRows = new Map((stored.items ?? []).filter((r) => r.id).map((r) => [r.id!, r]))
   const catalog = new Map((await getCatalog()).map((p) => [p.id, p]))
@@ -209,20 +311,24 @@ export async function saveQuoteInput(user: User, id: string, input: QuoteInput):
     const price = num(raw?.price)
     const quantity = num(raw?.quantity)
     if (!name) return { ok: false, error: `第 ${i + 1} 行产品缺少名称` }
-    if (!(price >= 0) || !(quantity >= 0)) return { ok: false, error: `第 ${i + 1} 行「${name}」的单价或数量无效` }
+    if (!(price >= 0) || !(quantity >= 0))
+      return { ok: false, error: `第 ${i + 1} 行「${name}」的单价或数量无效` }
     const rowId = typeof raw.id === 'string' && storedRows.has(raw.id) ? raw.id : null
     const before = rowId ? storedRows.get(rowId)! : null
     const beforeProduct = before ? mediaId(before.product) : null
     const productId = typeof raw.product === 'string' && raw.product ? raw.product : null
     const product = productId ? catalog.get(productId) : undefined
-    if (productId && !product) return { ok: false, error: `第 ${i + 1} 行「${name}」关联的产品不存在` }
+    if (productId && !product)
+      return { ok: false, error: `第 ${i + 1} 行「${name}」关联的产品不存在` }
 
     let deviceType = before?.deviceType ?? null
     let image = before ? mediaId(before.image) : null
     if (product && productId !== beforeProduct) {
       // 新增行或更换了型号：只允许在售产品；换型号时必须与原设备类型一致
-      if (product.status !== 'active') return { ok: false, error: `「${product.name}」已下架，不能加入报价` }
-      if (before?.deviceType && product.deviceType !== before.deviceType) return { ok: false, error: `第 ${i + 1} 行只能更换为同一设备类型的产品` }
+      if (product.status !== 'active')
+        return { ok: false, error: `「${product.name}」已下架，不能加入报价` }
+      if (before?.deviceType && product.deviceType !== before.deviceType)
+        return { ok: false, error: `第 ${i + 1} 行只能更换为同一设备类型的产品` }
       deviceType = (product.deviceType ?? null) as typeof deviceType
       image = product.image?.id ?? null
     } else if (product && !deviceType) {
@@ -267,10 +373,20 @@ export async function saveQuoteInput(user: User, id: string, input: QuoteInput):
 }
 
 /** 删除报价（已用于合同的报价、已归档项目的报价由集合 hook 拒绝）。 */
-export async function deleteQuoteById(user: User, id: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function deleteQuoteById(
+  user: User,
+  id: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     const payload = await getPayloadClient()
-    await payload.delete({ collection: 'quotes', id, user, overrideAccess: false, depth: 0, select: { title: true } })
+    await payload.delete({
+      collection: 'quotes',
+      id,
+      user,
+      overrideAccess: false,
+      depth: 0,
+      select: { title: true },
+    })
     return { ok: true }
   } catch (error) {
     return { ok: false, error: quoteFailure(error, '删除失败，请稍后重试') }

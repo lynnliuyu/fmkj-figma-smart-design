@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils'
  * 流式输出时未闭合的代码块按代码块渲染，不会闪烁成原始符号。
  */
 
-const INLINE_RE = /(`[^`\n]+`)|(\*\*[^*\n]+\*\*)|(~~[^~\n]+~~)|(\[[^\]\n]+\]\((?:https?:\/\/|\/)[^)\s]*\))|(\*[^*\s\n][^*\n]*\*)/g
+const INLINE_RE =
+  /(`[^`\n]+`)|(\*\*[^*\n]+\*\*)|(~~[^~\n]+~~)|(\[[^\]\n]+\]\((?:https?:\/\/|\/)[^)\s]*\))|(\*[^*\s\n][^*\n]*\*)/g
 
 function renderInline(text: string, keyPrefix: string): ReactNode[] {
   const out: ReactNode[] = []
@@ -20,17 +21,37 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
     if (idx > last) out.push(text.slice(last, idx))
     const token = m[0]
     const key = `${keyPrefix}-${i++}`
-    if (m[1]) out.push(<code key={key} className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">{token.slice(1, -1)}</code>)
-    else if (m[2]) out.push(<strong key={key} className="font-semibold text-foreground">{renderInline(token.slice(2, -2), key)}</strong>)
+    if (m[1])
+      out.push(
+        <code key={key} className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">
+          {token.slice(1, -1)}
+        </code>,
+      )
+    else if (m[2])
+      out.push(
+        <strong key={key} className="font-semibold text-foreground">
+          {renderInline(token.slice(2, -2), key)}
+        </strong>,
+      )
     else if (m[3]) out.push(<del key={key}>{token.slice(2, -2)}</del>)
     else if (m[4]) {
       const label = token.slice(1, token.indexOf(']'))
       const href = token.slice(token.indexOf('](') + 2, -1)
       out.push(
         href.startsWith('/') && !href.startsWith('//') ? (
-          <Link key={key} href={href} className="text-primary underline-offset-4 hover:underline">{label}</Link>
+          <Link key={key} href={href} className="text-primary underline-offset-4 hover:underline">
+            {label}
+          </Link>
         ) : (
-          <a key={key} href={href} target="_blank" rel="noreferrer" className="text-primary underline-offset-4 hover:underline">{label}</a>
+          <a
+            key={key}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            {label}
+          </a>
         ),
       )
     } else if (m[5]) out.push(<em key={key}>{token.slice(1, -1)}</em>)
@@ -41,7 +62,11 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
 }
 
 function withBreaks(lines: string[], keyPrefix: string): ReactNode[] {
-  return lines.flatMap((line, i) => (i === 0 ? renderInline(line, `${keyPrefix}-${i}`) : [<br key={`${keyPrefix}-br-${i}`} />, ...renderInline(line, `${keyPrefix}-${i}`)]))
+  return lines.flatMap((line, i) =>
+    i === 0
+      ? renderInline(line, `${keyPrefix}-${i}`)
+      : [<br key={`${keyPrefix}-br-${i}`} />, ...renderInline(line, `${keyPrefix}-${i}`)],
+  )
 }
 
 const splitRow = (line: string) =>
@@ -71,7 +96,10 @@ export function MarkdownText({ text, className }: { text: string; className?: st
       while (i < lines.length && !/^\s*```/.test(lines[i])) code.push(lines[i++])
       i++
       blocks.push(
-        <pre key={key()} className="overflow-x-auto rounded-lg bg-muted px-3 py-2.5 font-mono text-xs leading-relaxed">
+        <pre
+          key={key()}
+          className="overflow-x-auto rounded-lg bg-muted px-3 py-2.5 font-mono text-xs leading-relaxed"
+        >
           <code>{code.join('\n')}</code>
         </pre>,
       )
@@ -86,7 +114,13 @@ export function MarkdownText({ text, className }: { text: string; className?: st
     if (heading) {
       const level = heading[1].length
       blocks.push(
-        <p key={key()} className={cn('font-semibold text-foreground', level <= 2 ? 'mt-1 text-[0.95rem]' : 'text-sm')}>
+        <p
+          key={key()}
+          className={cn(
+            'font-semibold text-foreground',
+            level <= 2 ? 'mt-1 text-[0.95rem]' : 'text-sm',
+          )}
+        >
           {renderInline(heading[2], `h${k}`)}
         </p>,
       )
@@ -104,14 +138,20 @@ export function MarkdownText({ text, className }: { text: string; className?: st
       const header = splitRow(line)
       const rows: string[][] = []
       i += 2
-      while (i < lines.length && lines[i].includes('|') && lines[i].trim()) rows.push(splitRow(lines[i++]))
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim())
+        rows.push(splitRow(lines[i++]))
       blocks.push(
         <div key={key()} className="overflow-x-auto rounded-lg border">
           <table className="w-full border-collapse text-xs">
             <thead className="bg-muted/60">
               <tr>
                 {header.map((h, hi) => (
-                  <th key={hi} className="border-b px-2.5 py-1.5 text-left font-medium whitespace-nowrap">{renderInline(h, `th${k}-${hi}`)}</th>
+                  <th
+                    key={hi}
+                    className="border-b px-2.5 py-1.5 text-left font-medium whitespace-nowrap"
+                  >
+                    {renderInline(h, `th${k}-${hi}`)}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -119,7 +159,9 @@ export function MarkdownText({ text, className }: { text: string; className?: st
               {rows.map((r, ri) => (
                 <tr key={ri} className="border-b last:border-0">
                   {header.map((_, ci) => (
-                    <td key={ci} className="px-2.5 py-1.5 align-top">{renderInline(r[ci] ?? '', `td${k}-${ri}-${ci}`)}</td>
+                    <td key={ci} className="px-2.5 py-1.5 align-top">
+                      {renderInline(r[ci] ?? '', `td${k}-${ri}-${ci}`)}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -132,7 +174,8 @@ export function MarkdownText({ text, className }: { text: string; className?: st
     // 引用
     if (/^\s*>/.test(line)) {
       const quote: string[] = []
-      while (i < lines.length && /^\s*>/.test(lines[i])) quote.push(lines[i++].replace(/^\s*>\s?/, ''))
+      while (i < lines.length && /^\s*>/.test(lines[i]))
+        quote.push(lines[i++].replace(/^\s*>\s?/, ''))
       blocks.push(
         <blockquote key={key()} className="border-l-2 border-primary/40 pl-3 text-muted-foreground">
           {withBreaks(quote, `q${k}`)}
@@ -157,7 +200,10 @@ export function MarkdownText({ text, className }: { text: string; className?: st
       }
       const ListTag = ordered ? 'ol' : 'ul'
       blocks.push(
-        <ListTag key={key()} className={cn('space-y-1 pl-5', ordered ? 'list-decimal' : 'list-disc')}>
+        <ListTag
+          key={key()}
+          className={cn('space-y-1 pl-5', ordered ? 'list-decimal' : 'list-disc')}
+        >
           {items.map((it, ii) => (
             <li key={ii} className={cn(it.depth ? 'ml-4 list-[circle]' : '')}>
               {withBreaks(it.text.split('\n'), `li${k}-${ii}`)}
@@ -187,5 +233,11 @@ export function MarkdownText({ text, className }: { text: string; className?: st
     blocks.push(<p key={key()}>{withBreaks(para, `p${k}`)}</p>)
   }
 
-  return <div className={cn('space-y-2 text-sm leading-relaxed break-words', className)}>{blocks.map((b, bi) => <Fragment key={bi}>{b}</Fragment>)}</div>
+  return (
+    <div className={cn('space-y-2 text-sm leading-relaxed break-words', className)}>
+      {blocks.map((b, bi) => (
+        <Fragment key={bi}>{b}</Fragment>
+      ))}
+    </div>
+  )
 }

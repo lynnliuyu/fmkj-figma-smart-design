@@ -23,8 +23,22 @@ export function ProductThumb({
   loading?: 'eager' | 'lazy'
 }) {
   return (
-    <span className={cn('flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-white', className)}>
-      {src ? <Image src={src} alt={alt} width={size} height={size} loading={loading} className="h-[84%] w-[84%] object-contain" /> : null}
+    <span
+      className={cn(
+        'flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-white',
+        className,
+      )}
+    >
+      {src ? (
+        <Image
+          src={src}
+          alt={alt}
+          width={size}
+          height={size}
+          loading={loading}
+          className="h-[84%] w-[84%] object-contain"
+        />
+      ) : null}
     </span>
   )
 }

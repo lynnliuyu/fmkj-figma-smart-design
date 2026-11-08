@@ -25,7 +25,8 @@ export const roomInsightsAiSpec: PluginAiSpec = {
     {
       name: 'room_insights',
       title: '房间智能分析',
-      description: '读取当前关联项目的房间点位配置：每个房间的设备、配置完整度评分、缺少的必备/推荐设备和推荐联动场景。',
+      description:
+        '读取当前关联项目的房间点位配置：每个房间的设备、配置完整度评分、缺少的必备/推荐设备和推荐联动场景。',
       cost: 0.5,
       permissions: ['point-map:read'],
       scope: 'project',
@@ -43,8 +44,18 @@ export const roomInsightsAiSpec: PluginAiSpec = {
       recommendedModelId: 'deepseek-flash',
       requiredPlugins: ['room-insights'],
       variables: [
-        { key: 'layout', label: '户型结构', defaultValue: '三室两厅两卫', options: ['两室两厅一卫', '三室两厅两卫', '四室两厅三卫', '复式 / 别墅'] },
-        { key: 'focus', label: '审查重点', defaultValue: '照明回路与安防传感器', options: ['照明回路与安防传感器', '全屋无主灯调光', '老人与儿童看护', '精装房后装改造'] },
+        {
+          key: 'layout',
+          label: '户型结构',
+          defaultValue: '三室两厅两卫',
+          options: ['两室两厅一卫', '三室两厅两卫', '四室两厅三卫', '复式 / 别墅'],
+        },
+        {
+          key: 'focus',
+          label: '审查重点',
+          defaultValue: '照明回路与安防传感器',
+          options: ['照明回路与安防传感器', '全屋无主灯调光', '老人与儿童看护', '精装房后装改造'],
+        },
       ],
       promptTemplate:
         '请按【{layout}】户型标准，调用「房间智能分析」插件审查当前项目的点位配置（重点关注：{focus}），列出缺失点位、原因及推荐联动场景。',
@@ -58,7 +69,12 @@ export const roomInsightsAiSpec: PluginAiSpec = {
       recommendedModelId: 'deepseek-flash',
       requiredPlugins: ['room-insights', 'proposal'],
       variables: [
-        { key: 'stage', label: '施工阶段', defaultValue: '水电开槽布管前', options: ['水电开槽布管前', '吊顶木工封板前', '油漆完工安装前'] },
+        {
+          key: 'stage',
+          label: '施工阶段',
+          defaultValue: '水电开槽布管前',
+          options: ['水电开槽布管前', '吊顶木工封板前', '油漆完工安装前'],
+        },
       ],
       promptTemplate:
         '当前项目处于【{stage}】阶段，请结合项目点位生成一份给水电工与项目经理的强弱电预留交底注意事项（含零火线、底盒深度、窗帘电源与网关网口要求）。',

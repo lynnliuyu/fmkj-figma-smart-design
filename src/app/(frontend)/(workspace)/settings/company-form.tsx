@@ -12,7 +12,11 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
-import { DocumentTemplateSettings, type DocKindOption, type DocStyleOption } from './document-plugin-settings'
+import {
+  DocumentTemplateSettings,
+  type DocKindOption,
+  type DocStyleOption,
+} from './document-plugin-settings'
 import { SquareCropDialog } from './square-crop-dialog'
 
 type Values = {
@@ -29,7 +33,19 @@ type Values = {
   qrCodeUrl: string | null
 }
 
-function ImageField({ name, label, url, hint, squareCrop }: { name: 'logo' | 'qrCode'; label: string; url: string | null; hint: string; squareCrop?: boolean }) {
+function ImageField({
+  name,
+  label,
+  url,
+  hint,
+  squareCrop,
+}: {
+  name: 'logo' | 'qrCode'
+  label: string
+  url: string | null
+  hint: string
+  squareCrop?: boolean
+}) {
   const [preview, setPreview] = useState(url)
   const [removed, setRemoved] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
@@ -76,12 +92,24 @@ function ImageField({ name, label, url, hint, squareCrop }: { name: 'logo' | 'qr
               <Upload className="size-3.5" />
               {preview ? '更换图片' : '选择图片'}
             </label>
-            <span className="truncate text-sm text-muted-foreground">{fileName ?? (preview ? '已上传' : '未选择文件')}</span>
+            <span className="truncate text-sm text-muted-foreground">
+              {fileName ?? (preview ? '已上传' : '未选择文件')}
+            </span>
           </div>
           <p className="text-xs text-muted-foreground">{hint}</p>
         </div>
         {preview ? (
-          <Button type="button" variant="ghost" size="icon-sm" aria-label={`移除${label}`} onClick={() => { setPreview(null); setFileName(null); setRemoved(true) }}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`移除${label}`}
+            onClick={() => {
+              setPreview(null)
+              setFileName(null)
+              setRemoved(true)
+            }}
+          >
             <X className="size-4" />
           </Button>
         ) : null}
@@ -116,7 +144,11 @@ export function CompanyForm({
   documents,
 }: {
   initial: Values
-  documents: { kinds: DocKindOption[]; styles: DocStyleOption[]; defaults: Record<string, { style?: string; layout?: string }> }
+  documents: {
+    kinds: DocKindOption[]
+    styles: DocStyleOption[]
+    defaults: Record<string, { style?: string; layout?: string }>
+  }
 }) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
@@ -127,9 +159,17 @@ export function CompanyForm({
     setSaving(true)
     setError(null)
     try {
-      const res = await fetch('/settings/company', { method: 'POST', body: new FormData(e.currentTarget) })
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; field?: string }
-      if (!res.ok || !data.ok) return setError({ message: data.error ?? '保存失败，请稍后重试', field: data.field })
+      const res = await fetch('/settings/company', {
+        method: 'POST',
+        body: new FormData(e.currentTarget),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean
+        error?: string
+        field?: string
+      }
+      if (!res.ok || !data.ok)
+        return setError({ message: data.error ?? '保存失败，请稍后重试', field: data.field })
       toast.success('设置已保存')
       router.refresh()
     } catch {
@@ -139,17 +179,30 @@ export function CompanyForm({
     }
   }
 
-  const field = (name: Exclude<keyof Values, 'printProductImages'>, label: string, props: React.ComponentProps<typeof Input> = {}) => (
+  const field = (
+    name: Exclude<keyof Values, 'printProductImages'>,
+    label: string,
+    props: React.ComponentProps<typeof Input> = {},
+  ) => (
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} defaultValue={initial[name] ?? ''} aria-invalid={error?.field === name ? true : undefined} {...props} />
+      <Input
+        id={name}
+        name={name}
+        defaultValue={initial[name] ?? ''}
+        aria-invalid={error?.field === name ? true : undefined}
+        {...props}
+      />
     </div>
   )
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       {error ? (
-        <div role="alert" className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong">
+        <div
+          role="alert"
+          className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong"
+        >
           <AlertCircle className="size-4 shrink-0" />
           {error.message}
         </div>
@@ -160,10 +213,19 @@ export function CompanyForm({
           <CardDescription>用于报价单、方案、合同页眉及侧边栏标识</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
-          {field('name', '名称', { required: true, maxLength: 60, placeholder: '公司、工作室或个人名称' })}
+          {field('name', '名称', {
+            required: true,
+            maxLength: 60,
+            placeholder: '公司、工作室或个人名称',
+          })}
           {field('slogan', '副标题', { maxLength: 80 })}
           <div className="md:col-span-2">
-            <ImageField name="logo" label="Logo" url={initial.logoUrl} hint="PNG 或 SVG，透明背景，≤ 3MB" />
+            <ImageField
+              name="logo"
+              label="Logo"
+              url={initial.logoUrl}
+              hint="PNG 或 SVG，透明背景，≤ 3MB"
+            />
           </div>
         </CardContent>
       </Card>
@@ -177,7 +239,13 @@ export function CompanyForm({
           {field('email', '邮箱', { type: 'email', maxLength: 80 })}
           <div className="md:col-span-2">{field('address', '地址', { maxLength: 200 })}</div>
           <div className="md:col-span-2">
-            <ImageField name="qrCode" label="二维码" url={initial.qrCodeUrl} hint="微信或公众号二维码，上传后可裁剪为正方形" squareCrop />
+            <ImageField
+              name="qrCode"
+              label="二维码"
+              url={initial.qrCodeUrl}
+              hint="微信或公众号二维码，上传后可裁剪为正方形"
+              squareCrop
+            />
           </div>
           {field('qrCaption', '二维码说明', { maxLength: 40, placeholder: '扫码添加微信' })}
         </CardContent>
@@ -190,19 +258,41 @@ export function CompanyForm({
         <CardContent className="grid gap-5">
           <div className="grid gap-2">
             <Label htmlFor="quoteNotes">报价备注</Label>
-            <Textarea id="quoteNotes" name="quoteNotes" rows={3} maxLength={2000} defaultValue={initial.quoteNotes} placeholder="例如：报价有效期 30 天；设备质保一年，含一年免费上门维护" />
+            <Textarea
+              id="quoteNotes"
+              name="quoteNotes"
+              rows={3}
+              maxLength={2000}
+              defaultValue={initial.quoteNotes}
+              placeholder="例如：报价有效期 30 天；设备质保一年，含一年免费上门维护"
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="contractTerms">合同条款</Label>
-            <Textarea id="contractTerms" name="contractTerms" rows={7} maxLength={5000} defaultValue={initial.contractTerms} className="leading-relaxed" />
+            <Textarea
+              id="contractTerms"
+              name="contractTerms"
+              rows={7}
+              maxLength={5000}
+              defaultValue={initial.contractTerms}
+              className="leading-relaxed"
+            />
           </div>
           <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
             <Label htmlFor="printProductImages">打印报价单时显示产品缩略图</Label>
-            <Switch id="printProductImages" name="printProductImages" defaultChecked={initial.printProductImages} />
+            <Switch
+              id="printProductImages"
+              name="printProductImages"
+              defaultChecked={initial.printProductImages}
+            />
           </div>
         </CardContent>
       </Card>
-      <DocumentTemplateSettings kinds={documents.kinds} styles={documents.styles} defaults={documents.defaults} />
+      <DocumentTemplateSettings
+        kinds={documents.kinds}
+        styles={documents.styles}
+        defaults={documents.defaults}
+      />
       <div className="sticky bottom-0 -mx-1 flex justify-end bg-background/95 px-1 py-3">
         <Button type="submit" disabled={saving}>
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}保存

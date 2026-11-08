@@ -2,12 +2,12 @@
 
 Figma Make 继续作为开发环境；正式环境跑在你自己的服务器上，使用 PostgreSQL。两边代码相同，区别只在配置：
 
-| | Figma Make | 自己的服务器 |
-|---|---|---|
-| 配置文件 | `src/payload.config.ts` | `src/payload.selfhost.config.ts` |
-| 数据库 | Figma 托管 | PostgreSQL（Docker） |
-| 图片 | Figma 托管 | 服务器磁盘，或阿里云 OSS / 腾讯云 COS |
-| 登录 | 不变 | 邮箱 + 密码 |
+|          | Figma Make              | 自己的服务器                          |
+| -------- | ----------------------- | ------------------------------------- |
+| 配置文件 | `src/payload.config.ts` | `src/payload.selfhost.config.ts`      |
+| 数据库   | Figma 托管              | PostgreSQL（Docker）                  |
+| 图片     | Figma 托管              | 服务器磁盘，或阿里云 OSS / 腾讯云 COS |
+| 登录     | 不变                    | 邮箱 + 密码                           |
 
 Docker 构建时会自动把配置切到自托管版本，不需要改代码。
 

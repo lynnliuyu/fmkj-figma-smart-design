@@ -19,7 +19,9 @@ export async function listConversations(user: User) {
 
 export async function getConversationMessages(user: User, id: string) {
   const payload = await getPayloadClient()
-  const conv = await payload.findByID({ collection: 'ai-conversations', id, depth: 0, user, overrideAccess: false }).catch(() => null)
+  const conv = await payload
+    .findByID({ collection: 'ai-conversations', id, depth: 0, user, overrideAccess: false })
+    .catch(() => null)
   if (!conv) return null
   const { docs } = await payload.find({
     collection: 'ai-messages',
@@ -29,17 +31,39 @@ export async function getConversationMessages(user: User, id: string) {
     depth: 0,
     user,
     overrideAccess: false,
-    select: { role: true, content: true, model: true, cost: true, toolCalls: true, createdAt: true },
+    select: {
+      role: true,
+      content: true,
+      model: true,
+      cost: true,
+      toolCalls: true,
+      createdAt: true,
+    },
   })
-  return docs.map((m) => ({ id: String(m.id), role: m.role, content: m.content, model: m.model ?? null, cost: m.cost ?? null, toolCalls: m.toolCalls ?? null, createdAt: m.createdAt }))
+  return docs.map((m) => ({
+    id: String(m.id),
+    role: m.role,
+    content: m.content,
+    model: m.model ?? null,
+    cost: m.cost ?? null,
+    toolCalls: m.toolCalls ?? null,
+    createdAt: m.createdAt,
+  }))
 }
 
 /** 删除会话及其消息（积分流水保留）。 */
 export async function deleteConversation(user: User, id: string) {
   const payload = await getPayloadClient()
-  const conv = await payload.findByID({ collection: 'ai-conversations', id, depth: 0, user, overrideAccess: false }).catch(() => null)
+  const conv = await payload
+    .findByID({ collection: 'ai-conversations', id, depth: 0, user, overrideAccess: false })
+    .catch(() => null)
   if (!conv) return false
-  await payload.delete({ collection: 'ai-messages', where: { conversation: { equals: id } }, user, overrideAccess: false })
+  await payload.delete({
+    collection: 'ai-messages',
+    where: { conversation: { equals: id } },
+    user,
+    overrideAccess: false,
+  })
   await payload.delete({ collection: 'ai-conversations', id, user, overrideAccess: false })
   return true
 }

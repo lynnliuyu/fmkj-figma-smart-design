@@ -26,12 +26,22 @@ const MIN = 60
 
 /** 「03-一层开关布置图 1F.PM-10.png」→「一层开关布置图」 */
 export function sheetNameFromFile(name: string) {
-  const base = name.replace(/\.[a-z0-9]+$/i, '').replace(/^\d+[\s._-]*/, '').replace(/\s+[A-Z0-9][A-Z0-9.\-]*$/i, '').trim()
+  const base = name
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/^\d+[\s._-]*/, '')
+    .replace(/\s+[A-Z0-9][A-Z0-9.\-]*$/i, '')
+    .trim()
   return (base || '图纸').slice(0, 40)
 }
 
 /** 把裁切区域画进标准图纸（白底 3:2，居中留白）。 */
-function renderSheet(bitmap: ImageBitmap, crop: Rect, canvas: HTMLCanvasElement, width: number, height: number) {
+function renderSheet(
+  bitmap: ImageBitmap,
+  crop: Rect,
+  canvas: HTMLCanvasElement,
+  width: number,
+  height: number,
+) {
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')!
@@ -39,10 +49,28 @@ function renderSheet(bitmap: ImageBitmap, crop: Rect, canvas: HTMLCanvasElement,
   ctx.fillRect(0, 0, width, height)
   ctx.imageSmoothingQuality = 'high'
   const { target } = fitIntoSheet(crop, width, height, SHEET.padding)
-  ctx.drawImage(bitmap, crop.x, crop.y, crop.width, crop.height, target.x, target.y, target.width, target.height)
+  ctx.drawImage(
+    bitmap,
+    crop.x,
+    crop.y,
+    crop.width,
+    crop.height,
+    target.x,
+    target.y,
+    target.width,
+    target.height,
+  )
 }
 
-export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCancel: () => void; onConfirm: (png: Blob, name: string) => Promise<void> }) {
+export function SheetCropper({
+  file,
+  onCancel,
+  onConfirm,
+}: {
+  file: File
+  onCancel: () => void
+  onConfirm: (png: Blob, name: string) => Promise<void>
+}) {
   const [bitmap, setBitmap] = useState<ImageBitmap | null>(null)
   const [url, setUrl] = useState<string | null>(null)
   const [auto, setAuto] = useState<Rect | null>(null)
@@ -67,7 +95,12 @@ export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCanc
         const ctx = canvas.getContext('2d', { willReadFrequently: true })!
         ctx.drawImage(bmp, 0, 0)
         const { data } = ctx.getImageData(0, 0, bmp.width, bmp.height)
-        const detected = detectPlanBounds({ data, width: bmp.width, height: bmp.height, channels: 4 })
+        const detected = detectPlanBounds({
+          data,
+          width: bmp.width,
+          height: bmp.height,
+          channels: 4,
+        })
         setBitmap(bmp)
         setAuto(detected)
         setCrop(detected)
@@ -86,7 +119,9 @@ export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCanc
   useEffect(() => {
     const el = stage.current
     if (!el) return
-    const ro = new ResizeObserver(([entry]) => setBox({ w: entry.contentRect.width, h: entry.contentRect.height }))
+    const ro = new ResizeObserver(([entry]) =>
+      setBox({ w: entry.contentRect.width, h: entry.contentRect.height }),
+    )
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
@@ -163,20 +198,54 @@ export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCanc
               onPointerUp={onPointerUp}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="待裁切的户型图" draggable={false} className="size-full bg-background shadow-sm" />
+              <img
+                src={url}
+                alt="待裁切的户型图"
+                draggable={false}
+                className="size-full bg-background shadow-sm"
+              />
               {/* 裁切框外变暗 */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 bg-foreground/45" style={{ height: crop.y * scale }} />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-foreground/45" style={{ height: (bitmap.height - crop.y - crop.height) * scale }} />
-              <div className="pointer-events-none absolute left-0 bg-foreground/45" style={{ top: crop.y * scale, height: crop.height * scale, width: crop.x * scale }} />
-              <div className="pointer-events-none absolute right-0 bg-foreground/45" style={{ top: crop.y * scale, height: crop.height * scale, width: (bitmap.width - crop.x - crop.width) * scale }} />
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 bg-foreground/45"
+                style={{ height: crop.y * scale }}
+              />
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 bg-foreground/45"
+                style={{ height: (bitmap.height - crop.y - crop.height) * scale }}
+              />
+              <div
+                className="pointer-events-none absolute left-0 bg-foreground/45"
+                style={{ top: crop.y * scale, height: crop.height * scale, width: crop.x * scale }}
+              />
+              <div
+                className="pointer-events-none absolute right-0 bg-foreground/45"
+                style={{
+                  top: crop.y * scale,
+                  height: crop.height * scale,
+                  width: (bitmap.width - crop.x - crop.width) * scale,
+                }}
+              />
               <div
                 role="presentation"
                 className="absolute cursor-move border-2 border-primary"
-                style={{ left: crop.x * scale, top: crop.y * scale, width: crop.width * scale, height: crop.height * scale }}
+                style={{
+                  left: crop.x * scale,
+                  top: crop.y * scale,
+                  width: crop.width * scale,
+                  height: crop.height * scale,
+                }}
                 onPointerDown={onPointerDown('move')}
               >
                 {HANDLES.map(({ h, className }) => (
-                  <span key={h} role="presentation" onPointerDown={onPointerDown(h)} className={cn('absolute size-3 rounded-sm border-2 border-primary bg-background', className)} />
+                  <span
+                    key={h}
+                    role="presentation"
+                    onPointerDown={onPointerDown(h)}
+                    className={cn(
+                      'absolute size-3 rounded-sm border-2 border-primary bg-background',
+                      className,
+                    )}
+                  />
                 ))}
               </div>
             </div>
@@ -192,16 +261,45 @@ export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCanc
       <aside className="flex w-84 shrink-0 flex-col border-l bg-background">
         <div className="space-y-4 overflow-y-auto p-4">
           <div className="space-y-1">
-            <h2 className="flex items-center gap-2 text-sm font-semibold"><Crop className="size-4" />裁切图纸</h2>
-            <p className="text-xs text-muted-foreground">已自动去掉图框和标题栏，可拖动边框微调。</p>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Crop className="size-4" />
+              裁切图纸
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              已自动去掉图框和标题栏，可拖动边框微调。
+            </p>
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="sheet-name">图纸名称</Label>
-            <Input id="sheet-name" value={name} maxLength={40} onChange={(e) => setName(e.target.value)} placeholder="例如：一层开关布置图" />
+            <Input
+              id="sheet-name"
+              value={name}
+              maxLength={40}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="例如：一层开关布置图"
+            />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm" disabled={!auto} onClick={() => auto && setCrop(auto)}><ScanSearch className="size-4" />自动识别</Button>
-            <Button variant="outline" size="sm" disabled={!bitmap} onClick={() => bitmap && setCrop({ x: 0, y: 0, width: bitmap.width, height: bitmap.height })}><Maximize className="size-4" />整张图</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!auto}
+              onClick={() => auto && setCrop(auto)}
+            >
+              <ScanSearch className="size-4" />
+              自动识别
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!bitmap}
+              onClick={() =>
+                bitmap && setCrop({ x: 0, y: 0, width: bitmap.width, height: bitmap.height })
+              }
+            >
+              <Maximize className="size-4" />
+              整张图
+            </Button>
           </div>
           <div className="space-y-1.5">
             <div className="text-xs font-medium text-muted-foreground">标准图纸预览</div>
@@ -209,14 +307,25 @@ export function SheetCropper({ file, onCancel, onConfirm }: { file: File; onCanc
           </div>
           {bitmap && crop ? (
             <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
-              <dt className="text-muted-foreground">原图</dt><dd className="tabular-nums">{bitmap.width} × {bitmap.height}</dd>
-              <dt className="text-muted-foreground">裁切</dt><dd className="tabular-nums">{crop.width} × {crop.height}（{ratio}:1）</dd>
-              <dt className="text-muted-foreground">输出</dt><dd className="tabular-nums">{SHEET.pixelWidth} × {SHEET.pixelHeight} PNG</dd>
+              <dt className="text-muted-foreground">原图</dt>
+              <dd className="tabular-nums">
+                {bitmap.width} × {bitmap.height}
+              </dd>
+              <dt className="text-muted-foreground">裁切</dt>
+              <dd className="tabular-nums">
+                {crop.width} × {crop.height}（{ratio}:1）
+              </dd>
+              <dt className="text-muted-foreground">输出</dt>
+              <dd className="tabular-nums">
+                {SHEET.pixelWidth} × {SHEET.pixelHeight} PNG
+              </dd>
             </dl>
           ) : null}
         </div>
         <div className="mt-auto flex gap-2 border-t p-4">
-          <Button variant="outline" className="flex-1" disabled={busy} onClick={onCancel}>取消</Button>
+          <Button variant="outline" className="flex-1" disabled={busy} onClick={onCancel}>
+            取消
+          </Button>
           <Button className="flex-1" disabled={!crop || busy} onClick={() => void confirm()}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : null}确认并添加
           </Button>

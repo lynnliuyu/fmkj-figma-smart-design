@@ -68,10 +68,20 @@ export function rulerStep(mmPerUnit: number | null, zoom: number, minPx = 64) {
 }
 
 /** 图纸按某比例打印在纸上的尺寸（mm） */
-export const printedSize = (wUnits: number, hUnits: number, mmPerUnit: number, scale: number) => ({ w: (wUnits * mmPerUnit) / scale, h: (hUnits * mmPerUnit) / scale })
+export const printedSize = (wUnits: number, hUnits: number, mmPerUnit: number, scale: number) => ({
+  w: (wUnits * mmPerUnit) / scale,
+  h: (hUnits * mmPerUnit) / scale,
+})
 
 /** 能把图纸完整放进纸张（留 margin mm 边距）的最小标准比例；放不下时返回 null */
-export function fittingScale(wUnits: number, hUnits: number, mmPerUnit: number, paper: PaperId, margin = 12, reserve = { w: 0, h: 0 }) {
+export function fittingScale(
+  wUnits: number,
+  hUnits: number,
+  mmPerUnit: number,
+  paper: PaperId,
+  margin = 12,
+  reserve = { w: 0, h: 0 },
+) {
   const P = PAPERS[paper]
   const availW = P.w - 2 * margin - reserve.w
   const availH = P.h - 2 * margin - reserve.h

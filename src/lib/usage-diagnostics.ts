@@ -11,7 +11,14 @@ export type UploadDiagnosticEvent = {
   fileName: string
   mediaId: string
   url: string
-  method: 'cad-color' | 'vision-snap' | 'vision-fusion' | 'dxf-vector' | 'cad-bw' | 'empty' | 'non-plan'
+  method:
+    | 'cad-color'
+    | 'vision-snap'
+    | 'vision-fusion'
+    | 'dxf-vector'
+    | 'cad-bw'
+    | 'empty'
+    | 'non-plan'
   totalPoints: number
   switches: number
   lights: number
@@ -172,76 +179,80 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
   const payload = await getPayloadClient()
   const diag = readDiagnostics()
 
-  const [usersRes, projectsRes, quotesRes, contractsRes, convsRes, msgsRes, ledgerRes] = await Promise.all([
-    payload
-      .find({
-        collection: 'users',
-        sort: '-updatedAt',
-        limit: 200,
-        depth: 0,
-        overrideAccess: true,
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'projects',
-        where: { isDemoTemplate: { not_equals: true } },
-        sort: '-updatedAt',
-        limit: 300,
-        depth: 0,
-        overrideAccess: true,
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'quotes',
-        sort: '-updatedAt',
-        limit: 400,
-        depth: 0,
-        overrideAccess: true,
-        select: { project: true, total: true, status: true, updatedAt: true },
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'contracts',
-        sort: '-updatedAt',
-        limit: 300,
-        depth: 0,
-        overrideAccess: true,
-        select: { project: true, status: true, updatedAt: true },
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'ai-conversations',
-        sort: '-updatedAt',
-        limit: 200,
-        depth: 0,
-        overrideAccess: true,
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'ai-messages',
-        sort: '-createdAt',
-        limit: 500,
-        depth: 0,
-        overrideAccess: true,
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'ai-credit-ledger',
-        sort: '-createdAt',
-        limit: 500,
-        depth: 0,
-        overrideAccess: true,
-      })
-      .catch(() => ({ docs: [] })),
-  ])
+  const [usersRes, projectsRes, quotesRes, contractsRes, convsRes, msgsRes, ledgerRes] =
+    await Promise.all([
+      payload
+        .find({
+          collection: 'users',
+          sort: '-updatedAt',
+          limit: 200,
+          depth: 0,
+          overrideAccess: true,
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'projects',
+          where: { isDemoTemplate: { not_equals: true } },
+          sort: '-updatedAt',
+          limit: 300,
+          depth: 0,
+          overrideAccess: true,
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'quotes',
+          sort: '-updatedAt',
+          limit: 400,
+          depth: 0,
+          overrideAccess: true,
+          select: { project: true, total: true, status: true, updatedAt: true },
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'contracts',
+          sort: '-updatedAt',
+          limit: 300,
+          depth: 0,
+          overrideAccess: true,
+          select: { project: true, status: true, updatedAt: true },
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'ai-conversations',
+          sort: '-updatedAt',
+          limit: 200,
+          depth: 0,
+          overrideAccess: true,
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'ai-messages',
+          sort: '-createdAt',
+          limit: 500,
+          depth: 0,
+          overrideAccess: true,
+        })
+        .catch(() => ({ docs: [] })),
+      payload
+        .find({
+          collection: 'ai-credit-ledger',
+          sort: '-createdAt',
+          limit: 500,
+          depth: 0,
+          overrideAccess: true,
+        })
+        .catch(() => ({ docs: [] })),
+    ])
 
-  const userMap = new Map<string, { name: string; email: string; phone: string; credits: number; updatedAt: string }>()
+  const userMap = new Map<
+    string,
+    { name: string; email: string; phone: string; credits: number; updatedAt: string }
+  >()
   for (const u of usersRes.docs) {
     const uid = String(u.id)
     userMap.set(uid, {
@@ -302,7 +313,9 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
     touchTime(row, p.updatedAt)
 
     const norm = normalizeScene(p.pointMap as Partial<StoredScene> | null)
-    const sheets = sceneSheets(norm.elements, norm.files).filter((s) => s.fileId !== 'blank-sheet' && s.url)
+    const sheets = sceneSheets(norm.elements, norm.files).filter(
+      (s) => s.fileId !== 'blank-sheet' && s.url,
+    )
     const points = scenePoints(norm.elements, sheets, [])
     row.sheetCount += sheets.length
     row.pointCount += points.length
@@ -365,7 +378,10 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
 
   const modelMap = new Map<string, ModelUsageStat>()
   const toolMap = new Map<string, number>()
-  const convMsgStats = new Map<string, { count: number; tools: number; cost: number; lastPreview: string; lastModel: string }>()
+  const convMsgStats = new Map<
+    string,
+    { count: number; tools: number; cost: number; lastPreview: string; lastModel: string }
+  >()
 
   for (const m of msgsRes.docs) {
     const uid = relId(m.owner) ?? ''
@@ -376,7 +392,13 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
     }
     const cid = relId(m.conversation) ?? ''
     if (cid) {
-      const st = convMsgStats.get(cid) ?? { count: 0, tools: 0, cost: 0, lastPreview: '', lastModel: '' }
+      const st = convMsgStats.get(cid) ?? {
+        count: 0,
+        tools: 0,
+        cost: 0,
+        lastPreview: '',
+        lastModel: '',
+      }
       st.count++
       st.cost += Number(m.cost ?? 0)
       if (m.role === 'assistant') {
@@ -393,7 +415,12 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
       const rawModel = String(m.model || 'deepseek-flash')
       const isAuto = rawModel.startsWith('auto:')
       const cleanModel = isAuto ? rawModel.slice(5) : rawModel
-      const stat = modelMap.get(cleanModel) ?? { model: cleanModel, calls: 0, credits: 0, autoRoutedCount: 0 }
+      const stat = modelMap.get(cleanModel) ?? {
+        model: cleanModel,
+        calls: 0,
+        credits: 0,
+        autoRoutedCount: 0,
+      }
       stat.calls++
       stat.credits += Number(m.cost ?? 0)
       if (isAuto) stat.autoRoutedCount++
@@ -424,7 +451,7 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
         id: cid,
         title: c.title || '新对话',
         userName: userMap.get(uid)?.name ?? '用户',
-        projectName: pid ? projectMap.get(pid)?.name ?? null : null,
+        projectName: pid ? (projectMap.get(pid)?.name ?? null) : null,
         model: st?.lastModel || c.model || 'auto',
         messageCount: st?.count ?? 0,
         toolCount: st?.tools ?? 0,
@@ -435,7 +462,9 @@ export async function loadCustomerUsageReport(): Promise<CustomerUsageReport> {
     }
   }
 
-  const customers = Array.from(customerRowsMap.values()).sort((a, b) => b.lastActiveAt.localeCompare(a.lastActiveAt))
+  const customers = Array.from(customerRowsMap.values()).sort((a, b) =>
+    b.lastActiveAt.localeCompare(a.lastActiveAt),
+  )
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString()
   const activeCustomers7d = customers.filter((c) => c.lastActiveAt >= sevenDaysAgo).length
 

@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react'
 
 const MOBILE_BREAKPOINT = 768
 
@@ -15,8 +15,8 @@ export function useIsMobile() {
     }
     // 挂载时同步一次真实值，之后交给媒体查询监听
     onChange()
-    mql.addEventListener("change", onChange)
-    return () => mql.removeEventListener("change", onChange)
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
   }, [])
 
   return !!isMobile

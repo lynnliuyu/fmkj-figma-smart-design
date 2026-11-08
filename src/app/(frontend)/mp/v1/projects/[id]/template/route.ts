@@ -10,7 +10,14 @@ import { getPluginFlags } from '@/plugins/state'
 async function loadProject(user: User, id: string) {
   const payload = await getPayloadClient()
   return payload
-    .findByID({ collection: 'projects', id, depth: 0, user, overrideAccess: false, select: { owner: true, collaborators: true, status: true, proposalTemplate: true } })
+    .findByID({
+      collection: 'projects',
+      id,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { owner: true, collaborators: true, status: true, proposalTemplate: true },
+    })
     .catch(() => null)
 }
 
@@ -21,11 +28,18 @@ export const GET = mpRoute<{ id: string }>(async ({ user, params }) => {
   const flags = await getPluginFlags(relId(project.owner) ?? user.id)
   if (!flags.proposal) return fail(403, '「方案演示」插件未启用')
   const data = await presentProjectTemplates(user, project.proposalTemplate)
-  const editable = project.status !== 'archived' && canEditProject({ owner: project.owner, collaborators: (project.collaborators ?? []) as CollaboratorItem[] }, user.id)
+  const editable =
+    project.status !== 'archived' &&
+    canEditProject(
+      { owner: project.owner, collaborators: (project.collaborators ?? []) as CollaboratorItem[] },
+      user.id,
+    )
   return ok({
     ...data,
     editable,
-    previewPath: data.current ? `/print/projects/${params.id}/proposal?template=${encodeURIComponent(data.current.slug)}` : null,
+    previewPath: data.current
+      ? `/print/projects/${params.id}/proposal?template=${encodeURIComponent(data.current.slug)}`
+      : null,
   })
 })
 
@@ -36,8 +50,15 @@ export const PUT = mpRoute<{ id: string }>(async ({ request, user, params }) => 
   if (!project) return fail(404, '项目不存在或已被删除')
   const flags = await getPluginFlags(relId(project.owner) ?? user.id)
   if (!flags.proposal) return fail(403, '「方案演示」插件未启用')
-  const result = await saveDeliverables(user, params.id, { proposalTemplate: text(body.template, 60) || null })
+  const result = await saveDeliverables(user, params.id, {
+    proposalTemplate: text(body.template, 60) || null,
+  })
   if (!result.ok) return fail(400, result.error)
   const data = await presentProjectTemplates(user, text(body.template, 60) || null)
-  return ok({ current: data.current, previewPath: data.current ? `/print/projects/${params.id}/proposal?template=${encodeURIComponent(data.current.slug)}` : null })
+  return ok({
+    current: data.current,
+    previewPath: data.current
+      ? `/print/projects/${params.id}/proposal?template=${encodeURIComponent(data.current.slug)}`
+      : null,
+  })
 })

@@ -9,7 +9,13 @@ export async function findProjectIdByShareToken(token: string): Promise<string |
   const trimmed = typeof token === 'string' ? token.trim() : ''
   if (trimmed.length < 12 || trimmed.length > 80) return null
   const payload = await getPayloadClient()
-  const res = await payload.find({ collection: 'projects', limit: 1000, depth: 0, overrideAccess: true, select: { shareConfig: true } as never })
+  const res = await payload.find({
+    collection: 'projects',
+    limit: 1000,
+    depth: 0,
+    overrideAccess: true,
+    select: { shareConfig: true } as never,
+  })
   const docs = res.docs as unknown as { id: string | number; shareConfig?: unknown }[]
   const match = docs.find((p) => shareLinkMatches(p.shareConfig, trimmed))
   return match ? String(match.id) : null

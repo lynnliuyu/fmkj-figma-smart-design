@@ -12,23 +12,85 @@
  */
 
 export const DECK_SECTIONS = [
-  { value: 'cover', label: '封面', description: '品牌、标题、项目与预算', pages: '1 页', needsPoints: false, price: false },
-  { value: 'plans', label: '住宅平面', description: '每张图纸一页，点位编号与索引', pages: '每张图纸 1 页', needsPoints: true, price: false },
-  { value: 'system', label: '系统与设备', description: '网络拓扑、设备类别与配置原则', pages: '1 页', needsPoints: true, price: false },
-  { value: 'zones', label: '空间章节', description: '进门、休息、看护、专注四个空间章节', pages: '每个有设备的空间 1 页（最多 4 页）', needsPoints: true, price: true },
-  { value: 'scenes', label: '生活场景', description: '场景库匹配到的场景：图片、联动步骤与实际产品', pages: '每 2 个场景 1 页', needsPoints: true, price: false },
-  { value: 'rooms', label: '其余空间', description: '没有展开的房间：设备与小计', pages: '按房间数分页', needsPoints: true, price: true },
-  { value: 'investment', label: '投资明细', description: '设备清单、费用与合计', pages: '每 12 行 1 页', needsPoints: false, price: true },
-  { value: 'service', label: '服务交付', description: '服务流程、付款节点与签字确认', pages: '1 页', needsPoints: false, price: false },
+  {
+    value: 'cover',
+    label: '封面',
+    description: '品牌、标题、项目与预算',
+    pages: '1 页',
+    needsPoints: false,
+    price: false,
+  },
+  {
+    value: 'plans',
+    label: '住宅平面',
+    description: '每张图纸一页，点位编号与索引',
+    pages: '每张图纸 1 页',
+    needsPoints: true,
+    price: false,
+  },
+  {
+    value: 'system',
+    label: '系统与设备',
+    description: '网络拓扑、设备类别与配置原则',
+    pages: '1 页',
+    needsPoints: true,
+    price: false,
+  },
+  {
+    value: 'zones',
+    label: '空间章节',
+    description: '进门、休息、看护、专注四个空间章节',
+    pages: '每个有设备的空间 1 页（最多 4 页）',
+    needsPoints: true,
+    price: true,
+  },
+  {
+    value: 'scenes',
+    label: '生活场景',
+    description: '场景库匹配到的场景：图片、联动步骤与实际产品',
+    pages: '每 2 个场景 1 页',
+    needsPoints: true,
+    price: false,
+  },
+  {
+    value: 'rooms',
+    label: '其余空间',
+    description: '没有展开的房间：设备与小计',
+    pages: '按房间数分页',
+    needsPoints: true,
+    price: true,
+  },
+  {
+    value: 'investment',
+    label: '投资明细',
+    description: '设备清单、费用与合计',
+    pages: '每 12 行 1 页',
+    needsPoints: false,
+    price: true,
+  },
+  {
+    value: 'service',
+    label: '服务交付',
+    description: '服务流程、付款节点与签字确认',
+    pages: '1 页',
+    needsPoints: false,
+    price: false,
+  },
 ] as const
 export type DeckSection = (typeof DECK_SECTIONS)[number]['value']
-export const isDeckSection = (v: unknown): v is DeckSection => DECK_SECTIONS.some((s) => s.value === v)
-export const deckSectionLabel = (v: DeckSection) => DECK_SECTIONS.find((s) => s.value === v)?.label ?? v
+export const isDeckSection = (v: unknown): v is DeckSection =>
+  DECK_SECTIONS.some((s) => s.value === v)
+export const deckSectionLabel = (v: DeckSection) =>
+  DECK_SECTIONS.find((s) => s.value === v)?.label ?? v
 
 /** 方案的两种用途：业主方案（给客户看，含预算）与施工交底（给安装团队，不含价格），选择器里分开展示 */
 export const PROPOSAL_KINDS = [
   { value: 'owner', label: '业主方案', description: '给业主看的横版提案：场景、平面、系统与预算' },
-  { value: 'construction', label: '施工交底', description: '给安装团队：点位代号、安装位置与清单，不含任何价格' },
+  {
+    value: 'construction',
+    label: '施工交底',
+    description: '给安装团队：点位代号、安装位置与清单，不含任何价格',
+  },
 ] as const
 export type ProposalKind = (typeof PROPOSAL_KINDS)[number]['value']
 
@@ -65,13 +127,26 @@ export const PROPOSAL_FRAMEWORKS = [
     occasion: '进场施工前交底、现场安装与验收核对',
     sections: [],
   },
-] as const satisfies readonly { value: string; label: string; description: string; audience: string; occasion: string; sections: readonly DeckSection[] }[]
+] as const satisfies readonly {
+  value: string
+  label: string
+  description: string
+  audience: string
+  occasion: string
+  sections: readonly DeckSection[]
+}[]
 export type ProposalFrameworkId = (typeof PROPOSAL_FRAMEWORKS)[number]['value']
-export const isProposalFramework = (v: unknown): v is ProposalFrameworkId => PROPOSAL_FRAMEWORKS.some((f) => f.value === v)
-export const frameworkSections = (id: ProposalFrameworkId): DeckSection[] => [...(PROPOSAL_FRAMEWORKS.find((f) => f.value === id)?.sections ?? [])]
-export const frameworkLabel = (id: ProposalFrameworkId) => PROPOSAL_FRAMEWORKS.find((f) => f.value === id)?.label ?? id
-export const frameworkOf = (id: ProposalFrameworkId) => PROPOSAL_FRAMEWORKS.find((f) => f.value === id) ?? PROPOSAL_FRAMEWORKS[0]
-export const kindOfFramework = (id: ProposalFrameworkId): ProposalKind => (id === 'construction' ? 'construction' : 'owner')
+export const isProposalFramework = (v: unknown): v is ProposalFrameworkId =>
+  PROPOSAL_FRAMEWORKS.some((f) => f.value === v)
+export const frameworkSections = (id: ProposalFrameworkId): DeckSection[] => [
+  ...(PROPOSAL_FRAMEWORKS.find((f) => f.value === id)?.sections ?? []),
+]
+export const frameworkLabel = (id: ProposalFrameworkId) =>
+  PROPOSAL_FRAMEWORKS.find((f) => f.value === id)?.label ?? id
+export const frameworkOf = (id: ProposalFrameworkId) =>
+  PROPOSAL_FRAMEWORKS.find((f) => f.value === id) ?? PROPOSAL_FRAMEWORKS[0]
+export const kindOfFramework = (id: ProposalFrameworkId): ProposalKind =>
+  id === 'construction' ? 'construction' : 'owner'
 
 /** 编排规范（导出到知识库，也显示在后台「方案模板」说明里） */
 export const ORCHESTRATION_RULES = [
@@ -87,7 +162,10 @@ export const ORCHESTRATION_RULES = [
  * 按编排规范整理章节顺序：去重 → 封面置顶 → 投资明细与服务交付置底（投资在前）。
  * 施工交底没有章节，原样返回空数组；空列表回退到版式框架的推荐章节。
  */
-export function normalizeSections(sections: readonly unknown[], framework: ProposalFrameworkId = 'full'): DeckSection[] {
+export function normalizeSections(
+  sections: readonly unknown[],
+  framework: ProposalFrameworkId = 'full',
+): DeckSection[] {
   if (framework === 'construction') return []
   const seen = new Set<DeckSection>()
   const list: DeckSection[] = []
@@ -98,5 +176,10 @@ export function normalizeSections(sections: readonly unknown[], framework: Propo
   }
   if (!list.length) return frameworkSections(framework)
   const middle = list.filter((s) => s !== 'cover' && s !== 'investment' && s !== 'service')
-  return ['cover' as const, ...middle, ...(seen.has('investment') ? (['investment'] as const) : []), ...(seen.has('service') ? (['service'] as const) : [])]
+  return [
+    'cover' as const,
+    ...middle,
+    ...(seen.has('investment') ? (['investment'] as const) : []),
+    ...(seen.has('service') ? (['service'] as const) : []),
+  ]
 }

@@ -7,13 +7,42 @@ import { createContractFromQuote } from '@/lib/services/contract-service'
 export const GET = mpRoute<{ id: string }>(async ({ user, params }) => {
   const payload = await getPayloadClient()
   const [project, contracts, quotes] = await Promise.all([
-    payload.findByID({ collection: 'projects', id: params.id, depth: 0, user, overrideAccess: false, select: { name: true, status: true } }).catch(() => null),
-    payload.find({ collection: 'contracts', where: { project: { equals: params.id } }, limit: 1, depth: 0, user, overrideAccess: false }),
-    payload.find({ collection: 'quotes', where: { project: { equals: params.id } }, sort: '-updatedAt', limit: 100, depth: 0, user, overrideAccess: false, select: { title: true, status: true, total: true, updatedAt: true } }),
+    payload
+      .findByID({
+        collection: 'projects',
+        id: params.id,
+        depth: 0,
+        user,
+        overrideAccess: false,
+        select: { name: true, status: true },
+      })
+      .catch(() => null),
+    payload.find({
+      collection: 'contracts',
+      where: { project: { equals: params.id } },
+      limit: 1,
+      depth: 0,
+      user,
+      overrideAccess: false,
+    }),
+    payload.find({
+      collection: 'quotes',
+      where: { project: { equals: params.id } },
+      sort: '-updatedAt',
+      limit: 100,
+      depth: 0,
+      user,
+      overrideAccess: false,
+      select: { title: true, status: true, total: true, updatedAt: true },
+    }),
   ])
   if (!project) return fail(404, '项目不存在或已被删除')
   return ok({
-    project: { id: String(project.id), name: project.name, archived: project.status === 'archived' },
+    project: {
+      id: String(project.id),
+      name: project.name,
+      archived: project.status === 'archived',
+    },
     contract: contracts.docs[0] ? presentContract(contracts.docs[0]) : null,
     quotes: quotes.docs.map(presentQuoteSummary),
   })

@@ -33,16 +33,11 @@
     "米家": [
       {
         "brandPattern": null,
-        "platforms": [
-          "米家"
-        ]
+        "platforms": ["米家"]
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "通用",
-          "Matter"
-        ]
+        "platforms": ["通用", "Matter"]
       }
     ],
     "Aqara Home": [
@@ -52,75 +47,53 @@
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "Apple Home",
-          "Matter"
-        ]
+        "platforms": ["Apple Home", "Matter"]
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ],
     "Apple Home": [
       {
         "brandPattern": null,
-        "platforms": [
-          "Apple Home",
-          "Matter"
-        ]
+        "platforms": ["Apple Home", "Matter"]
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ],
     "华为鸿蒙智家": [
       {
         "brandPattern": null,
-        "platforms": [
-          "华为"
-        ]
+        "platforms": ["华为"]
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ],
     "KNX": [
       {
         "brandPattern": null,
-        "platforms": [
-          "KNX"
-        ]
+        "platforms": ["KNX"]
       },
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ],
     "Control4": [
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ],
     "网络/弱电": [
       {
         "brandPattern": null,
-        "platforms": [
-          "通用"
-        ]
+        "platforms": ["通用"]
       }
     ]
   },

@@ -25,70 +25,148 @@ import { ZonePage } from './pages/zone'
 import type { DeckCtx } from './parts'
 import { deckVars, type DeckTheme } from './themes'
 
-export { customizeTheme, DECK_THEME_LIST, DECK_THEMES, isDeckTheme, type DeckTheme, type DeckThemeId } from './themes'
+export {
+  customizeTheme,
+  DECK_THEME_LIST,
+  DECK_THEMES,
+  isDeckTheme,
+  type DeckTheme,
+  type DeckThemeId,
+} from './themes'
 
 type PageRender = (no: number, total: number) => React.ReactNode
 
-const ALL_SECTIONS: DeckSection[] = ['cover', 'plans', 'system', 'zones', 'scenes', 'rooms', 'investment', 'service']
+const ALL_SECTIONS: DeckSection[] = [
+  'cover',
+  'plans',
+  'system',
+  'zones',
+  'scenes',
+  'rooms',
+  'investment',
+  'service',
+]
 
 /**
  * 按模板的章节顺序生成页面（framework.ts）。没有点位时只保留封面、投资与服务交付。
  */
-export function deckPages(d: ProjectDocsData, theme: DeckTheme, opts: { markers: ProposalMarkers; insights: boolean; sections?: DeckSection[] }) {
-  return deckPageRenders(d, theme, opts).map((r, i, all) => <Fragment key={i}>{r(i + 1, all.length)}</Fragment>)
+export function deckPages(
+  d: ProjectDocsData,
+  theme: DeckTheme,
+  opts: { markers: ProposalMarkers; insights: boolean; sections?: DeckSection[] },
+) {
+  return deckPageRenders(d, theme, opts).map((r, i, all) => (
+    <Fragment key={i}>{r(i + 1, all.length)}</Fragment>
+  ))
 }
 
 /** 方案的页数（选择器、模板库里显示「约 N 页」；与 deckPages 的分页完全一致） */
-export const countDeckPages = (d: ProjectDocsData, theme: DeckTheme, opts: { insights: boolean; sections?: DeckSection[] }) =>
-  deckPageRenders(d, theme, { ...opts, markers: 'symbol' }).length
+export const countDeckPages = (
+  d: ProjectDocsData,
+  theme: DeckTheme,
+  opts: { insights: boolean; sections?: DeckSection[] },
+) => deckPageRenders(d, theme, { ...opts, markers: 'symbol' }).length
 
 /** 只渲染封面（模板缩略图）并给出总页数：封面上的页码按整套方案的总页数显示，和真实方案一致 */
-export function deckCover(d: ProjectDocsData, theme: DeckTheme, opts: { insights: boolean; sections?: DeckSection[] }) {
+export function deckCover(
+  d: ProjectDocsData,
+  theme: DeckTheme,
+  opts: { insights: boolean; sections?: DeckSection[] },
+) {
   const renders = deckPageRenders(d, theme, { ...opts, markers: 'symbol', lazy: true })
   return { cover: renders[0]?.(1, renders.length) ?? null, total: renders.length }
 }
 
 /** 整套方案（公开样张页用，图片延迟加载） */
-export function deckPreviewPages(d: ProjectDocsData, theme: DeckTheme, opts: { insights: boolean; sections?: DeckSection[] }) {
-  return deckPageRenders(d, theme, { ...opts, markers: 'symbol', lazy: true }).map((r, i, all) => <Fragment key={i}>{r(i + 1, all.length)}</Fragment>)
+export function deckPreviewPages(
+  d: ProjectDocsData,
+  theme: DeckTheme,
+  opts: { insights: boolean; sections?: DeckSection[] },
+) {
+  return deckPageRenders(d, theme, { ...opts, markers: 'symbol', lazy: true }).map((r, i, all) => (
+    <Fragment key={i}>{r(i + 1, all.length)}</Fragment>
+  ))
 }
 
-function deckPageRenders(d: ProjectDocsData, theme: DeckTheme, opts: { markers: ProposalMarkers; insights: boolean; sections?: DeckSection[]; lazy?: boolean }): PageRender[] {
+function deckPageRenders(
+  d: ProjectDocsData,
+  theme: DeckTheme,
+  opts: { markers: ProposalMarkers; insights: boolean; sections?: DeckSection[]; lazy?: boolean },
+): PageRender[] {
   const m = buildDeck(d)
   const network = buildNetworkCamera(m)
   const ctx: DeckCtx = { m, theme, markers: 'symbol', lazy: opts.lazy }
   const pages: PageRender[] = []
   const needsPoints = new Set<DeckSection>(['plans', 'system', 'zones', 'scenes', 'rooms'])
-  const sections = (opts.sections?.length ? opts.sections : ALL_SECTIONS).filter((s) => d.points.length || !needsPoints.has(s))
+  const sections = (opts.sections?.length ? opts.sections : ALL_SECTIONS).filter(
+    (s) => d.points.length || !needsPoints.has(s),
+  )
   // 服务交付页的页码（投资页里引用），先占位，最后回填
   let servicePage = 0
   const render: Record<DeckSection, () => void> = {
     cover: () => pages.push((no, total) => <CoverPage ctx={ctx} no={no} total={total} />),
-    plans: () => m.sheets.forEach((s, i) => pages.push((no, total) => <PlanPage ctx={ctx} no={no} total={total} s={s} first={i === 0} />)),
+    plans: () =>
+      m.sheets.forEach((s, i) =>
+        pages.push((no, total) => (
+          <PlanPage ctx={ctx} no={no} total={total} s={s} first={i === 0} />
+        )),
+      ),
     system: () => {
-      if (hasSwitchLightingPoints(m)) pages.push((no, total) => <SystemPage ctx={ctx} no={no} total={total} />)
+      if (hasSwitchLightingPoints(m))
+        pages.push((no, total) => <SystemPage ctx={ctx} no={no} total={total} />)
       if (network) {
-        network.sheets.forEach((s) => pages.push((no, total) => <NetworkCameraPage ctx={ctx} no={no} total={total} network={network} s={s} />))
-        if (network.unmappedPoints.length || !network.sheets.length) pages.push((no, total) => <NetworkCameraPage ctx={ctx} no={no} total={total} network={network} />)
+        network.sheets.forEach((s) =>
+          pages.push((no, total) => (
+            <NetworkCameraPage ctx={ctx} no={no} total={total} network={network} s={s} />
+          )),
+        )
+        if (network.unmappedPoints.length || !network.sheets.length)
+          pages.push((no, total) => (
+            <NetworkCameraPage ctx={ctx} no={no} total={total} network={network} />
+          ))
       }
     },
     zones: () => {
-      for (const zone of m.zones) pages.push((no, total) => <ZonePage ctx={ctx} no={no} total={total} zone={zone} insights={opts.insights} />)
+      for (const zone of m.zones)
+        pages.push((no, total) => (
+          <ZonePage ctx={ctx} no={no} total={total} zone={zone} insights={opts.insights} />
+        ))
     },
     // 场景库匹配到的场景，每页两个
     scenes: () => {
       const list = deckScenes(m)
       const n = Math.ceil(list.length / 2)
-      for (let i = 0; i < n; i++) pages.push((no, total) => <ScenesPage ctx={ctx} no={no} total={total} scenes={list.slice(i * 2, i * 2 + 2)} part={n > 1 ? `（${i + 1}/${n}）` : ''} />)
+      for (let i = 0; i < n; i++)
+        pages.push((no, total) => (
+          <ScenesPage
+            ctx={ctx}
+            no={no}
+            total={total}
+            scenes={list.slice(i * 2, i * 2 + 2)}
+            part={n > 1 ? `（${i + 1}/${n}）` : ''}
+          />
+        ))
     },
     rooms: () => {
       const roomPages = paginateRooms(m.otherRooms)
       roomPages.forEach((page, i) =>
-        pages.push((no, total) => <RoomsPage ctx={ctx} no={no} total={total} page={page} rooms={m.otherRooms.length} part={roomPages.length > 1 ? `（${i + 1}/${roomPages.length}）` : ''} />),
+        pages.push((no, total) => (
+          <RoomsPage
+            ctx={ctx}
+            no={no}
+            total={total}
+            page={page}
+            rooms={m.otherRooms.length}
+            part={roomPages.length > 1 ? `（${i + 1}/${roomPages.length}）` : ''}
+          />
+        )),
       )
     },
     investment: () => {
-      const rows: InvestRow[] = [...m.items.map((item) => ({ kind: 'item' as const, item })), ...m.fees.map((fee) => ({ kind: 'fee' as const, fee }))]
+      const rows: InvestRow[] = [
+        ...m.items.map((item) => ({ kind: 'item' as const, item })),
+        ...m.fees.map((fee) => ({ kind: 'fee' as const, fee })),
+      ]
       const investPages = paginateRows(rows, 12, 9)
       investPages.forEach((list, i) =>
         pages.push((no, total) => (
@@ -114,7 +192,15 @@ function deckPageRenders(d: ProjectDocsData, theme: DeckTheme, opts: { markers: 
 }
 
 /** 方案根节点：风格变量 + 方案专用变量；页面按 1440px 设计稿排版，窄屏横向滚动 */
-export function DeckRoot({ theme, children, bare = false }: { theme: DeckTheme; children: React.ReactNode; bare?: boolean }) {
+export function DeckRoot({
+  theme,
+  children,
+  bare = false,
+}: {
+  theme: DeckTheme
+  children: React.ReactNode
+  bare?: boolean
+}) {
   return (
     <DocRoot style={theme.style} className="overflow-x-auto print:overflow-visible">
       {bare ? (
@@ -123,7 +209,10 @@ export function DeckRoot({ theme, children, bare = false }: { theme: DeckTheme; 
         </div>
       ) : (
         <ScaledStack width={1440} className="mx-auto max-w-[1440px] px-2 sm:px-0">
-          <div style={deckVars(theme)} className="w-[1440px] space-y-6 py-6 print:min-w-0 print:space-y-0 print:py-0">
+          <div
+            style={deckVars(theme)}
+            className="w-[1440px] space-y-6 py-6 print:min-w-0 print:space-y-0 print:py-0"
+          >
             {children}
           </div>
         </ScaledStack>

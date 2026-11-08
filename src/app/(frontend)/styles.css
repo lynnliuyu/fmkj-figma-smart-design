@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "./shadcn.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './shadcn.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -9,54 +9,64 @@
    - 中文黑体 / 宋体、等宽数字：优先用电脑上已装的思源 / Noto 字体，没有时用系统自带的苹方、雅黑、宋体等。
    这样国内网络和自部署环境下文档都能立即显示，不会因为海外字体加载慢而卡住。 */
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin-var.woff2") format("woff2");
+  font-family: 'Inter';
+  src: url('/fonts/inter-latin-var.woff2') format('woff2');
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
 }
 @font-face {
-  font-family: "Inter:Light";
-  src: url("/fonts/inter-latin-var.woff2") format("woff2");
+  font-family: 'Inter:Light';
+  src: url('/fonts/inter-latin-var.woff2') format('woff2');
   font-style: normal;
   font-weight: 300;
   font-display: swap;
 }
 @font-face {
-  font-family: "Inter:Regular";
-  src: url("/fonts/inter-latin-var.woff2") format("woff2");
+  font-family: 'Inter:Regular';
+  src: url('/fonts/inter-latin-var.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: "Noto Sans SC:Bold";
-  src: local("Noto Sans SC Bold"), local("NotoSansSC-Bold"), local("Source Han Sans SC Bold"), local("PingFang SC Semibold"), local("PingFangSC-Semibold"), local("Microsoft YaHei Bold");
+  font-family: 'Noto Sans SC:Bold';
+  src:
+    local('Noto Sans SC Bold'), local('NotoSansSC-Bold'), local('Source Han Sans SC Bold'),
+    local('PingFang SC Semibold'), local('PingFangSC-Semibold'), local('Microsoft YaHei Bold');
   font-style: normal;
   font-weight: 700;
 }
 @font-face {
-  font-family: "Noto Sans SC:Medium";
-  src: local("Noto Sans SC Medium"), local("NotoSansSC-Medium"), local("Source Han Sans SC Medium"), local("PingFang SC Medium"), local("PingFangSC-Medium"), local("Microsoft YaHei");
+  font-family: 'Noto Sans SC:Medium';
+  src:
+    local('Noto Sans SC Medium'), local('NotoSansSC-Medium'), local('Source Han Sans SC Medium'),
+    local('PingFang SC Medium'), local('PingFangSC-Medium'), local('Microsoft YaHei');
   font-style: normal;
   font-weight: 500;
 }
 @font-face {
-  font-family: "Noto Sans SC:Regular";
-  src: local("Noto Sans SC"), local("NotoSansSC-Regular"), local("Source Han Sans SC"), local("PingFang SC"), local("PingFangSC-Regular"), local("Microsoft YaHei");
+  font-family: 'Noto Sans SC:Regular';
+  src:
+    local('Noto Sans SC'), local('NotoSansSC-Regular'), local('Source Han Sans SC'),
+    local('PingFang SC'), local('PingFangSC-Regular'), local('Microsoft YaHei');
   font-style: normal;
   font-weight: 400;
 }
 /* 文档风格「东方雅韵」等用的衬线体、「科技」的等宽数字 */
 @font-face {
-  font-family: "Noto Serif SC";
-  src: local("Noto Serif SC"), local("NotoSerifSC-Regular"), local("Source Han Serif SC"), local("Songti SC"), local("STSong"), local("SimSun");
+  font-family: 'Noto Serif SC';
+  src:
+    local('Noto Serif SC'), local('NotoSerifSC-Regular'), local('Source Han Serif SC'),
+    local('Songti SC'), local('STSong'), local('SimSun');
   font-style: normal;
   font-weight: 400 700;
 }
 @font-face {
-  font-family: "JetBrains Mono";
-  src: local("JetBrains Mono"), local("JetBrainsMono-Regular"), local("SF Mono"), local("Menlo"), local("Consolas");
+  font-family: 'JetBrains Mono';
+  src:
+    local('JetBrains Mono'), local('JetBrainsMono-Regular'), local('SF Mono'), local('Menlo'),
+    local('Consolas');
   font-style: normal;
   font-weight: 400 500;
 }
@@ -126,9 +136,12 @@
   --shadow-2xs: 0 1px 1px 0 oklch(0.25 0.02 270 / 0.05);
   --shadow-xs: 0 1px 2px 0 oklch(0.25 0.02 270 / 0.06);
   --shadow-sm: 0 1px 3px 0 oklch(0.25 0.02 270 / 0.08), 0 1px 2px -1px oklch(0.25 0.02 270 / 0.06);
-  --shadow-md: 0 4px 8px -2px oklch(0.25 0.02 270 / 0.08), 0 2px 4px -2px oklch(0.25 0.02 270 / 0.05);
-  --shadow-lg: 0 12px 16px -4px oklch(0.25 0.02 270 / 0.08), 0 4px 6px -2px oklch(0.25 0.02 270 / 0.03);
-  --shadow-xl: 0 20px 24px -4px oklch(0.25 0.02 270 / 0.09), 0 8px 8px -4px oklch(0.25 0.02 270 / 0.03);
+  --shadow-md:
+    0 4px 8px -2px oklch(0.25 0.02 270 / 0.08), 0 2px 4px -2px oklch(0.25 0.02 270 / 0.05);
+  --shadow-lg:
+    0 12px 16px -4px oklch(0.25 0.02 270 / 0.08), 0 4px 6px -2px oklch(0.25 0.02 270 / 0.03);
+  --shadow-xl:
+    0 20px 24px -4px oklch(0.25 0.02 270 / 0.09), 0 8px 8px -4px oklch(0.25 0.02 270 / 0.03);
   --inset-shadow-btn: inset 0 1px 0 0 oklch(1 0 0 / 0.14), inset 0 -1px 0 0 oklch(0 0 0 / 0.12);
   --inset-shadow-btn-neutral: inset 0 -1px 0 0 oklch(0.25 0.02 270 / 0.05);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -150,7 +163,8 @@
   --text-headline--letter-spacing: -0.018em;
   --text-lead: 1.125rem;
   --text-lead--line-height: 1.75;
-  --shadow-window: 0 1px 2px oklch(0.2 0.02 270 / 0.06), 0 24px 56px -28px oklch(0.2 0.03 270 / 0.28);
+  --shadow-window:
+    0 1px 2px oklch(0.2 0.02 270 / 0.06), 0 24px 56px -28px oklch(0.2 0.03 270 / 0.28);
 }
 
 /*
@@ -161,7 +175,9 @@
  * 「经典」就是 :root / .dark 的中性色。
  */
 :root {
-  --font-sans: var(--font-inter), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", ui-sans-serif, sans-serif;
+  --font-sans:
+    var(--font-inter), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+    ui-sans-serif, sans-serif;
   --background: oklch(1 0 0);
   --canvas: oklch(0.982 0.002 260);
   --foreground: oklch(0.2 0.008 260);
@@ -246,7 +262,7 @@
 }
 
 /* 主题风格（强调色）：<html data-accent="fanmeng | jade | classic">。 */
-[data-accent="fanmeng"] {
+[data-accent='fanmeng'] {
   --background: oklch(1 0 0);
   --canvas: oklch(0.982 0.004 286);
   --foreground: oklch(0.2 0.02 282);
@@ -277,8 +293,8 @@
   --sidebar-border: oklch(0.918 0.009 285);
   --sidebar-ring: oklch(0.62 0.17 281);
 }
-.dark[data-accent="fanmeng"],
-.dark [data-accent="fanmeng"] {
+.dark[data-accent='fanmeng'],
+.dark [data-accent='fanmeng'] {
   --background: oklch(0.17 0.016 283);
   --canvas: oklch(0.145 0.014 283);
   --foreground: oklch(0.97 0.006 285);
@@ -309,7 +325,7 @@
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.6 0.15 282);
 }
-[data-accent="jade"] {
+[data-accent='jade'] {
   --background: oklch(1 0 0);
   --canvas: oklch(0.982 0.004 185);
   --foreground: oklch(0.2 0.014 200);
@@ -340,8 +356,8 @@
   --sidebar-border: oklch(0.918 0.008 182);
   --sidebar-ring: oklch(0.63 0.1 180);
 }
-.dark[data-accent="jade"],
-.dark [data-accent="jade"] {
+.dark[data-accent='jade'],
+.dark [data-accent='jade'] {
   --background: oklch(0.17 0.012 205);
   --canvas: oklch(0.145 0.011 205);
   --foreground: oklch(0.97 0.005 180);
@@ -403,13 +419,8 @@
      换台电脑行高和字宽就变。这里显式补齐中文字体链，保证同一份界面到哪都一样。 */
   html {
     font-family:
-      var(--font-sans),
-      "PingFang SC",
-      "Hiragino Sans GB",
-      "Microsoft YaHei",
-      "Noto Sans SC",
-      ui-sans-serif,
-      sans-serif;
+      var(--font-sans), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+      ui-sans-serif, sans-serif;
   }
 
   /* 表格里的金额、数量、日期必须上下对齐；比例数字会让右对齐的列参差不齐。 */
@@ -446,15 +457,14 @@
     text-underline-offset: 3px;
   }
 
-  body[data-density="compact"] {
+  body[data-density='compact'] {
     --spacing: 0.225rem;
   }
 
-  body[data-density="comfortable"] {
+  body[data-density='comfortable'] {
     --spacing: 0.275rem;
   }
 }
-
 
 .figma-custom-code-fragment {
   display: contents;
@@ -470,7 +480,9 @@
   background: var(--foreground);
   color: var(--background);
   padding: 8px 12px;
-  font: 600 14px/1.2 system-ui, sans-serif;
+  font:
+    600 14px/1.2 system-ui,
+    sans-serif;
   text-decoration: none;
 }
 
@@ -480,14 +492,13 @@
 
 /* 画布类页面（点位图）和项目详情铺满内容区，不受页面最大宽度限制（项目各板块自己控制内容宽度）。
    页面容器见 (workspace)/layout.tsx 的 data-slot="workspace-page"。 */
-[data-slot="workspace-page"]:has(> .full-bleed-page),
-[data-slot="workspace-page"]:has(> .project-header) {
+[data-slot='workspace-page']:has(> .full-bleed-page),
+[data-slot='workspace-page']:has(> .project-header) {
   max-width: none;
 }
 
-
 /* 侧栏滚动区域：内容按容器宽度换行，长产品名不会把面板撑宽 */
-.point-map-aside [data-slot="scroll-area-viewport"] > div {
+.point-map-aside [data-slot='scroll-area-viewport'] > div {
   display: block !important;
   min-width: 0 !important;
 }
@@ -563,13 +574,21 @@ html:has([data-landing]) {
 }
 
 /* 工作区页面入场：页面主体逐块淡入上移 6px（指数缓出），全屏画布与项目顶栏不参与 */
-[data-slot="workspace-page"] > :not(.full-bleed-page):not(.project-header) {
+[data-slot='workspace-page'] > :not(.full-bleed-page):not(.project-header) {
   animation: enter 420ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
-[data-slot="workspace-page"] > :nth-child(2) { animation-delay: 40ms; }
-[data-slot="workspace-page"] > :nth-child(3) { animation-delay: 80ms; }
-[data-slot="workspace-page"] > :nth-child(4) { animation-delay: 120ms; }
-[data-slot="workspace-page"] > :nth-child(n + 5) { animation-delay: 160ms; }
+[data-slot='workspace-page'] > :nth-child(2) {
+  animation-delay: 40ms;
+}
+[data-slot='workspace-page'] > :nth-child(3) {
+  animation-delay: 80ms;
+}
+[data-slot='workspace-page'] > :nth-child(4) {
+  animation-delay: 120ms;
+}
+[data-slot='workspace-page'] > :nth-child(n + 5) {
+  animation-delay: 160ms;
+}
 @keyframes enter {
   from {
     opacity: 0;
@@ -602,7 +621,7 @@ html:has([data-landing]) {
 }
 /* 手机与小程序窄屏预览打印页时，按屏幕宽度等比缩放纸张（导出 PDF / 图片时通过行内 zoom:1 还原 1:1 高清尺寸） */
 @media screen and (max-width: 1460px) {
-  article[data-export-page="flow"] {
+  article[data-export-page='flow'] {
     zoom: var(--paper-zoom, 1);
   }
   section[data-export-page]:not([data-figma-frame]) {

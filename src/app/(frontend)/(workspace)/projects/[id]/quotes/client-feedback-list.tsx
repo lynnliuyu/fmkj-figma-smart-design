@@ -30,7 +30,17 @@ export type FeedbackItem = {
 }
 
 /** 报价页顶部：业主在分享页提交的意向反馈（确认意向 / 希望调整、暂缓的设备、留言与手写签名） */
-export function ClientFeedbackList({ projectId, items, readOnly, canCreateQuote }: { projectId: string; items: FeedbackItem[]; readOnly: boolean; canCreateQuote: boolean }) {
+export function ClientFeedbackList({
+  projectId,
+  items,
+  readOnly,
+  canCreateQuote,
+}: {
+  projectId: string
+  items: FeedbackItem[]
+  readOnly: boolean
+  canCreateQuote: boolean
+}) {
   const router = useRouter()
   const [busy, setBusy] = useState<string | null>(null)
   const [, startTransition] = useTransition()
@@ -57,7 +67,10 @@ export function ClientFeedbackList({ projectId, items, readOnly, canCreateQuote 
   }
 
   return (
-    <section aria-labelledby="feedback-title" className="overflow-hidden rounded-xl bg-card shadow-xs ring-1 ring-border">
+    <section
+      aria-labelledby="feedback-title"
+      className="overflow-hidden rounded-xl bg-card shadow-xs ring-1 ring-border"
+    >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3.5">
         <h3 id="feedback-title" className="flex items-center gap-2 text-base font-semibold">
           <MessageSquareQuote className="size-4 text-muted-foreground" />
@@ -73,25 +86,38 @@ export function ClientFeedbackList({ projectId, items, readOnly, canCreateQuote 
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{f.customerName}</span>
-                  <Badge variant={f.decision === 'confirm' ? 'success' : 'warning'}>{feedbackDecisionLabel(f.decision)}</Badge>
+                  <Badge variant={f.decision === 'confirm' ? 'success' : 'warning'}>
+                    {feedbackDecisionLabel(f.decision)}
+                  </Badge>
                   {f.status === 'handled' ? <Badge variant="outline">已处理</Badge> : null}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {[f.createdLabel, f.quoteTitle ? `方案「${f.quoteTitle}」` : null, f.customerPhone || null].filter(Boolean).join(' · ')}
+                  {[
+                    f.createdLabel,
+                    f.quoteTitle ? `方案「${f.quoteTitle}」` : null,
+                    f.customerPhone || null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-lg font-semibold tabular-nums">{yuan(f.intentTotal)}</p>
                 {f.deferred.length ? (
                   <p className="text-xs text-muted-foreground">
-                    原价 <span className="line-through">{yuan(f.quoteTotal)}</span> · 暂缓 {f.deferred.length} 项
+                    原价 <span className="line-through">{yuan(f.quoteTotal)}</span> · 暂缓{' '}
+                    {f.deferred.length} 项
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground">按原方案</p>
                 )}
               </div>
             </div>
-            {f.message ? <p className="mt-2.5 rounded-lg bg-muted/50 px-3 py-2 text-sm whitespace-pre-line">{f.message}</p> : null}
+            {f.message ? (
+              <p className="mt-2.5 rounded-lg bg-muted/50 px-3 py-2 text-sm whitespace-pre-line">
+                {f.message}
+              </p>
+            ) : null}
             {f.deferred.length ? (
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 暂缓：{f.deferred.map((d) => `${d.name} ×${d.quantity}`).join('、')}
@@ -99,19 +125,40 @@ export function ClientFeedbackList({ projectId, items, readOnly, canCreateQuote 
             ) : null}
             <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
               {f.signature ? (
-                <Image src={f.signature} alt={`${f.customerName} 的手写签名`} width={192} height={64} unoptimized className="h-14 w-auto rounded-md border bg-white" />
+                <Image
+                  src={f.signature}
+                  alt={`${f.customerName} 的手写签名`}
+                  width={192}
+                  height={64}
+                  unoptimized
+                  className="h-14 w-auto rounded-md border bg-white"
+                />
               ) : (
                 <span className="text-xs text-muted-foreground">未签名</span>
               )}
               {readOnly ? null : (
                 <div className="flex flex-wrap gap-2">
                   {canCreateQuote && f.quoteId && f.deferred.length ? (
-                    <Button size="sm" variant="outline" disabled={busy === `q:${f.id}`} onClick={() => adjust(f)}>
-                      {busy === `q:${f.id}` ? <Loader2 className="size-4 animate-spin" /> : <CopyPlus className="size-4" />}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busy === `q:${f.id}`}
+                      onClick={() => adjust(f)}
+                    >
+                      {busy === `q:${f.id}` ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <CopyPlus className="size-4" />
+                      )}
                       按意向生成调整版
                     </Button>
                   ) : null}
-                  <Button size="sm" variant={f.status === 'new' ? 'default' : 'ghost'} disabled={busy === f.id} onClick={() => toggle(f)}>
+                  <Button
+                    size="sm"
+                    variant={f.status === 'new' ? 'default' : 'ghost'}
+                    disabled={busy === f.id}
+                    onClick={() => toggle(f)}
+                  >
                     {busy === f.id ? <Loader2 className="size-4 animate-spin" /> : null}
                     {f.status === 'new' ? '标记已处理' : '设为待处理'}
                   </Button>

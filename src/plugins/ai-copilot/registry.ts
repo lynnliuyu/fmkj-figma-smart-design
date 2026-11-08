@@ -12,10 +12,20 @@ import { coreToolHandlers } from './tools/core-handlers'
 import { competitorQuoteHandlers } from './tools/competitor-quote'
 import type { AiTool, AiToolHandler, ToolContext } from './tools/context'
 
-export type { ActiveProjectUpdate, AiTool, AiToolHandler, ToolContext, ToolRunResult } from './tools/context'
+export type {
+  ActiveProjectUpdate,
+  AiTool,
+  AiToolHandler,
+  ToolContext,
+  ToolRunResult,
+} from './tools/context'
 export { refreshContextProject } from './tools/context'
 
-export type LlmToolCall = { id: string; type: 'function'; function: { name: string; arguments: string } }
+export type LlmToolCall = {
+  id: string
+  type: 'function'
+  function: { name: string; arguments: string }
+}
 
 /** 汇总各插件自己注册的工具执行函数（去中心化维护，按工具名映射） */
 const HANDLER_MAP: Record<string, AiToolHandler> = {
@@ -45,7 +55,11 @@ export const REGISTERED_AI_TOOLS: AiTool[] = allAiToolSpecs()
   }))
 
 /** 本次对话可用的工具：核心工具始终可用，插件工具需对应插件已开启且已勾选 */
-export function availableTools(_modelId: string, pluginIds: string[], flags: PluginFlags): AiTool[] {
+export function availableTools(
+  _modelId: string,
+  pluginIds: string[],
+  flags: PluginFlags,
+): AiTool[] {
   return REGISTERED_AI_TOOLS.filter(
     (t) => t.pluginId === null || (flags[t.pluginId] && pluginIds.includes(t.pluginId)),
   )
@@ -84,7 +98,11 @@ export async function runTool(tools: AiTool[], call: LlmToolCall, ctx: ToolConte
   const declaredPerms = new Set(PLUGIN_AI_SPECS[ownerId]?.permissions ?? [])
   for (const perm of tool.spec.permissions) {
     if (!declaredPerms.has(perm)) {
-      return { tool, output: { error: `工具「${tool.pluginName}」缺少插件权限声明：${perm}` }, summary: '权限校验未通过' }
+      return {
+        tool,
+        output: { error: `工具「${tool.pluginName}」缺少插件权限声明：${perm}` },
+        summary: '权限校验未通过',
+      }
     }
   }
 
@@ -96,7 +114,9 @@ export async function runTool(tools: AiTool[], call: LlmToolCall, ctx: ToolConte
   }
 
   const argProjectId =
-    tool.spec.projectArg && typeof args[tool.spec.projectArg] === 'string' && String(args[tool.spec.projectArg]).trim()
+    tool.spec.projectArg &&
+    typeof args[tool.spec.projectArg] === 'string' &&
+    String(args[tool.spec.projectArg]).trim()
       ? String(args[tool.spec.projectArg]).trim()
       : null
   const targetProjectId = argProjectId ?? ctx.projectId
@@ -104,7 +124,9 @@ export async function runTool(tools: AiTool[], call: LlmToolCall, ctx: ToolConte
   if (tool.spec.scope === 'project' && !targetProjectId) {
     return {
       tool,
-      output: { error: '当前尚未关联项目，请先调用 list_projects 选择项目或调用 create_project 新建项目' },
+      output: {
+        error: '当前尚未关联项目，请先调用 list_projects 选择项目或调用 create_project 新建项目',
+      },
       summary: '未关联项目',
     }
   }

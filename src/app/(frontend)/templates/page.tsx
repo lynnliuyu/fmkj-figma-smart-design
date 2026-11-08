@@ -7,7 +7,11 @@ import { Section, SectionHeader } from '@/components/landing/section'
 import { Button } from '@/components/ui/button'
 import { APP_NAME } from '@/lib/brand'
 import { getCompanyInfo } from '@/lib/cached-data'
-import { DECK_SECTIONS, ORCHESTRATION_RULES, PROPOSAL_FRAMEWORKS } from '@/plugins/proposal/framework'
+import {
+  DECK_SECTIONS,
+  ORCHESTRATION_RULES,
+  PROPOSAL_FRAMEWORKS,
+} from '@/plugins/proposal/framework'
 import { buildTemplateGallery, getTemplatePreviewDocs } from '@/plugins/proposal/preview'
 import { loadPublicProposalTemplates } from '@/plugins/proposal/registry'
 import { Swatches } from '@/plugins/proposal/template-picker'
@@ -16,7 +20,8 @@ import { TemplateCard } from '@/components/proposal-template-card'
 
 export const metadata: Metadata = {
   title: `方案模板库 · ${APP_NAME}`,
-  description: '全屋智能方案模板库：每套模板写清适合什么客户、什么时候用、有哪些章节，缩略图就是真实封面，点进去可以看整套样张。',
+  description:
+    '全屋智能方案模板库：每套模板写清适合什么客户、什么时候用、有哪些章节，缩略图就是真实封面，点进去可以看整套样张。',
   alternates: { canonical: '/templates' },
 }
 
@@ -24,7 +29,11 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function TemplatesPage() {
-  const [templates, docs, company] = await Promise.all([loadPublicProposalTemplates(), getTemplatePreviewDocs().catch(() => null), getCompanyInfo().catch(() => null)])
+  const [templates, docs, company] = await Promise.all([
+    loadPublicProposalTemplates(),
+    getTemplatePreviewDocs().catch(() => null),
+    getCompanyInfo().catch(() => null),
+  ])
   const { items, thumbs } = buildTemplateGallery(templates, docs)
   const owner = items.filter((t) => t.kind === 'owner')
   const construction = items.filter((t) => t.kind === 'construction')
@@ -61,7 +70,8 @@ export default async function TemplatesPage() {
 
         <Section id="owner" labelledBy="owner-title" className="pt-16 sm:pt-20">
           <SectionHeader id="owner-title" title="业主方案">
-            给业主看的横版提案。按版式分为{frameworks.map((f) => `「${f.label}」`).join('')}，样张使用平台内置的三层别墅示例项目生成。
+            给业主看的横版提案。按版式分为{frameworks.map((f) => `「${f.label}」`).join('')}
+            ，样张使用平台内置的三层别墅示例项目生成。
           </SectionHeader>
           {frameworks.map((f) => (
             <div key={f.value} className="mt-12">
@@ -83,7 +93,8 @@ export default async function TemplatesPage() {
         {construction.length ? (
           <Section id="construction" labelledBy="construction-title" className="pt-0 sm:pt-0">
             <SectionHeader id="construction-title" title="施工交底">
-              给安装团队的 A4 横版资料：点位代号、安装位置、房间配置与逐点核对表，不含任何价格，和业主方案分开生成。
+              给安装团队的 A4
+              横版资料：点位代号、安装位置、房间配置与逐点核对表，不含任何价格，和业主方案分开生成。
             </SectionHeader>
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
               {construction.map((t) => (
@@ -113,18 +124,25 @@ export default async function TemplatesPage() {
                 {[...owner, ...construction].map((t) => (
                   <tr key={t.value} className="align-top">
                     <td className="px-4 py-3">
-                      <Link href={`/templates/${t.value}`} className="flex items-center gap-2 font-medium whitespace-nowrap hover:underline">
+                      <Link
+                        href={`/templates/${t.value}`}
+                        className="flex items-center gap-2 font-medium whitespace-nowrap hover:underline"
+                      >
                         <Swatches colors={t.swatches} />
                         {t.label}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{t.frameworkLabel}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                      {t.frameworkLabel}
+                    </td>
                     <td className="px-4 py-3">{t.audience}</td>
                     <td className="px-4 py-3">{t.occasion}</td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {t.coverStyle} · {t.mood}
                     </td>
-                    <td className="px-4 py-3 text-right text-muted-foreground tabular-nums">{t.pages ?? '—'}</td>
+                    <td className="px-4 py-3 text-right text-muted-foreground tabular-nums">
+                      {t.pages ?? '—'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -139,8 +157,13 @@ export default async function TemplatesPage() {
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.4fr]">
             <ol className="space-y-3">
               {ORCHESTRATION_RULES.map((r, i) => (
-                <li key={r} className="flex gap-4 rounded-xl border bg-card p-4 text-sm leading-relaxed">
-                  <span className="font-medium text-muted-foreground tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                <li
+                  key={r}
+                  className="flex gap-4 rounded-xl border bg-card p-4 text-sm leading-relaxed"
+                >
+                  <span className="font-medium text-muted-foreground tabular-nums">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                   <span>{r}</span>
                 </li>
               ))}
@@ -162,7 +185,9 @@ export default async function TemplatesPage() {
                         {s.description}
                         {s.needsPoints ? '（需要点位）' : ''}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{s.pages}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                        {s.pages}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -177,9 +202,15 @@ export default async function TemplatesPage() {
               <h2 id="templates-cta" className="text-headline font-medium">
                 用自己的项目试一套
               </h2>
-              <p className="mt-3 text-lead text-muted-foreground">在项目「归档」或方案页里打开模板选择器，缩略图与页数会按你的项目实时计算。</p>
+              <p className="mt-3 text-lead text-muted-foreground">
+                在项目「归档」或方案页里打开模板选择器，缩略图与页数会按你的项目实时计算。
+              </p>
             </div>
-            <Button asChild size="lg" className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85">
+            <Button
+              asChild
+              size="lg"
+              className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
+            >
               <Link href="/projects">
                 进入工作台
                 <ArrowRight data-icon="inline-end" />
@@ -188,7 +219,10 @@ export default async function TemplatesPage() {
           </div>
         </section>
       </main>
-      <LandingFooter qrCodeUrl={company?.qrCode?.url ?? '/brand/wechat-contact-qr.jpg'} qrCaption={company?.qrCaption ?? '扫码添加微信'} />
+      <LandingFooter
+        qrCodeUrl={company?.qrCode?.url ?? '/brand/wechat-contact-qr.jpg'}
+        qrCaption={company?.qrCaption ?? '扫码添加微信'}
+      />
     </div>
   )
 }

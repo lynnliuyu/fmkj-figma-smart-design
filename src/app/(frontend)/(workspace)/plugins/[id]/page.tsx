@@ -84,7 +84,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
       <PageHeader
         title={plugin.name}
         description={plugin.description}
-        actions={pending ? <Badge variant="outline" className="text-muted-foreground">规划中</Badge> : null}
+        actions={
+          pending ? (
+            <Badge variant="outline" className="text-muted-foreground">
+              规划中
+            </Badge>
+          ) : null
+        }
       />
 
       <div className="-mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -96,7 +102,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
         <CardHeader>
           <CardTitle>插件能力与接入位置</CardTitle>
           <CardDescription>
-            {pending ? `规划接入：${stage.label}（${stage.hint}）` : `接入阶段：${stage.label}（${stage.hint}）${plugin.entry ? ` · 入口：${plugin.entry.label}` : ''}`}
+            {pending
+              ? `规划接入：${stage.label}（${stage.hint}）`
+              : `接入阶段：${stage.label}（${stage.hint}）${plugin.entry ? ` · 入口：${plugin.entry.label}` : ''}`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -112,7 +120,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
             <div className="space-y-4 border-t pt-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">内置对话技能模板（{DEFAULT_AI_TEMPLATES.length} 套）</span>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    内置对话技能模板（{DEFAULT_AI_TEMPLATES.length} 套）
+                  </span>
                   <Button asChild variant="outline" size="xs">
                     <Link href="/ai">
                       <Bot className="size-3.5" />
@@ -122,7 +132,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {DEFAULT_AI_TEMPLATES.map((tpl) => {
-                    const m = activeAiModels.find((x) => x.id === tpl.recommendedModelId) ?? activeAiModels[0]
+                    const m =
+                      activeAiModels.find((x) => x.id === tpl.recommendedModelId) ??
+                      activeAiModels[0]
                     return (
                       <div key={tpl.id} className="rounded-lg border p-3">
                         <div className="flex items-center justify-between gap-2">
@@ -161,7 +173,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           {plugin.id === 'doc-styles' ? (
             <div className="space-y-2 border-t pt-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">包含的 {PLUGIN_DOC_STYLES.length} 套扩展打印风格</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  包含的 {PLUGIN_DOC_STYLES.length} 套扩展打印风格
+                </span>
                 <Button asChild variant="outline" size="xs">
                   <Link href="/settings">
                     <Settings className="size-3.5" />
@@ -172,7 +186,10 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
               <div className="grid gap-2 sm:grid-cols-2">
                 {PLUGIN_DOC_STYLES.map((s) => (
                   <div key={s.id} className="flex items-start gap-2.5 rounded-lg border p-3">
-                    <span className="mt-0.5 flex shrink-0 overflow-hidden rounded-sm ring-1 ring-foreground/10" aria-hidden>
+                    <span
+                      className="mt-0.5 flex shrink-0 overflow-hidden rounded-sm ring-1 ring-foreground/10"
+                      aria-hidden
+                    >
                       <span className="size-3.5" style={{ backgroundColor: s.colors.paper }} />
                       <span className="size-3.5" style={{ backgroundColor: s.colors.accent }} />
                       <span className="size-3.5" style={{ backgroundColor: s.colors.headBg }} />
@@ -191,7 +208,8 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
             <div className="space-y-3 border-t pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-medium text-muted-foreground">
-                  可用的方案模板（业主方案 {gallery.items.filter((t) => t.kind === 'owner').length} 套 · 施工交底 {gallery.items.filter((t) => t.kind === 'construction').length} 套）
+                  可用的方案模板（业主方案 {gallery.items.filter((t) => t.kind === 'owner').length}{' '}
+                  套 · 施工交底 {gallery.items.filter((t) => t.kind === 'construction').length} 套）
                 </span>
                 <Button asChild variant="outline" size="xs">
                   <Link href="/templates" target="_blank">
@@ -212,13 +230,19 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
             <div className="space-y-3 border-t pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-medium text-muted-foreground">
-                  插件 AI 元数据（工具 {plugin.ai.tools.length} · 技能 {plugin.ai.skills.length} · 知识条目 {plugin.ai.knowledge.length}）
+                  插件 AI 元数据（工具 {plugin.ai.tools.length} · 技能 {plugin.ai.skills.length} ·
+                  知识条目 {plugin.ai.knowledge.length}）
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {plugin.ai.permissions.map((perm) => {
                     const meta = AI_PERMISSIONS.find((p) => p.value === perm)
                     return (
-                      <Badge key={perm} variant="outline" className="font-mono text-[10px] font-normal" title={meta?.label}>
+                      <Badge
+                        key={perm}
+                        variant="outline"
+                        className="font-mono text-[10px] font-normal"
+                        title={meta?.label}
+                      >
                         {perm}
                       </Badge>
                     )
@@ -236,7 +260,9 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                           +{tool.cost} 积分 · {tool.mutates ? '写入' : '只读'}
                         </Badge>
                       </div>
-                      <code className="mt-0.5 block font-mono text-[11px] text-muted-foreground">{tool.name}</code>
+                      <code className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
+                        {tool.name}
+                      </code>
                       <p className="mt-1 text-muted-foreground">{tool.description}</p>
                     </div>
                   ))}
@@ -286,13 +312,27 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           </CardHeader>
           <CardContent className="divide-y">
             {projects.length === 0 ? (
-              <p className="py-4 text-sm text-muted-foreground">还没有进行中的项目，请先在「项目」中创建。</p>
+              <p className="py-4 text-sm text-muted-foreground">
+                还没有进行中的项目，请先在「项目」中创建。
+              </p>
             ) : (
               projects.map((proj) => {
-                const targetHref = plugin.entry ? plugin.entry.href(proj.id) : `/projects/${proj.id}`
-                const targetLabel = plugin.id === 'proposal' ? '打开方案' : plugin.id === 'doc-styles' ? '预览风格' : plugin.id === 'ai-copilot' ? '打开 AI 对话' : '打开点位图'
+                const targetHref = plugin.entry
+                  ? plugin.entry.href(proj.id)
+                  : `/projects/${proj.id}`
+                const targetLabel =
+                  plugin.id === 'proposal'
+                    ? '打开方案'
+                    : plugin.id === 'doc-styles'
+                      ? '预览风格'
+                      : plugin.id === 'ai-copilot'
+                        ? '打开 AI 对话'
+                        : '打开点位图'
                 return (
-                  <div key={proj.id} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                  <div
+                    key={proj.id}
+                    className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                  >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <FolderKanban className="size-4 shrink-0 text-muted-foreground" />

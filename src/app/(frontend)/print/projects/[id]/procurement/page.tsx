@@ -4,7 +4,19 @@ import { BrandLogo } from '@/components/brand-logo'
 import { PointMarker } from '@/components/point-marker'
 import { PrintToolbar } from '@/components/print-toolbar'
 import { ProductThumb } from '@/components/product-thumb'
-import { DocArticle, DocCheckbox, DocEmpty, DocFacts, DocFooter, DocHeader, DocRoot, DocSectionHeading, DocSignatures, DocTitle, docTable } from '@/documents/parts'
+import {
+  DocArticle,
+  DocCheckbox,
+  DocEmpty,
+  DocFacts,
+  DocFooter,
+  DocHeader,
+  DocRoot,
+  DocSectionHeading,
+  DocSignatures,
+  DocTitle,
+  docTable,
+} from '@/documents/parts'
 import { resolveDocSetup } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { deviceTypeOf } from '@/lib/device-types'
@@ -36,24 +48,44 @@ export default async function ProcurementPage({
   const { style, company } = setup
   const showCost = sp.cost !== '0'
   const t = docTable(style)
-  const date = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric' })
+  const date = new Date().toLocaleDateString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
   const base = `/print/projects/${id}/procurement`
   const href = (patch: { style?: string; cost?: string }) => {
-    const q = new URLSearchParams({ style: patch.style ?? style.id, cost: patch.cost ?? (showCost ? '1' : '0') })
+    const q = new URLSearchParams({
+      style: patch.style ?? style.id,
+      cost: patch.cost ?? (showCost ? '1' : '0'),
+    })
     return `${base}?${q.toString()}`
   }
 
-  const brandGroups = new Map<string, { brandName: string; brandLogo: string | null; rows: typeof d.products }>()
+  const brandGroups = new Map<
+    string,
+    { brandName: string; brandLogo: string | null; rows: typeof d.products }
+  >()
   for (const row of d.products) {
     const bName = row.product.brand?.name || '其他品牌'
-    const existing = brandGroups.get(bName) ?? { brandName: bName, brandLogo: row.product.brand?.logo ?? null, rows: [] }
+    const existing = brandGroups.get(bName) ?? {
+      brandName: bName,
+      brandLogo: row.product.brand?.logo ?? null,
+      rows: [],
+    }
     existing.rows.push(row)
     brandGroups.set(bName, existing)
   }
-  const groups = [...brandGroups.values()].sort((a, b) => b.rows.reduce((s, r) => s + r.count, 0) - a.rows.reduce((s, r) => s + r.count, 0))
+  const groups = [...brandGroups.values()].sort(
+    (a, b) => b.rows.reduce((s, r) => s + r.count, 0) - a.rows.reduce((s, r) => s + r.count, 0),
+  )
 
   const totalQty = d.products.reduce((s, r) => s + r.count, 0)
-  const totalCost = d.products.reduce((s, r) => s + (r.product.cost ?? r.product.price) * r.count, 0)
+  const totalCost = d.products.reduce(
+    (s, r) => s + (r.product.cost ?? r.product.price) * r.count,
+    0,
+  )
   const totalRetail = d.total
   const estMargin = totalRetail - totalCost
   const address = [d.project.community, d.project.address].filter(Boolean).join(' ')
@@ -74,13 +106,25 @@ export default async function ProcurementPage({
             ],
           },
           ...(setup.styles.length > 1
-            ? [{ label: '风格', value: style.id, options: setup.styles.map((s) => ({ value: s.id, label: s.name, href: href({ style: s.id }) })) }]
+            ? [
+                {
+                  label: '风格',
+                  value: style.id,
+                  options: setup.styles.map((s) => ({
+                    value: s.id,
+                    label: s.name,
+                    href: href({ style: s.id }),
+                  })),
+                },
+              ]
             : []),
         ]}
       />
 
       {d.products.length === 0 ? (
-        <DocEmpty projectId={id}>项目点位尚未关联产品型号。完成选型后，这里会自动按品牌生成采购与到货核验单。</DocEmpty>
+        <DocEmpty projectId={id}>
+          项目点位尚未关联产品型号。完成选型后，这里会自动按品牌生成采购与到货核验单。
+        </DocEmpty>
       ) : (
         <DocRoot style={style}>
           <DocArticle>
@@ -115,12 +159,15 @@ export default async function ProcurementPage({
                 </div>
                 <div className="rounded-doc border border-doc-rule p-3">
                   <div className="text-[11px] text-doc-muted">设备零售小计</div>
-                  <div className="doc-numeral mt-1 text-[22px] leading-none">{yuan(totalRetail)}</div>
+                  <div className="doc-numeral mt-1 text-[22px] leading-none">
+                    {yuan(totalRetail)}
+                  </div>
                 </div>
                 <div className="rounded-doc border border-doc-rule p-3">
                   <div className="text-[11px] text-doc-muted">预估设备毛利</div>
                   <div className="doc-numeral mt-1 text-[22px] leading-none text-doc-accent">
-                    {yuan(estMargin)}（{totalRetail > 0 ? `${Math.round((estMargin / totalRetail) * 100)}%` : '0%'}）
+                    {yuan(estMargin)}（
+                    {totalRetail > 0 ? `${Math.round((estMargin / totalRetail) * 100)}%` : '0%'}）
                   </div>
                 </div>
               </section>
@@ -129,7 +176,10 @@ export default async function ProcurementPage({
             <div className="mt-6 space-y-6">
               {groups.map((g) => {
                 const groupQty = g.rows.reduce((s, r) => s + r.count, 0)
-                const groupCost = g.rows.reduce((s, r) => s + (r.product.cost ?? r.product.price) * r.count, 0)
+                const groupCost = g.rows.reduce(
+                  (s, r) => s + (r.product.cost ?? r.product.price) * r.count,
+                  0,
+                )
                 return (
                   <section key={g.brandName}>
                     <DocSectionHeading
@@ -137,7 +187,11 @@ export default async function ProcurementPage({
                       className="mb-2"
                       title={
                         <span className="flex items-center gap-2.5">
-                          <BrandLogo name={g.brandName} logo={g.brandLogo} className="h-4 max-w-20" />
+                          <BrandLogo
+                            name={g.brandName}
+                            logo={g.brandLogo}
+                            className="h-4 max-w-20"
+                          />
                           <span>{g.brandName}</span>
                         </span>
                       }
@@ -149,9 +203,13 @@ export default async function ProcurementPage({
                           <th className={cn(t.th, 'w-12')}>图片</th>
                           <th className={t.th}>产品名称 / 型号</th>
                           <th className={cn(t.th, 'w-32')}>安装房间</th>
-                          {showCost ? <th className={cn(t.th, 'w-20 text-right')}>成本单价</th> : null}
+                          {showCost ? (
+                            <th className={cn(t.th, 'w-20 text-right')}>成本单价</th>
+                          ) : null}
                           <th className={cn(t.th, 'w-16 text-right')}>采购数</th>
-                          {showCost ? <th className={cn(t.th, 'w-24 text-right')}>成本小计</th> : null}
+                          {showCost ? (
+                            <th className={cn(t.th, 'w-24 text-right')}>成本小计</th>
+                          ) : null}
                           <th className={cn(t.th, 'w-32 text-center')}>备货与到场状态</th>
                         </tr>
                       </thead>
@@ -161,7 +219,11 @@ export default async function ProcurementPage({
                           return (
                             <tr key={r.product.id} className={t.row(idx)}>
                               <td className={cn(t.td, 'py-1.5')}>
-                                <ProductThumb src={r.product.image?.url} alt={r.product.name} className="size-8" />
+                                <ProductThumb
+                                  src={r.product.image?.url}
+                                  alt={r.product.name}
+                                  className="size-8"
+                                />
                               </td>
                               <td className={cn(t.td, 'py-1.5')}>
                                 <div className="flex items-center gap-1.5">
@@ -177,12 +239,27 @@ export default async function ProcurementPage({
                                 {r.rooms.slice(0, 3).join('、')}
                                 {r.rooms.length > 3 ? `等${r.rooms.length}处` : ''}
                               </td>
-                              {showCost ? <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{yuan(unitCost)}</td> : null}
-                              <td className={cn(t.td, 'py-1.5 text-right font-semibold tabular-nums')}>
+                              {showCost ? (
+                                <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                                  {yuan(unitCost)}
+                                </td>
+                              ) : null}
+                              <td
+                                className={cn(t.td, 'py-1.5 text-right font-semibold tabular-nums')}
+                              >
                                 {r.count} {r.product.unit || '个'}
                               </td>
-                              {showCost ? <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>{yuan(unitCost * r.count)}</td> : null}
-                              <td className={cn(t.td, 'py-1.5 text-center text-[10.5px] whitespace-nowrap text-doc-muted')}>
+                              {showCost ? (
+                                <td className={cn(t.td, 'py-1.5 text-right tabular-nums')}>
+                                  {yuan(unitCost * r.count)}
+                                </td>
+                              ) : null}
+                              <td
+                                className={cn(
+                                  t.td,
+                                  'py-1.5 text-center text-[10.5px] whitespace-nowrap text-doc-muted',
+                                )}
+                              >
                                 <span className="inline-flex items-center gap-1">
                                   <DocCheckbox />
                                   已订
@@ -203,8 +280,19 @@ export default async function ProcurementPage({
             </div>
 
             <section data-pdf-block className="mt-8 break-inside-avoid">
-              <DocSignatures parties={[{ label: '备货/仓管核对签字' }, { label: '安装工程师签收' }, { label: '业主到场核验签字' }]} />
-              <DocFooter className="mt-6" left={address || projectName} center={date} right={company.name} />
+              <DocSignatures
+                parties={[
+                  { label: '备货/仓管核对签字' },
+                  { label: '安装工程师签收' },
+                  { label: '业主到场核验签字' },
+                ]}
+              />
+              <DocFooter
+                className="mt-6"
+                left={address || projectName}
+                center={date}
+                right={company.name}
+              />
             </section>
           </DocArticle>
         </DocRoot>

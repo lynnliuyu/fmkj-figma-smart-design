@@ -19,7 +19,15 @@ export type ContractValues = Omit<ContractInput, 'payments'> & {
 }
 
 /** 还没有合同：选一份报价生成。默认选客户已确认的报价，没有则选最新的。 */
-export function CreateContractPanel({ projectId, quotes, defaultQuoteId }: { projectId: string; quotes: QuoteOption[]; defaultQuoteId: string }) {
+export function CreateContractPanel({
+  projectId,
+  quotes,
+  defaultQuoteId,
+}: {
+  projectId: string
+  quotes: QuoteOption[]
+  defaultQuoteId: string
+}) {
   const router = useRouter()
   const [quoteId, setQuoteId] = useState(defaultQuoteId)
   const [pending, startTransition] = useTransition()
@@ -27,12 +35,24 @@ export function CreateContractPanel({ projectId, quotes, defaultQuoteId }: { pro
     <div className="rounded-xl bg-card shadow-xs ring-1 ring-border">
       <div className="border-b px-5 py-4">
         <h3 className="text-base font-semibold">选择报价生成合同</h3>
-        <p className="text-sm text-muted-foreground">自动带入报价金额、客户资料与默认条款，生成后可修改。</p>
+        <p className="text-sm text-muted-foreground">
+          自动带入报价金额、客户资料与默认条款，生成后可修改。
+        </p>
       </div>
       <div role="radiogroup" aria-label="合同依据的报价" className="divide-y">
         {quotes.map((q) => (
-          <label key={q.id} className="flex cursor-pointer items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40 has-[:checked]:bg-muted/60">
-            <input type="radio" name="quote" value={q.id} checked={quoteId === q.id} onChange={() => setQuoteId(q.id)} className="size-4 accent-foreground" />
+          <label
+            key={q.id}
+            className="flex cursor-pointer items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40 has-[:checked]:bg-muted/60"
+          >
+            <input
+              type="radio"
+              name="quote"
+              value={q.id}
+              checked={quoteId === q.id}
+              onChange={() => setQuoteId(q.id)}
+              className="size-4 accent-foreground"
+            />
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-medium">{q.title}</span>
               <span className="text-xs text-muted-foreground">{quoteStatusLabel(q.status)}</span>
@@ -53,7 +73,12 @@ export function CreateContractPanel({ projectId, quotes, defaultQuoteId }: { pro
             })
           }
         >
-          {pending ? <Loader2 className="size-4 animate-spin" /> : <FileSignature className="size-4" />}生成合同
+          {pending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <FileSignature className="size-4" />
+          )}
+          生成合同
         </Button>
       </div>
     </div>

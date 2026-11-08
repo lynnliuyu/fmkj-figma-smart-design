@@ -84,13 +84,28 @@ export function JoinCard({
           <Label htmlFor="join-email" className="text-xs">
             成员邮箱
           </Label>
-          <Input id="join-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
+          <Input
+            id="join-email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@example.com"
+          />
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="join-password" className="text-xs">
             密码
           </Label>
-          <Input id="join-password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" />
+          <Input
+            id="join-password"
+            type="password"
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••"
+          />
         </div>
         {error ? <p className="text-xs text-destructive">{error}</p> : null}
         <Button type="submit" className="w-full" disabled={busy}>
@@ -98,7 +113,9 @@ export function JoinCard({
           登录并加入项目
           <ArrowRight className="size-4" />
         </Button>
-        <p className="text-center text-xs text-muted-foreground">请使用管理员为您开通的成员账号登录</p>
+        <p className="text-center text-xs text-muted-foreground">
+          请使用管理员为您开通的成员账号登录
+        </p>
       </form>
     </div>
   )

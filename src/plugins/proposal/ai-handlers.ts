@@ -27,12 +27,16 @@ export const proposalHandlers: Record<string, AiToolHandler> = {
           highlights: t.highlights,
           reasons,
           sampleUrl: `/templates/${t.value}`,
-          projectPreviewUrl: ctx.projectId ? `/print/projects/${ctx.projectId}/proposal?template=${encodeURIComponent(t.value)}` : null,
+          projectPreviewUrl: ctx.projectId
+            ? `/print/projects/${ctx.projectId}/proposal?template=${encodeURIComponent(t.value)}`
+            : null,
         })),
       },
       summary: top ? `推荐方案模板「${top.label}」等 ${picks.length} 套` : '已列出推荐方案模板',
       href: previewHref,
-      hrefLabel: ctx.projectId ? `用「${top?.label ?? '推荐模板'}」预览本项目方案` : '打开方案模板库',
+      hrefLabel: ctx.projectId
+        ? `用「${top?.label ?? '推荐模板'}」预览本项目方案`
+        : '打开方案模板库',
     }
   },
 }
