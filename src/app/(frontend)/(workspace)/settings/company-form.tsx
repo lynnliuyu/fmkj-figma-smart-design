@@ -293,7 +293,12 @@ export function CompanyForm({
         styles={documents.styles}
         defaults={documents.defaults}
       />
-      <div className="sticky bottom-0 -mx-1 flex justify-end bg-background/95 px-1 py-3">
+      {/*
+        保存条：吸底时必须是**不透明**背景 + 上边框，否则滚动过程中下方卡片的
+        标题会从半透明背景里透出来，看起来像「保存条压住了标题」。
+        用实心 bg-background，并加 border-t 与阴影把它与内容明确分开。
+      */}
+      <div className="sticky bottom-0 z-10 -mx-1 flex justify-end border-t border-border bg-background px-1 py-3 shadow-[0_-4px_12px_-6px_rgb(0_0_0/0.12)]">
         <Button type="submit" disabled={saving}>
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}保存
         </Button>
