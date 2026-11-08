@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/empty-state'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowLeft, Palette } from 'lucide-react'
@@ -19,16 +20,18 @@ export default async function StyleTransferPage() {
   const flags = await getPluginFlags(user.id)
   if (!flags['ai-copilot']) {
     return (
-      <section className="mx-auto flex w-full max-w-xl flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-14 text-center">
-        <Palette className="size-7 text-primary" />
-        <h1 className="text-base font-semibold">「AI 对话侧栏（高级）」插件已关闭</h1>
-        <p className="text-xs text-muted-foreground">
-          户型图风格化依赖 AI 插件，请先在插件中心开启。
-        </p>
-        <Button asChild size="sm" variant="outline">
-          <Link href="/plugins/ai-copilot">去插件页开启</Link>
-        </Button>
-      </section>
+      <div className="mx-auto w-full max-w-xl">
+        <EmptyState
+          icon={<Palette className="size-5" />}
+          title="「AI 对话侧栏（高级）」插件已关闭"
+          description="户型图风格化依赖 AI 插件，请先在插件中心开启。"
+          action={
+            <Button asChild size="sm" variant="outline">
+              <Link href="/plugins/ai-copilot">去插件页开启</Link>
+            </Button>
+          }
+        />
+      </div>
     )
   }
   return (
