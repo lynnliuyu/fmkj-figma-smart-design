@@ -33,8 +33,8 @@ export const variantTemplate = (
 function Art({ id, className }: { id: string; className?: string }) {
   const art = artOf(id)
   if (!art) return null
-  // eslint-disable-next-line @next/next/no-img-element
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={art.srcSm} alt="" draggable={false} className={cn('object-contain', className)} />
   )
 }

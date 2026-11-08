@@ -44,9 +44,10 @@ jobs:
         run: pnpm exec oxfmt --check
 
       # ESLint 只开「能抓到真 bug」的规则（React Hooks + Next img），不做风格检查。
-      # 当前基线 6 个警告 0 个错误；--max-warnings 留余量，避免小改动就红。
+      # 当前基线 0 error 0 warning，所以把阈值收到 0 —— 任何新警告都会让 CI 红，
+      # 避免警告越积越多最后没人看。
       - name: ESLint 语义检查
-        run: pnpm exec eslint . --max-warnings 10
+        run: pnpm exec eslint . --max-warnings 0
 
       - name: TypeScript 类型检查
         run: pnpm exec tsc --noEmit

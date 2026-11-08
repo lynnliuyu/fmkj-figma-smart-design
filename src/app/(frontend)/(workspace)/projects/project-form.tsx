@@ -88,7 +88,10 @@ export function ProjectForm({
       router.refresh()
       onSaved?.()
     }
-    // onSaved 只在保存成功（state 变化）时调用一次，不放进依赖，避免父组件重新渲染时重复触发
+    // onSaved 只在保存成功（state 变化）时调用一次，不放进依赖，避免父组件重新渲染时重复触发。
+    // 这是有意的：若把 onSaved 放进依赖，父组件每次重渲染都会换新函数引用，
+    // 导致这个 effect 反复触发、重复弹 toast / 重复 router.refresh。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, isNew, router])
 
   useEffect(() => {

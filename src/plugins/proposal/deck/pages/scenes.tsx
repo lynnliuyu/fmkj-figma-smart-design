@@ -163,6 +163,10 @@ export function ScenesPage({
                     note=""
                   />
                 ) : (
+                  // 方案 deck 的场景图：来源可能是外部 URL / 本地兜底路径，
+                  // 走 next/image 会受自定义 loader 与 remotePatterns 限制，
+                  // 在导出 PDF/PNG 时也容易出问题。这里保留原生 img。
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={
                       night?.url ??
