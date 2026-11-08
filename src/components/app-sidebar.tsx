@@ -102,7 +102,7 @@ const capabilityNav = [
   {
     key: 'template',
     label: '模板',
-    items: [{ icon: LayoutTemplate, label: '方案模板', url: '/templates' }],
+    items: [{ icon: LayoutTemplate, label: '模板中心', url: '/plugins/templates' }],
   },
   {
     key: 'tool',
