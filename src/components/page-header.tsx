@@ -1,6 +1,15 @@
+import { HStack, VStack } from '@astryxdesign/core/Stack'
+import { Heading, Text } from '@astryxdesign/core/Text'
+
 import { cn } from '@/lib/utils'
 
-/** 页面标题区：标题 + 一句说明 + 右侧操作。各列表页、设置页统一使用。 */
+/**
+ * 页面标题区：标题 + 一句说明 + 右侧操作。各列表页、设置页统一使用。
+ *
+ * 视觉上改用 Astryx 的 Heading / Text 排版（语义层级、字号、行高都走设计系统 token），
+ * 但 **对外 props 签名保持不变**，调用方（10 个页面）无需改动。
+ * 分隔线仍用本仓 Tailwind 工具类，保持与既有页面间距一致。
+ */
 export function PageHeader({
   title,
   description,
@@ -19,15 +28,21 @@ export function PageHeader({
         className,
       )}
     >
-      <div className="min-w-0 space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+      <VStack gap={1} className="min-w-0">
+        <Heading level={1} maxLines={2}>
           {title}
-        </h1>
+        </Heading>
         {description ? (
-          <p className="max-w-2xl text-sm text-pretty text-muted-foreground">{description}</p>
+          <Text type="supporting" maxLines={3} className="max-w-2xl text-pretty text-sm">
+            {description}
+          </Text>
         ) : null}
-      </div>
-      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+      </VStack>
+      {actions ? (
+        <HStack gap={2} wrap="wrap" vAlign="center">
+          {actions}
+        </HStack>
+      ) : null}
     </header>
   )
 }

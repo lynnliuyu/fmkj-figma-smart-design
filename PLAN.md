@@ -37,6 +37,7 @@ Alma 先写提案（修改前/修改后/影响范围/迁移/回滚/谁批），n
 ### 3. [~] Astryx 设计系统（owner 决策：最终全量覆盖）—— 进行中
 
 **已完成**：
+
 - 接入 + `/design-pilot` 对照页（PR #15/#16）
 - CSS 层序根因修复（PR #19）——`layers.css` 必须是 layout 的第一个 import
 - 繁梦品牌主题 `fanmeng`（PR #20）：extends butter + 品牌紫，已设为默认主题
@@ -46,11 +47,11 @@ Alma 先写提案（修改前/修改后/影响范围/迁移/回滚/谁批），n
 **下一步**：按复杂度从低到高推进（quotes → docs → membership → ai → projects → 首页）
 
 **踩过的坑（必看）**：
+
 - `layers.css` 是 CSS 层序声明，**必须是 layout 第一个 import**，否则 Tailwind preflight 压死 Astryx 整层样式
 - `astryx theme add/use` 会重写 `astryx-themes.ts` 并塞回 `fonts.css`（Google Fonts 外链）——**每次跑完必须手工剥离**
 - Astryx 没有 `--color-primary`，强调色 token 是 `--color-accent`
 - 改认证/支付类页面：`login-form.tsx` 这类组件**一个字都不能动**，只换外壳，且必须做基线对比
-
 
 ### 4. [~] 能力中心改造 —— 第一二步已合并（PR #8）；模板中心页 / URL 改名 / 点位图显示方案 留后续
 
