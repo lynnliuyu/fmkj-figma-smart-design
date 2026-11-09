@@ -91,20 +91,48 @@ echo "  迁移完成"
 # ── 3. 起影子容器（端口 $NEW_PORT）────────────────────
 log "3/7 起影子容器，监听 127.0.0.1:$NEW_PORT"
 # 用 override 文件改端口，不动 tracked compose
+# 三处必须 !override，缺一个都会出事（都是 2026-11-09 实际踩到的）：
+#  1. ports    → 不 override 就绑不上影子端口
+#  2. networks → 不 override 会被丢进 compose 自建网络，连不上生产库（空库！）
+#  3. volumes  → ⚠️ 最隐蔽：compose 用 project 名建**自己的空卷**
+#      （fmkj-shadow_media），容器里 /data/media 是空的，
+#      页面能开、不报错，但**所有上传图片 404**（产品图、户型图、AI 生图全挂）。
+#      必须显式挂生产卷 fmkj_media / fmkj_desktop。
 cat > "$REL/override.yml" <<YAML
 services:
   app:
     ports: !override
       - "127.0.0.1:$NEW_PORT:3000"
-    # 必须挂到生产库所在网络，且用 --no-deps 阻止 compose 另起一个 db
     networks: !override
       - fmkj_prod
+    volumes: !override
+      - shadow_media:/data/media
+      - shadow_desktop:/data/desktop
 networks:
   fmkj_prod:
     external: true
     name: $PROD_NET
+volumes:
+  shadow_media:
+    external: true
+    name: fmkj_media
+  shadow_desktop:
+    external: true
+    name: fmkj_desktop
 YAML
 sudo docker compose -p fmkj-shadow -f docker-compose.yml -f "$REL/override.yml" up -d --no-deps app
+
+# ── 3.5 验证容器真的接上了生产资源（不能只看容器起来）────────
+# 这几条是"看得见的证据"：网络不对 → 数据空；卷不对 → 图片 404。
+log "3.5/7 验证容器接线"
+_net=$(sudo docker inspect fmkj-shadow-app-1 --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null)
+[[ "$_net" == *"$PROD_NET"* ]] || die "影子容器没接生产网络（当前：$_net），中止"
+echo "  ✅ 网络：$_net"
+_img=$(sudo docker exec fmkj-shadow-app-1 sh -c 'ls /data/media 2>/dev/null | wc -l' 2>/dev/null || echo 0)
+if [[ "${_img:-0}" -lt 10 ]]; then
+  die "素材卷是空的（只有 ${_img} 个文件）—— 容器挂到了 compose 自建的空卷，图片会全 404"
+fi
+echo "  ✅ 素材：$_img 个文件"
 
 # ── 4. 等健康 ─────────────────────────────────────────
 log "4/7 等影子容器就绪"
@@ -114,6 +142,16 @@ for i in $(seq 1 60); do
   [[ $i -eq 60 ]] && die "影子容器 300 秒内未就绪，已中止（生产未受影响）"
   sleep 5
 done
+
+# ── 4.5 冒烟验证影子容器（⚠️ 切流量前的最后一道闸）────────
+# 为什么必须在**真服务器**上跑：本地库没有素材，页面上「图片全 404」这类
+# 只在生产才出现的问题，本地冒烟永远测不出来（2026-11-09 就是这么漏过去的：
+# 影子容器挂了空素材卷，产品图全 404，但页面不报错、接口也返回 200）。
+log "4.5/7 冒烟验证影子容器（失败则中止，不切流量）"
+SMOKE_BASE="http://127.0.0.1:$NEW_PORT" \
+SMOKE_EMAIL="${SMOKE_EMAIL:-}" SMOKE_PASS="${SMOKE_PASS:-}" \
+  node e2e/smoke.mjs 2>&1 | tail -25 \
+  || die "冒烟未通过，已中止（生产未受影响）"
 
 # ── 5. 切流量 ─────────────────────────────────────────
 log "5/7 切 Caddy 流量：$CUR_PORT → $NEW_PORT"
