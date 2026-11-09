@@ -1,46 +1,66 @@
 'use client'
 
 import * as React from 'react'
+import { ToggleButton } from '@astryxdesign/core/ToggleButton'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Toggle as TogglePrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
-const toggleVariants = cva(
-  "group/toggle inline-flex items-center justify-center gap-1 rounded-md text-sm font-medium whitespace-nowrap transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-pressed:bg-muted dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-  {
-    variants: {
-      variant: {
-        default: 'bg-transparent',
-        outline: 'border border-input bg-transparent hover:bg-muted',
-      },
-      size: {
-        default:
-          'h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
-        sm: 'h-7 min-w-7 px-2.5 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5',
-        lg: 'h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
+/**
+ * 切换按钮：内部换成 Astryx 官方 ToggleButton。
+ *
+ * ## ⚠️ 必须保住 `aria-pressed`
+ *
+ * radix 的 Toggle 会把 `aria-pressed={pressed}` 渲染到元素上，本仓调用点的
+ * className 大量依赖它写样式（`aria-pressed:bg-primary/10`、`aria-pressed:text-foreground`）。
+ * 官方用 `isPressed` 表达状态，属性名不同 —— 若不管，这些类会**全部失效、按钮看不出选中**。
+ * 所以这里显式把 `aria-pressed` 补回去（官方接受 data-* / aria-* 透传）。
+ *
+ * `onPressedChange`（radix）与官方的同名 prop 语义一致，直接映射。
+ */
+const toggleVariants = cva('', {
+  variants: {
+    variant: { default: 'bg-transparent', outline: 'border border-input bg-transparent' },
+    size: {
+      default: 'h-8 min-w-8 px-2.5',
+      sm: 'h-7 min-w-7 px-2.5',
+      lg: 'h-9 min-w-9 px-2.5',
     },
   },
-)
+  defaultVariants: { variant: 'default', size: 'default' },
+})
 
-function Toggle({
+export function Toggle({
   className,
   variant = 'default',
-  size = 'default',
+  pressed,
+  onPressedChange,
+  disabled,
+  children,
   ...props
-}: React.ComponentProps<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>) {
+}: React.ComponentProps<'button'> & {
+  pressed?: boolean
+  onPressedChange?: (pressed: boolean) => void
+} & VariantProps<typeof toggleVariants>) {
+  const ariaLabel = (props as { 'aria-label'?: string })['aria-label']
+
   return (
-    <TogglePrimitive.Root
+    <ToggleButton
+      label={ariaLabel || ''}
+      isIconOnly={!ariaLabel}
+      isPressed={Boolean(pressed)}
+      onPressedChange={(next) => onPressedChange?.(next)}
+      isDisabled={Boolean(disabled)}
+      size="md"
+      aria-pressed={Boolean(pressed)}
+      aria-label={ariaLabel}
       data-slot="toggle"
-      className={cn(toggleVariants({ variant, size, className }))}
-      {...props}
-    />
+      className={cn(toggleVariants({ variant }), className)}
+      {...(props as object)}
+    >
+      {children as never}
+    </ToggleButton>
   )
 }
 
-export { Toggle, toggleVariants }
+export { toggleVariants }

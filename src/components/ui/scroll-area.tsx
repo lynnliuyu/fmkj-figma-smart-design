@@ -1,55 +1,47 @@
 'use client'
 
 import * as React from 'react'
-import { ScrollArea as ScrollAreaPrimitive } from 'radix-ui'
+import { ScrollableArea } from '@astryxdesign/core/ScrollableArea'
 
 import { cn } from '@/lib/utils'
 
-function ScrollArea({
+/**
+ * 可滚动区域：内部换成 Astryx 官方 ScrollableArea。
+ *
+ * ## 为什么不整包透传 props
+ *
+ * 官方 ScrollableArea 的 props 是**收窄的**（`role` 只接受 `group` / `region`），
+ * 而 `React.ComponentProps<'div'>` 的 `role` 是宽泛的 `AriaRole`（含 `none` 等），
+ * 直接展开会类型冲突。所以只挑真正需要下传的：`className`（非 StyleX 集成）与
+ * `aria-label`（可访问名称）。
+ *
+ * 官方要求 `label` 必填；调用点没传时用中性文案兜底 —— 滚动区在键盘可达序列里，
+ * 没有名称的 region 对读屏用户等于「未命名容器」。
+ *
+ * `ScrollBar` 是对外保留的空壳：官方把滚动条收进组件内部。保留导出是为了
+ * 不让既有 import 断掉。
+ */
+export function ScrollArea({
   className,
   children,
+  label,
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+}: React.ComponentProps<'div'> & { label?: string }) {
+  const ariaLabel = (props as { 'aria-label'?: string })['aria-label']
+
   return (
-    <ScrollAreaPrimitive.Root
+    <ScrollableArea
+      label={label || ariaLabel || '内容'}
+      axis="block"
       data-slot="scroll-area"
       className={cn('relative', className)}
-      {...props}
     >
-      <ScrollAreaPrimitive.Viewport
-        data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
-      >
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      <ScrollBar />
-      <ScrollAreaPrimitive.Corner />
-    </ScrollAreaPrimitive.Root>
+      {children}
+    </ScrollableArea>
   )
 }
 
-function ScrollBar({
-  className,
-  orientation = 'vertical',
-  ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
-  return (
-    <ScrollAreaPrimitive.ScrollAreaScrollbar
-      data-slot="scroll-area-scrollbar"
-      data-orientation={orientation}
-      orientation={orientation}
-      className={cn(
-        'flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent',
-        className,
-      )}
-      {...props}
-    >
-      <ScrollAreaPrimitive.ScrollAreaThumb
-        data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-border"
-      />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
-  )
+/** 保留导出，避免既有 import 断掉（官方把滚动条收进 ScrollableArea 内部了）。 */
+export function ScrollBar(_props: React.ComponentProps<'div'> & { orientation?: string }) {
+  return null
 }
-
-export { ScrollArea, ScrollBar }
