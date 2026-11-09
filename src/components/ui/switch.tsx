@@ -1,33 +1,41 @@
 'use client'
 
 import * as React from 'react'
-import { Switch as SwitchPrimitive } from 'radix-ui'
+import { Switch as AstryxSwitch } from '@astryxdesign/core/Switch'
 
-import { cn } from '@/lib/utils'
-
-function Switch({
+/**
+ * 开关：内部换成 Astryx 官方 Switch。
+ *
+ * 同样把 radix 的 `checked` + `onCheckedChange` 转译到官方的
+ * `value` + `onChange(checked, e)`，调用点保持不变。
+ * 官方会渲染自己的文字标签，本仓的开关多数是「开关 + 外部标签」的排布，
+ * 所以隐藏内置标签（`isLabelHidden`），可访问名称由 `aria-label` 提供。
+ */
+export function Switch({
+  checked,
+  onCheckedChange,
+  disabled,
   className,
-  size = 'default',
+  id,
   ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root> & {
-  size?: 'sm' | 'default'
+}: Omit<React.ComponentProps<'input'>, 'onChange' | 'checked'> & {
+  checked?: boolean
+  onCheckedChange?: (checked: boolean) => void
 }) {
+  const ariaLabel = (props as { 'aria-label'?: string })['aria-label']
+  const name = (props as { name?: string }).name
+
   return (
-    <SwitchPrimitive.Root
+    <AstryxSwitch
+      value={Boolean(checked)}
+      onChange={(next) => onCheckedChange?.(next)}
+      isDisabled={Boolean(disabled)}
+      isLabelHidden
+      label={ariaLabel || ' '}
+      htmlName={name}
+      id={id}
       data-slot="switch"
-      data-size={size}
-      className={cn(
-        'peer group/switch relative inline-flex shrink-0 items-center rounded-full border-2 transition-[background-color,box-shadow] duration-150 outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-5 data-[size=default]:w-8 data-[size=sm]:h-4 data-[size=sm]:w-6 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-unchecked:border-transparent data-unchecked:bg-input data-disabled:cursor-not-allowed data-disabled:opacity-50',
-        className,
-      )}
-      {...props}
-    >
-      <SwitchPrimitive.Thumb
-        data-slot="switch-thumb"
-        className="pointer-events-none block rounded-full bg-background shadow-xs ring-0 transition-transform not-dark:bg-clip-padding group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 data-checked:translate-x-[calc(100%-4px)] dark:data-checked:bg-primary-foreground data-unchecked:translate-x-0 dark:data-unchecked:bg-foreground"
-      />
-    </SwitchPrimitive.Root>
+      className={className}
+    />
   )
 }
-
-export { Switch }
