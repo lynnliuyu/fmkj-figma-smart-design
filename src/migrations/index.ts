@@ -11,6 +11,7 @@ import * as migration_20261102_140755_model_pricing from './20261102_140755_mode
 import * as migration_20261103_120000_templates_meta_and_ai_min_tier from './20261103_120000_templates_meta_and_ai_min_tier'
 import * as migration_20261104_032108_after_sales_feedback_costs from './20261104_032108_after_sales_feedback_costs'
 import * as migration_20261108_012324_20261108_remove_membership_tiers from './20261108_012324_20261108_remove_membership_tiers'
+import * as migration_20261109_101917_display_profile from './20261109_101917_display_profile'
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20261108_012324_20261108_remove_membership_tiers.up,
     down: migration_20261108_012324_20261108_remove_membership_tiers.down,
     name: '20261108_012324_20261108_remove_membership_tiers',
+  },
+  {
+    up: migration_20261109_101917_display_profile.up,
+    down: migration_20261109_101917_display_profile.down,
+    name: '20261109_101917_display_profile',
   },
 ]

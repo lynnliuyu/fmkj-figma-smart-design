@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { type DeckSheet } from '../model'
 import { PlanLegend } from '@/components/plan-legend'
 import { PointMarker } from '@/components/point-marker'
+import { resolveDisplayProfile } from '@/lib/display-profile'
 
 import {
   Chapter,
@@ -49,6 +50,10 @@ export function PlanPage({
   first: boolean
 }) {
   const { m } = ctx
+  // 项目级显示方案：决定这页点位图怎么画（网格 / 覆盖圈 / 光晕 / 底图淡化）
+  const profile = resolveDisplayProfile(
+    (m.d.project as unknown as { displayProfile?: string | null }).displayProfile,
+  )
   const multi = m.sheets.length > 1
   const title = first ? '从生活出发，把智能放对位置。' : `${s.floorName}，逐点落位。`
   const subtitle = first
@@ -79,6 +84,11 @@ export function PlanPage({
               className="flex items-center justify-center pt-[34px] pb-[12px]"
               style={{ height: planH }}
             >
+              {/*
+                按项目选定的「显示方案」渲染点位图。
+                覆盖圈 / 光晕 / 网格都来自这里——同一份点位数据，
+                打印给工长和发给客户看到的不是同一种图。
+              */}
               <PlanView
                 ctx={ctx}
                 sheet={s.sheet}
@@ -87,6 +97,10 @@ export function PlanPage({
                 width={888}
                 height={planH - 46}
                 crop={contentCrop(s.sheet, s.areas, s.points)}
+                coverage={profile.coverage}
+                displayEffects={profile.displayEffects}
+                grid={profile.grid}
+                sheetOpacity={profile.sheetOpacity}
               />
             </div>
           </PlanCard>

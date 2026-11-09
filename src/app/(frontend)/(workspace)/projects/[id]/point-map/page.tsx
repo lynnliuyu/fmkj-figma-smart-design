@@ -36,7 +36,12 @@ export default async function PointMapPage({
         depth: 0,
         user,
         overrideAccess: false,
-        select: { pointMap: true, defaultProducts: true, updatedAt: true },
+        select: {
+          pointMap: true,
+          defaultProducts: true,
+          updatedAt: true,
+          displayProfile: true,
+        },
       })
       .catch(() => null),
     getProjectDeals(id),
@@ -75,6 +80,9 @@ export default async function PointMapPage({
       needsSave={repaired > 0 && !readOnly}
       products={products}
       initialDefaults={parseDefaults(scene.defaultProducts)}
+      displayProfile={
+        (scene as unknown as { displayProfile?: string | null }).displayProfile ?? null
+      }
       quotes={deals.quotes.map((q) => ({
         id: String(q.id),
         title: q.title,

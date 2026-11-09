@@ -512,6 +512,9 @@ export function PlanView({
   height,
   crop,
   coverage = false,
+  displayEffects,
+  grid,
+  sheetOpacity,
 }: {
   ctx: DeckCtx
   sheet: SheetInfo
@@ -522,6 +525,12 @@ export function PlanView({
   crop?: Crop | null
   /** 覆盖展示页放大信号与感应波形，沿用点位图的类型化效果。 */
   coverage?: boolean
+  /** 灯光光晕 / 感应波纹。不传则沿用 coverage（兼容旧调用）。 */
+  displayEffects?: boolean
+  /** 显示网格。不传则保持此前的做法（不画网格）。 */
+  grid?: boolean
+  /** 底图透明度 0–1。不传则用 0.72。 */
+  sheetOpacity?: number
 }) {
   const box = crop ?? { x: 0, y: 0, w: SW, h: SH }
   const k = Math.min(width / box.w, height / box.h)
@@ -534,7 +543,8 @@ export function PlanView({
   const vy = fit(box.y, box.h, vh, SH)
   const u = (px: number) => px / k
   const dense = points.length > 48
-  const displayEffects = buildPointDisplayEffects(
+  const effectsEnabled = displayEffects ?? coverage
+  const effects = buildPointDisplayEffects(
     points.flatMap((p) =>
       p.rx == null || p.ry == null
         ? []
@@ -563,7 +573,7 @@ export function PlanView({
             top: -vy * k,
             width: SW * k,
             height: SH * k,
-            opacity: ctx.theme.mood === 'dark' ? 0.8 : 0.62,
+            opacity: (ctx.theme.mood === 'dark' ? 0.8 : 0.62) * (sheetOpacity ?? 1),
           }}
         />
       ) : null}
@@ -574,7 +584,7 @@ export function PlanView({
         viewBox={`${vx} ${vy} ${vw} ${vh}`}
         aria-hidden
       >
-        <PointDisplayEffects effects={displayEffects} idPrefix="proposal-plan" />
+        {effectsEnabled ? <PointDisplayEffects effects={effects} idPrefix="proposal-plan" /> : null}
         {areas.map((a) => {
           const px = (x: number) => ((x - sheet.x) / sheet.width) * SW
           const py = (y: number) => ((y - sheet.y) / sheet.height) * SH

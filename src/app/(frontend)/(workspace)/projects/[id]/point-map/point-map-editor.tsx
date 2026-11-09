@@ -133,6 +133,7 @@ import { cn } from '@/lib/utils'
 import { createQuoteFromProject, syncQuoteFromPointMap } from '../quotes/actions'
 
 import { BOARD_TOOLS, BoardViewPopover } from './board-toolbar'
+import { DisplayProfilePicker } from './display-profile-picker'
 import {
   AreasPanel,
   DRAG_TYPE,
@@ -242,6 +243,7 @@ export function PointMapEditor({
   needsSave,
   products,
   initialDefaults,
+  displayProfile,
   quotes = [],
   initialFocus,
   readOnly,
@@ -256,6 +258,8 @@ export function PointMapEditor({
   needsSave: boolean
   products: PointProduct[]
   initialDefaults: ProjectDefaults
+  /** 项目级的点位图显示方案（决定方案模板里怎么渲染），null 表示未设置 */
+  displayProfile: string | null
   quotes?: ProjectQuoteSummary[]
   initialFocus?: InitialFocus
   readOnly: boolean
@@ -1654,6 +1658,14 @@ export function PointMapEditor({
             </ToolbarIconButton>
           )}
           <BoardViewPopover view={view} onView={setView} pack={pack} highlighted={scope !== 'all'}>
+            {/*
+              显示方案（随项目保存，决定方案模板怎么渲染）放在最上面，
+              与下面那组「显示设置」（只改本机预览）明确分开。
+              readOnly 时不显示 —— 只读协作成员不该改项目的交付形态。
+            */}
+            {readOnly ? null : (
+              <DisplayProfilePicker projectId={projectId} initial={displayProfile} />
+            )}
             <section className="space-y-2 border-b border-border px-3 py-3 text-xs">
               <div className="flex items-center justify-between px-1">
                 <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">

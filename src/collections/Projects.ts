@@ -322,6 +322,24 @@ export const Projects: CollectionConfig = {
       ],
     },
     {
+      // 点位图在方案模板里的显示方案（网格 / 覆盖圈 / 光晕 / 底图淡化）。
+      // 预设定义在 src/lib/display-profile.ts，这里只存 id；未知值在读取时回落到默认。
+      // 老项目没有这个字段时取 defaultValue，行为与改动前完全一致。
+      name: 'displayProfile',
+      label: '点位图显示方案',
+      type: 'text',
+      defaultValue: 'construction',
+      admin: {
+        description:
+          '决定点位图在方案模板里怎么显示：施工图（清晰线稿）/ 业主展示（覆盖圈 + 光晕）/ 技术交底 / 汇报演示。',
+      },
+      validate: (value: unknown) => {
+        if (value === undefined || value === null || value === '') return true
+        const ok = ['construction', 'owner', 'handover', 'presentation'].includes(String(value))
+        return ok || '显示方案只能是 construction / owner / handover / presentation 之一'
+      },
+    },
+    {
       // 协作分享链接配置：{ enabled: boolean, token: string, role: 'read' | 'edit' }，严禁向普通成员直接返回 token
       name: 'shareConfig',
       label: '协作链接配置',
