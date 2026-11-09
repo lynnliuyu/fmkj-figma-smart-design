@@ -79,13 +79,21 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Payload 媒体库图片（/api/media/file/...）：设置 1 年强缓存，避免热刷新重复下载十几 MB 原图
+        // Payload 媒体库图片（/api/media/file/...）：1 年强缓存，避免热刷新重复下载十几 MB 原图。
+        //
+        // ⚠️ 但 `immutable` 有个致命前提：**只有 200 才能这么设**。
+        // Next 的 headers() 无法按状态码区分，所以这里**不能再用 immutable**：
+        //   2026-11-09 事故 —— Payload 的 /api/media/file 只注册了 GET、没有 HEAD，
+        //   任何 HEAD 请求都返回 404；而这个 404 被这条规则套上 `max-age=31536000, immutable`
+        //   → 浏览器把 404 缓存一整年且永不重验 → 图片在最前面就断了，`⌘⇧R` 都冲不掉。
+        // 改用 `s-maxage`（只约束中间缓存）+ `stale-while-revalidate`：
+        // 命中时仍走强缓存，未命中/出错时浏览器会回源确认，404 不会被钉死。
         source: '/api/media/file/:path*',
         headers: [
           ...securityHeaders,
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=300, s-maxage=31536000, stale-while-revalidate=86400',
           },
         ],
       },
