@@ -1,135 +1,200 @@
 'use client'
 
 import * as React from 'react'
-import { Dialog as DialogPrimitive } from 'radix-ui'
-
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { Dialog as AstryxDialog } from '@astryxdesign/core/Dialog'
 import { XIcon } from 'lucide-react'
 
-function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+import { cn } from '@/lib/utils'
+
+/**
+ * 对话框：内部换成 Astryx 官方 Dialog，对外保留本仓 10 个部件的复合 API。
+ *
+ * ## 模型差异与解法
+ *
+ * 官方是**单体**：`<Dialog isOpen onOpenChange>{内容}</Dialog>` —— 弹层、背板、焦点管理都在它内部。
+ * 本仓是**复合式**（radix）：`<Dialog><DialogTrigger/><DialogContent>…</DialogContent></Dialog>`，
+ * 其中 Trigger 要渲染在**原地**、Content 要渲染进**弹层**。
+ *
+ * 解法：`Dialog` 只做一个 **context 提供者**（存 `open` / `onOpenChange`）并原样渲染子元素；
+ * `DialogTrigger` 从 context 取 `onOpenChange` 渲染触发按钮；`DialogContent` 从 context 取 `open`，
+ * 交给官方 `<Dialog>` 承载真正的弹层。
+ *
+ * 这样 16 个文件的调用结构一个字不改，**弹层本身是官方组件**。
+ *
+ * ## 为什么要自己画头部
+ *
+ * 官方 `DialogHeader` 只收 `title`/`subtitle`（字符串或行内节点），而本仓的标题区
+ * 常有图标、徽标、多行布局（`DialogHeader` 用量 17 处）。所以头部保留为布局容器，
+ * 但配色与间距仍走 token —— 视觉上仍是官方的样子。
+ */
+
+type DialogCtx = {
+  open: boolean
+  setOpen: (open: boolean) => void
 }
 
-function DialogTrigger({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+const Ctx = React.createContext<DialogCtx | null>(null)
+const useDialog = () => React.useContext(Ctx)
+
+function Dialog({
+  open = false,
+  onOpenChange,
+  children,
+}: {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children?: React.ReactNode
+  modal?: boolean
+  defaultOpen?: boolean
+}) {
+  const ctx = React.useMemo<DialogCtx>(
+    () => ({ open, setOpen: (next) => onOpenChange?.(next) }),
+    [open, onOpenChange],
+  )
+
+  // 只提供上下文；触发物与内容各自从 context 取值后决定渲染位置。
+  return <Ctx.Provider value={ctx}>{children}</Ctx.Provider>
 }
 
-function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
-}
-
-function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
-}
-
-function DialogOverlay({
-  className,
+/** 触发物：渲染在原地，点击后打开弹层。 */
+function DialogTrigger({
+  asChild,
+  children,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+}: React.ComponentProps<'button'> & { asChild?: boolean }) {
+  const ctx = useDialog()
+  const open = () => ctx?.setOpen(true)
+  const child = children as React.ReactElement<{ onClick?: (e: unknown) => void }>
+
+  if (asChild && React.isValidElement(child)) {
+    return React.cloneElement(child, {
+      onClick: (e: unknown) => {
+        child.props.onClick?.(e)
+        open()
+      },
+    })
+  }
+
   return (
-    <DialogPrimitive.Overlay
-      data-slot="dialog-overlay"
-      className={cn(
-        'fixed inset-0 isolate z-50 bg-black/40 duration-150 supports-backdrop-filter:backdrop-blur-[2px] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
-        className,
-      )}
-      {...props}
-    />
+    <button type="button" data-slot="dialog-trigger" onClick={open} {...props}>
+      {children}
+    </button>
+  )
+}
+
+/** radix 的 Portal 在官方模型里由 Dialog 内部处理，这里保留为空壳导出。 */
+function DialogPortal({ children }: { children?: React.ReactNode; forceMount?: boolean }) {
+  return <>{children}</>
+}
+
+/** radix 的 Overlay 由官方 Dialog 自带，保留空壳避免既有 import 断掉。 */
+function DialogOverlay(_props: { className?: string }) {
+  return null
+}
+
+/** 关闭按钮：放进弹层内部的普通按钮，点击后关闭。 */
+function DialogClose({
+  asChild,
+  children,
+  ...props
+}: React.ComponentProps<'button'> & { asChild?: boolean }) {
+  const ctx = useDialog()
+  const close = () => ctx?.setOpen(false)
+  const child = children as React.ReactElement<{ onClick?: (e: unknown) => void }>
+
+  if (asChild && React.isValidElement(child)) {
+    return React.cloneElement(child, {
+      onClick: (e: unknown) => {
+        child.props.onClick?.(e)
+        close()
+      },
+    })
+  }
+
+  return (
+    <button type="button" data-slot="dialog-close" onClick={close} {...props}>
+      {children}
+    </button>
   )
 }
 
 function DialogContent({
   className,
   children,
-  overlayClassName,
+  overlayClassName: _overlayClassName,
   showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  className?: string
+}: React.ComponentProps<'div'> & {
   overlayClassName?: string
   showCloseButton?: boolean
 }) {
+  const ctx = useDialog()
+  const isOpen = Boolean(ctx?.open)
+
   return (
-    <DialogPortal>
-      <DialogOverlay className={overlayClassName} />
-      <DialogPrimitive.Content
-        data-slot="dialog-content"
-        className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-[var(--radius-container)] bg-popover p-6 text-sm text-popover-foreground shadow-xl ring-1 ring-border duration-150 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close data-slot="dialog-close" asChild>
-            <Button
-              variant="ghost"
-              className="absolute top-4 right-4 text-muted-foreground"
-              size="icon-sm"
-            >
-              <XIcon />
-              <span className="sr-only">关闭</span>
-            </Button>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Content>
-    </DialogPortal>
+    <AstryxDialog
+      isOpen={isOpen}
+      onOpenChange={(next) => ctx?.setOpen(next)}
+      width={undefined as never}
+      padding={6}
+      data-slot="dialog-content"
+      className={cn(className)}
+      {...(props as object)}
+    >
+      {showCloseButton ? (
+        <Button
+          label="关闭"
+          isIconOnly
+          variant="ghost"
+          size="sm"
+          // 右上角关闭：与标题区同排，视觉上是官方图标按钮
+          data-slot="dialog-close-button"
+          className="absolute top-3 right-3"
+        >
+          <XIcon />
+        </Button>
+      ) : null}
+      {children}
+    </AstryxDialog>
   )
 }
 
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot="dialog-header" className={cn('flex flex-col gap-1.5', className)} {...props} />
-  )
-}
-
-function DialogFooter({
-  className,
-  showCloseButton = false,
-  children,
-  ...props
-}: React.ComponentProps<'div'> & {
-  showCloseButton?: boolean
-}) {
-  return (
     <div
-      data-slot="dialog-footer"
-      className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
-      {...props}
-    >
-      {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
-        </DialogPrimitive.Close>
-      )}
-    </div>
-  )
-}
-
-function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return (
-    <DialogPrimitive.Title
-      data-slot="dialog-title"
-      className={cn('font-heading text-base leading-none font-medium', className)}
+      data-slot="dialog-header"
+      className={cn('flex flex-col gap-1.5 text-left', className)}
       {...props}
     />
   )
 }
 
-function DialogDescription({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <DialogPrimitive.Description
+    <div
+      data-slot="dialog-footer"
+      className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
+      {...props}
+    />
+  )
+}
+
+function DialogTitle({ className, ...props }: React.ComponentProps<'h2'>) {
+  return (
+    <h2
+      data-slot="dialog-title"
+      className={cn('font-heading text-lg leading-none font-semibold', className)}
+      {...props}
+    />
+  )
+}
+
+function DialogDescription({ className, ...props }: React.ComponentProps<'p'>) {
+  return (
+    <p
       data-slot="dialog-description"
-      className={cn(
-        'text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground',
-        className,
-      )}
+      className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />
   )
