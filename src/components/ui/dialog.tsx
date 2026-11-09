@@ -136,26 +136,34 @@ function DialogContent({
     <AstryxDialog
       isOpen={isOpen}
       onOpenChange={(next) => ctx?.setOpen(next)}
-      width={undefined as never}
-      padding={6}
+      padding={0}
       data-slot="dialog-content"
-      className={cn(className)}
       {...(props as object)}
     >
-      {showCloseButton ? (
-        <Button
-          label="关闭"
-          isIconOnly
-          variant="ghost"
-          size="sm"
-          // 右上角关闭：与标题区同排，视觉上是官方图标按钮
-          data-slot="dialog-close-button"
-          className="absolute top-3 right-3"
-        >
-          <XIcon />
-        </Button>
-      ) : null}
-      {children}
+      {/*
+        ⚠️ 调用点的 className **绝不能**直接挂在官方 <dialog> 上。
+        本仓的调用点习惯用 `w-[calc(100vw-1.5rem)]` / `max-h-[92vh]` / `overflow-y-auto`
+        这类布局类 —— 一旦落到官方 dialog 上，会把官方「关闭时 display:none」的机制冲掉：
+        实测未打开的弹窗变成 `display:flex`、仍占 1220px 宽 → **整页出现横向滚动条**
+        （冒烟测试抓到的回归）。
+        所以把调用点的类放到**内层包裹元素**上：布局照旧生效，官方 dialog 的显隐不受干扰。
+      */}
+      <div className={cn(showCloseButton ? 'relative' : undefined, className)}>
+        {showCloseButton ? (
+          <Button
+            label="关闭"
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            // 右上角关闭：与标题区同排，视觉上是官方图标按钮
+            data-slot="dialog-close-button"
+            className="absolute top-0 right-0"
+          >
+            <XIcon />
+          </Button>
+        ) : null}
+        {children}
+      </div>
     </AstryxDialog>
   )
 }
