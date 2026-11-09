@@ -8,6 +8,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 
+import { EmptyState } from '@/components/empty-state'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { appAuth } from '@/lib/app-auth'
@@ -68,9 +69,11 @@ export default async function PluginToolsPage() {
         })}
       </div>
       {tools.length === 0 ? (
-        <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-          还没有可用的工具，稍后会自动出现在这里。
-        </p>
+        <EmptyState
+          icon={<Blocks className="size-5" />}
+          title="还没有可用的工具"
+          description="启用能力中心的插件后，工具会自动出现在这里。"
+        />
       ) : null}
     </section>
   )

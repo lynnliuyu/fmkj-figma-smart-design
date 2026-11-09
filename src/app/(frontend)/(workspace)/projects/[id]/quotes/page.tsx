@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { AlertCircle, FileText, MapPinned } from 'lucide-react'
 
+import { EmptyState } from '@/components/empty-state'
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -88,21 +89,23 @@ export default async function ProjectQuotesPage({
       ) : null}
 
       {quotes.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-14 text-center">
-          <FileText className="size-8 text-muted-foreground" />
-          <p className="font-medium">还没有报价</p>
-          <p className="max-w-md text-sm text-muted-foreground">
-            {points ? '按点位图自动生成设备清单与金额' : '布置点位后可自动汇总设备数量与型号'}
-          </p>
-          {points ? null : (
-            <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={`/projects/${pid}/point-map`}>
-                <MapPinned className="size-4" />
-                去布置点位
-              </Link>
-            </Button>
-          )}
-        </div>
+        <EmptyState
+          icon={<FileText className="size-5" />}
+          title="还没有报价"
+          description={
+            points ? '按点位图自动生成设备清单与金额' : '布置点位后可自动汇总设备数量与型号'
+          }
+          action={
+            points ? null : (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/projects/${pid}/point-map`}>
+                  <MapPinned className="size-4" />
+                  去布置点位
+                </Link>
+              </Button>
+            )
+          }
+        />
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-background shadow-2xs">
           {quotes.map((q) => {

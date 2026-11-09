@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { FolderKanban, Plus, Search, Sparkles } from 'lucide-react'
 import type { Where } from 'payload'
 
+import { EmptyState } from '@/components/empty-state'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { SearchSubmit } from '@/components/search-submit'
@@ -291,36 +292,36 @@ export default async function ProjectsPage({
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border-strong bg-background px-6 py-16 text-center">
-          <span className="mb-1 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <FolderKanban className="size-6" />
-          </span>
-          <p className="font-medium">
-            {keyword
+        <EmptyState
+          icon={<FolderKanban className="size-5" />}
+          title={
+            keyword
               ? '没有找到符合条件的项目'
               : archived
                 ? '还没有归档的项目'
-                : '还没有进行中的项目'}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {keyword
+                : '还没有进行中的项目'
+          }
+          description={
+            keyword
               ? '请尝试其他关键词'
               : archived
                 ? '交付完成的项目可在「归档」页移入此处'
-                : '创建项目后即可上传户型图并布置点位'}
-          </p>
-          {!keyword && !archived ? (
-            <div className="mt-2 flex items-center gap-2">
-              <Button asChild size="sm">
-                <Link href="/projects/new">
-                  <Plus className="size-4" />
-                  新建项目
-                </Link>
-              </Button>
-              {claimButton}
-            </div>
-          ) : null}
-        </div>
+                : '创建项目后即可上传户型图并布置点位'
+          }
+          action={
+            !keyword && !archived ? (
+              <>
+                <Button asChild size="sm">
+                  <Link href="/projects/new">
+                    <Plus className="size-4" />
+                    新建项目
+                  </Link>
+                </Button>
+                {claimButton}
+              </>
+            ) : null
+          }
+        />
       ) : (
         <Card className="overflow-hidden border-border py-0 shadow-2xs">
           <Table>
