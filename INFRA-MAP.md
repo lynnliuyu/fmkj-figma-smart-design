@@ -35,16 +35,29 @@
 ### 1. 主站 `124.222.225.26`（腾讯云 Ubuntu 24.04）
 
 ```text
-部署目录  /opt/fmkj/figma-smart-design
-分支      release-integration（本地无此分支）
-版本      1ba9927（2026-11-07），落后 main 93 个提交
-监听      127.0.0.1:13000 → 容器 3000
-容器      fmkj-app-1 / fmkj-db-1
-数据库    PostgreSQL 16，卷 fmkj_pgdata
-媒体      卷 fmkj_media（716 文件）
-反代      复用 fanmeng-gateway-edge-caddy-1（host network，占 80/443）
+当前版本  c504272（2026-11-09 上线，含 93 个提交）
+容器      fmkj-shadow-app（新版，监听 127.0.0.1:13001）← 现在对外服务的
+          fmkj-app-1（旧版，已停，镜像保留为 fmkj-app:rollback-20261109）
+目录      新版 /opt/fmkj/releases/20261109-1650/src
+          旧版 /opt/fmkj/figma-smart-design（保留不动）
+数据库    PostgreSQL 16，卷 fmkj_pgdata（容器 fmkj-db-1）
+媒体      卷 fmkj_media
+反代      fanmeng-gateway-edge-caddy-1
 Caddy     /opt/fanmeng-gateway/releases/aad2e52/deploy/remote/caddy/gateway.Caddyfile
-资源      内存 3.6G（可用 1.2G）/ 磁盘 40G 用 79%
+          注意：这是**独立的一份**，只有 api/fmkj.top/www/http 四个块，
+                与 150.158.3.164 那份（泛解析 + show/registry/xgj）不是同一个文件
+资源      内存 3.6G + swap 5.9G / 磁盘 40G 用 59%
+```
+
+**回滚（30 秒）**：
+
+```bash
+# 1. 改 Caddy 回 13000（宿主机文件）
+sudo sh -c "sed 's|127.0.0.1:13001|127.0.0.1:13000|'   /opt/fanmeng-gateway/releases/aad2e52/deploy/remote/caddy/gateway.Caddyfile > /tmp/c &&   cat /tmp/c > /opt/fanmeng-gateway/releases/aad2e52/deploy/remote/caddy/gateway.Caddyfile"
+# 2. 启旧容器
+sudo docker start fmkj-app-1
+# 3. 重启 Caddy（bind mount 需要重建才生效，reload 不够）
+sudo docker restart fanmeng-gateway-edge-caddy-1
 ```
 
 ⚠️ **同机还有别人的服务**：`fanmeng-gateway-new-api-1`、`-db-1`、`-redis-1`。
