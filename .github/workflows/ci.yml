@@ -133,6 +133,16 @@ jobs:
           tail -40 /tmp/dev.log
           exit 1
 
+      # verify job 里的「生产构建」用的是占位 DATABASE_URI（连不上库），
+      # 那样只验证了「编译能过」，验证不了「页面在构建期取数据时会不会卡住」。
+      # 这里在**真库**上再构建一次：任何页面在构建期取不到数据、或触发交互式提示
+      # （Payload 的 push 模式残留会这样），都会在这里暴露。
+      - name: 在真库上跑生产构建
+        run: |
+          printf "export { default } from './payload.selfhost.config'\n" > src/payload.config.ts
+          pnpm exec payload generate:importmap
+          pnpm build
+
       - name: 页面冒烟测试
         env:
           SMOKE_PROJECT_ID: ${{ steps.seed.outputs.project_id }}

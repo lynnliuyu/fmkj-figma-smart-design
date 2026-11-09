@@ -41,6 +41,17 @@ export PAYLOAD_SECRET="${PAYLOAD_SECRET:-dev-local-secret-key-please-change}"
 export DATABASE_URI="$DB_URI"
 export PUBLIC_URL="${PUBLIC_URL:-http://localhost:${PORT}}"
 export NEXT_TELEMETRY_DISABLED=1
+# 关掉 Payload 的 push 模式。
+#
+# 为什么：payload.selfhost.config.ts 里 `push: NODE_ENV !== 'production' && PAYLOAD_DB_PUSH !== 'false'`，
+# 本地跑 dev 时 NODE_ENV 不是 production，push 就会开启，Payload 会**动态把 schema
+# 推到数据库**。之后再用这个库跑 `pnpm build`（或任何 payload 命令），Payload 检测到
+# 「dev 模式痕迹」就弹一个交互式确认：
+#   "It looks like you've run Payload in dev mode... data loss will occur. Would you like to proceed?"
+# 构建进程没人回答，卡满 60 秒后构建失败（表现为 /catalog 页面超时重试三次）。
+#
+# 关掉 push 后，schema 只由 src/migrations/ 下的迁移文件驱动，与生产一致。
+export PAYLOAD_DB_PUSH=false
 
 echo "▶ 数据库: $DB_URI"
 echo "▶ 地址:   http://localhost:${PORT}"

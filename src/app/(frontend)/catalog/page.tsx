@@ -14,7 +14,18 @@ import { categoryOfType, DEVICE_GROUPS } from '@/lib/device-types'
 import { yuan } from '@/lib/quotes'
 import { wiringSpecOf } from '@/app/(frontend)/print/projects/[id]/wiring/page'
 
-export const revalidate = 3600
+/**
+ * 运行时渲染，不在构建期预渲染。
+ *
+ * 为什么：这一页要 `await getCatalog()`（真连数据库取产品目录）。用
+ * `revalidate` 让它在构建期预渲染时，构建机会去连生产库——库慢、不可达，
+ * 或者 Payload 检测到迁移状态需要交互确认，构建就会卡住（实测卡满 60 秒
+ * 后失败，报 `/catalog took more than 60 seconds`）。
+ *
+ * 同类的公开页（`/templates`、`/docs`）都是 `force-dynamic`，这一页之前漏了。
+ * 产品目录本来就随后台数据变，运行时渲染 + 下面的缓存更贴合语义。
+ */
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: pageTitle('全屋智能点位图例符号与产品选型库'),
