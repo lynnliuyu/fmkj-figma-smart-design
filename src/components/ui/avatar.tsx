@@ -1,96 +1,58 @@
 'use client'
 
 import * as React from 'react'
-import { Avatar as AvatarPrimitive } from 'radix-ui'
+import { Avatar as AstryxAvatar } from '@astryxdesign/core/Avatar'
 
 import { cn } from '@/lib/utils'
 
-function Avatar({
+/**
+ * 头像：内部换成 Astryx 官方 Avatar。
+ *
+ * 本仓原来的用法是 `<Avatar><AvatarImage/><AvatarFallback/></Avatar>` 三段式（radix），
+ * 官方是单组件（`src` + `name` + 内置兜底）。为了让既有调用点不改，这里保留三段的导出名，
+ * 但在 `Avatar` 根组件内部把子元素解析成 `src` / `name`，交给官方渲染。
+ */
+
+/** 只作为宿主：真正的渲染在 `Avatar` 根组件里完成，这两个子组件不直接产出 DOM。 */
+export function AvatarImage(_props: React.ComponentProps<'img'>) {
+  return null
+}
+export function AvatarFallback(_props: React.ComponentProps<'span'>) {
+  return null
+}
+
+function pickFrom(children: React.ReactNode): { src?: string; name?: string } {
+  const out: { src?: string; name?: string } = {}
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return
+    const p = child.props as { src?: string; alt?: string; children?: React.ReactNode }
+    if (typeof p.src === 'string') out.src = p.src
+    const text = typeof p.children === 'string' ? p.children : undefined
+    if (text) out.name = text
+    else if (p.alt) out.name = p.alt
+  })
+  return out
+}
+
+export function Avatar({
   className,
-  size = 'default',
+  children,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root> & {
-  size?: 'default' | 'sm' | 'lg'
-}) {
+}: React.ComponentProps<'span'> & { size?: 'sm' | 'default' | 'lg' }) {
+  const { src, name } = pickFrom(children)
+  const size = (props as { size?: string }).size
+  const mapped = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'
+
   return (
-    <AvatarPrimitive.Root
+    <AstryxAvatar
+      src={src}
+      name={name}
+      alt={name}
+      size={mapped as never}
+      shape="circle"
+      tooltip={false}
       data-slot="avatar"
-      data-size={size}
-      className={cn(
-        'group/avatar relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten',
-        className,
-      )}
-      {...props}
+      className={cn('shrink-0', className)}
     />
   )
 }
-
-function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      className={cn('aspect-square size-full rounded-full object-cover', className)}
-      {...props}
-    />
-  )
-}
-
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
-  return (
-    <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
-      className={cn(
-        'flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs',
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
-  return (
-    <span
-      data-slot="avatar-badge"
-      className={cn(
-        'absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground bg-blend-color ring-2 ring-background select-none',
-        'group-data-[size=sm]/avatar:size-2 group-data-[size=sm]/avatar:[&>svg]:hidden',
-        'group-data-[size=default]/avatar:size-2.5 group-data-[size=default]/avatar:[&>svg]:size-2',
-        'group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2',
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-function AvatarGroup({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="avatar-group"
-      className={cn(
-        'group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background',
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="avatar-group-count"
-      className={cn(
-        'relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3',
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-export { Avatar, AvatarImage, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarBadge }

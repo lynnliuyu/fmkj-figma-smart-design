@@ -1,9 +1,24 @@
+'use client'
+
 import * as React from 'react'
+import { Badge as AstryxBadge } from '@astryxdesign/core/Badge'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Slot } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/**
+ * 徽标：对外 API 不变，内部走 Astryx 官方 Badge。
+ *
+ * Astryx 的 Badge 只有「语义色 + 色名」两族变体（neutral/info/success/warning/error + 色名），
+ * 没有本仓的 default/brand/secondary/outline/ghost/link 这套「强调层级」。
+ * 映射原则：**语义色的搬到官方语义变体，强调层级的归到 neutral/info** ——
+ * 后者在视觉上会从「深浅两级」变成「统一的石灰色」，这是切到官方配色后的一致结果。
+ *
+ * `asChild` 走 Fallback 路径（Badge 常被当作链接标签用）。
+ */
+
+/** Fallback 路径（asChild）用的样式，仍由 token 驱动。 */
 const badgeVariants = cva(
   'group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!',
   {
@@ -31,22 +46,65 @@ const badgeVariants = cva(
   },
 )
 
-function Badge({
+type Variant =
+  | 'default'
+  | 'brand'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'success'
+  | 'warning'
+  | 'ghost'
+  | 'link'
+
+/** 旧变体 → Astryx 官方变体。语义色一一对应，强调层级归到 neutral / info。 */
+const ASTRYX_VARIANT: Record<Variant, 'neutral' | 'info' | 'success' | 'warning' | 'error'> = {
+  default: 'neutral',
+  brand: 'info',
+  secondary: 'neutral',
+  destructive: 'error',
+  outline: 'neutral',
+  success: 'success',
+  warning: 'warning',
+  ghost: 'neutral',
+  link: 'info',
+}
+
+export function Badge({
   className,
   variant = 'default',
   asChild = false,
+  children,
   ...props
-}: React.ComponentProps<'span'> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : 'span'
+}: React.ComponentProps<'span'> &
+  VariantProps<typeof badgeVariants> & {
+    asChild?: boolean
+  }) {
+  const v = (variant ?? 'default') as Variant
+
+  // asChild：把样式交给子元素（通常是 <Link>），DOM 里只留一个元素。
+  if (asChild) {
+    return (
+      <Slot.Root
+        data-slot="badge"
+        data-variant={v}
+        className={cn(badgeVariants({ variant: v }), className)}
+        {...props}
+      >
+        {children}
+      </Slot.Root>
+    )
+  }
 
   return (
-    <Comp
+    <AstryxBadge
+      variant={ASTRYX_VARIANT[v]}
+      label={children as never}
       data-slot="badge"
-      data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
-      {...props}
+      data-variant={v}
+      className={className}
     />
   )
 }
 
-export { Badge, badgeVariants }
+export { badgeVariants }

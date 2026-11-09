@@ -1,31 +1,31 @@
 'use client'
 
 import * as React from 'react'
-import { Progress as ProgressPrimitive } from 'radix-ui'
+import { ProgressBar } from '@astryxdesign/core/ProgressBar'
 
-import { cn } from '@/lib/utils'
-
-function Progress({
+/**
+ * 进度条：内部换成 Astryx 官方 ProgressBar。
+ *
+ * 对外保留 `value` / `max` / `className`（沿用 radix 时代的调用方式）。
+ * 官方要求 `label`（无障碍名称），调用点没传时用占位文案兜底 ——
+ * 进度条的可访问名称不能为空，否则读屏软件只会念出「进度条」三个字。
+ */
+export function Progress({
+  value = 0,
+  max = 100,
   className,
-  value,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentProps<'div'> & { value?: number | null; max?: number }) {
+  const label = (props as { 'aria-label'?: string })['aria-label'] ?? '进度'
+
   return (
-    <ProgressPrimitive.Root
+    <ProgressBar
+      label={label}
+      value={value ?? 0}
+      max={max}
+      hasValueLabel
       data-slot="progress"
-      className={cn(
-        'relative flex h-2 w-full items-center overflow-x-hidden rounded-2xl bg-muted',
-        className,
-      )}
-      {...props}
-    >
-      <ProgressPrimitive.Indicator
-        data-slot="progress-indicator"
-        className="size-full flex-1 bg-primary transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-      />
-    </ProgressPrimitive.Root>
+      className={className}
+    />
   )
 }
-
-export { Progress }
