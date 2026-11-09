@@ -15,7 +15,7 @@ export const config = {
   matcher: [
     '/projects/:path*',
     '/products/:path*',
-    '/plugins/:path*',
+    '/capabilities/:path*',
     '/membership/:path*',
     '/settings/:path*',
     '/ai/:path*',

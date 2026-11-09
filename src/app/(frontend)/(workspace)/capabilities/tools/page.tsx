@@ -35,7 +35,7 @@ export default async function PluginToolsPage() {
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-5">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/plugins">
+        <Link href="/capabilities">
           <ArrowLeft className="size-4" />
           返回能力中心
         </Link>

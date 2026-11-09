@@ -62,7 +62,7 @@ export default async function PluginsPage({
           <FilterTabs
             label="阶段"
             items={[
-              { key: 'all', label: '全部阶段', href: '/plugins', active: !stage },
+              { key: 'all', label: '全部阶段', href: '/capabilities', active: !stage },
               ...PLUGIN_STAGES.map((s) => ({
                 key: s.key,
                 label: s.label,

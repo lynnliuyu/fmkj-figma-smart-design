@@ -105,8 +105,8 @@ const capabilityNav = [
     key: 'library',
     label: '模板与工具',
     items: [
-      { icon: LayoutTemplate, label: '模板中心', url: '/plugins/templates' },
-      { icon: Wrench, label: '全部工具', url: '/plugins/tools' },
+      { icon: LayoutTemplate, label: '模板中心', url: '/capabilities/templates' },
+      { icon: Wrench, label: '全部工具', url: '/capabilities/tools' },
     ],
   },
 ] as const
@@ -305,8 +305,8 @@ export function AppSidebar({
                 className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:pointer-events-none"
               >
                 <GuardedLink
-                  href="/plugins"
-                  aria-current={isActive('/plugins') ? 'page' : undefined}
+                  href="/capabilities"
+                  aria-current={isActive('/capabilities') ? 'page' : undefined}
                 >
                   <span>能力中心</span>
                   <LinkPending className="ml-auto size-3.5" />

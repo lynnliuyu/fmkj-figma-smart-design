@@ -35,7 +35,7 @@ export default async function ProjectAfterSalesPage({
           </p>
         </div>
         <Button asChild size="sm">
-          <Link href="/plugins/after-sales">去能力中心查看</Link>
+          <Link href="/capabilities/after-sales">去能力中心查看</Link>
         </Button>
       </section>
     )

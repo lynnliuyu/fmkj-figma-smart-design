@@ -39,9 +39,9 @@ const GATED = [
   { name: '合同', path: PID ? `/projects/${PID}/contract` : null },
   { name: '归档分享', path: PID ? `/projects/${PID}/archive` : null },
   { name: '售后', path: PID ? `/projects/${PID}/after-sales` : null },
-  { name: '能力中心', path: '/plugins', expect: ['能力中心'] },
-  { name: '模板中心', path: '/plugins/templates', expect: ['模板中心', '文档风格'] },
-  { name: '全部工具', path: '/plugins/tools' },
+  { name: '能力中心', path: '/capabilities', expect: ['能力中心'] },
+  { name: '模板中心', path: '/capabilities/templates', expect: ['模板中心', '文档风格'] },
+  { name: '全部工具', path: '/capabilities/tools' },
   { name: 'AI 能力', path: '/ai' },
   { name: 'AI 生图', path: '/ai/image' },
   { name: '设置', path: '/settings', expect: ['设置'] },
@@ -182,6 +182,34 @@ async function main() {
     }
     await anon.close()
     await anonCtx.close()
+  }
+
+  // ── 旧 URL 兼容（2026-11-09 /plugins → /capabilities）────────
+  // 这条单独查：书签、客户群里的历史分享、搜索引擎收录都靠它不 404。
+  if (!only.length || only.some((o) => '旧URL'.includes(o) || 'plugins'.includes(o))) {
+    const legacy = [
+      ['/plugins', '/capabilities'],
+      ['/plugins/templates', '/capabilities/templates'],
+      ['/plugins/tools', '/capabilities/tools'],
+    ]
+    const problems = []
+    for (const [from, to] of legacy) {
+      const res = await ctx.request.get(`${BASE}${from}`, { maxRedirects: 0 }).catch(() => null)
+      const status = res ? res.status() : 0
+      const loc = res ? res.headers()['location'] || '' : ''
+      const okStatus = status === 301 || status === 308
+      const okTarget = loc.includes(to)
+      if (!okStatus || !okTarget) {
+        problems.push(`${from} → 期望 301 到 ${to}，实际 ${status} ${loc || '(无 Location)'}`)
+      }
+    }
+    if (problems.length) {
+      console.log(`  ❌ 旧URL兼容       ${problems.length} 个问题`)
+      for (const p of problems) fail('旧URL兼容', '断言', p)
+    } else {
+      console.log(`  ✅ 旧URL兼容       /plugins* → /capabilities* 全部 301`)
+    }
+    results.push({ name: '旧URL兼容', path: '/plugins', problems })
   }
 
   // ── 公开页 ────────────────────────────────────────────

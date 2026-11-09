@@ -27,7 +27,7 @@ export default async function StyleTransferPage() {
           description="户型图风格化依赖 AI 插件，请先在插件中心开启。"
           action={
             <Button asChild size="sm" variant="outline">
-              <Link href="/plugins/ai-copilot">去插件页开启</Link>
+              <Link href="/capabilities/ai-copilot">去插件页开启</Link>
             </Button>
           }
         />

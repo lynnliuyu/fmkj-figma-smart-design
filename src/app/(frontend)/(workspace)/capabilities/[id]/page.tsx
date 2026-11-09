@@ -69,7 +69,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <div className="flex items-center justify-between gap-2">
         <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
-          <Link href="/plugins">
+          <Link href="/capabilities">
             <ArrowLeft className="size-4" />
             返回能力中心
           </Link>
@@ -293,7 +293,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           action={
             <>
               <Button asChild variant="outline" size="sm">
-                <Link href="/plugins">返回能力中心</Link>
+                <Link href="/capabilities">返回能力中心</Link>
               </Button>
               <Button asChild size="sm">
                 <Link href={`/ai?plugin=${plugin.id}`}>去 AI 对话推演需求</Link>

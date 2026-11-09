@@ -20,6 +20,16 @@ const makePublicPreviewOrigin = (() => {
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    // 2026-11-09：能力中心的 URL 从 /plugins 改名为 /capabilities
+    // （侧边栏早就叫「能力中心」了，地址还停在 plugins 名不副实）。
+    // 老链接——书签、客户群里的分享、搜索引擎收录——一律 301 到新地址，
+    // 用 permanent 让搜索引擎更新索引。
+    return [
+      { source: '/plugins', destination: '/capabilities', permanent: true },
+      { source: '/plugins/:path*', destination: '/capabilities/:path*', permanent: true },
+    ]
+  },
   async headers() {
     const isFigmaMake = process.env.FIGMA === '1'
     const frameAncestors = isFigmaMake

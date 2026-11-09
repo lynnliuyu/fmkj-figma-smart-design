@@ -54,7 +54,7 @@ export default async function AiPage({
           </p>
         </div>
         <Button asChild size="sm" variant="outline">
-          <Link href="/plugins/ai-copilot">去插件页开启</Link>
+          <Link href="/capabilities/ai-copilot">去插件页开启</Link>
         </Button>
       </section>
     )

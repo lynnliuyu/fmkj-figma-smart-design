@@ -559,7 +559,7 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                   <Link href="/membership" className="hover:text-foreground">
                     → 会员兑换与积分明细
                   </Link>
-                  <Link href="/plugins" className="hover:text-foreground">
+                  <Link href="/capabilities" className="hover:text-foreground">
                     → 能力中心
                   </Link>
                   <Link href="/catalog" className="hover:text-foreground">

@@ -618,7 +618,7 @@ export function AiPromptComposer({
                   ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/plugins">管理插件</Link>
+                    <Link href="/capabilities">管理插件</Link>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
