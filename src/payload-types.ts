@@ -518,6 +518,10 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
+  /**
+   * 决定点位图在方案模板里怎么显示：施工图（清晰线稿）/ 业主展示（覆盖圈 + 光晕）/ 技术交底 / 汇报演示。
+   */
+  displayProfile?: string | null;
   shareConfig?:
     | {
         [k: string]: unknown;
@@ -1698,6 +1702,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         joinedAt?: T;
         id?: T;
       };
+  displayProfile?: T;
   shareConfig?: T;
   createdBy?: T;
   updatedBy?: T;
