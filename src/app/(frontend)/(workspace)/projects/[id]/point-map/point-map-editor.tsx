@@ -42,6 +42,7 @@ import { toast } from 'sonner'
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { STYLE_TRANSFER_HANDOFF_KEY } from '@/lib/style-templates'
 import {
   Dialog,
   DialogContent,
@@ -1296,6 +1297,33 @@ export function PointMapEditor({
     [setView],
   )
 
+  /**
+   * 把当前楼层底图交给「户型图风格化」（AI 出图）继续处理。
+   *
+   * 两者是**不同**的能力，别混：本页的「风格化」是**画布本地渲染色**（即时、免费），
+   * AI 页那个是**调用模型生成一张新图**（要等、扣积分）。这里只做交接，不改任何现有行为。
+   *
+   * 底图在客户端是 dataURL，尺寸超过 URL 上限，故经 sessionStorage 传递。
+   */
+  const handoffToAiStyle = useCallback(() => {
+    const sheet = snap.sheets[0]
+    const dataURL = sheet?.fileId ? files[sheet.fileId]?.dataURL : undefined
+    if (!dataURL) {
+      toast.error('没有可用的户型底图，请先上传')
+      return
+    }
+    try {
+      sessionStorage.setItem(
+        STYLE_TRANSFER_HANDOFF_KEY,
+        JSON.stringify({ image: dataURL, name: sheet.name || '户型图' }),
+      )
+    } catch {
+      toast.error('底图太大，无法带过去，请到 AI 页手动上传')
+      return
+    }
+    router.push('/ai/image/style')
+  }, [snap.sheets, files, router])
+
   return (
     <div
       ref={editorRootRef}
@@ -1633,6 +1661,19 @@ export function PointMapEditor({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+
+            {/* 与上面的「风格化」并列：一个是画布本地渲染色，一个是 AI 出图 */}
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={!snap.sheets.length || !!cropFile}
+              onClick={handoffToAiStyle}
+              title="用 AI 把户型图生成精装彩平图（消耗积分）"
+              className="text-muted-foreground"
+            >
+              <Sparkles />
+              <span className="hidden lg:inline">AI 精装彩平</span>
+            </Button>
 
             <Button
               variant={primaryAction === 'generate' ? 'default' : 'outline'}

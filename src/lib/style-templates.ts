@@ -81,3 +81,15 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
 ]
 
 export const styleTemplateById = (id: string) => STYLE_TEMPLATES.find((t) => t.id === id) ?? null
+
+/**
+ * 「带图跳转」的交接键：点位图编辑器 → 户型图风格化。
+ *
+ * 为什么走 sessionStorage 而不是 URL query：
+ * 画布底图在客户端是 **dataURL（base64）**，一张 3:2 的图纸动辄几百 KB ~ 数 MB，
+ * 放进 query 会撞上 URL 长度上限（各浏览器约 2KB~64KB）并被日志/Referer 泄露。
+ * sessionStorage 同源、随标签页生命周期、不落盘。
+ */
+export const STYLE_TRANSFER_HANDOFF_KEY = 'fmkj:style-transfer-source'
+
+export type StyleTransferHandoff = { image: string; name: string }

@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Download, ImagePlus, Loader2, Palette, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { STYLE_TRANSFER_HANDOFF_KEY, type StyleTransferHandoff } from '@/lib/style-templates'
 import { cn } from '@/lib/utils'
 
 type Template = { id: string; name: string; description: string; file: string }
@@ -54,6 +55,36 @@ export function StyleTransfer({
     }
     reader.readAsDataURL(file)
   }
+
+  /**
+   * 从点位图编辑器「带图跳转」过来时，自动把那张户型图放进上传位。
+   *
+   * 只在**首次挂载**读一次并立刻清掉 —— 否则用户回到本页会莫名其妙
+   * 又被塞回上次那张图，覆盖掉他当前的选择。
+   */
+  useEffect(() => {
+    let handoff: StyleTransferHandoff | null = null
+    try {
+      const raw = sessionStorage.getItem(STYLE_TRANSFER_HANDOFF_KEY)
+      if (raw) {
+        sessionStorage.removeItem(STYLE_TRANSFER_HANDOFF_KEY)
+        const parsed = JSON.parse(raw) as Partial<StyleTransferHandoff>
+        if (typeof parsed?.image === 'string' && parsed.image.startsWith('data:image/')) {
+          handoff = {
+            image: parsed.image,
+            name: typeof parsed.name === 'string' ? parsed.name : '户型图',
+          }
+        }
+      }
+    } catch {
+      // 隐私模式或脏数据：静默忽略，用户仍然可以手动上传
+    }
+    if (!handoff) return
+    setSource(handoff.image)
+    setSourceName(handoff.name)
+    setError(null)
+    setResult(null)
+  }, [])
 
   const generate = async () => {
     if (!source || !styleId || busy) return
