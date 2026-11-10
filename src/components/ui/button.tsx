@@ -132,10 +132,12 @@ export function Button({
   variant = 'default',
   size = 'default',
   asChild = false,
+  ref,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    ref?: React.Ref<HTMLButtonElement>
   }) {
   const v = (variant ?? 'default') as Variant
   const s = (size ?? 'default') as Size
@@ -144,6 +146,7 @@ export function Button({
   if (asChild) {
     return (
       <Slot.Root
+        ref={ref as never}
         data-slot="button"
         data-variant={v}
         data-size={s}
@@ -173,8 +176,17 @@ export function Button({
   const label = ariaLabel || textOf(remainder) || title || ''
   const isIconOnly = ICON_ONLY_SIZES.has(s)
 
+  // ⚠️ `ref` 与其余 props 必须**原样转发**，不能挑着传。
+  //
+  // Radix 的 `*Trigger asChild` 会把 `ref` / `aria-haspopup` / `aria-expanded` /
+  // `data-state` / 各种事件处理器注入到子元素上。这里原本只手写了 `onClick` 等
+  // 少数几个 prop、且没接 `ref` —— 后果是**所有「<Button asChild> 当下拉触发器」
+  // 的菜单全都点不开**（实测 9 处：报价编辑器 3、点位图编辑器 5、合同预览、
+  // 售后看板、打印工具栏、docs 外观菜单）。
+  // 按钮能渲染，但身上没有任何 trigger 属性，Radix 收不到点击、也不知道该展开谁。
   return (
     <AstryxButton
+      ref={ref as never}
       variant={ASTRYX_VARIANT[v]}
       size={ASTRYX_SIZE[s]}
       label={label}
@@ -182,8 +194,8 @@ export function Button({
       isIconOnly={isIconOnly}
       isDisabled={Boolean(rest.disabled)}
       type={(rest.type as 'button' | 'submit' | 'reset') ?? 'button'}
-      onClick={rest.onClick as never}
       tooltip={isIconOnly ? title || ariaLabel : undefined}
+      {...(rest as object)}
       data-slot="button"
       data-variant={v}
       data-size={s}
