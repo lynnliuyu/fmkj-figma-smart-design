@@ -739,43 +739,25 @@ html:has([data-landing]) {
 }
 
 /*
- * 「官网」主题的形态：按钮 / 输入框走全圆胶囊，卡片圆角 16px。
+ * `data-accent` 的圆角覆盖 —— 已移除（2026-11-10）。
  *
- * 为什么不能用 `html[data-accent='official'] { --radius-element: … }`：
- * CSS 变量按**最近的祖先**取值，不看选择器优先级。Astryx 的 `<Theme>` 会渲染一个
- * 带 `.xrw1vgx` 的 div，并在那里重新定义 `--radius-element: 8px`
- * （见 @astryxdesign/core/dist/astryx.css 的 `:root, .xrw1vgx{…}`），
- * 于是 html 上的值被这一层截胡，按钮拿到的仍是 8px。
+ * 这段原本是给**旧的 shadcn 按钮**写的：那时按钮是 `<button data-slot="button">`
+ * 加 Tailwind 类，圆角来自类，所以需要 `!important` 盖过 utilities 层。
  *
- * 所以改成在**按钮元素自己身上**覆盖：Button 用的是
- * `rounded-[var(--radius-element)]`，但只有图标尺寸的部分才带这个类，
- * 主按钮的圆角来自基类。这里直接对 data-slot="button" 与表单控件下最终值，
- * 用 `!important` 是因为要盖过 Tailwind 的 utilities 层（它排在 astryx 之后）。
+ * **换 Astryx 官方组件后它变成了破坏源**：Astryx Button 的圆角由它自己的
+ * CSS 层决定（`stone` 主题下是 8–12px 的小圆角），而这里的
+ * `border-radius: 9999px !important` 会把它直接顶成**全圆胶囊**，
+ * 中文短标签在胶囊里显得又挤又飘 —— 这就是「页面显示乱」的观感来源。
+ *
+ * 实测证据（线上 /projects）：
+ *   「立即兑换」按钮 border-radius = 9999px（应为 stone 的 12px 左右）
+ *   「搜索」按钮     border-radius = 9999px
+ *   四套 accent（official / fanmeng / jade / classic）**全部如此**
+ *
+ * 现在圆角统一交给 Astryx 主题决定：换主题即换几何语言，不再由 accent 层二次干预。
+ * 若日后确实需要「某个 accent 用胶囊按钮」，应该在**该主题的 defineTheme 里**改
+ * `components.button.base.borderRadius`，而不是用 `!important` 覆盖整个站点。
  */
-html[data-accent='official'] {
-  --radius-inner: 9999px;
-  --radius-element: 9999px;
-  --radius-container: 1rem;
-}
-
-/* 元素级兜底：变量被 Astryx 的中间层重置，就直接在元素上给终值。
- *
- * 胶囊只给「操作按钮」（data-slot="button"）。导航项、菜单项、Tab 一律不动——
- * 实测把它们也做成胶囊后，239px 宽的侧边栏条目会变成一根根药丸，很难看。
- * 输入框同理保持 8px：胶囊输入框像搜索栏，与选择卡片几何语言不协调。 */
-html[data-accent='official'] [data-slot='button'] {
-  border-radius: var(--radius-full, 9999px) !important;
-}
-
-html[data-accent='official'] input:not([type='checkbox']):not([type='radio']),
-html[data-accent='official'] textarea,
-html[data-accent='official'] [data-slot='select-trigger'] {
-  border-radius: 0.5rem !important;
-}
-
-html[data-accent='official'] [data-slot='card'] {
-  border-radius: 1rem !important;
-}
 
 /*
  * 侧边栏选中项：默认的 --sidebar-accent 在几套主题里都偏浅（约 oklch 0.95~0.96），
