@@ -4,11 +4,18 @@ import { useEffect, useState } from 'react'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
+import { useAstryxTheme } from '@/components/astryx-theme-provider'
 import { useAccent } from '@/components/theme-provider'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ACCENT_SWATCH, ACCENTS, DEFAULT_ACCENT, isAccent } from '@/lib/appearance'
+import {
+  ASTRYX_SWATCH,
+  ASTRYX_THEMES,
+  DEFAULT_ASTRYX_THEME,
+  isAstryxTheme,
+} from '@/lib/astryx-theme'
 import { cn } from '@/lib/utils'
 
 const MODES = [
@@ -45,10 +52,29 @@ function AccentPreview({ swatch, pill = false }: { swatch: string; pill?: boolea
   )
 }
 
+/**
+ * 组件主题的示意小窗：用主题自身的强调色画「主按钮 + 输入框 + 卡片边」，
+ * 让 6 套主题的差别（强调色深浅、按钮形态）一眼可辨。
+ * 色值来自各主题 `theme.css` 的 `--color-accent`，不是随手挑的。
+ */
+function AstryxThemePreview({ swatch }: { swatch: string }) {
+  return (
+    <span className="flex h-16 flex-col gap-2 overflow-hidden rounded-lg border bg-background p-2">
+      <span className="flex items-center gap-1.5">
+        <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: swatch }} />
+        <span className="h-1.5 w-8 rounded-full bg-muted-foreground/25" />
+      </span>
+      <span className="h-3 w-full rounded-sm bg-muted-foreground/12" />
+      <span className="mt-auto h-4 w-12 rounded-md" style={{ backgroundColor: swatch }} />
+    </span>
+  )
+}
+
 /** 外观：颜色模式 + 主题风格。只保存在当前浏览器。 */
 export function AppearanceSettings() {
   const { theme, setTheme } = useTheme()
   const { accent, setAccent } = useAccent()
+  const { themeId, setThemeId } = useAstryxTheme()
   // next-themes 在服务端不知道用户选择，挂载后再显示选中项，避免水合不一致
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
@@ -112,6 +138,42 @@ export function AppearanceSettings() {
                     ) : null}
                   </span>
                   <RadioGroupItem id={`appearance-accent-${a.id}`} value={a.id} />
+                </span>
+              </Label>
+            ))}
+          </RadioGroup>
+        </div>
+
+        {/* 组件主题（Astryx 官方 6 套）—— 与上面的「主题风格」是两套：
+            主题风格管页面级配色，这一组管官方组件的 token（强调色、圆角、边框…）。 */}
+        <div className="flex flex-col gap-2">
+          <p id="appearance-astryx" className="text-sm font-medium">
+            组件主题
+          </p>
+          <p className="text-xs text-muted-foreground">
+            按钮、输入框、弹窗等组件的样式；与上面的主题风格相互独立。
+          </p>
+          <RadioGroup
+            aria-labelledby="appearance-astryx"
+            value={themeId}
+            onValueChange={(v) => isAstryxTheme(v) && setThemeId(v)}
+            className="gap-2 sm:grid-cols-3"
+          >
+            {ASTRYX_THEMES.map((t) => (
+              <Label
+                key={t.id}
+                htmlFor={`appearance-astryx-${t.id}`}
+                className={cn(tile, 'flex-col items-stretch gap-2.5 p-3')}
+              >
+                <AstryxThemePreview swatch={ASTRYX_SWATCH[t.id]} />
+                <span className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium">
+                    {t.label}
+                    {t.id === DEFAULT_ASTRYX_THEME ? (
+                      <span className="ml-1.5 text-xs font-normal text-muted-foreground">默认</span>
+                    ) : null}
+                  </span>
+                  <RadioGroupItem id={`appearance-astryx-${t.id}`} value={t.id} />
                 </span>
               </Label>
             ))}

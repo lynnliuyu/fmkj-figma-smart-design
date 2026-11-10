@@ -6,9 +6,9 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
-import { Theme } from '@astryxdesign/core/theme'
-import { themes, defaultThemeSlug } from '@/astryx-themes'
+import { AstryxThemeProvider } from '@/components/astryx-theme-provider'
 import { ACCENT_INIT_SCRIPT } from '@/lib/appearance'
+import { ASTRYX_THEME_INIT_SCRIPT } from '@/lib/astryx-theme'
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE, COMPANY_NAME } from '@/lib/brand'
 import { siteSans } from '@/lib/fonts'
 import { Toaster } from '@/components/ui/sonner'
@@ -90,13 +90,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
         )}
         <div id="root" tabIndex={-1}>
-          {/* Astryx 设计系统（试点）：提供主题上下文，供 Astryx 组件使用 */}
-          <Theme theme={themes[defaultThemeSlug]}>
+          {/* Astryx 设计系统：提供主题上下文；主题可在「设置 → 外观」切换 */}
+          <AstryxThemeProvider>
             <ThemeProvider>
               <TooltipProvider>{children}</TooltipProvider>
               <Toaster />
             </ThemeProvider>
-          </Theme>
+          </AstryxThemeProvider>
         </div>
         {googleAnalyticsId && (
           <>
