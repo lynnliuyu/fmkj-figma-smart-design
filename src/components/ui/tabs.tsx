@@ -191,7 +191,25 @@ function TabsList({
         role="tablist"
         hasDivider={false}
         aria-label={ariaLabel ?? '标签页'}
-        className={cn('w-full', wantsFill && 'grid gap-0.5', wantsFill && gridColsOf(className))}
+        className="w-full"
+        /*
+         * ⚠️ 栅格必须用**内联样式**，不能用 Tailwind 的 `grid grid-cols-N` 类。
+         *
+         * 官方 TabList 内部用 StyleX 编译出的原子类设了 `display:flex`，
+         * 那些类的优先级高于我们拼上去的 Tailwind 工具类 —— 实测传 `grid grid-cols-3`
+         * 后，TabList 仍是 flex、宽度仍是外层 grid 的 1/3（111px / 341px）。
+         * 内联样式优先级最高，能把栅格真正落到它身上。
+         */
+        style={
+          wantsFill
+            ? {
+                display: 'grid',
+                gridTemplateColumns: `repeat(${colsOf(className)}, minmax(0, 1fr))`,
+                gap: 2,
+                width: '100%',
+              }
+            : undefined
+        }
       >
         {items.map((it) => (
           // 官方 Tab 不收 children：文案走 `label`（同时是无障碍名称），
@@ -210,10 +228,11 @@ function TabsList({
   )
 }
 
-/** 从调用点 className 里抠出 `grid-cols-N`，供官方 TabList 直接使用。 */
-function gridColsOf(className?: string): string {
-  const m = (className ?? '').match(/grid-cols-([a-z0-9]+)/)
-  return m ? `grid-cols-${m[1]}` : ''
+/** 从调用点 className 里抠出 `grid-cols-N` 的 N（默认 3）。 */
+function colsOf(className?: string): number {
+  const m = (className ?? '').match(/grid-cols-(\d+)/)
+  const n = m ? Number(m[1]) : 0
+  return Number.isFinite(n) && n > 0 ? n : 3
 }
 
 function TabsContent({
