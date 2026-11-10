@@ -144,8 +144,30 @@ function TabsList({
    */
   const wantsFill = Boolean(className && /(^|\s)(w-full|grid-cols-)/.test(className))
 
+  /*
+   * 统一的分段控件外观（segmented control）。
+   *
+   * 官方 TabList 默认渲染成「文字 + 选中下划线」，那是**页面级导航**的语言；
+   * 而本仓的 Tabs 几乎都用在「几种互斥选项里选一个」的场景（报价版式 6 选 1、
+   * 方案结构 3 选 1、侧边栏 导航/AI 对话），读者预期的是**分段控件**（灰槽 + 白底实心选中）。
+   *
+   * 之前没给这层基础样式，结果侧边栏那两个 tab 看起来像两行普通菜单文字，
+   * 跟下面的「工作台 / 能力中心」分不开 —— 这就是 owner 说的「侧边栏有问题」。
+   *
+   * 这里把「灰底 + 内边距 + 圆角」放到容器上，选中态的实心白底交给官方 Tab 自己画
+   * （它的 active 态本来就有背景）。调用点传 `bg-muted p-0.5` 之类的仍可覆盖。
+   */
   return (
-    <div data-slot="tabs-list" className={cn('w-full', className)}>
+    <div
+      data-slot="tabs-list"
+      className={cn(
+        'w-full rounded-[var(--radius-element)] bg-muted p-0.5',
+        // 调用点自己声明了背景/内边距就尊重它（避免和我这层打架）
+        /(^|\s)bg-/.test(className ?? '') && 'bg-transparent',
+        /(^|\s)p-[\d.]/.test(className ?? '') && 'p-0',
+        className,
+      )}
+    >
       <TabList
         value={ctx?.value ?? ''}
         onChange={(v) => ctx?.setValue(v)}
