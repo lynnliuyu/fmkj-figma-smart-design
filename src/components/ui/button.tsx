@@ -197,8 +197,19 @@ export function Button({
       tooltip={isIconOnly ? title || ariaLabel : undefined}
       {...(rest as object)}
       data-slot="button"
-      data-variant={v}
-      data-size={s}
+      // ⚠️ 这里**绝不能**再写 data-variant / data-size。
+      //
+      // 官方组件用 `themeDataAttributes()` 把 `variant` / `size` prop 反映成
+      // `data-variant` / `data-size`，而官方主题 CSS 正是用这些属性选样式：
+      //   .astryx-button[data-variant="secondary"] { border-width: 1.5px; … }
+      //
+      // 早先这里又写了一遍**本仓的旧名**（如 outline），把它覆盖掉了 →
+      // 官方选择器选不中这个元素 → **全站 37 个 outline 按钮失去描边**，
+      // 只剩 6% 的浅底，在浅色背景上看起来「隐形」。
+      //
+      // 实测对照（同一页面）：
+      //   纯官方 secondary 按钮 → 边框 1px 灰、背景透明 ✅
+      //   适配层产出的按钮     → data-variant="outline" → 边框 0px ❌
       className={className}
     >
       {remainder}
