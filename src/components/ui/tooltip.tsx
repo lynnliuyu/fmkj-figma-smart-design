@@ -33,10 +33,26 @@ export function TooltipProvider({
   return <>{children}</>
 }
 
-/** radix 式的 Trigger；真正的渲染由外层 `Tooltip` 解析后交给官方组件。 */
+/**
+ * radix 式的 Trigger；只作为「触发物的载体」，由外层 `Tooltip` 解析。
+ *
+ * ═══ 为什么用静态属性 `__tooltipSlot` 而不是函数名 ═══
+ *
+ * 生产构建会把组件压成**匿名函数**：
+ *   dev:  `function TooltipTrigger({children}) {...}`
+ *   线上: `TooltipTrigger",0,function({children:e}){...}`   ← 函数名没了
+ *
+ * 所以靠 `child.type.name === 'TooltipTrigger'` 判断在**生产环境永远失败**
+ * （`name` 是空串），触发物被当成「没有内容」直接丢弃 ——
+ * 实测后果：**侧边栏 10 个菜单项全部消失**（只剩分组标题），
+ * 而本地 dev 一切正常，这个差异让排查绕了很久。
+ *
+ * 静态属性跟着函数走，不会被压缩掉。
+ */
 export function TooltipTrigger({ children }: { children?: React.ReactNode; asChild?: boolean }) {
   return <>{children}</>
 }
+TooltipTrigger.__tooltipSlot = 'trigger' as const
 
 /**
  * radix 式的 Content；只作为「文案 + 方位」的载体，由外层 `Tooltip` 解析。
@@ -54,6 +70,7 @@ export function TooltipContent({
 }) {
   return <>{children}</>
 }
+TooltipContent.__tooltipSlot = 'content' as const
 
 /** 从子元素里认出触发物与文案（三段式 → 官方的两段式）。 */
 function splitParts(children: React.ReactNode): {
@@ -70,15 +87,11 @@ function splitParts(children: React.ReactNode): {
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return
     const p = child.props as { children?: React.ReactNode; side?: string; align?: string }
-    const name =
-      typeof child.type === 'function'
-        ? (child.type as { name?: string }).name
-        : typeof child.type === 'string'
-          ? child.type
-          : ''
+    // 用静态标记识别，不靠函数名（生产压缩会把名字改成匿名函数，见 TooltipTrigger 注释）
+    const slot = (child.type as { __tooltipSlot?: string }).__tooltipSlot
 
-    if (name === 'TooltipTrigger') trigger = p.children
-    else if (name === 'TooltipContent') {
+    if (slot === 'trigger') trigger = p.children
+    else if (slot === 'content') {
       content = p.children
       side = p.side
       align = p.align
