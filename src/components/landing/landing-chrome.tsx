@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { APP_DESCRIPTION, APP_NAME, COMPANY_NAME } from '@/lib/brand'
 import { cn } from '@/lib/utils'
 
@@ -54,24 +54,25 @@ export function LandingNav() {
           {NAV.map((item) => (
             <Button
               key={item.href}
-              asChild
               variant="ghost"
               className="rounded-full px-3 font-normal text-muted-foreground hover:text-foreground"
-            >
-              <Link href={item.href}>{item.label}</Link>
-            </Button>
+              href={item.href}
+              label="操作"
+            />
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-1.5">
-          <Button asChild variant="ghost" className="rounded-full px-3 font-normal">
-            <Link href="/login">登录</Link>
-          </Button>
           <Button
-            asChild
+            variant="ghost"
+            className="rounded-full px-3 font-normal"
+            href="/login"
+            label="登录"
+          />
+          <Button
             className="rounded-full bg-foreground px-4 text-background hover:bg-foreground/85"
-          >
-            <Link href="/projects">进入工作台</Link>
-          </Button>
+            href="/projects"
+            label="进入工作台"
+          />
         </div>
       </div>
     </header>

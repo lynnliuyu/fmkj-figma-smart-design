@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Minus, Plus } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   Dialog,
   DialogContent,
@@ -156,15 +157,16 @@ export function SquareCropDialog({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Button
+          <IconButton
             type="button"
             variant="ghost"
-            size="icon-sm"
+
             aria-label="缩小"
             onClick={() => setZoomCentered(zoom - 0.25)}
-          >
-            <Minus className="size-4" />
-          </Button>
+            label="缩小"
+            icon={<Minus />}
+            size="sm"
+          />
           <input
             type="range"
             min={1}
@@ -175,23 +177,20 @@ export function SquareCropDialog({
             onChange={(e) => setZoomCentered(Number(e.target.value))}
             className="flex-1 accent-primary"
           />
-          <Button
+          <IconButton
             type="button"
             variant="ghost"
-            size="icon-sm"
+
             aria-label="放大"
             onClick={() => setZoomCentered(zoom + 0.25)}
-          >
-            <Plus className="size-4" />
-          </Button>
+            label="放大"
+            icon={<Plus />}
+            size="sm"
+          />
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={onCancel}>
-            取消
-          </Button>
-          <Button type="button" onClick={confirm} disabled={!img}>
-            确认裁剪
-          </Button>
+          <Button type="button" variant="secondary" onClick={onCancel} label="取消" />
+          <Button type="button" onClick={confirm} isDisabled={!img} label="确认裁剪" />
         </DialogFooter>
       </DialogContent>
     </Dialog>

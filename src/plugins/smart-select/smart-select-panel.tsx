@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Loader2, Sparkles } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { cn } from '@/lib/utils'
 
 import { SELECTION_TIERS, type SelectionTier } from './auto-select'
@@ -43,28 +43,30 @@ export function SmartSelect({
             key={t.value}
             type="button"
             size="sm"
-            variant={tier === t.value ? 'outline' : 'ghost'}
+            variant={tier === t.value ? 'secondary' : 'ghost'}
             role="radio"
             aria-checked={tier === t.value}
             className={cn('h-7 text-xs', tier === t.value && 'bg-background shadow-sm')}
             onClick={() => setTier(t.value)}
-          >
-            {t.label}
-          </Button>
+            label="操作"
+          />
         ))}
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <Button size="sm" disabled={disabled || busy} onClick={() => onRun(tier, false)}>
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}补全未选型
-        </Button>
         <Button
           size="sm"
-          variant="outline"
-          disabled={disabled || busy}
+          isDisabled={disabled || busy}
+          onClick={() => onRun(tier, false)}
+          icon={<Loader2 />}
+          label="补全未选型"
+        />
+        <Button
+          size="sm"
+          variant="secondary"
+          isDisabled={disabled || busy}
           onClick={() => onRun(tier, true)}
-        >
-          全部重新选
-        </Button>
+          label="全部重新选"
+        />
       </div>
     </div>
   )

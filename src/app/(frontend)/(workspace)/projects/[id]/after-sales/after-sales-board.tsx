@@ -27,7 +27,8 @@ import {
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
@@ -274,17 +275,16 @@ export function AfterSalesBoard({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/print/projects/${projectId}/after-sales`}>
-              <Printer className="size-4" />
-              打印维保卡
-            </Link>
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            href={`/print/projects/${projectId}/after-sales`}
+            as={Link}
+            icon={<Printer />}
+            label="打印维保卡"
+          />
           {canEdit ? (
-            <Button size="sm" onClick={() => openNew()}>
-              <Plus className="size-4" />
-              新建记录
-            </Button>
+            <Button size="sm" onClick={() => openNew()} icon={<Plus />} label="新建记录" />
           ) : null}
         </div>
       </header>
@@ -352,13 +352,12 @@ export function AfterSalesBoard({
                 {canEdit && !data.records.length ? (
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="secondary"
                     className="mt-2"
                     onClick={() => openNew('acceptance')}
-                  >
-                    <BadgeCheck className="size-4" />
-                    登记交付验收
-                  </Button>
+                    icon={<BadgeCheck />}
+                    label="登记交付验收"
+                  />
                 ) : null}
               </div>
             ) : (
@@ -419,19 +418,14 @@ export function AfterSalesBoard({
               )}
               {canEdit ? (
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   className="w-full"
-                  disabled={busyId === '__backup'}
+                  isDisabled={busyId === '__backup'}
                   onClick={backup}
-                >
-                  {busyId === '__backup' ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <DatabaseBackup className="size-4" />
-                  )}
-                  立即备份当前配置
-                </Button>
+                  icon={<Loader2 />}
+                  label="立即备份当前配置"
+                />
               ) : null}
               {backups.length > 1 ? (
                 <p className="text-xs text-muted-foreground">
@@ -617,13 +611,13 @@ export function AfterSalesBoard({
             </div>
           ) : null}
           <DialogFooter>
-            <Button variant="outline" disabled={pending} onClick={() => setEditing(null)}>
-              取消
-            </Button>
-            <Button disabled={pending} onClick={submit}>
-              {pending ? <Loader2 className="size-4 animate-spin" /> : null}
-              保存
-            </Button>
+            <Button
+              variant="secondary"
+              isDisabled={pending}
+              onClick={() => setEditing(null)}
+              label="取消"
+            />
+            <Button isDisabled={pending} onClick={submit} icon={<Loader2 />} label="保存" />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -661,15 +655,16 @@ function WarrantyHero({
         </div>
         <div className="flex shrink-0 gap-2">
           {!data.contract ? (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/projects/${projectId}/contract`}>去生成合同</Link>
-            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              href={`/projects/${projectId}/contract`}
+              as={Link}
+              label="去生成合同"
+            />
           ) : null}
           {canEdit ? (
-            <Button size="sm" onClick={onAcceptance}>
-              <BadgeCheck className="size-4" />
-              登记交付验收
-            </Button>
+            <Button size="sm" onClick={onAcceptance} icon={<BadgeCheck />} label="登记交付验收" />
           ) : null}
         </div>
       </div>
@@ -826,14 +821,15 @@ function RecordItem({
       {canEdit ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
+            <IconButton
               variant="ghost"
-              size="icon-sm"
+
               aria-label={`更多操作：${r.title}`}
-              disabled={busy}
-            >
-              {busy ? <Loader2 className="size-4 animate-spin" /> : <Ellipsis className="size-4" />}
-            </Button>
+              isDisabled={busy}
+              label="操作"
+              icon={<Loader2 />}
+              size="sm"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onSelect={onEdit}>

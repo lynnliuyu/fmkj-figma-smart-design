@@ -14,7 +14,7 @@ import {
 import { DesktopHeroActions, DesktopPlatformCards } from '@/components/download/desktop-downloads'
 import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { SectionHeading } from '@/components/landing/section-heading'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import { APP_NAME, pageTitle } from '@/lib/brand'
 
@@ -226,23 +226,19 @@ export default function DownloadPage() {
             </div>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button
-                asChild
                 size="lg"
                 className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-              >
-                <Link href="/projects">
-                  先用网页版
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
+                href="/projects"
+                icon={<ArrowRight />}
+                label="先用网页版"
+              />
               <Button
-                asChild
                 size="lg"
-                variant="outline"
+                variant="secondary"
                 className="h-11 rounded-full px-6 text-base"
-              >
-                <Link href="/login">登录账号</Link>
-              </Button>
+                href="/login"
+                label="登录账号"
+              />
             </div>
           </div>
         </section>

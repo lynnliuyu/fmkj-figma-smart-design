@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import type { SymbolTemplate } from '@/board/core/types'
@@ -66,8 +66,8 @@ export function LightingPanel({
                   <Button
                     key={f.id}
                     type="button"
-                    variant="outline"
-                    disabled={disabled}
+                    variant="secondary"
+                    isDisabled={disabled}
                     draggable={!disabled}
                     onDragStart={(e) => {
                       e.dataTransfer.setData(
@@ -91,10 +91,9 @@ export function LightingPanel({
                       f.id === famId &&
                         'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
                     )}
-                  >
-                    <Art id={f.cover} className="size-7" />
-                    <span className="leading-tight">{f.name}</span>
-                  </Button>
+                    icon={<Art id="lighting" />}
+                    label="操作"
+                  />
                 ))}
               </div>
             </section>
@@ -122,9 +121,9 @@ export function LightingPanel({
           {fam.variants.map((v) => (
             <Button
               key={v.id}
-              size="xs"
-              variant={armedId === v.id ? 'default' : 'outline'}
-              disabled={disabled}
+              size="sm"
+              variant={armedId === v.id ? 'primary' : 'secondary'}
+              isDisabled={disabled}
               className={cn(
                 'h-6.5 gap-1 px-2 text-[11px] shadow-none',
                 armedId === v.id
@@ -132,12 +131,9 @@ export function LightingPanel({
                   : 'border-border bg-background text-fg-secondary hover:bg-subtle',
               )}
               onClick={() => onArm(armedId === v.id ? null : variantTemplate(fam, v.id, real))}
-            >
-              {fam.variants.some((x) => x.art !== v.art) ? (
-                <Art id={v.art} className="size-4" />
-              ) : null}
-              {v.label}
-            </Button>
+              icon={<Art id="lighting" />}
+              label="操作"
+            />
           ))}
         </div>
         <p className="text-[11px] text-muted-foreground">

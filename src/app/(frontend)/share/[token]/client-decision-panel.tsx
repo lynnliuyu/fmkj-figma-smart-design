@@ -5,7 +5,7 @@ import { CheckCircle2, Loader2, PenLine, Send } from 'lucide-react'
 
 import { money, SectionHeader } from '@/components/landing/section'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -519,18 +519,14 @@ export function ClientDecisionPanel({
                   {formError}
                 </p>
               ) : null}
-              <Button type="submit" className="mt-4 w-full" disabled={!canSubmit || pending}>
-                {pending ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Send className="size-4" />
-                )}
-                {canSubmit
-                  ? decision === 'confirm'
-                    ? '签名确认意向'
-                    : '提交调整意见'
-                  : '演示链接不能提交'}
-              </Button>
+              <Button
+                type="submit"
+                className="mt-4 w-full"
+                isDisabled={!canSubmit || pending}
+                icon={<Loader2 />}
+                endContent={<Send />}
+                label="操作"
+              />
             </form>
           )}
         </div>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { FileSignature, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { quoteStatusLabel, yuan } from '@/lib/quotes'
 
 import { createContract, type ContractInput } from './actions'
@@ -63,7 +63,7 @@ export function CreateContractPanel({
       </div>
       <div className="flex justify-end border-t px-5 py-4">
         <Button
-          disabled={pending || !quoteId}
+          isDisabled={pending || !quoteId}
           onClick={() =>
             startTransition(async () => {
               const result = await createContract(projectId, quoteId)
@@ -72,14 +72,9 @@ export function CreateContractPanel({
               router.refresh()
             })
           }
-        >
-          {pending ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <FileSignature className="size-4" />
-          )}
-          生成合同
-        </Button>
+          icon={<Loader2 />}
+          label="生成合同"
+        />
       </div>
     </div>
   )

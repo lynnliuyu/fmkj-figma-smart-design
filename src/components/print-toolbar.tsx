@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import {
   Dialog,
   DialogContent,
@@ -312,16 +312,14 @@ export function PrintToolbar({
       >
         {isMpView ? null : (
           <Button
-            asChild
             variant="ghost"
             size="sm"
             className="-ml-2 shrink-0 text-muted-foreground"
-          >
-            <Link href={back.href}>
-              <ChevronLeft className="size-4" />
-              {back.label}
-            </Link>
-          </Button>
+            href={back.href}
+            as={Link}
+            icon={<ChevronLeft />}
+            label="操作"
+          />
         )}
 
         <div
@@ -353,16 +351,13 @@ export function PrintToolbar({
           {groups.length > 0 ? (
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
-                  <SlidersHorizontal className="size-3.5" />
-                  <span>版式与选项</span>
-                  {summaryParts.length > 0 ? (
-                    <span className="hidden max-w-36 truncate text-muted-foreground sm:inline">
-                      · {summaryParts.join(' / ')}
-                    </span>
-                  ) : null}
-                  <ChevronDown className="size-3.5 text-muted-foreground" />
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="h-8 gap-1.5 text-xs"
+                  icon={<SlidersHorizontal />}
+                  label="版式与选项 {summaryParts.length > 0 ? ( · ) : null}"
+                />
               </PopoverTrigger>
               <PopoverContent align="end" className="w-80 space-y-3.5 p-4">
                 {groups.map((g) => (
@@ -374,15 +369,13 @@ export function PrintToolbar({
                         return (
                           <Button
                             key={o.value}
-                            asChild
-                            size="xs"
-                            variant={active ? 'default' : 'outline'}
+                            size="sm"
+                            variant={active ? 'primary' : 'secondary'}
                             className="h-7 rounded-md px-2.5 text-xs"
-                          >
-                            <Link href={o.href} replace scroll={false}>
-                              {o.label}
-                            </Link>
-                          </Button>
+                            href={o.href}
+                            as={Link}
+                            label="操作"
+                          />
                         )
                       })}
                     </div>
@@ -396,28 +389,23 @@ export function PrintToolbar({
             <Button
               size="sm"
               className="ml-auto h-8 shrink-0 gap-1.5 px-2.5 text-xs"
-              disabled={busy !== null || Boolean(locked)}
+              isDisabled={busy !== null || Boolean(locked)}
               onClick={() => void exportPdf()}
-            >
-              {busy !== null ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <FileDown className="size-3.5" />
-              )}
-              {busy ? '生成中…' : '导出 PDF'}
-            </Button>
+              icon={<Loader2 />}
+              endContent={<FileDown />}
+              label="操作"
+            />
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" className="h-8" disabled={busy !== null || Boolean(locked)}>
-                  {busy !== null ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <FileDown className="size-4" />
-                  )}
-                  {busy === 'pdf' ? '生成 PDF 中…' : busy === 'img' ? '生成图片中…' : '导出 PDF'}
-                  <ChevronDown className="size-3.5" />
-                </Button>
+                <Button
+                  size="sm"
+                  className="h-8"
+                  isDisabled={busy !== null || Boolean(locked)}
+                  icon={<Loader2 />}
+                  endContent={<ChevronDown />}
+                  label="操作"
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem onSelect={() => void exportPdf()}>
@@ -470,29 +458,33 @@ export function PrintToolbar({
           {exportResult?.kind === 'pdf' ? (
             <div className="flex flex-wrap gap-2">
               {!isMpView ? (
-                <Button type="button" size="sm" onClick={() => void savePdfWithPicker()}>
-                  <FolderDown className="size-4" />
-                  下载 / 选择位置另存为
-                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => void savePdfWithPicker()}
+                  icon={<FolderDown />}
+                  label="下载 / 选择位置另存为"
+                />
               ) : null}
               {exportResult.downloadUrl ? (
                 <Button
                   type="button"
-                  variant={isMpView ? 'default' : 'secondary'}
+                  variant={isMpView ? 'primary' : 'secondary'}
                   size="sm"
                   onClick={() => void copyDownloadUrl()}
-                >
-                  {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                  {copied ? '已复制下载链接' : '复制 PDF 下载链接'}
-                </Button>
+                  icon={<Check />}
+                  endContent={<Copy />}
+                  label="操作"
+                />
               ) : null}
               {!isMpView && exportResult.previewUrl ? (
-                <Button asChild variant="outline" size="sm">
-                  <a href={exportResult.previewUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="size-4" />
-                    新窗口打开 PDF
-                  </a>
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  href={exportResult.previewUrl}
+                  icon={<ExternalLink />}
+                  label="新窗口打开 PDF"
+                />
               ) : null}
             </div>
           ) : null}

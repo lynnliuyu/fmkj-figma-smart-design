@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Blocks, ChevronRight } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { PluginId } from '@/plugins/types'
@@ -91,16 +91,13 @@ export function PluginList({
         <CardFooter className="flex items-center justify-between gap-2 border-t pt-3 pb-0 text-xs text-muted-foreground">
           <span className="truncate">{p.entry ? `入口：${p.entry}` : null}</span>
           <Button
-            asChild
             variant="ghost"
-            size="xs"
+            size="sm"
             className="-mr-2 shrink-0 text-muted-foreground hover:text-foreground"
-          >
-            <Link href={`/plugins/${p.id}`}>
-              详情
-              <ChevronRight className="size-3.5" />
-            </Link>
-          </Button>
+            href={`/plugins/${p.id}`}
+            icon={<ChevronRight />}
+            label="详情"
+          />
         </CardFooter>
       </Card>
     )

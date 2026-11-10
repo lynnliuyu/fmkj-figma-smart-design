@@ -37,7 +37,8 @@ import { PlanFigure } from '@/components/plan-figure'
 import { PointMarker } from '@/components/point-marker'
 import { ProductThumb } from '@/components/product-thumb'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -594,29 +595,24 @@ export function QuoteEditor({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-1.5">
           <Button
-            asChild
             variant="ghost"
             size="sm"
             className="-ml-2 h-8 text-xs font-medium text-muted-foreground hover:text-foreground"
-          >
-            <GuardedLink href={`/projects/${project.id}/quotes`}>
-              <ChevronLeft className="size-4" />
-              全部报价
-            </GuardedLink>
-          </Button>
+            icon={<ChevronLeft />}
+            label="全部报价"
+          />
           {projectQuotes.length > 1 ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   className="h-8 border-border bg-background text-xs font-medium text-fg-secondary shadow-2xs"
                   aria-label="切换到项目里的其他报价"
-                >
-                  切换报价 ({projectQuotes.length})
-                  <ChevronDown className="size-3.5 text-muted-foreground" />
-                </Button>
+                  icon={<ChevronDown />}
+                  label="切换报价 ( )"
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64">
                 {projectQuotes.map((q) => (
@@ -661,29 +657,23 @@ export function QuoteEditor({
             </Badge>
           ) : null}
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             className="h-8 border-border bg-background text-xs font-medium shadow-2xs"
-            disabled={saving || syncing}
+            isDisabled={saving || syncing}
             onClick={() => switchToPointMap()}
-          >
-            <MapPinned className="size-3.5 text-primary" />
-            调整点位图
-          </Button>
+            icon={<MapPinned />}
+            label="调整点位图"
+          />
           {readOnly ? null : (
             <Button
               size="sm"
               className="h-8 bg-primary text-xs font-medium text-primary-foreground shadow-xs hover:bg-primary/90"
-              disabled={saving}
+              isDisabled={saving}
               onClick={() => save()}
-            >
-              {saving ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <Save className="size-3.5" />
-              )}
-              保存报价
-            </Button>
+              icon={<Loader2 />}
+              label="保存报价"
+            />
           )}
         </div>
       </div>
@@ -791,17 +781,11 @@ export function QuoteEditor({
           <span className="text-sm font-medium">客户已确认此报价，可直接生成合同</span>
           <Button
             size="sm"
-            disabled={creatingContract || saving}
+            isDisabled={creatingContract || saving}
             onClick={() => void generateContract()}
-          >
-            {creatingContract ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <FileSignature className="size-4" />
-            )}
-            生成合同
-            <ArrowRight className="size-4" />
-          </Button>
+            icon={<Loader2 />}
+            label="生成合同"
+          />
         </div>
       ) : null}
 
@@ -839,14 +823,12 @@ export function QuoteEditor({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    size="xs"
+                    size="sm"
                     variant="secondary"
                     className="h-7 gap-1 bg-primary-foreground/15 px-2.5 text-xs font-medium text-primary-foreground hover:bg-primary-foreground/25"
-                  >
-                    <Percent className="size-3.5" />
-                    批量折扣
-                    <ChevronDown className="size-3" />
-                  </Button>
+                    icon={<Percent />}
+                    label="批量折扣"
+                  />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onSelect={() => applyBatchDiscount(0.95)}>
@@ -864,32 +846,29 @@ export function QuoteEditor({
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button
-                size="xs"
+                size="sm"
                 variant="secondary"
                 onClick={restoreBatchOriginPrice}
                 className="h-7 gap-1 bg-primary-foreground/15 px-2.5 text-xs font-medium text-primary-foreground hover:bg-primary-foreground/25"
-              >
-                <RotateCcw className="size-3.5" />
-                恢复原价
-              </Button>
+                icon={<RotateCcw />}
+                label="恢复原价"
+              />
               <Button
-                size="xs"
+                size="sm"
                 variant="secondary"
                 onClick={deleteBatchSelected}
                 className="h-7 gap-1 bg-primary-foreground/15 px-2.5 text-xs font-medium text-primary-foreground hover:bg-red-500/80"
-              >
-                <Trash2 className="size-3.5" />
-                批量删除
-              </Button>
+                icon={<Trash2 />}
+                label="批量删除"
+              />
               <Button
-                size="xs"
+                size="sm"
                 variant="ghost"
                 onClick={() => setSelectedKeys(new Set())}
                 className="h-7 px-2 text-xs text-primary-foreground/85 hover:bg-primary-foreground/15 hover:text-primary-foreground"
-              >
-                <X className="size-3.5" />
-                取消选择
-              </Button>
+                icon={<X />}
+                label="取消选择"
+              />
             </div>
           </div>
         ) : null}
@@ -908,7 +887,7 @@ export function QuoteEditor({
                 >
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant="ghost"
                     role="tab"
                     aria-selected={viewMode === 'floors'}
@@ -918,13 +897,12 @@ export function QuoteEditor({
                         'bg-background font-semibold text-primary shadow-2xs',
                     )}
                     onClick={() => setViewMode('floors')}
-                  >
-                    <Layers className="size-3.5" />
-                    按房间（{floorGroups.reduce((s, f) => s + f.rooms.length, 0)}）
-                  </Button>
+                    icon={<Layers />}
+                    label="按房间（ ）"
+                  />
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant="ghost"
                     role="tab"
                     aria-selected={viewMode === 'summary'}
@@ -934,9 +912,8 @@ export function QuoteEditor({
                         'bg-background font-semibold text-primary shadow-2xs',
                     )}
                     onClick={() => setViewMode('summary')}
-                  >
-                    整单汇总
-                  </Button>
+                    label="整单汇总"
+                  />
                 </div>
                 {viewMode === 'floors' ? (
                   <div
@@ -954,7 +931,7 @@ export function QuoteEditor({
                       <Button
                         key={v}
                         type="button"
-                        size="xs"
+                        size="sm"
                         variant="ghost"
                         role="radio"
                         aria-checked={planMode === v}
@@ -963,9 +940,8 @@ export function QuoteEditor({
                           planMode === v && 'bg-background font-semibold text-primary shadow-2xs',
                         )}
                         onClick={() => setPlanMode(v)}
-                      >
-                        {label}
-                      </Button>
+                        label="操作"
+                      />
                     ))}
                   </div>
                 ) : null}
@@ -1000,30 +976,24 @@ export function QuoteEditor({
               {project ? (
                 <div className="flex items-center">
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
-                    disabled={syncing || saving}
+                    isDisabled={syncing || saving}
                     className="rounded-r-none border-r-0"
                     onClick={() => void syncFromPointMap(currentScope)}
-                  >
-                    {syncing ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="size-4" />
-                    )}
-                    从点位图同步
-                  </Button>
+                    icon={<Loader2 />}
+                    label="从点位图同步"
+                  />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
-                        disabled={syncing || saving}
+                        isDisabled={syncing || saving}
                         className="rounded-l-none px-1.5"
-                        aria-label="选择同步范围"
-                      >
-                        <ChevronDown className="size-3.5" />
-                      </Button>
+                        label="选择同步范围"
+                        icon={<ChevronDown />}
+                      />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       {POINT_SCOPES.map((s) => (
@@ -1044,10 +1014,7 @@ export function QuoteEditor({
               ) : null}
               <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Plus className="size-4" />
-                    添加产品
-                  </Button>
+                  <Button variant="secondary" size="sm" icon={<Plus />} label="添加产品" />
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-96 p-0">
                   <Command>
@@ -1116,14 +1083,13 @@ export function QuoteEditor({
                       {project ? (
                         <Button
                           type="button"
-                          variant="link"
-                          size="xs"
+                          variant="ghost"
+                          size="sm"
                           className="h-auto p-0 text-xs"
                           onClick={() => switchToPointMap({ sheet: floor.sheetId })}
-                        >
-                          <MapPinned className="size-3" />
-                          去点位图看本层
-                        </Button>
+                          icon={<MapPinned />}
+                          label="去点位图看本层"
+                        />
                       ) : null}
                     </div>
                     <div className="text-sm font-semibold tabular-nums">
@@ -1157,13 +1123,12 @@ export function QuoteEditor({
                             {project && room.typeLabel !== '未分区' ? (
                               <Button
                                 type="button"
-                                variant="link"
-                                size="xs"
+                                variant="ghost"
+                                size="sm"
                                 className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
                                 onClick={() => switchToPointMap({ area: room.name })}
-                              >
-                                定位房间
-                              </Button>
+                                label="定位房间"
+                              />
                             ) : null}
                           </div>
                           <span className="text-sm font-semibold tabular-nums">
@@ -1227,14 +1192,13 @@ export function QuoteEditor({
                                       ) : null}
                                       {!readOnly && line.lineKey ? (
                                         <Button
-                                          variant="link"
-                                          size="xs"
+                                          variant="ghost"
+                                          size="sm"
                                           className="h-auto p-0 text-xs text-muted-foreground no-underline hover:text-primary hover:no-underline"
                                           onClick={() => setSwapKey(line.lineKey)}
-                                        >
-                                          <ArrowLeftRight className="size-3" />
-                                          更换型号
-                                        </Button>
+                                          icon={<ArrowLeftRight />}
+                                          label="更换型号"
+                                        />
                                       ) : null}
                                     </div>
                                   </div>
@@ -1265,16 +1229,15 @@ export function QuoteEditor({
                                       {!readOnly ? (
                                         <Button
                                           type="button"
-                                          variant="link"
-                                          size="xs"
+                                          variant="ghost"
+                                          size="sm"
                                           className="h-auto p-0 text-xs"
                                           onClick={() =>
                                             updateLine(line.lineKey!, { price: originPrice })
                                           }
-                                        >
-                                          <RotateCcw className="size-2.5" />
-                                          恢复
-                                        </Button>
+                                          icon={<RotateCcw />}
+                                          label="恢复"
+                                        />
                                       ) : null}
                                     </div>
                                   ) : null}
@@ -1329,29 +1292,29 @@ export function QuoteEditor({
                           </span>
                           {!readOnly && l.deviceType ? (
                             <Button
-                              variant="link"
-                              size="xs"
+                              variant="ghost"
+                              size="sm"
                               className="h-auto p-0 text-xs text-muted-foreground no-underline hover:text-primary hover:no-underline"
                               onClick={() => setSwapKey(l.key)}
-                            >
-                              <ArrowLeftRight className="size-3" />
-                              更换型号
-                            </Button>
+                              icon={<ArrowLeftRight />}
+                              label="更换型号"
+                            />
                           ) : null}
                         </div>
                       </div>
                       {readOnly ? null : (
-                        <Button
+                        <IconButton
                           variant="ghost"
-                          size="icon-sm"
+
                           className="-mr-1 shrink-0"
                           aria-label={`删除 ${l.name}`}
                           onClick={() =>
                             update({ items: quote.items.filter((x) => x.key !== l.key) })
                           }
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
+                          label="操作"
+                          icon={<Trash2 />}
+                          size="sm"
+                        />
                       )}
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-2 pl-12 text-xs tabular-nums">
@@ -1385,14 +1348,13 @@ export function QuoteEditor({
                           {!readOnly ? (
                             <Button
                               type="button"
-                              variant="link"
-                              size="xs"
+                              variant="ghost"
+                              size="sm"
                               className="h-auto p-0 text-xs"
                               onClick={() => updateLine(l.key, { price: originPrice })}
-                            >
-                              <RotateCcw className="size-2.5" />
-                              恢复
-                            </Button>
+                              icon={<RotateCcw />}
+                              label="恢复"
+                            />
                           ) : null}
                         </div>
                       )
@@ -1486,14 +1448,13 @@ export function QuoteEditor({
                                 </div>
                                 {!readOnly && l.deviceType ? (
                                   <Button
-                                    variant="link"
+                                    variant="ghost"
                                     size="sm"
                                     className="h-auto p-0 text-xs text-muted-foreground no-underline hover:text-primary hover:no-underline"
                                     onClick={() => setSwapKey(l.key)}
-                                  >
-                                    <ArrowLeftRight className="size-3" />
-                                    更换型号
-                                  </Button>
+                                    icon={<ArrowLeftRight />}
+                                    label="更换型号"
+                                  />
                                 ) : null}
                               </div>
                             </div>
@@ -1520,14 +1481,13 @@ export function QuoteEditor({
                                     {!readOnly ? (
                                       <Button
                                         type="button"
-                                        variant="link"
-                                        size="xs"
+                                        variant="ghost"
+                                        size="sm"
                                         className="h-auto p-0 text-xs"
                                         onClick={() => updateLine(l.key, { price: originPrice })}
-                                      >
-                                        <RotateCcw className="size-2.5" />
-                                        恢复
-                                      </Button>
+                                        icon={<RotateCcw />}
+                                        label="恢复"
+                                      />
                                     ) : null}
                                   </span>
                                 )
@@ -1547,16 +1507,17 @@ export function QuoteEditor({
                           </TableCell>
                           {readOnly ? null : (
                             <TableCell className="pr-4">
-                              <Button
+                              <IconButton
                                 variant="ghost"
-                                size="icon-sm"
+
                                 aria-label={`删除 ${l.name}`}
                                 onClick={() =>
                                   update({ items: quote.items.filter((x) => x.key !== l.key) })
                                 }
-                              >
-                                <Trash2 className="size-4" />
-                              </Button>
+                                label="操作"
+                                icon={<Trash2 />}
+                                size="sm"
+                              />
                             </TableCell>
                           )}
                         </TableRow>
@@ -1590,7 +1551,7 @@ export function QuoteEditor({
             <CardTitle className="text-base">附加费用</CardTitle>
             {readOnly ? null : (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() =>
                   update({
@@ -1604,10 +1565,9 @@ export function QuoteEditor({
                     ],
                   })
                 }
-              >
-                <Plus className="size-4" />
-                添加费用
-              </Button>
+                icon={<Plus />}
+                label="添加费用"
+              />
             )}
           </CardHeader>
           <CardContent className="space-y-2.5">
@@ -1660,14 +1620,15 @@ export function QuoteEditor({
                   'w-28',
                 )}
                 {readOnly ? null : (
-                  <Button
+                  <IconButton
                     variant="ghost"
-                    size="icon-sm"
+
                     aria-label="删除费用"
                     onClick={() => update({ fees: quote.fees.filter((x) => x.key !== f.key) })}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
+                    label="删除费用"
+                    icon={<Trash2 />}
+                    size="sm"
+                  />
                 )}
               </div>
             ))}
@@ -1682,25 +1643,23 @@ export function QuoteEditor({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   onClick={() => roundDownTotal(100)}
                   className="h-6 px-2 text-xs text-primary hover:bg-primary/8 hover:text-primary"
-                  title="自动计算优惠金额，使报价总额抹去零头至整百"
-                >
-                  <Sparkles className="size-3" />
-                  抹零至百位
-                </Button>
+                  tooltip="自动计算优惠金额，使报价总额抹去零头至整百"
+                  icon={<Sparkles />}
+                  label="抹零至百位"
+                />
                 {totals.productTotal + totals.feeTotal > 1000 ? (
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     onClick={() => roundDownTotal(1000)}
                     className="h-6 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-                    title="自动计算优惠金额，使报价总额抹去零头至整千"
-                  >
-                    抹零至千位
-                  </Button>
+                    tooltip="自动计算优惠金额，使报价总额抹去零头至整千"
+                    label="抹零至千位"
+                  />
                 ) : null}
               </div>
             ) : null}
@@ -1880,17 +1839,18 @@ function MarginCapsule({
   const tone = toneOf(margin, settings)
   if (hidden) {
     return (
-      <Button
+      <IconButton
         type="button"
-        variant="outline"
-        size="icon"
+        variant="secondary"
+
         onClick={onToggle}
         className="fixed right-4 bottom-4 z-30 size-10 rounded-full bg-background shadow-lg md:right-6 md:bottom-6 print:hidden"
         aria-label="显示内部成本与毛利"
-        title="显示内部成本与毛利"
-      >
-        <EyeOff className="size-4" />
-      </Button>
+        tooltip="显示内部成本与毛利"
+        label="显示内部成本与毛利"
+        icon={<EyeOff />}
+        size="md"
+      />
     )
   }
   return (

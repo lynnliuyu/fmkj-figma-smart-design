@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { AlertCircle, ImageIcon, Loader2, Save, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -99,19 +100,20 @@ function ImageField({
           <p className="text-xs text-muted-foreground">{hint}</p>
         </div>
         {preview ? (
-          <Button
+          <IconButton
             type="button"
             variant="ghost"
-            size="icon-sm"
+
             aria-label={`移除${label}`}
             onClick={() => {
               setPreview(null)
               setFileName(null)
               setRemoved(true)
             }}
-          >
-            <X className="size-4" />
-          </Button>
+            label="操作"
+            icon={<X />}
+            size="sm"
+          />
         ) : null}
       </div>
       {removed ? <input type="hidden" name={`${name}Remove`} value="1" /> : null}
@@ -308,9 +310,7 @@ export function CompanyForm({
         改为普通文档流 + 上边框，保存按钮始终跟着表单末尾走。
       */}
       <div className="flex justify-end border-t border-border pt-4">
-        <Button type="submit" disabled={saving}>
-          {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}保存
-        </Button>
+        <Button type="submit" isDisabled={saving} icon={<Loader2 />} label="保存" />
       </div>
     </form>
   )

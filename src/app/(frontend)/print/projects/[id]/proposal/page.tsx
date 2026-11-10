@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
 import { PrintToolbar } from '@/components/print-toolbar'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { DocEmpty } from '@/documents/parts'
 import { appAuth } from '@/lib/app-auth'
 import { isPointScope, loadProjectDocs, POINT_SCOPES, type PointScope } from '@/lib/project-docs'
@@ -77,9 +77,12 @@ export default async function ProposalPage({
         <p className="text-sm leading-relaxed text-muted-foreground">
           请联系管理员启用方案模板，再打开本项目生成方案。
         </p>
-        <Button asChild variant="outline" size="sm">
-          <Link href={`/projects/${id}/archive`}>返回项目归档</Link>
-        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          href={`/projects/${id}/archive`}
+          label="返回项目归档"
+        />
       </section>
     )
   }

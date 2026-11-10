@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 
 import { PageHeader } from '@/components/page-header'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { getPayloadClient } from '@/lib/payload'
@@ -34,12 +34,14 @@ export default async function NewProjectPage() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/projects">
-          <ChevronLeft className="size-4" />
-          项目
-        </Link>
-      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-2 w-fit text-muted-foreground"
+        href="/projects"
+        icon={<ChevronLeft />}
+        label="项目"
+      />
       <PageHeader title="新建项目" />
       <ProjectForm initial={{ platform }} />
     </section>

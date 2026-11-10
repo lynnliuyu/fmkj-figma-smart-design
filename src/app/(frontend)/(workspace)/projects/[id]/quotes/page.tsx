@@ -4,7 +4,7 @@ import { AlertCircle, FileText, MapPinned } from 'lucide-react'
 import { EmptyState } from '@/components/empty-state'
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { relId } from '@/lib/access'
 import { resolveFinalQuote } from '@/lib/deliverables'
 import { fmtDate } from '@/lib/projects'
@@ -97,12 +97,13 @@ export default async function ProjectQuotesPage({
           }
           action={
             points ? null : (
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/projects/${pid}/point-map`}>
-                  <MapPinned className="size-4" />
-                  去布置点位
-                </Link>
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                href={`/projects/${pid}/point-map`}
+                icon={<MapPinned />}
+                label="去布置点位"
+              />
             )
           }
         />

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, Download, Laptop, Monitor, RefreshCw } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   DESKTOP_DOWNLOADS_PATH,
@@ -153,13 +153,12 @@ export function DesktopHeroActions() {
         </Badge>
         <Button
           size="lg"
-          variant="outline"
+          variant="secondary"
           className="h-11 rounded-full px-6 text-base"
           onClick={() => void bridge.checkForUpdates()}
-        >
-          <RefreshCw data-icon="inline-start" />
-          检查更新
-        </Button>
+          icon={<RefreshCw />}
+          label="检查更新"
+        />
       </div>
     )
   }
@@ -182,18 +181,21 @@ export function DesktopHeroActions() {
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-3">
           <Button
-            asChild
             size="lg"
             className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-          >
-            <Link href={asset.url} prefetch={false} download>
-              <Download data-icon="inline-start" />
-              {target.cta}
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="ghost" className="h-11 rounded-full px-5 text-base">
-            <Link href="#platforms">其他平台</Link>
-          </Button>
+            href={asset.url}
+            as={Link}
+            icon={<Download />}
+            label="操作"
+          />
+          <Button
+            size="lg"
+            variant="ghost"
+            className="h-11 rounded-full px-5 text-base"
+            href="#platforms"
+            as={Link}
+            label="其他平台"
+          />
         </div>
         <p className="mt-3 text-sm text-muted-foreground">
           v{version} · {formatBytes(asset.size)} · {target.note}
@@ -206,18 +208,21 @@ export function DesktopHeroActions() {
     <div className="mt-8">
       <div className="flex flex-wrap items-center gap-3">
         <Button
-          asChild
           size="lg"
           className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-        >
-          <Link href="/projects">
-            使用网页版
-            <ArrowRight data-icon="inline-end" />
-          </Link>
-        </Button>
-        <Button asChild size="lg" variant="ghost" className="h-11 rounded-full px-5 text-base">
-          <Link href="#platforms">查看全部平台</Link>
-        </Button>
+          href="/projects"
+          as={Link}
+          icon={<ArrowRight />}
+          label="使用网页版"
+        />
+        <Button
+          size="lg"
+          variant="ghost"
+          className="h-11 rounded-full px-5 text-base"
+          href="#platforms"
+          as={Link}
+          label="查看全部平台"
+        />
       </div>
     </div>
   )
@@ -276,22 +281,24 @@ export function DesktopPlatformCards() {
                   </div>
                 </dl>
                 <Button
-                  asChild
                   size="lg"
-                  variant={isRecommended ? 'default' : 'outline'}
+                  variant={isRecommended ? 'primary' : 'secondary'}
                   className="w-full rounded-full"
-                >
-                  <Link href={asset.url} prefetch={false} download>
-                    <Download data-icon="inline-start" />
-                    下载
-                  </Link>
-                </Button>
+                  href={asset.url}
+                  as={Link}
+                  icon={<Download />}
+                  label="下载"
+                />
               </div>
             ) : (
               <div className="mt-6 flex flex-1 flex-col justify-end gap-4">
-                <Button size="lg" variant="outline" className="w-full rounded-full" disabled>
-                  即将上线
-                </Button>
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="w-full rounded-full"
+                  isDisabled
+                  label="即将上线"
+                />
               </div>
             )}
           </div>

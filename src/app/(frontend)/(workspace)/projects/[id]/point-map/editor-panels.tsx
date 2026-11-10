@@ -17,7 +17,8 @@ import {
 import { BrandLogo } from '@/components/brand-logo'
 import { PointMarker } from '@/components/point-marker'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -112,9 +113,8 @@ export function PlacePanel({
               variant="ghost"
               className="h-6 px-2 text-xs"
               onClick={() => onArm(null)}
-            >
-              Esc 结束
-            </Button>
+              label="Esc 结束"
+            />
           </div>
         ) : null}
         <div className="relative">
@@ -156,8 +156,8 @@ export function PlacePanel({
                       <Button
                         key={t.value}
                         type="button"
-                        variant="outline"
-                        disabled={disabled}
+                        variant="secondary"
+                        isDisabled={disabled}
                         draggable={!disabled}
                         onDragStart={(e) => {
                           e.dataTransfer.setData(DRAG_TYPE, t.value)
@@ -165,21 +165,15 @@ export function PlacePanel({
                         }}
                         onClick={() => onArm(active ? null : t.value)}
                         aria-pressed={active}
-                        title={`放置${deviceTypeLabel(t.value)}`}
+                        tooltip={`放置${deviceTypeLabel(t.value)}`}
                         className={cn(
                           'relative h-auto min-w-0 flex-col gap-1 rounded-lg border-border bg-background px-1.5 py-2 text-center text-xs font-normal whitespace-normal text-fg-secondary shadow-none hover:border-border-strong hover:bg-subtle',
                           active &&
                             'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
                         )}
-                      >
-                        <PointMarker type={t.value} className="size-6.5" />
-                        <span className="w-full truncate text-[11px] leading-tight">{t.name}</span>
-                        {n ? (
-                          <span className="absolute top-1 right-1 rounded-full bg-primary px-1.5 text-[10px] leading-4 font-semibold text-primary-foreground tabular-nums">
-                            {n}
-                          </span>
-                        ) : null}
-                      </Button>
+                        icon={<PointMarker type={null} />}
+                        label="{n ? ( ) : null}"
+                      />
                     )
                   })}
                 </div>
@@ -256,12 +250,11 @@ export function AreasPanel({
             <Button
               size="sm"
               className="h-8 bg-primary text-xs text-primary-foreground hover:bg-primary/90"
-              disabled={!sheets.length}
+              isDisabled={!sheets.length}
               onClick={() => onAdd(type)}
-            >
-              <Plus className="size-3.5" />
-              添加区域
-            </Button>
+              icon={<Plus />}
+              label="添加区域"
+            />
           </div>
         </div>
       )}
@@ -283,31 +276,15 @@ export function AreasPanel({
                 return (
                   <Button
                     key={a.id}
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => onFocus(a.id)}
                     className={cn(
                       'h-auto w-full justify-start gap-2 rounded-lg border-border bg-background px-2.5 py-2 text-left font-normal shadow-none hover:bg-subtle',
                       selected && 'border-primary bg-primary/8 ring-1 ring-primary/20',
                     )}
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          'block truncate text-xs font-semibold',
-                          selected ? 'text-primary' : 'text-foreground',
-                        )}
-                      >
-                        {a.name}
-                      </span>
-                      <span className="block text-[11px] text-muted-foreground">
-                        {areaTypeLabel(a.areaType)} · {r?.total ?? 0} 个点位
-                        {r && r.missing.filter((m) => m.level !== 'optional').length
-                          ? ` · 建议补充 ${r.missing.filter((m) => m.level !== 'optional').length} 项`
-                          : ''}
-                      </span>
-                    </span>
-                    {r ? <ScoreBadge score={r.score} /> : null}
-                  </Button>
+                    icon={<ScoreBadge score={r?.score ?? 0} />}
+                    label="· 个点位 {r && r.missing.filter((m) => m.level !== 'optional').length ? ` · 建议补充 $ 项` : ''}"
+                  />
                 )
               })}
             </section>
@@ -359,15 +336,16 @@ export function SelectedArea({
         </div>
         <div className="flex items-center gap-1">
           {analysis ? <ScoreBadge score={analysis.score} /> : null}
-          <Button
+          <IconButton
             variant="ghost"
-            size="icon-xs"
+
             aria-label="取消选中区域"
-            title="取消选中"
+            tooltip="取消选中"
             onClick={onClose}
-          >
-            <X />
-          </Button>
+            label="取消选中区域"
+            icon={<X />}
+            size="sm"
+          />
         </div>
       </div>
       <div className="grid grid-cols-[1fr_7rem] gap-2">
@@ -441,10 +419,9 @@ export function SelectedArea({
           size="sm"
           className="-ml-2 text-muted-foreground"
           onClick={onDelete}
-        >
-          <Trash2 className="size-4" />
-          删除区域（保留点位）
-        </Button>
+          icon={<Trash2 />}
+          label="删除区域（保留点位）"
+        />
       )}
     </div>
   )
@@ -477,13 +454,12 @@ export function TypeDefaultRow({
           <Button
             type="button"
             variant="ghost"
-            size="xs"
+            size="sm"
             className="h-6 px-1.5 text-[11px] text-primary hover:bg-primary/8 hover:text-primary"
             onClick={() => onArm(type)}
-          >
-            <Plus className="size-3" />
-            继续放
-          </Button>
+            icon={<Plus />}
+            label="继续放"
+          />
         ) : null}
       </div>
     </div>
@@ -521,23 +497,21 @@ export function SelectedPoint({
             {onDuplicate ? (
               <Button
                 variant="ghost"
-                size="xs"
+                size="sm"
                 className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
                 onClick={onDuplicate}
-              >
-                <Copy className="size-3.5" />
-                复制
-              </Button>
+                icon={<Copy />}
+                label="复制"
+              />
             ) : null}
             <Button
               variant="ghost"
-              size="xs"
+              size="sm"
               className="h-6 px-2 text-xs text-muted-foreground hover:text-destructive"
               onClick={onDelete}
-            >
-              <Trash2 className="size-3.5" />
-              删除
-            </Button>
+              icon={<Trash2 />}
+              label="删除"
+            />
           </div>
         )}
       </div>

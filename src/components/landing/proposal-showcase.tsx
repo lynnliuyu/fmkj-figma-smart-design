@@ -5,7 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
 
 import { PointMarker } from '@/components/point-marker'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { brandLatin, DocCheckbox, DocRoot } from '@/documents/parts'
@@ -311,17 +312,18 @@ export function ProposalShowcase({
 
         {/* 缩略图条：直接点某一页跳过去，比滚动找更快 */}
         <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
-          <Button
+          <IconButton
             type="button"
-            variant="outline"
-            size="icon-sm"
+            variant="secondary"
+
             onClick={() => setPage((n) => Math.max(0, n - 1))}
-            disabled={page === 0}
+            isDisabled={page === 0}
             aria-label="上一页"
             className="shrink-0"
-          >
-            <ChevronLeft className="size-4" />
-          </Button>
+            label="上一页"
+            icon={<ChevronLeft />}
+            size="sm"
+          />
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {activeChapters.map((chapterId, index) => {
               const active = index === Math.min(page, activeChapters.length - 1)
@@ -364,17 +366,18 @@ export function ProposalShowcase({
               )
             })}
           </div>
-          <Button
+          <IconButton
             type="button"
-            variant="outline"
-            size="icon-sm"
+            variant="secondary"
+
             onClick={() => setPage((n) => Math.min(activeChapters.length - 1, n + 1))}
-            disabled={page >= activeChapters.length - 1}
+            isDisabled={page >= activeChapters.length - 1}
             aria-label="下一页"
             className="shrink-0"
-          >
-            <ChevronRight className="size-4" />
-          </Button>
+            label="下一页"
+            icon={<ChevronRight />}
+            size="sm"
+          />
         </div>
         <p className="mt-2 text-xs text-muted-foreground tabular-nums">
           第 {Math.min(page, activeChapters.length - 1) + 1} / {activeChapters.length} 页 ·

@@ -30,7 +30,8 @@ import {
 import { AppearanceMenuItems } from '@/components/appearance-menu'
 import { BrandLogo } from '@/components/landing/landing-chrome'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   DropdownMenu,
@@ -335,15 +336,16 @@ export function DocsClient({ manual }: { manual: ManualData }) {
       {/* 顶部吸顶大厂文档导航栏 */}
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <Button
+          <IconButton
             variant="ghost"
-            size="icon-sm"
+
             className="lg:hidden"
             onClick={() => setMobileNavOpen((v) => !v)}
             aria-label="打开文档目录"
-          >
-            {mobileNavOpen ? <X className="size-4" /> : <Menu className="size-4" />}
-          </Button>
+            label="打开文档目录"
+            icon={<X />}
+            size="sm"
+          />
 
           <div className="flex items-center gap-2.5">
             <Link href="/" className="shrink-0">
@@ -383,28 +385,38 @@ export function DocsClient({ manual }: { manual: ManualData }) {
           </div>
 
           <nav className="hidden items-center gap-1 md:flex">
-            <Button asChild variant="ghost" size="sm" className="text-xs">
-              <Link href="/catalog">产品与图例库</Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm" className="text-xs">
-              <Link href="/membership">会员与积分</Link>
-            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs"
+              href="/catalog"
+              as={Link}
+              label="产品与图例库"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs"
+              href="/membership"
+              as={Link}
+              label="会员与积分"
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-xs">
-                  外观
-                </Button>
+                <Button variant="ghost" size="sm" className="text-xs" label="外观" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <AppearanceMenuItems />
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button asChild size="sm" className="ml-1 h-8 rounded-lg text-xs">
-              <Link href="/projects">
-                进入工作台
-                <ArrowRight className="size-3.5" />
-              </Link>
-            </Button>
+            <Button
+              size="sm"
+              className="ml-1 h-8 rounded-lg text-xs"
+              href="/projects"
+              as={Link}
+              icon={<ArrowRight />}
+              label="进入工作台"
+            />
           </nav>
         </div>
       </header>
@@ -1541,12 +1553,14 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
           <h2 className="text-base font-semibold">
             1. 方案演示模板与施工交底（共 {manual.proposalTemplates.length} 套）
           </h2>
-          <Button asChild variant="outline" size="xs">
-            <Link href="/templates">
-              打开方案模板库（看封面与整套样张）
-              <ArrowRight className="size-3" />
-            </Link>
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            href="/templates"
+            as={Link}
+            icon={<ArrowRight />}
+            label="打开方案模板库（看封面与整套样张）"
+          />
         </div>
         <div className="overflow-hidden rounded-xl border">
           <table className="w-full text-left text-xs">

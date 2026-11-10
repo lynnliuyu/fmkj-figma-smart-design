@@ -7,7 +7,7 @@ import { EyeOff, Loader2, Save, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -195,10 +195,7 @@ export function CostSettingsCard({
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={save} disabled={pending}>
-            {pending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-            保存成本设置
-          </Button>
+          <Button onClick={save} isDisabled={pending} icon={<Loader2 />} label="保存成本设置" />
         </div>
       </CardContent>
     </Card>

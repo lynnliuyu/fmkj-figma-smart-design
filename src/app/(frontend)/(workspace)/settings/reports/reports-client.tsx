@@ -22,7 +22,7 @@ import {
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -201,29 +201,35 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/settings">
-              <ArrowLeft className="size-4" />
-              返回设置
-            </Link>
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            href="/settings"
+            as={Link}
+            icon={<ArrowLeft />}
+            label="返回设置"
+          />
           <span className="text-xs text-muted-foreground">
             数据生成于 {formatDateTime(report.generatedAt)}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={cn('size-3.5', refreshing && 'animate-spin')} />
-            刷新数据
-          </Button>
-          <Button variant="outline" size="sm" onClick={copyMarkdownDigest}>
-            {copiedSummary ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-            复制巡检日报
-          </Button>
-          <Button size="sm" onClick={exportCsv}>
-            <Download className="size-3.5" />
-            导出 CSV 报表
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRefresh}
+            isDisabled={refreshing}
+            icon={<RefreshCw />}
+            label="刷新数据"
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={copyMarkdownDigest}
+            icon={<Check />}
+            label="复制巡检日报"
+          />
+          <Button size="sm" onClick={exportCsv} icon={<Download />} label="导出 CSV 报表" />
         </div>
       </div>
 
@@ -454,14 +460,13 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                 </CardDescription>
               </div>
               <Button
-                variant={onlyZeroSheet ? 'default' : 'outline'}
+                variant={onlyZeroSheet ? 'primary' : 'secondary'}
                 size="sm"
                 onClick={() => setOnlyZeroSheet((v) => !v)}
                 className="text-xs"
-              >
-                <AlertTriangle className="size-3.5" />
-                {onlyZeroSheet ? '显示全部图纸' : `只看 0 点位图纸 (${kpis.zeroPointSheets})`}
-              </Button>
+                icon={<AlertTriangle />}
+                label="{onlyZeroSheet ? '显示全部图纸' : `只看 0 点位图纸 ($ )`}"
+              />
             </CardHeader>
             <CardContent>
               {filteredSheets.length === 0 ? (
@@ -763,7 +768,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <span>{formatDateTime(err.createdAt)}</span>
                           <Button
-                            variant="outline"
+                            variant="secondary"
                             size="sm"
                             className="h-6 px-2 text-[11px]"
                             onClick={() => {
@@ -771,10 +776,9 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               void navigator.clipboard?.writeText(text)
                               toast.success('已复制该条排障上下文')
                             }}
-                          >
-                            <Copy className="size-3" />
-                            复制排障信息
-                          </Button>
+                            icon={<Copy />}
+                            label="复制排障信息"
+                          />
                         </div>
                       </div>
                       <div className="text-muted-foreground">
@@ -805,9 +809,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
           >
             <div className="flex items-center justify-between border-b px-4 py-2.5 text-sm font-medium">
               <span>{previewImg.title}</span>
-              <Button variant="ghost" size="sm" onClick={() => setPreviewImg(null)}>
-                关闭
-              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setPreviewImg(null)} label="关闭" />
             </div>
             <div className="overflow-auto bg-muted/40 p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}

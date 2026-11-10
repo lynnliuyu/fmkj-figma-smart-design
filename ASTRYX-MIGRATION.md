@@ -92,3 +92,64 @@ SMOKE_PROJECT_ID=<id> pnpm smoke      # 22 页
 外加 **Playwright 真浏览器验证**。这不是可选项 —— 本轮靠它抓出了：
 卡片 2px 高度差、侧边栏横向滚动条、Tabs 图标丢失、Popover 不渲染。
 **tsc 全绿时这些问题一个都不会暴露。**
+
+---
+
+# 全量原生化（2026-11-10 起）
+
+目标：删掉适配层，调用点直接使用官方组件。
+提案见 `proposals/2026-11-10-Astryx全量原生化.md`。
+
+## 转换规则（**全部经本地实测确认**，不是推测）
+
+### Button
+
+| 本仓写法                  | 官方写法                                  | 实测结论                                     |
+| ------------------------- | ----------------------------------------- | -------------------------------------------- |
+| `variant="default"`       | `variant="primary"`                       |                                              |
+| `variant="outline"`       | `variant="secondary"`                     | 官方 secondary = 透明底 + 描边，语义吻合     |
+| `variant="ghost"`         | `variant="ghost"`                         |                                              |
+| `variant="destructive"`   | `variant="destructive"`                   |                                              |
+| `size="default"`          | `size="md"`                               |                                              |
+| `size="sm"` / `"xs"`      | `size="sm"`                               |                                              |
+| `size="lg"`               | `size="lg"`                               |                                              |
+| `disabled`                | `isDisabled`                              |                                              |
+| children 里的文字         | `label="…"`                               | children 也可以，但 `label` 同时兼作无障碍名 |
+| children 里的图标         | **`icon={<X />}` 插槽**                   | ⚠️ 见下                                      |
+| `asChild` + `<Link href>` | `href="…"`（+ `as={Link}` 用自定义 Link） | 实测渲染成 `<A>`，样式正常                   |
+| `size="icon*"`            | **改用 `IconButton`**（`label` + `icon`） | 图标按钮是独立组件                           |
+| 尾部图标/徽标             | `endContent={<X />}`                      | 实测正常                                     |
+
+### ⚠️ 两条硬规矩（都做了对照实验）
+
+**1. icon 插槽要传「元素」，不是「组件本身」**
+
+```jsx
+<Button icon={Sparkles} />      // ❌ 报错 Objects are not valid as a React child
+<Button icon={<Sparkles />} />  // ✅ 115x28、图标 16px、工整
+```
+
+**2. 图标绝不能混在 children 里**
+
+```jsx
+<Button><Sparkles />生成点位</Button>   // ❌ 图标溢出按钮上方、文字掉到下方
+<Button icon={<Sparkles />} label="生成点位" />  // ✅ 图标与文字并排
+```
+
+（这条与适配层时代的结论一致，官方组件同样要求走 icon 插槽。）
+
+### 不要写 `data-variant` / `data-size`
+
+官方用 `themeDataAttributes()` 把 `variant`/`size` prop 反映成这些属性，
+主题 CSS 就用它们选样式。**再写一遍会覆盖掉官方值**，导致样式整条失效
+（2026-11-10 的 37 个描边按钮「隐形」就是这么来的）。
+
+## 图标体系
+
+lucide 图标**可以直接用**，不需要换成语义名：
+
+```jsx
+import { HeartIcon } from 'lucide-react'
+<Icon icon={HeartIcon} size="lg" />        // 官方 Icon 自动处理尺寸与颜色
+<Button icon={<HeartIcon />} label="…" />  // 传元素
+```

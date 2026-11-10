@@ -9,7 +9,7 @@ import { ProposalShowcase } from '@/components/landing/proposal-showcase'
 import { QuoteShowcase } from '@/components/landing/quote-showcase'
 import { money, Section } from '@/components/landing/section'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { MINIMAL_STYLE } from '@/documents/minimal'
 import { DOC_KINDS } from '@/documents/registry'
 import { relId } from '@/lib/access'
@@ -320,9 +320,7 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
             </Badge>
             <ShareExportButton projectName={data.project.name} />
             {compare.length ? (
-              <Button asChild size="sm" className="rounded-full">
-                <a href="#decide">确认意向</a>
-              </Button>
+              <Button size="sm" className="rounded-full" href="#decide" label="确认意向" />
             ) : null}
           </div>
         </div>
@@ -445,18 +443,21 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
-              <Button asChild size="sm" className="rounded-full">
-                <Link href="/login?mode=register">
-                  <Gift className="size-3.5" />
-                  设计师免费体验（送 20 AI 积分）
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="rounded-full">
-                <Link href="/">
-                  了解繁梦空间
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </Button>
+              <Button
+                size="sm"
+                className="rounded-full"
+                href="/login?mode=register"
+                icon={<Gift />}
+                label="设计师免费体验（送 20 AI 积分）"
+              />
+              <Button
+                variant="secondary"
+                size="sm"
+                className="rounded-full"
+                href="/"
+                icon={<ArrowRight />}
+                label="了解繁梦空间"
+              />
             </div>
           </div>
         </div>

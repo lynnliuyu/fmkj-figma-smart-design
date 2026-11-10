@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 
 import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { Section, SectionHeader } from '@/components/landing/section'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { APP_NAME } from '@/lib/brand'
 import { getCompanyInfo } from '@/lib/cached-data'
 import {
@@ -207,15 +207,12 @@ export default async function TemplatesPage() {
               </p>
             </div>
             <Button
-              asChild
               size="lg"
               className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-            >
-              <Link href="/projects">
-                进入工作台
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
+              href="/projects"
+              icon={<ArrowRight />}
+              label="进入工作台"
+            />
           </div>
         </section>
       </main>

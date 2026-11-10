@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { CollaboratorRole } from '@/lib/project-access'
@@ -62,11 +62,13 @@ export function JoinCard({
           </div>
         </div>
         {error ? <p className="text-xs text-destructive">{error}</p> : null}
-        <Button className="w-full" disabled={busy} onClick={() => void submit('current')}>
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
-          接受邀请并进入项目
-          <ArrowRight className="size-4" />
-        </Button>
+        <Button
+          className="w-full"
+          isDisabled={busy}
+          onClick={() => void submit('current')}
+          icon={<Loader2 />}
+          label="接受邀请并进入项目"
+        />
       </div>
     )
   }
@@ -108,11 +110,13 @@ export function JoinCard({
           />
         </div>
         {error ? <p className="text-xs text-destructive">{error}</p> : null}
-        <Button type="submit" className="w-full" disabled={busy}>
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
-          登录并加入项目
-          <ArrowRight className="size-4" />
-        </Button>
+        <Button
+          type="submit"
+          className="w-full"
+          isDisabled={busy}
+          icon={<Loader2 />}
+          label="登录并加入项目"
+        />
         <p className="text-center text-xs text-muted-foreground">
           请使用管理员为您开通的成员账号登录
         </p>

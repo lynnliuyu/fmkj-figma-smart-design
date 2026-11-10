@@ -18,7 +18,8 @@ import {
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   Dialog,
   DialogContent,
@@ -191,13 +192,13 @@ export function ProjectShareDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="xs" className="h-7 gap-1.5 px-2.5 text-xs">
-          <Users className="size-3.5" />
-          <span>协作</span>
-          {count > 0 ? (
-            <span className="rounded-full bg-muted px-1.5 text-xs tabular-nums">{count}</span>
-          ) : null}
-        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="h-7 gap-1.5 px-2.5 text-xs"
+          icon={<Users />}
+          label="协作 {count > 0 ? ( ) : null}"
+        />
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -285,20 +286,21 @@ export function ProjectShareDialog({
                         size="sm"
                         className="h-8 shrink-0"
                         onClick={() => void copyLink()}
-                      >
-                        {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-                        {copied ? '已复制' : '复制链接'}
-                      </Button>
-                      <Button
+                        icon={<Check />}
+                        endContent={<Copy />}
+                        label="操作"
+                      />
+                      <IconButton
                         type="button"
                         variant="ghost"
-                        size="icon-sm"
-                        title="重置链接（旧链接立即失效）"
-                        disabled={busy}
+
+                        tooltip="重置链接（旧链接立即失效）"
+                        isDisabled={busy}
                         onClick={() => void updateConfig({ resetToken: true })}
-                      >
-                        <RefreshCw className="size-3.5" />
-                      </Button>
+                        label="操作"
+                        icon={<RefreshCw />}
+                        size="sm"
+                      />
                     </div>
                   </>
                 ) : (
@@ -358,17 +360,18 @@ export function ProjectShareDialog({
                             <SelectItem value="edit">可编辑</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button
+                        <IconButton
                           type="button"
                           variant="ghost"
-                          size="icon-xs"
+
                           aria-label={`移除 ${c.name}`}
-                          disabled={busy}
+                          isDisabled={busy}
                           className="text-muted-foreground hover:text-destructive"
                           onClick={() => void updateCollaborator(c.userId, { remove: true })}
-                        >
-                          <Trash2 className="size-3.5" />
-                        </Button>
+                          label="操作"
+                          icon={<Trash2 />}
+                          size="sm"
+                        />
                       </div>
                     ) : (
                       <Badge variant="secondary" className="text-xs">
@@ -390,14 +393,13 @@ export function ProjectShareDialog({
               <div className="flex justify-end border-t pt-3">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  disabled={busy}
+                  isDisabled={busy}
                   onClick={() => void leaveProject()}
-                >
-                  <LogOut className="size-3.5" />
-                  退出该项目协作
-                </Button>
+                  icon={<LogOut />}
+                  label="退出该项目协作"
+                />
               </div>
             ) : null}
           </div>

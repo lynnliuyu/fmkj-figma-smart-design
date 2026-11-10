@@ -41,7 +41,8 @@ import { toast } from 'sonner'
 
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { STYLE_TRANSFER_HANDOFF_KEY } from '@/lib/style-templates'
 import {
   Dialog,
@@ -169,20 +170,27 @@ function ToolbarIconButton({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof Button> & { label: string; pressed?: boolean }) {
+}: {
+  label: string
+  pressed?: boolean
+  className?: string
+  children: React.ReactNode
+  onClick?: () => void
+  isDisabled?: boolean
+}) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
+        <IconButton
           variant="ghost"
-          size="icon"
-          aria-label={label}
           aria-pressed={pressed}
           className={cn('text-muted-foreground', pressed && 'bg-muted text-foreground', className)}
-          {...props}
-        >
-          {children}
-        </Button>
+          onClick={props.onClick}
+          isDisabled={props.isDisabled}
+          label={label}
+          icon={children as never}
+          size="md"
+        />
       </TooltipTrigger>
       <TooltipContent side="bottom">{label}</TooltipContent>
     </Tooltip>
@@ -1385,13 +1393,10 @@ export function PointMapEditor({
                       <Button
                         variant="ghost"
                         className="h-8 max-w-44 shrink-0 gap-1.5 px-2 text-xs font-medium data-[state=open]:bg-muted"
-                        aria-label={`楼层图纸：当前「${activeSheet?.name ?? '全部楼层'}」`}
-                      >
-                        <Layers className="size-4 text-muted-foreground" />
-                        <span className="truncate">{activeSheet?.name ?? '全部楼层'}</span>
-                        {missingSheets ? <AlertTriangle className="size-3.5 text-warning" /> : null}
-                        <ChevronDown className="size-3.5 text-muted-foreground" />
-                      </Button>
+                        label="楼层图纸：当前「」"
+                        icon={<Layers />}
+                        endContent={<ChevronDown />}
+                      />
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">楼层图纸</TooltipContent>
@@ -1520,14 +1525,14 @@ export function PointMapEditor({
             <>
               <ToolbarIconButton
                 label="撤销（Ctrl/⌘ + Z）"
-                disabled={!board.canUndo}
+                isDisabled={!board.canUndo}
                 onClick={board.undo}
               >
                 <Undo2 />
               </ToolbarIconButton>
               <ToolbarIconButton
                 label="重做（Ctrl/⌘ + Shift + Z）"
-                disabled={!board.canRedo}
+                isDisabled={!board.canRedo}
                 onClick={board.redo}
               >
                 <Redo2 />
@@ -1550,16 +1555,14 @@ export function PointMapEditor({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant={primaryAction === 'upload' ? 'default' : 'outline'}
-                    size={snap.sheets.length ? 'icon' : 'default'}
-                    disabled={!!cropFile}
+                    variant={primaryAction === 'upload' ? 'primary' : 'secondary'}
+                    size={snap.sheets.length ? 'sm' : 'md'}
+                    isDisabled={!!cropFile}
                     onClick={() => fileInput.current?.click()}
-                    aria-label={snap.sheets.length ? '上传户型图（新增楼层）' : undefined}
+                    label={snap.sheets.length ? '上传户型图' : '上传户型图'}
                     className={cn(dwgEnabled && 'rounded-r-none')}
-                  >
-                    <ImagePlus />
-                    {snap.sheets.length ? null : '上传户型图'}
-                  </Button>
+                    icon={<ImagePlus />}
+                  />
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   {snap.sheets.length
@@ -1570,18 +1573,19 @@ export function PointMapEditor({
               {dwgEnabled ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      variant={primaryAction === 'upload' ? 'default' : 'outline'}
-                      size="icon"
-                      disabled={converting || !!cropFile}
+                    <IconButton
+                      variant={primaryAction === 'upload' ? 'primary' : 'secondary'}
+
+                      isDisabled={converting || !!cropFile}
                       aria-label="更多图纸导入方式"
                       className={cn(
                         'w-7 rounded-l-none',
                         primaryAction === 'upload' ? 'border-l-primary-foreground/20' : '-ml-px',
                       )}
-                    >
-                      {converting ? <Loader2 className="animate-spin" /> : <ChevronDown />}
-                    </Button>
+                      label="更多图纸导入方式"
+                      icon={<Loader2 />}
+                      size="md"
+                    />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="center">
                     <DropdownMenuItem onSelect={() => fileInput.current?.click()}>
@@ -1599,41 +1603,33 @@ export function PointMapEditor({
 
             <div className="flex items-center">
               <Button
-                variant={primaryAction === 'stylize' ? 'default' : 'outline'}
-                disabled={!snap.sheets.length || !!cropFile}
+                variant={primaryAction === 'stylize' ? 'primary' : 'secondary'}
+                isDisabled={!snap.sheets.length || !!cropFile}
                 onClick={() => applySheetStyle(isStylized ? 'cad' : 'warm')}
                 className="rounded-r-none"
-                title={
+                tooltip={
                   isStylized
                     ? `当前：${SHEET_STYLE_META[sheetStyle].label}，点击恢复原始 CAD 底图`
                     : '将户型底图与房间区域一键渲染为彩平图'
                 }
-              >
-                {isStylized ? (
-                  <span
-                    aria-hidden
-                    className="size-2.5 rounded-full ring-1 ring-black/10"
-                    style={{ background: STYLE_DOT[sheetStyle] }}
-                  />
-                ) : (
-                  <Palette />
-                )}
-                {isStylized ? SHEET_STYLE_META[sheetStyle].label : '风格化'}
-              </Button>
+                icon={<Palette />}
+                label="风格化"
+              />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant={primaryAction === 'stylize' ? 'default' : 'outline'}
-                    size="icon"
-                    disabled={!snap.sheets.length || !!cropFile}
+                  <IconButton
+                    variant={primaryAction === 'stylize' ? 'primary' : 'secondary'}
+
+                    isDisabled={!snap.sheets.length || !!cropFile}
                     aria-label="选择彩平图风格"
                     className={cn(
                       'w-7 rounded-l-none',
                       primaryAction === 'stylize' ? 'border-l-primary-foreground/20' : '-ml-px',
                     )}
-                  >
-                    <ChevronDown />
-                  </Button>
+                    label="选择彩平图风格"
+                    icon={<ChevronDown />}
+                    size="md"
+                  />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center" className="w-56">
                   {(['warm', 'modern', 'blueprint', 'cad'] as SheetStyle[]).map((st) => (
@@ -1666,24 +1662,22 @@ export function PointMapEditor({
             <Button
               variant="ghost"
               size="sm"
-              disabled={!snap.sheets.length || !!cropFile}
+              isDisabled={!snap.sheets.length || !!cropFile}
               onClick={handoffToAiStyle}
-              title="用 AI 把户型图生成精装彩平图（消耗积分）"
+              tooltip="用 AI 把户型图生成精装彩平图（消耗积分）"
               className="text-muted-foreground"
-            >
-              <Sparkles />
-              <span className="hidden lg:inline">AI 精装彩平</span>
-            </Button>
+              icon={<Sparkles />}
+              label="AI 精装彩平"
+            />
 
             <Button
-              variant={primaryAction === 'generate' ? 'default' : 'outline'}
-              disabled={!snap.sheets.length || !!cropFile}
+              variant={primaryAction === 'generate' ? 'primary' : 'secondary'}
+              isDisabled={!snap.sheets.length || !!cropFile}
               onClick={() => setAutoGenOpen(true)}
-              title="根据房间区域智能生成全屋点位（会覆盖当前点位，支持一键撤销）"
-            >
-              <Sparkles />
-              生成点位
-            </Button>
+              tooltip="根据房间区域智能生成全屋点位（会覆盖当前点位，支持一键撤销）"
+              icon={<Sparkles />}
+              label="生成点位"
+            />
           </div>
         )}
 
@@ -1748,15 +1742,16 @@ export function PointMapEditor({
             </section>
           </BoardViewPopover>
           <div className="hidden items-center rounded-lg bg-muted p-0.5 md:flex">
-            <Button
+            <IconButton
               variant="ghost"
-              size="icon-xs"
+
               className="size-7 text-muted-foreground hover:bg-background"
               aria-label="缩小"
               onClick={() => zoomBy(1 / 1.2)}
-            >
-              <Minus className="size-3.5" />
-            </Button>
+              label="缩小"
+              icon={<Minus />}
+              size="sm"
+            />
             <button
               type="button"
               onClick={() => fitSheet(activeSheetId)}
@@ -1765,15 +1760,16 @@ export function PointMapEditor({
             >
               {zoomPct}%
             </button>
-            <Button
+            <IconButton
               variant="ghost"
-              size="icon-xs"
+
               className="size-7 text-muted-foreground hover:bg-background"
               aria-label="放大"
               onClick={() => zoomBy(1.2)}
-            >
-              <Plus className="size-3.5" />
-            </Button>
+              label="放大"
+              icon={<Plus />}
+              size="sm"
+            />
           </div>
           <ToolbarIconButton
             label={isFullscreen ? '退出全屏' : '全屏画布'}
@@ -1785,14 +1781,15 @@ export function PointMapEditor({
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
-                  <Button
+                  <IconButton
                     variant="ghost"
-                    size="icon"
+
                     className="text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
                     aria-label="导出 / 导入"
-                  >
-                    <Download />
-                  </Button>
+                    label="导出 / 导入"
+                    icon={<Download />}
+                    size="md"
+                  />
                 </DropdownMenuTrigger>
               </TooltipTrigger>
               <TooltipContent side="bottom">导出 / 导入</TooltipContent>
@@ -1819,46 +1816,43 @@ export function PointMapEditor({
           <span aria-hidden className="mx-1 h-5 w-px bg-border" />
           {readOnly ? (
             activeQuote ? (
-              <Button variant="outline" onClick={() => void switchToQuote()}>
-                <ReceiptText />
-                查看报价
-              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => void switchToQuote()}
+                icon={<ReceiptText />}
+                label="查看报价"
+              />
             ) : null
           ) : (
             <>
               <div className="flex items-center">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   className={cn(quotes.length && 'rounded-r-none')}
-                  disabled={saving || syncingQuote || !scopedPoints.length}
+                  isDisabled={saving || syncingQuote || !scopedPoints.length}
                   onClick={() => void switchToQuote()}
-                  title={
+                  tooltip={
                     activeQuote
                       ? `把${scope === 'all' ? '全部' : `「${pointScopeLabel(scope)}」`}点位同步到「${activeQuote.title}」并打开`
                       : '按当前点位生成报价'
                   }
-                >
-                  {syncingQuote ? (
-                    <Loader2 className="animate-spin" />
-                  ) : activeQuote ? (
-                    <ArrowLeftRight />
-                  ) : (
-                    <FilePlus2 />
-                  )}
-                  {activeQuote ? '同步报价' : '生成报价'}
-                </Button>
+                  icon={<Loader2 />}
+                  endContent={<FilePlus2 />}
+                  label="同步报价"
+                />
                 {quotes.length ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
+                      <IconButton
+                        variant="secondary"
+
                         className="-ml-px w-7 rounded-l-none"
-                        disabled={saving || syncingQuote}
+                        isDisabled={saving || syncingQuote}
                         aria-label="选择要同步的报价，或新建报价"
-                      >
-                        <ChevronDown />
-                      </Button>
+                        label="选择要同步的报价，或新建报价"
+                        icon={<ChevronDown />}
+                        size="md"
+                      />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-72">
                       {quotes.map((q) => (
@@ -1893,11 +1887,12 @@ export function PointMapEditor({
                 ) : null}
               </div>
               <Button
-                variant={dirty ? 'outline' : 'ghost'}
-                disabled={saving || (!dirty && !saving)}
+                variant={dirty ? 'secondary' : 'ghost'}
+                isDisabled={saving || (!dirty && !saving)}
                 onClick={() => void save()}
                 className={cn('min-w-20', !dirty && 'text-muted-foreground disabled:opacity-100')}
-                title={dirty ? '保存点位图（Ctrl/⌘ + S）' : '所有修改已保存'}
+                tooltip={dirty ? '保存点位图（Ctrl/⌘ + S）' : '所有修改已保存'}
+                label={saving ? '保存中' : dirty ? '保存' : '已保存'}
               >
                 {saving ? (
                   <Loader2 className="animate-spin" />
@@ -1959,16 +1954,15 @@ export function PointMapEditor({
                     ? '点击房间拐角描出轮廓，点回起点或双击完成；直接拖动画矩形'
                     : '沿已知长度拖一条线（按住 Shift 水平 / 垂直）'}
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="ghost"
                   className="h-6 px-2"
                   onClick={() => {
                     setArmed(null)
                     setTool('select')
                   }}
-                >
-                  结束
-                </Button>
+                  label="结束"
+                />
               </div>
             ) : null}
             {ctxMenu ? (
@@ -1992,7 +1986,7 @@ export function PointMapEditor({
                 <Info className="size-4 shrink-0 text-primary" />
                 <span>发现 {new Date(draft.at).toLocaleString('zh-CN')} 未保存的本地草稿</span>
                 <Button
-                  size="xs"
+                  size="sm"
                   onClick={() => {
                     const r = decodeScene(draft.scene)
                     setFiles((f) => ({ ...f, ...draft.scene.files }))
@@ -2000,19 +1994,17 @@ export function PointMapEditor({
                     setDraft(null)
                     toast.success('已恢复本地草稿，确认无误后保存')
                   }}
-                >
-                  恢复
-                </Button>
+                  label="恢复"
+                />
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="ghost"
                   onClick={() => {
                     localStorage.removeItem(draftKey(projectId))
                     setDraft(null)
                   }}
-                >
-                  丢弃
-                </Button>
+                  label="丢弃"
+                />
               </div>
             ) : notices.length || missingSheets ? (
               <div className="absolute top-16 left-1/2 z-10 flex max-w-xl -translate-x-1/2 items-start gap-2 rounded-lg border border-warning/30 bg-background px-3 py-2 text-xs shadow-sm">
@@ -2025,14 +2017,15 @@ export function PointMapEditor({
                     <p key={n}>{n}</p>
                   ))}
                 </div>
-                <Button
+                <IconButton
                   variant="ghost"
-                  size="icon-xs"
+
                   aria-label="关闭提示"
                   onClick={() => setNotices([])}
-                >
-                  <X />
-                </Button>
+                  label="关闭提示"
+                  icon={<X />}
+                  size="sm"
+                />
               </div>
             ) : null}
             {ready && !snap.sheets.length && !readOnly ? (
@@ -2063,14 +2056,15 @@ export function PointMapEditor({
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-2 lg:hidden">
             <span className="text-xs font-semibold">选择要放置的设备</span>
-            <Button
+            <IconButton
               variant="ghost"
-              size="icon-xs"
+
               onClick={() => setMobilePlaceOpen(false)}
               aria-label="关闭放置面板"
-            >
-              <X className="size-4" />
-            </Button>
+              label="关闭放置面板"
+              icon={<X />}
+              size="sm"
+            />
           </div>
           {/* 置顶上下文属性面板 */}
           {selectedPoint && selectedSymbol ? (
@@ -2129,25 +2123,27 @@ export function PointMapEditor({
                   ) : null}
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-medium text-muted-foreground">旋转</span>
-                    <Button
-                      variant="outline"
-                      size="icon-sm"
+                    <IconButton
+                      variant="secondary"
+
                       className="size-7 border-border bg-background"
                       aria-label="逆时针旋转 90°"
                       onClick={() => rotate([selectedSymbol.id], -90)}
-                    >
-                      <RotateCcw className="size-3.5" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon-sm"
+                      label="逆时针旋转 90°"
+                      icon={<RotateCcw />}
+                      size="sm"
+                    />
+                    <IconButton
+                      variant="secondary"
+
                       className="size-7 border-border bg-background"
                       aria-label="顺时针旋转 90°（R）"
-                      title="顺时针 90°（R）"
+                      tooltip="顺时针 90°（R）"
                       onClick={() => rotate([selectedSymbol.id], 90)}
-                    >
-                      <RotateCw className="size-3.5" />
-                    </Button>
+                      label="顺时针旋转 90°（R）"
+                      icon={<RotateCw />}
+                      size="sm"
+                    />
                     <Input
                       key={`${selectedSymbol.id}-${selectedSymbol.angle}`}
                       defaultValue={toDeg(selectedSymbol.angle)}
@@ -2184,19 +2180,21 @@ export function PointMapEditor({
               <span className="text-primary">已选 {selectedIds.length} 个对象</span>
               {readOnly ? null : (
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="xs" onClick={() => rotate(selectedIds, 90)}>
-                    <RotateCw className="size-3.5" />
-                    旋转
-                  </Button>
                   <Button
                     variant="ghost"
-                    size="xs"
+                    size="sm"
+                    onClick={() => rotate(selectedIds, 90)}
+                    icon={<RotateCw />}
+                    label="旋转"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="hover:text-destructive"
                     onClick={() => removeIds(selectedIds)}
-                  >
-                    <Trash2 className="size-3.5" />
-                    删除
-                  </Button>
+                    icon={<Trash2 />}
+                    label="删除"
+                  />
                 </div>
               )}
             </div>
@@ -2377,12 +2375,13 @@ export function PointMapEditor({
             />
           </form>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenaming(null)}>
-              取消
-            </Button>
-            <Button type="submit" form="rename-sheet" disabled={!renaming?.name.trim()}>
-              保存
-            </Button>
+            <Button variant="secondary" onClick={() => setRenaming(null)} label="取消" />
+            <Button
+              type="submit"
+              form="rename-sheet"
+              isDisabled={!renaming?.name.trim()}
+              label="保存"
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -2399,16 +2398,13 @@ export function PointMapEditor({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(null)}>
-              取消
-            </Button>
+            <Button variant="secondary" onClick={() => setConfirmDelete(null)} label="取消" />
             <Button
               variant="destructive"
               onClick={() => confirmDelete && deleteSheet(confirmDelete)}
-            >
-              <Trash2 />
-              删除图纸
-            </Button>
+              icon={<Trash2 />}
+              label="删除图纸"
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -2440,10 +2436,8 @@ export function PointMapEditor({
             <span className="text-sm text-muted-foreground">米</span>
           </form>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCalib(null)}>
-              取消
-            </Button>
-            <Button onClick={applyCalibration}>确定</Button>
+            <Button variant="secondary" onClick={() => setCalib(null)} label="取消" />
+            <Button onClick={applyCalibration} label="确定" />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -2472,19 +2466,17 @@ export function PointMapEditor({
                   <Button
                     type="button"
                     size="sm"
-                    variant={autoGenScope === 'current' ? 'default' : 'outline'}
+                    variant={autoGenScope === 'current' ? 'primary' : 'secondary'}
                     onClick={() => setAutoGenScope('current')}
-                  >
-                    当前图纸（{activeSheet?.name ?? '当前层'}）
-                  </Button>
+                    label="当前图纸（ ）"
+                  />
                   <Button
                     type="button"
                     size="sm"
-                    variant={autoGenScope === 'all' ? 'default' : 'outline'}
+                    variant={autoGenScope === 'all' ? 'primary' : 'secondary'}
                     onClick={() => setAutoGenScope('all')}
-                  >
-                    全部图纸（{snap.sheets.length} 张）
-                  </Button>
+                    label="全部图纸（ 张）"
+                  />
                 </div>
               </div>
             ) : null}
@@ -2525,13 +2517,12 @@ export function PointMapEditor({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAutoGenOpen(false)}>
-              取消
-            </Button>
-            <Button onClick={runAutoGeneratePoints}>
-              <Sparkles className="size-4" />
-              确认覆盖并生成（可撤销）
-            </Button>
+            <Button variant="secondary" onClick={() => setAutoGenOpen(false)} label="取消" />
+            <Button
+              onClick={runAutoGeneratePoints}
+              icon={<Sparkles />}
+              label="确认覆盖并生成（可撤销）"
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>

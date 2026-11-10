@@ -5,7 +5,7 @@ import { ArrowUpRight, Sparkles } from 'lucide-react'
 import { EmptyState } from '@/components/empty-state'
 import { PageHeader } from '@/components/page-header'
 import { TemplateCard } from '@/components/proposal-template-card'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { pageTitle } from '@/lib/brand'
 import { allStyles } from '@/documents/registry'
 import { buildTemplateGallery } from '@/plugins/proposal/preview'
@@ -94,12 +94,13 @@ export default function TemplateCenterPage() {
           title="点位图显示方案正在开发"
           description="目前可以在点位图页的画板设置里临时调整显示效果；独立的显示方案会在后续版本提供。"
           action={
-            <Button asChild variant="outline" size="sm">
-              <Link href="/projects">
-                去项目里查看点位图
-                <ArrowUpRight className="size-3.5" />
-              </Link>
-            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              href="/projects"
+              icon={<ArrowUpRight />}
+              label="去项目里查看点位图"
+            />
           }
         />
       </section>

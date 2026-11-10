@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Check, Copy, ExternalLink, FileDown, FolderDown, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import {
   Dialog,
   DialogContent,
@@ -138,14 +138,14 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
       <Button
         type="button"
         size="sm"
-        variant="default"
+        variant="primary"
         className="h-8 gap-1.5 text-xs"
-        disabled={busy}
+        isDisabled={busy}
         onClick={() => void handleExport()}
-      >
-        {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileDown className="size-3.5" />}
-        {busy ? '生成 PDF 中…' : '下载方案与报价 PDF'}
-      </Button>
+        icon={<Loader2 />}
+        endContent={<FileDown />}
+        label="操作"
+      />
 
       <Dialog open={result !== null} onOpenChange={(open) => !open && setResult(null)}>
         <DialogContent className="max-h-[88vh] max-w-lg gap-4 overflow-y-auto p-5 sm:max-w-lg">
@@ -169,23 +169,32 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" size="sm" onClick={() => void saveWithPicker()}>
-              <FolderDown className="size-4" />
-              下载 / 选择位置另存为
-            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => void saveWithPicker()}
+              icon={<FolderDown />}
+              label="下载 / 选择位置另存为"
+            />
             {result?.downloadUrl ? (
-              <Button type="button" variant="secondary" size="sm" onClick={() => void copyLink()}>
-                {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                {copied ? '已复制下载链接' : '复制 PDF 下载链接'}
-              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => void copyLink()}
+                icon={<Check />}
+                endContent={<Copy />}
+                label="操作"
+              />
             ) : null}
             {result?.previewUrl ? (
-              <Button asChild variant="outline" size="sm">
-                <a href={result.previewUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="size-4" />
-                  新窗口打开 PDF
-                </a>
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                href={result.previewUrl}
+                icon={<ExternalLink />}
+                label="新窗口打开 PDF"
+              />
             ) : null}
           </div>
 

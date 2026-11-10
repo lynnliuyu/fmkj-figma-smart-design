@@ -7,7 +7,7 @@ import { ExternalLink, FileArchive, FileStack, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Progress } from '@/components/ui/progress'
 import {
@@ -213,22 +213,20 @@ export function DeliveryPackage({
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
-            disabled={busy || !chosen.length}
+            isDisabled={busy || !chosen.length}
             onClick={() => void build('zip')}
-          >
-            {busy ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <FileArchive className="size-4" />
-            )}
-            下载 ZIP
-          </Button>
-          <Button size="sm" disabled={busy || !chosen.length} onClick={() => void build('pdf')}>
-            {busy ? <Loader2 className="size-4 animate-spin" /> : <FileStack className="size-4" />}
-            合并为一份 PDF
-          </Button>
+            icon={<Loader2 />}
+            label="下载 ZIP"
+          />
+          <Button
+            size="sm"
+            isDisabled={busy || !chosen.length}
+            onClick={() => void build('pdf')}
+            icon={<Loader2 />}
+            label="合并为一份 PDF"
+          />
         </div>
       </div>
 
@@ -291,12 +289,15 @@ export function DeliveryPackage({
             ) : null}
             {d.key === 'proposal' && proposalPicker && !busy ? proposalPicker : null}
             {d.url ? (
-              <Button asChild variant="ghost" size="xs" className="text-muted-foreground">
-                <Link href={d.url}>
-                  预览
-                  <ExternalLink className="size-3" />
-                </Link>
-              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                href={d.url}
+                as={Link}
+                icon={<ExternalLink />}
+                label="预览"
+              />
             ) : null}
           </li>
         ))}

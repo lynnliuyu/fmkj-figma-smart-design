@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -298,11 +298,10 @@ export function ProjectForm({
             {isNew ? (
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 onClick={() => router.push(onCancelHref ?? '/projects')}
-              >
-                取消
-              </Button>
+                label="取消"
+              />
             ) : (
               <>
                 {dirty ? (
@@ -311,28 +310,24 @@ export function ProjectForm({
                 {onCancel ? (
                   <Button
                     type="button"
-                    variant="outline"
-                    disabled={pending}
+                    variant="secondary"
+                    isDisabled={pending}
                     onClick={() => {
                       if (dirty && !window.confirm('项目信息还没有保存，确定放弃修改吗？')) return
                       onCancel()
                     }}
-                  >
-                    取消
-                  </Button>
+                    label="取消"
+                  />
                 ) : null}
               </>
             )}
-            <Button type="submit" disabled={pending || (!isNew && !dirty)}>
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : isNew ? (
-                <Plus className="size-4" />
-              ) : (
-                <Save className="size-4" />
-              )}
-              {isNew ? '创建项目' : '保存'}
-            </Button>
+            <Button
+              type="submit"
+              isDisabled={pending || (!isNew && !dirty)}
+              icon={<Loader2 />}
+              endContent={<Save />}
+              label="操作"
+            />
           </CardFooter>
         )}
       </Card>

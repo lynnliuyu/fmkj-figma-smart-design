@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Archive, ArchiveRestore, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 
 import { setProjectArchived } from './actions'
 
@@ -22,8 +22,8 @@ export function ArchiveButton({
   const [pending, startTransition] = useTransition()
   return (
     <Button
-      variant={archived || !primary ? 'outline' : 'default'}
-      disabled={pending}
+      variant={archived || !primary ? 'secondary' : 'primary'}
+      isDisabled={pending}
       onClick={() =>
         startTransition(async () => {
           const result = await setProjectArchived(projectId, !archived)
@@ -32,15 +32,9 @@ export function ArchiveButton({
           router.refresh()
         })
       }
-    >
-      {pending ? (
-        <Loader2 className="size-4 animate-spin" />
-      ) : archived ? (
-        <ArchiveRestore className="size-4" />
-      ) : (
-        <Archive className="size-4" />
-      )}
-      {archived ? '恢复项目' : '归档项目'}
-    </Button>
+      icon={<Loader2 />}
+      endContent={<Archive />}
+      label="操作"
+    />
   )
 }

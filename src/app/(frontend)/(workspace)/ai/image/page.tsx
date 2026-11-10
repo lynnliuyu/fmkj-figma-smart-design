@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowLeft, Palette, Sparkles } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { getPluginFlags } from '@/plugins/state'
@@ -25,9 +25,12 @@ export default async function AiImagePage() {
           title="「AI 对话侧栏（高级）」插件已关闭"
           description="AI 生图依赖 AI 插件，请先在插件中心开启。"
           action={
-            <Button asChild size="sm" variant="outline">
-              <Link href="/capabilities/ai-copilot">去插件页开启</Link>
-            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              href="/capabilities/ai-copilot"
+              label="去插件页开启"
+            />
           }
         />
       </div>
@@ -44,18 +47,14 @@ export default async function AiImagePage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/ai/image/style">
-              <Palette className="size-4" />
-              户型图风格化
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/ai">
-              <ArrowLeft className="size-4" />
-              返回 AI 对话
-            </Link>
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            href="/ai/image/style"
+            icon={<Palette />}
+            label="户型图风格化"
+          />
+          <Button variant="ghost" size="sm" href="/ai" icon={<ArrowLeft />} label="返回 AI 对话" />
         </div>
       </div>
       <ImageGenerator

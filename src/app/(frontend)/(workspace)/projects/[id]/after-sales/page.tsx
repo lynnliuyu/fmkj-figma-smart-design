@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Wrench } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { relId } from '@/lib/access'
 import { loadAfterSales } from '@/lib/services/after-sales-service'
 import { PLUGINS } from '@/plugins'
@@ -34,9 +34,7 @@ export default async function ProjectAfterSalesPage({
             这项能力目前不可用。可用时可以按合同质保期追踪检修、设备更换与配置备份。
           </p>
         </div>
-        <Button asChild size="sm">
-          <Link href="/capabilities/after-sales">去能力中心查看</Link>
-        </Button>
+        <Button size="sm" href="/capabilities/after-sales" label="去能力中心查看" />
       </section>
     )
   }

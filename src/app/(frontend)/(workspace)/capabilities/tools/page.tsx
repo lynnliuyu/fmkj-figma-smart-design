@@ -10,7 +10,7 @@ import {
 
 import { EmptyState } from '@/components/empty-state'
 import { PageHeader } from '@/components/page-header'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { PLUGIN_TOOLS } from '@/lib/plugin-tools'
@@ -35,12 +35,14 @@ export default async function PluginToolsPage() {
   const tools = PLUGIN_TOOLS.filter((tool) => flags[tool.pluginId])
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-5">
-      <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit text-muted-foreground">
-        <Link href="/capabilities">
-          <ArrowLeft className="size-4" />
-          返回能力中心
-        </Link>
-      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-2 w-fit text-muted-foreground"
+        href="/capabilities"
+        icon={<ArrowLeft />}
+        label="返回能力中心"
+      />
       <PageHeader
         title="工具"
         description="可以独立打开的功能页面，点开即用、按 AI 积分计费；需要项目上下文的入口仍从项目内进入。"

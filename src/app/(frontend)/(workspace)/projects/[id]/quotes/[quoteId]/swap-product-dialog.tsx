@@ -8,7 +8,7 @@ import { Check, ImageIcon, Search } from 'lucide-react'
 import { BrandLogo } from '@/components/brand-logo'
 import { DeviceSymbol } from '@/components/device-symbol'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -303,19 +303,16 @@ export function SwapProductDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => reset(false)}>
-            取消
-          </Button>
+          <Button variant="secondary" onClick={() => reset(false)} label="取消" />
           <Button
-            disabled={!chosen}
+            isDisabled={!chosen}
             onClick={() => {
               if (!chosen) return
               onConfirm(chosen, sameTypeLines > 1 ? scope : 'line', canSetDefault && setDefault)
               reset(false)
             }}
-          >
-            {chosen ? `更换为 ${chosen.name}` : '请选择产品'}
-          </Button>
+            label="{chosen ? `更换为 $ ` : '请选择产品'}"
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

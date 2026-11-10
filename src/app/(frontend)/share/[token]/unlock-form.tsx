@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { KeyRound, Loader2 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -69,10 +69,12 @@ export function UnlockForm({ token }: { token: string }) {
           ) : null}
         </div>
 
-        <Button type="submit" disabled={pending || !password}>
-          {pending ? <Loader2 className="size-4 animate-spin" /> : <KeyRound className="size-4" />}
-          打开方案
-        </Button>
+        <Button
+          type="submit"
+          isDisabled={pending || !password}
+          icon={<Loader2 />}
+          label="打开方案"
+        />
       </form>
     </div>
   )

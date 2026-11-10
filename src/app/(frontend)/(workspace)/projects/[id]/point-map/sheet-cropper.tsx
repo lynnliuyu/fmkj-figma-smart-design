@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Crop, Loader2, Maximize, ScanSearch } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { clampRect, detectPlanBounds, fitIntoSheet, type Rect } from '@/lib/floor-plan-crop'
@@ -281,25 +281,23 @@ export function SheetCropper({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
-              disabled={!auto}
+              isDisabled={!auto}
               onClick={() => auto && setCrop(auto)}
-            >
-              <ScanSearch className="size-4" />
-              自动识别
-            </Button>
+              icon={<ScanSearch />}
+              label="自动识别"
+            />
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
-              disabled={!bitmap}
+              isDisabled={!bitmap}
               onClick={() =>
                 bitmap && setCrop({ x: 0, y: 0, width: bitmap.width, height: bitmap.height })
               }
-            >
-              <Maximize className="size-4" />
-              整张图
-            </Button>
+              icon={<Maximize />}
+              label="整张图"
+            />
           </div>
           <div className="space-y-1.5">
             <div className="text-xs font-medium text-muted-foreground">标准图纸预览</div>
@@ -323,12 +321,20 @@ export function SheetCropper({
           ) : null}
         </div>
         <div className="mt-auto flex gap-2 border-t p-4">
-          <Button variant="outline" className="flex-1" disabled={busy} onClick={onCancel}>
-            取消
-          </Button>
-          <Button className="flex-1" disabled={!crop || busy} onClick={() => void confirm()}>
-            {busy ? <Loader2 className="size-4 animate-spin" /> : null}确认并添加
-          </Button>
+          <Button
+            variant="secondary"
+            className="flex-1"
+            isDisabled={busy}
+            onClick={onCancel}
+            label="取消"
+          />
+          <Button
+            className="flex-1"
+            isDisabled={!crop || busy}
+            onClick={() => void confirm()}
+            icon={<Loader2 />}
+            label="确认并添加"
+          />
         </div>
       </aside>
     </div>

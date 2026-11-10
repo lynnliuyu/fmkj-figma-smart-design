@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { BadgeCheck, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 
 import { setDeliverables } from '../archive/actions'
 
@@ -22,9 +22,9 @@ export function SetFinalQuoteButton({
   return (
     <Button
       variant="ghost"
-      size="xs"
+      size="sm"
       className="relative z-10 text-muted-foreground"
-      disabled={pending}
+      isDisabled={pending}
       onClick={() =>
         start(async () => {
           const res = await setDeliverables(projectId, { finalQuote: quoteId })
@@ -33,13 +33,8 @@ export function SetFinalQuoteButton({
           router.refresh()
         })
       }
-    >
-      {pending ? (
-        <Loader2 className="size-3.5 animate-spin" />
-      ) : (
-        <BadgeCheck className="size-3.5" />
-      )}
-      设为定稿
-    </Button>
+      icon={<Loader2 />}
+      label="设为定稿"
+    />
   )
 }

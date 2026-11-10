@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Bot } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { getCompanyInfo } from '@/lib/cached-data'
@@ -53,9 +53,12 @@ export default async function AiPage({
             该功能面向高级用户提供侧边栏常驻对话、技能模板库、多模型积分计费与跨插件调用。需要使用时可在插件中心开启。
           </p>
         </div>
-        <Button asChild size="sm" variant="outline">
-          <Link href="/capabilities/ai-copilot">去插件页开启</Link>
-        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          href="/capabilities/ai-copilot"
+          label="去插件页开启"
+        />
       </section>
     )
   }
@@ -90,9 +93,7 @@ export default async function AiPage({
     <div className="mx-auto flex h-[calc(100svh-5.5rem)] w-full max-w-3xl flex-col md:h-[calc(100svh-6.5rem)]">
       <div className="flex items-center justify-between pb-2">
         <span className="text-xs font-medium tracking-[0.18em] text-muted-foreground">AI 对话</span>
-        <Button asChild size="sm" variant="outline">
-          <Link href="/ai/image">AI 生图 →</Link>
-        </Button>
+        <Button size="sm" variant="secondary" href="/ai/image" label="AI 生图 →" />
       </div>
       <AiSidebarDock
         plugins={plugins}

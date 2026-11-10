@@ -2,7 +2,7 @@ import { MapPinned } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import type { CompanyInfo } from '@/lib/cached-data'
 import { brandInitials } from '@/lib/brand'
 import { cn } from '@/lib/utils'
@@ -426,9 +426,12 @@ export function DocEmpty({
     <div className="mx-auto flex max-w-[297mm] flex-col items-center gap-3 rounded-lg border border-dashed border-foreground/20 bg-background px-6 py-10 text-center print:hidden">
       <MapPinned className="size-6 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">{children}</p>
-      <Button asChild size="sm" variant="outline">
-        <Link href={`/projects/${projectId}/point-map`}>去布置点位</Link>
-      </Button>
+      <Button
+        size="sm"
+        variant="secondary"
+        href={`/projects/${projectId}/point-map`}
+        label="去布置点位"
+      />
     </div>
   )
 }

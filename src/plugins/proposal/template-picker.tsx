@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, Columns3, ExternalLink, Eye, Loader2, X } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   Dialog,
   DialogContent,
@@ -246,57 +247,61 @@ export function TemplatePicker({
             <Button
               type="button"
               size="sm"
-              variant={compareMode ? 'secondary' : 'outline'}
+              variant={compareMode ? 'secondary' : 'secondary'}
               onClick={() => {
                 setCompareMode((m) => !m)
                 setView('grid')
                 setCompareIds([])
               }}
-            >
-              <Columns3 className="size-3.5" />
-              {compareMode ? '退出对比' : '对比模板'}
-            </Button>
+              icon={<Columns3 />}
+              label="操作"
+            />
           ) : null}
-          <Button
+          <IconButton
             type="button"
             variant="ghost"
-            size="icon-sm"
+
             onClick={() => setOpen(false)}
             aria-label="关闭"
-          >
-            <X className="size-4" />
-          </Button>
+            label="关闭"
+            icon={<X />}
+            size="sm"
+          />
         </header>
 
         {view === 'preview' && activeT ? (
           <div className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-wrap items-center gap-2 border-b px-4 py-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setView('grid')}>
-                <ChevronLeft className="size-4" />
-                返回模板列表
-              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setView('grid')}
+                icon={<ChevronLeft />}
+                label="返回模板列表"
+              />
               <span className="text-sm font-medium">{activeT.label}</span>
               <span className="hidden text-xs text-muted-foreground md:inline">
                 {activeT.pages ? `约 ${activeT.pages} 页 · ` : ''}
                 {pageNote}
               </span>
               <div className="ml-auto flex gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <a href={previewHref[activeT.value]} target="_blank" rel="noreferrer">
-                    新窗口打开
-                    <ExternalLink className="size-3.5" />
-                  </a>
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  href={previewHref[activeT.value]}
+                  icon={<ExternalLink />}
+                  label="新窗口打开"
+                />
                 {onSelect ? (
                   <Button
                     type="button"
                     size="sm"
-                    disabled={!canChoose(activeT) || busy}
+                    isDisabled={!canChoose(activeT) || busy}
                     onClick={() => void choose(activeT.value)}
-                  >
-                    {busy ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                    {chooseLabel(activeT)}
-                  </Button>
+                    icon={<Loader2 />}
+                    label="操作"
+                  />
                 ) : null}
               </div>
             </div>
@@ -309,10 +314,14 @@ export function TemplatePicker({
         ) : view === 'compare' && compared.length ? (
           <div className="min-h-0 flex-1 overflow-auto p-5">
             <div className="mb-3 flex items-center gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setView('grid')}>
-                <ChevronLeft className="size-4" />
-                返回挑选
-              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setView('grid')}
+                icon={<ChevronLeft />}
+                label="返回挑选"
+              />
               <span className="text-xs text-muted-foreground">
                 并排对比 {compared.length} 套模板
               </span>
@@ -359,27 +368,25 @@ export function TemplatePicker({
                     <td key={t.value} className="space-y-1.5 px-2 pt-3">
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
                         className="w-full"
                         onClick={() => {
                           setActive(t.value)
                           setView('preview')
                         }}
-                      >
-                        <Eye className="size-3.5" />
-                        预览样张
-                      </Button>
+                        icon={<Eye />}
+                        label="预览样张"
+                      />
                       {onSelect ? (
                         <Button
                           type="button"
                           size="sm"
                           className="w-full"
-                          disabled={!canChoose(t) || busy}
+                          isDisabled={!canChoose(t) || busy}
                           onClick={() => void choose(t.value)}
-                        >
-                          {chooseLabel(t)}
-                        </Button>
+                          label="操作"
+                        />
                       ) : null}
                     </td>
                   ))}
@@ -508,12 +515,11 @@ export function TemplatePicker({
                   <Button
                     type="button"
                     size="sm"
-                    disabled={compareIds.length < 2}
+                    isDisabled={compareIds.length < 2}
                     onClick={() => setView('compare')}
-                  >
-                    <Columns3 className="size-3.5" />
-                    开始对比
-                  </Button>
+                    icon={<Columns3 />}
+                    label="开始对比"
+                  />
                 </div>
               ) : activeT ? (
                 <div className="flex items-center gap-2 border-t px-4 py-3 lg:hidden">
@@ -522,22 +528,20 @@ export function TemplatePicker({
                   </span>
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => setView('preview')}
-                  >
-                    <Eye className="size-3.5" />
-                    预览
-                  </Button>
+                    icon={<Eye />}
+                    label="预览"
+                  />
                   {onSelect ? (
                     <Button
                       type="button"
                       size="sm"
-                      disabled={!canChoose(activeT) || busy}
+                      isDisabled={!canChoose(activeT) || busy}
                       onClick={() => void choose(activeT.value)}
-                    >
-                      {chooseLabel(activeT)}
-                    </Button>
+                      label="操作"
+                    />
                   ) : null}
                 </div>
               ) : null}
@@ -616,23 +620,21 @@ export function TemplatePicker({
                 <div className="flex gap-2 border-t bg-background p-4">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     className="flex-1"
                     onClick={() => setView('preview')}
-                  >
-                    <Eye className="size-4" />
-                    预览样张
-                  </Button>
+                    icon={<Eye />}
+                    label="预览样张"
+                  />
                   {onSelect ? (
                     <Button
                       type="button"
                       className="flex-1"
-                      disabled={!canChoose(activeT) || busy}
+                      isDisabled={!canChoose(activeT) || busy}
                       onClick={() => void choose(activeT.value)}
-                    >
-                      {busy ? <Loader2 className="size-4 animate-spin" /> : null}
-                      {chooseLabel(activeT)}
-                    </Button>
+                      icon={<Loader2 />}
+                      label="操作"
+                    />
                   ) : null}
                 </div>
               </aside>

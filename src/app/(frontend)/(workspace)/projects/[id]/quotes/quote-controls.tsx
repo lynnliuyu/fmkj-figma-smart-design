@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { FilePlus2, Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import {
   Select,
   SelectContent,
@@ -21,10 +21,13 @@ import { createQuoteFromProject, deleteQuote } from './actions'
 function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending}>
-      {pending ? <Loader2 className="size-4 animate-spin" /> : <FilePlus2 className="size-4" />}
-      {children}
-    </Button>
+    <Button
+      type="submit"
+      isDisabled={pending}
+      icon={<Loader2 />}
+      endContent={<FilePlus2 />}
+      label="操作"
+    />
   )
 }
 
@@ -79,8 +82,8 @@ export function DeleteQuoteButton({ quoteId, title }: { quoteId: string; title: 
       type="button"
       variant={armed ? 'destructive' : 'ghost'}
       size="sm"
-      disabled={pending}
-      aria-label={armed ? `确认删除「${title}」` : `删除「${title}」`}
+      isDisabled={pending}
+      label="删除"
       className="relative z-10"
       onClick={() => {
         if (!armed) return setArmed(true)
@@ -95,9 +98,8 @@ export function DeleteQuoteButton({ quoteId, title }: { quoteId: string; title: 
           router.refresh()
         })
       }}
-    >
-      {pending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-      {armed ? '确认删除' : null}
-    </Button>
+      icon={<Loader2 />}
+      endContent={<Trash2 />}
+    />
   )
 }

@@ -20,7 +20,7 @@ import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { SearchSubmit } from '@/components/search-submit'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
@@ -259,7 +259,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 className="pl-9"
               />
             </div>
-            <SearchSubmit variant="default" />
+            <SearchSubmit variant="primary" />
           </Form>
         }
       />
@@ -337,12 +337,13 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           {seg(STATUSES, f.status, 'status', '销售状态')}
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {activeCount ? (
-              <Button asChild variant="ghost" size="sm">
-                <Link href={f.sort ? `/products?sort=${f.sort}` : '/products'}>
-                  <X className="size-4" />
-                  清除筛选
-                </Link>
-              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                href={f.sort ? `/products?sort=${f.sort}` : '/products'}
+                icon={<X />}
+                label="清除筛选"
+              />
             ) : null}
             <SortToggle
               items={SORTS.map((it) => ({
@@ -360,11 +361,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             icon={<PackageSearch className="size-5" />}
             title="没有找到符合条件的产品"
             description="换个关键词或筛选条件试试；新产品在后台（/admin）添加。"
-            action={
-              <Button asChild variant="outline" size="sm">
-                <Link href="/products">清除筛选</Link>
-              </Button>
-            }
+            action={<Button variant="secondary" size="sm" href="/products" label="清除筛选" />}
           />
         ) : (
           <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
@@ -427,33 +424,41 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         {pages > 1 ? (
           <nav className="flex items-center justify-center gap-2 pt-2" aria-label="分页">
             {page > 1 ? (
-              <Button asChild variant="outline" size="sm">
-                <Link href={pageHref(page - 1)}>
-                  <ChevronLeft className="size-4" />
-                  上一页
-                </Link>
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                href={pageHref(page - 1)}
+                icon={<ChevronLeft />}
+                label="上一页"
+              />
             ) : (
-              <Button variant="outline" size="sm" disabled>
-                <ChevronLeft className="size-4" />
-                上一页
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                isDisabled
+                icon={<ChevronLeft />}
+                label="上一页"
+              />
             )}
             <span className="px-2 text-sm text-muted-foreground tabular-nums">
               {page} / {pages}
             </span>
             {page < pages ? (
-              <Button asChild variant="outline" size="sm">
-                <Link href={pageHref(page + 1)}>
-                  下一页
-                  <ChevronRight className="size-4" />
-                </Link>
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                href={pageHref(page + 1)}
+                icon={<ChevronRight />}
+                label="下一页"
+              />
             ) : (
-              <Button variant="outline" size="sm" disabled>
-                下一页
-                <ChevronRight className="size-4" />
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                isDisabled
+                icon={<ChevronRight />}
+                label="下一页"
+              />
             )}
           </nav>
         ) : null}

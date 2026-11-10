@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowLeft, Palette } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { STYLE_TEMPLATES } from '@/lib/style-templates'
@@ -26,9 +26,12 @@ export default async function StyleTransferPage() {
           title="「AI 对话侧栏（高级）」插件已关闭"
           description="户型图风格化依赖 AI 插件，请先在插件中心开启。"
           action={
-            <Button asChild size="sm" variant="outline">
-              <Link href="/capabilities/ai-copilot">去插件页开启</Link>
-            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              href="/capabilities/ai-copilot"
+              label="去插件页开启"
+            />
           }
         />
       </div>
@@ -44,12 +47,13 @@ export default async function StyleTransferPage() {
             上传户型图，选择风格模板，保留墙体布局生成家具彩平图。
           </p>
         </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/ai/image">
-            <ArrowLeft className="size-4" />
-            返回 AI 生图
-          </Link>
-        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          href="/ai/image"
+          icon={<ArrowLeft />}
+          label="返回 AI 生图"
+        />
       </div>
       <StyleTransfer
         configured={styleTransferConfigured()}

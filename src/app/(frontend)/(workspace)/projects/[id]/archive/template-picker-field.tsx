@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { LayoutTemplate } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import type { PickerTemplate } from '@/plugins/proposal/picker-data'
 import { Swatches, TemplatePicker } from '@/plugins/proposal/template-picker'
 
@@ -54,19 +54,13 @@ export function ArchiveTemplatePicker({
       trigger={
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="sm"
           className="ml-7 h-8 gap-2 text-xs sm:ml-0"
-          aria-label={`交付方案模板：${current?.label ?? '未选择'}，点击${editable ? '更换' : '查看'}`}
-        >
-          {current ? (
-            <Swatches colors={current.swatches} />
-          ) : (
-            <LayoutTemplate className="size-3.5" />
-          )}
-          <span className="max-w-28 truncate">{current?.label ?? '选择模板'}</span>
-          <span className="text-muted-foreground">{editable ? '更换' : '查看'}</span>
-        </Button>
+          label="交付方案模板：，点击"
+          icon={<Swatches colors={[]} />}
+          endContent={<LayoutTemplate />}
+        />
       }
     />
   )

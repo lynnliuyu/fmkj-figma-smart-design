@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -88,7 +88,6 @@ function InputGroupButton({
   return (
     <Button
       type={type}
-      data-size={size}
       variant={variant}
       className={cn(inputGroupButtonVariants({ size }), className)}
       {...props}

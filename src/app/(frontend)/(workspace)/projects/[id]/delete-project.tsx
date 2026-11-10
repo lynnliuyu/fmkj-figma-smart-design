@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import {
   Dialog,
   DialogClose,
@@ -61,13 +61,12 @@ export function DeleteProject({
       <Dialog open={open} onOpenChange={(v) => (setOpen(v), setError(''))}>
         <DialogTrigger asChild>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             className="text-destructive-strong hover:text-destructive-strong"
-          >
-            <Trash2 className="size-4" />
-            删除项目
-          </Button>
+            icon={<Trash2 />}
+            label="删除项目"
+          />
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -87,18 +86,15 @@ export function DeleteProject({
           ) : null}
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" disabled={pending}>
-                取消
-              </Button>
+              <Button variant="secondary" isDisabled={pending} label="取消" />
             </DialogClose>
-            <Button variant="destructive" onClick={confirm} disabled={pending}>
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Trash2 className="size-4" />
-              )}
-              确认删除
-            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirm}
+              isDisabled={pending}
+              icon={<Loader2 />}
+              label="确认删除"
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>

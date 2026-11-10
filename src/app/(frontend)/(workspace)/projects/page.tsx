@@ -9,7 +9,7 @@ import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { SearchSubmit } from '@/components/search-submit'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
@@ -192,10 +192,7 @@ export default async function ProjectsPage({
   const signedContractsCount = contracts.docs.filter((c) => c.status === 'signed').length
   const claimButton = canClaimDemo ? (
     <form action={claimDemoProject}>
-      <Button type="submit" variant="outline">
-        <Sparkles />
-        领取示例项目
-      </Button>
+      <Button type="submit" variant="secondary" icon={<Sparkles />} label="领取示例项目" />
     </form>
   ) : null
 
@@ -216,12 +213,7 @@ export default async function ProjectsPage({
         actions={
           <div className="flex items-center gap-2">
             {claimButton}
-            <Button asChild>
-              <Link href="/projects/new">
-                <Plus className="size-4" />
-                新建项目
-              </Link>
-            </Button>
+            <Button href="/projects/new" icon={<Plus />} label="新建项目" />
           </div>
         }
       />
@@ -311,12 +303,7 @@ export default async function ProjectsPage({
           action={
             !keyword && !archived ? (
               <>
-                <Button asChild size="sm">
-                  <Link href="/projects/new">
-                    <Plus className="size-4" />
-                    新建项目
-                  </Link>
-                </Button>
+                <Button size="sm" href="/projects/new" icon={<Plus />} label="新建项目" />
                 {claimButton}
               </>
             ) : null

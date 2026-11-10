@@ -4,7 +4,7 @@ import { ArrowLeft, Bot, Clock, ExternalLink, FolderKanban, Settings } from 'luc
 
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { EmptyState } from '@/components/empty-state'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { appAuth } from '@/lib/app-auth'
@@ -68,18 +68,21 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <div className="flex items-center justify-between gap-2">
-        <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
-          <Link href="/capabilities">
-            <ArrowLeft className="size-4" />
-            返回能力中心
-          </Link>
-        </Button>
-        <Button asChild variant="outline" size="sm">
-          <Link href={`/ai?plugin=${plugin.id}`}>
-            <Bot className="size-4" />
-            在 AI 对话中连接
-          </Link>
-        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-2 text-muted-foreground"
+          href="/capabilities"
+          icon={<ArrowLeft />}
+          label="返回能力中心"
+        />
+        <Button
+          variant="secondary"
+          size="sm"
+          href={`/ai?plugin=${plugin.id}`}
+          icon={<Bot />}
+          label="在 AI 对话中连接"
+        />
       </div>
 
       <PageHeader
@@ -124,12 +127,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                   <span className="text-xs font-medium text-muted-foreground">
                     内置对话技能模板（{DEFAULT_AI_TEMPLATES.length} 套）
                   </span>
-                  <Button asChild variant="outline" size="xs">
-                    <Link href="/ai">
-                      <Bot className="size-3.5" />
-                      打开 AI 对话工作台
-                    </Link>
-                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    href="/ai"
+                    icon={<Bot />}
+                    label="打开 AI 对话工作台"
+                  />
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {DEFAULT_AI_TEMPLATES.map((tpl) => {
@@ -177,12 +181,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                 <span className="text-xs font-medium text-muted-foreground">
                   包含的 {PLUGIN_DOC_STYLES.length} 套扩展打印风格
                 </span>
-                <Button asChild variant="outline" size="xs">
-                  <Link href="/settings">
-                    <Settings className="size-3.5" />
-                    设置默认模板
-                  </Link>
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  href="/settings"
+                  icon={<Settings />}
+                  label="设置默认模板"
+                />
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
                 {PLUGIN_DOC_STYLES.map((s) => (
@@ -212,12 +217,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                   可用的方案模板（业主方案 {gallery.items.filter((t) => t.kind === 'owner').length}{' '}
                   套 · 施工交底 {gallery.items.filter((t) => t.kind === 'construction').length} 套）
                 </span>
-                <Button asChild variant="outline" size="xs">
-                  <Link href="/templates" target="_blank">
-                    打开模板库
-                    <ExternalLink className="size-3" />
-                  </Link>
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  href="/templates"
+                  icon={<ExternalLink />}
+                  label="打开模板库"
+                />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {gallery.items.map((t) => (
@@ -292,12 +298,8 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           description={`规划能力：${plugin.provides.join('、')}`}
           action={
             <>
-              <Button asChild variant="outline" size="sm">
-                <Link href="/capabilities">返回能力中心</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href={`/ai?plugin=${plugin.id}`}>去 AI 对话推演需求</Link>
-              </Button>
+              <Button variant="secondary" size="sm" href="/capabilities" label="返回能力中心" />
+              <Button size="sm" href={`/ai?plugin=${plugin.id}`} label="去 AI 对话推演需求" />
             </>
           }
         />
@@ -342,12 +344,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                         {proj.platform || '平台待定'} · {proj.points} 个点位
                       </p>
                     </div>
-                    <Button asChild variant="outline" size="xs">
-                      <Link href={targetHref}>
-                        {targetLabel}
-                        <ExternalLink className="size-3" />
-                      </Link>
-                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      href={targetHref}
+                      icon={<ExternalLink />}
+                      label="操作"
+                    />
                   </div>
                 )
               })

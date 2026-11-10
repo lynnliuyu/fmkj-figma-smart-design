@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 
 import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { ScaledStack } from '@/components/scaled-frame'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { APP_NAME } from '@/lib/brand'
 import { getCompanyInfo } from '@/lib/cached-data'
 import { constructionDeckPages } from '@/plugins/proposal/construction-deck'
@@ -94,12 +94,14 @@ export default async function TemplateDetailPage({
       <main>
         <section aria-labelledby="template-title" className="px-4 pt-12 sm:px-6 sm:pt-16 lg:px-8">
           <div className="mx-auto max-w-6xl">
-            <Button asChild variant="ghost" size="sm" className="-ml-3 text-muted-foreground">
-              <Link href="/templates">
-                <ArrowLeft className="size-4" />
-                方案模板库
-              </Link>
-            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-3 text-muted-foreground"
+              href="/templates"
+              icon={<ArrowLeft />}
+              label="方案模板库"
+            />
             <div className="mt-6 grid gap-10 lg:grid-cols-[1.1fr_1fr]">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -131,23 +133,19 @@ export default async function TemplateDetailPage({
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button
-                    asChild
                     size="lg"
                     className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-                  >
-                    <Link href="/projects">
-                      在项目里使用
-                      <ArrowRight data-icon="inline-end" />
-                    </Link>
-                  </Button>
+                    href="/projects"
+                    icon={<ArrowRight />}
+                    label="在项目里使用"
+                  />
                   <Button
-                    asChild
                     size="lg"
-                    variant="outline"
+                    variant="secondary"
                     className="h-11 rounded-full px-6 text-base"
-                  >
-                    <a href="#sample">看整套样张</a>
-                  </Button>
+                    href="#sample"
+                    label="看整套样张"
+                  />
                 </div>
               </div>
               <div className="space-y-6">

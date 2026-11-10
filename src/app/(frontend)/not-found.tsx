@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { BrandMark } from '@/components/brand/brand-mark'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 
 export default function NotFound() {
   return (
@@ -13,14 +13,11 @@ export default function NotFound() {
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button
-          asChild
           className="h-10 rounded-full bg-foreground px-5 text-background hover:bg-foreground/85"
-        >
-          <Link href="/projects">返回项目列表</Link>
-        </Button>
-        <Button asChild variant="outline" className="h-10 rounded-full px-5">
-          <Link href="/">返回首页</Link>
-        </Button>
+          href="/projects"
+          label="返回项目列表"
+        />
+        <Button variant="secondary" className="h-10 rounded-full px-5" href="/" label="返回首页" />
       </div>
     </main>
   )

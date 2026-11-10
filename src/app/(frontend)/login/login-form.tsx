@@ -18,7 +18,7 @@ import {
   UserRound,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -347,7 +347,7 @@ export function LoginForm({
           {otpRequired ? (
             <Button
               type="button"
-              variant="link"
+              variant="ghost"
               className="h-auto p-0 text-xs font-normal text-muted-foreground hover:text-foreground"
               onClick={() => {
                 setAuthMode('reset')
@@ -355,9 +355,8 @@ export function LoginForm({
                 setOtpCode('')
                 setError('')
               }}
-            >
-              忘记密码？
-            </Button>
+              label="忘记密码？"
+            />
           ) : null}
         </div>
         <div className="relative">
@@ -379,11 +378,11 @@ export function LoginForm({
       <Button
         type="submit"
         className="h-10 w-full rounded-full bg-foreground text-background hover:bg-foreground/85"
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="size-4 animate-spin" /> : <LogIn className="size-4" />}
-        {loading ? '登录中' : '登录'}
-      </Button>
+        isDisabled={loading}
+        icon={<Loader2 />}
+        endContent={<LogIn />}
+        label="操作"
+      />
       {previewDemo ? (
         <div className="space-y-2 rounded-xl border border-border/80 bg-muted/40 p-3 text-xs">
           <div className="flex items-center justify-between text-muted-foreground">
@@ -393,32 +392,30 @@ export function LoginForm({
           <div className="grid grid-cols-2 gap-2">
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               size="sm"
-              disabled={loading}
+              isDisabled={loading}
               onClick={() => {
                 setEmail('demo@fmkj.dev')
                 setPassword('demo1234')
                 void doLogin('demo@fmkj.dev', 'demo1234')
               }}
               className="h-8 text-xs"
-            >
-              演示管理员登录
-            </Button>
+              label="演示管理员登录"
+            />
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               size="sm"
-              disabled={loading}
+              isDisabled={loading}
               onClick={() => {
                 setEmail('sales@fmkj.dev')
                 setPassword('demo1234')
                 void doLogin('sales@fmkj.dev', 'demo1234')
               }}
               className="h-8 text-xs"
-            >
-              销售小王登录
-            </Button>
+              label="销售小王登录"
+            />
           </div>
         </div>
       ) : null}
@@ -485,14 +482,13 @@ export function LoginForm({
             </div>
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               className="h-10 shrink-0 rounded-lg px-3.5 text-xs"
-              disabled={sendingOtp || countdown > 0}
+              isDisabled={sendingOtp || countdown > 0}
               onClick={() => void handleSendOtp('register')}
-            >
-              {sendingOtp ? <Loader2 className="size-3.5 animate-spin" /> : null}
-              {countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
-            </Button>
+              icon={<Loader2 />}
+              label="{countdown > 0 ? `$ s 后重发` : '获取验证码'}"
+            />
           </div>
         </div>
       ) : null}
@@ -547,11 +543,11 @@ export function LoginForm({
       <Button
         type="submit"
         className="h-10 w-full rounded-full bg-foreground text-background hover:bg-foreground/85"
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="size-4 animate-spin" /> : <UserPlus className="size-4" />}
-        {loading ? '正在创建工作台…' : '注册并进入工作台'}
-      </Button>
+        isDisabled={loading}
+        icon={<Loader2 />}
+        endContent={<UserPlus />}
+        label="操作"
+      />
     </form>
   )
 
@@ -608,14 +604,13 @@ export function LoginForm({
               </div>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 className="h-10 shrink-0 rounded-lg px-3.5 text-xs"
-                disabled={sendingOtp || countdown > 0}
+                isDisabled={sendingOtp || countdown > 0}
                 onClick={() => void handleSendOtp('reset')}
-              >
-                {sendingOtp ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                {countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
-              </Button>
+                icon={<Loader2 />}
+                label="{countdown > 0 ? `$ s 后重发` : '获取验证码'}"
+              />
             </div>
           </div>
           <div className="grid gap-2">
@@ -639,11 +634,10 @@ export function LoginForm({
           <Button
             type="submit"
             className="h-10 w-full rounded-full bg-foreground text-background hover:bg-foreground/85"
-            disabled={loading}
-          >
-            {loading ? <Loader2 className="size-4 animate-spin" /> : null}
-            {loading ? '正在重置密码…' : '重置密码并登录'}
-          </Button>
+            isDisabled={loading}
+            icon={<Loader2 />}
+            label="操作"
+          />
         </form>
       ) : qrAvailable ? (
         <Tabs
@@ -688,10 +682,9 @@ export function LoginForm({
                     variant="ghost"
                     onClick={() => void createQr()}
                     className="absolute inset-0 h-auto flex-col gap-2 rounded-none bg-background/90 text-xs backdrop-blur-xs hover:bg-background/95"
-                  >
-                    <RefreshCw className="size-5 text-primary" />
-                    <span>二维码已过期，点击刷新</span>
-                  </Button>
+                    icon={<RefreshCw />}
+                    label="二维码已过期，点击刷新"
+                  />
                 ) : qrStatus === 'confirmed' ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/95 text-xs font-medium text-success">
                     <CheckCircle2 className="size-6" />
@@ -709,19 +702,16 @@ export function LoginForm({
                 </p>
                 <Button
                   type="button"
-                  variant="link"
-                  size="xs"
+                  variant="ghost"
+                  size="sm"
                   className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
                   onClick={() => {
                     const next = qrPreferMode === 'wxacode' ? 'qrcode' : 'wxacode'
                     setQrPreferMode(next)
                     void createQr(next)
                   }}
-                >
-                  {qrPreferMode === 'wxacode'
-                    ? '扫码后只进小程序没弹窗？切换为「小程序内扫码」'
-                    : '切换回「微信扫一扫小程序码」'}
-                </Button>
+                  label="操作"
+                />
               </div>
             </div>
           </TabsContent>
@@ -737,22 +727,21 @@ export function LoginForm({
             {authMode === 'reset' ? '想起密码了？ ' : '已有账号？ '}
             <Button
               type="button"
-              variant="link"
+              variant="ghost"
               className="h-auto p-0 text-sm font-medium text-foreground"
               onClick={() => {
                 setAuthMode('login')
                 setError('')
               }}
-            >
-              直接登录
-            </Button>
+              label="直接登录"
+            />
           </p>
         ) : (
           <p>
             还没有账号？{' '}
             <Button
               type="button"
-              variant="link"
+              variant="ghost"
               className="h-auto p-0 text-sm font-medium text-foreground"
               onClick={() => {
                 setAuthMode('register')
@@ -762,9 +751,8 @@ export function LoginForm({
                 }
                 setError('')
               }}
-            >
-              免费注册账号
-            </Button>
+              label="免费注册账号"
+            />
           </p>
         )}
       </div>

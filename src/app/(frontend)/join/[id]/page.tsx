@@ -3,7 +3,7 @@ import { AlertTriangle, Eye, PencilLine, Users } from 'lucide-react'
 
 import { BrandLockup } from '@/components/brand/brand-mark'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { appAuth } from '@/lib/app-auth'
 import { APP_NAME, pageTitle } from '@/lib/brand'
@@ -61,9 +61,7 @@ export default async function JoinProjectPage({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/projects">返回工作台</Link>
-            </Button>
+            <Button variant="secondary" size="sm" href="/projects" label="返回工作台" />
           </CardContent>
         </Card>
       </main>

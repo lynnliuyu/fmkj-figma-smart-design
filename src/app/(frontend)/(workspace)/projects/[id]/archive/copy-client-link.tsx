@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Check, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 
 export function CopyClientLinkButton({ token }: { token: string }) {
   const [copied, setCopied] = useState(false)
@@ -27,13 +27,13 @@ export function CopyClientLinkButton({ token }: { token: string }) {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="secondary"
       size="sm"
       onClick={() => void handleCopy()}
-      title="业主可在链接里对比方案、勾选暂缓设备并签名确认意向"
-    >
-      {copied ? <Check className="size-4 text-success" /> : <Share2 className="size-4" />}
-      {copied ? '已复制业主预览链接' : '复制业主预览链接'}
-    </Button>
+      tooltip="业主可在链接里对比方案、勾选暂缓设备并签名确认意向"
+      icon={<Check />}
+      endContent={<Share2 />}
+      label="业主可在链接里对比方案、勾选暂缓设备并签名确认意向"
+    />
   )
 }

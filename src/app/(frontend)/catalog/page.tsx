@@ -7,7 +7,7 @@ import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { PointMarker } from '@/components/point-marker'
 import { ProductThumb } from '@/components/product-thumb'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { pageTitle } from '@/lib/brand'
 import { getCatalog } from '@/lib/cached-data'
 import { categoryOfType, DEVICE_GROUPS } from '@/lib/device-types'
@@ -56,25 +56,19 @@ export default async function PublicCatalogPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button
-              asChild
               size="lg"
               className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-            >
-              <Link href="/projects">
-                用这些设备画点位出报价
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
+              href="/projects"
+              icon={<ArrowRight />}
+              label="用这些设备画点位出报价"
+            />
             <Button
-              asChild
               size="lg"
-              variant="outline"
+              variant="secondary"
               className="h-11 rounded-full px-6 text-base"
-            >
-              <Link href="#products">
-                {active.length > 0 ? `浏览在售产品 (${active.length})` : '查看点位图例'}
-              </Link>
-            </Button>
+              href="#products"
+              label="{active.length > 0 ? `浏览在售产品 ($ )` : '查看点位图例'}"
+            />
           </div>
         </div>
 

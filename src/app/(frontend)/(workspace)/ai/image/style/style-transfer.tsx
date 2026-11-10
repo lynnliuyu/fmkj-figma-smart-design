@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Download, ImagePlus, Loader2, Palette, Upload } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { STYLE_TRANSFER_HANDOFF_KEY, type StyleTransferHandoff } from '@/lib/style-templates'
 import { cn } from '@/lib/utils'
 
@@ -238,12 +238,11 @@ export function StyleTransfer({
         <Button
           type="button"
           onClick={() => void generate()}
-          disabled={!configured || busy || !source || !styleId}
+          isDisabled={!configured || busy || !source || !styleId}
           className="h-11 w-full gap-2"
-        >
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <Palette className="size-4" />}
-          {busy ? `风格化生成中… ${elapsed}s` : `生成风格化户型图 · ${cost} 积分`}
-        </Button>
+          icon={<Loader2 />}
+          label="{busy ? `风格化生成中… $ s` : `生成风格化户型图 · $ 积分`}"
+        />
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           会保留原图墙体做 mask；通常 30–90 秒，成功后扣积分。
         </p>
@@ -273,15 +272,20 @@ export function StyleTransfer({
               </span>
             </div>
             <div className="flex gap-2">
-              <Button asChild size="sm" variant="outline" className="gap-1.5">
-                <a href={result.url} download>
-                  <Download className="size-3.5" />
-                  下载原图
-                </a>
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => setResult(null)}>
-                再生成一张
-              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-1.5"
+                href={result.url}
+                icon={<Download />}
+                label="下载原图"
+              />
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setResult(null)}
+                label="再生成一张"
+              />
             </div>
           </div>
         ) : (

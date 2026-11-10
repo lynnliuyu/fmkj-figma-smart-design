@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowRight, Coins, Gift, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import {
   Dialog,
   DialogContent,
@@ -96,23 +96,24 @@ export function MembershipDialog({
             disabled={pending}
             className="font-mono tracking-wider uppercase"
           />
-          <Button type="submit" disabled={pending} className="shrink-0">
-            {pending ? <Loader2 className="size-4 animate-spin" /> : <Gift className="size-4" />}
-            立即兑换
-          </Button>
+          <Button
+            type="submit"
+            isDisabled={pending}
+            className="shrink-0"
+            icon={<Loader2 />}
+            label="立即兑换"
+          />
         </form>
 
         <Button
-          asChild
           variant="ghost"
           size="sm"
           className="justify-start text-xs text-muted-foreground hover:text-foreground"
-        >
-          <Link href="/membership" onClick={() => onOpenChange(false)}>
-            查看积分任务与明细
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </Button>
+          href="/membership"
+          as={Link}
+          icon={<ArrowRight />}
+          label="onOpenChange(false)}> 查看积分任务与明细"
+        />
       </DialogContent>
     </Dialog>
   )

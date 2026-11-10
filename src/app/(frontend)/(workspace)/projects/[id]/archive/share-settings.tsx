@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { CalendarClock, KeyRound, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { ShareConfig } from '@/lib/project-access'
@@ -123,14 +123,14 @@ export function ShareSettings({ projectId, config }: { projectId: string; config
         </div>
 
         <div className="flex items-center gap-3">
-          <Button type="button" size="sm" disabled={saving} onClick={save}>
-            {saving ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : (
-              <CalendarClock className="size-3.5" />
-            )}
-            保存设置
-          </Button>
+          <Button
+            type="button"
+            size="sm"
+            isDisabled={saving}
+            onClick={save}
+            icon={<Loader2 />}
+            label="保存设置"
+          />
           <span className="text-xs text-muted-foreground">
             只影响业主预览链接，不改变你和协作成员的访问权限。
           </span>

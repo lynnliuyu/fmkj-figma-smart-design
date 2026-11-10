@@ -5,7 +5,8 @@ import { useTheme } from 'next-themes'
 
 import { useAstryxTheme } from '@/components/astryx-theme-provider'
 import { useAccent } from '@/components/theme-provider'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -80,14 +81,15 @@ export function AppearanceMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
+        <IconButton
           variant="ghost"
-          size="icon-sm"
+
           aria-label="外观：颜色模式、主题风格与组件主题"
           className="text-muted-foreground hover:text-foreground"
-        >
-          <Palette className="size-4" />
-        </Button>
+          label="外观：颜色模式、主题风格与组件主题"
+          icon={<Palette />}
+          size="sm"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <AppearanceMenuItems />

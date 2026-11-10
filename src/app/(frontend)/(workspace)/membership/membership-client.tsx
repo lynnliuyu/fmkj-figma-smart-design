@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
@@ -106,12 +106,14 @@ export function MembershipClient({
         title="会员与积分"
         description="平台所有功能统一按 AI 积分扣除，不再区分会员等级。可用兑换码充值积分，完成绑定与成长任务也可领取积分。"
         actions={
-          <Button asChild variant="outline" size="sm">
-            <Link href="/docs#ai-billing">
-              <BookOpen className="size-3.5" />
-              使用文档与计费规则
-            </Link>
-          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            href="/docs#ai-billing"
+            as={Link}
+            icon={<BookOpen />}
+            label="使用文档与计费规则"
+          />
         }
       />
 
@@ -149,10 +151,13 @@ export function MembershipClient({
               disabled={pending}
               className="font-mono tracking-wider uppercase"
             />
-            <Button type="submit" disabled={pending} className="shrink-0">
-              {pending ? <Loader2 className="size-4 animate-spin" /> : <Gift className="size-4" />}
-              兑换
-            </Button>
+            <Button
+              type="submit"
+              isDisabled={pending}
+              className="shrink-0"
+              icon={<Loader2 />}
+              label="兑换"
+            />
           </form>
         </CardContent>
       </Card>
@@ -210,22 +215,29 @@ export function MembershipClient({
                       <Button
                         size="sm"
                         className="h-8 text-xs"
-                        disabled={isBusy}
+                        isDisabled={isBusy}
                         onClick={() => handleClaimTask(task.id)}
-                      >
-                        {isBusy ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                        {task.id === 'follow_official_account'
-                          ? '已关注 · 领 5 分'
-                          : `领取 +${task.credits}`}
-                      </Button>
+                        icon={<Loader2 />}
+                        label="{task.id === 'follow_official_account' ? '已关注 · 领 5 分' : `领取 +$ `}"
+                      />
                     ) : task.id === 'complete_company_profile' ? (
-                      <Button asChild variant="outline" size="sm" className="h-8 text-xs">
-                        <Link href="/settings">去设置</Link>
-                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="h-8 text-xs"
+                        href="/settings"
+                        as={Link}
+                        label="去设置"
+                      />
                     ) : task.id === 'first_quote' ? (
-                      <Button asChild variant="outline" size="sm" className="h-8 text-xs">
-                        <Link href="/projects">去生成</Link>
-                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="h-8 text-xs"
+                        href="/projects"
+                        as={Link}
+                        label="去生成"
+                      />
                     ) : (
                       <Badge variant="outline" className="text-muted-foreground">
                         待绑定

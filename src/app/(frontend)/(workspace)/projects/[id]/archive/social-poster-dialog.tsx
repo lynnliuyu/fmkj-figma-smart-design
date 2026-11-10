@@ -17,7 +17,8 @@ import { toast } from 'sonner'
 import { ScaledFrame } from '@/components/scaled-frame'
 import { SocialPoster, type SocialPosterTheme } from '@/components/social-poster'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   Dialog,
   DialogContent,
@@ -160,10 +161,7 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Share2 className="size-4" />
-          生成小红书 / 朋友圈图组
-        </Button>
+        <Button variant="secondary" size="sm" icon={<Share2 />} label="生成小红书 / 朋友圈图组" />
       </DialogTrigger>
       <DialogContent className="max-h-[92vh] w-[calc(100vw-1.5rem)] max-w-5xl gap-5 overflow-y-auto p-4 sm:p-5 sm:max-w-5xl">
         <DialogHeader>
@@ -188,27 +186,29 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
               </ScaledFrame>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <Button
-                variant="outline"
-                size="icon-sm"
+              <IconButton
+                variant="secondary"
+
                 aria-label="上一张"
-                disabled={busy || active === 0}
+                isDisabled={busy || active === 0}
                 onClick={() => setCurrent(active - 1)}
-              >
-                <ChevronLeft />
-              </Button>
+                label="上一张"
+                icon={<ChevronLeft />}
+                size="sm"
+              />
               <span className="text-xs tabular-nums" aria-live="polite">
                 {active + 1} / {pages.length} · {pages[active].label}
               </span>
-              <Button
-                variant="outline"
-                size="icon-sm"
+              <IconButton
+                variant="secondary"
+
                 aria-label="下一张"
-                disabled={busy || active === pages.length - 1}
+                isDisabled={busy || active === pages.length - 1}
                 onClick={() => setCurrent(active + 1)}
-              >
-                <ChevronRight />
-              </Button>
+                label="下一张"
+                icon={<ChevronRight />}
+                size="sm"
+              />
             </div>
             <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4" aria-label="图组内容">
               {pages.map((page, i) => (
@@ -216,15 +216,13 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
                   key={page.key}
                   type="button"
                   variant={i === active ? 'secondary' : 'ghost'}
-                  size="xs"
-                  disabled={busy}
+                  size="sm"
+                  isDisabled={busy}
                   aria-pressed={i === active}
                   onClick={() => setCurrent(i)}
                   className="h-auto min-w-0 justify-start whitespace-normal py-1.5 text-left leading-snug"
-                >
-                  <span className="shrink-0 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="truncate">{page.label}</span>
-                </Button>
+                  label="操作"
+                />
               ))}
             </div>
           </div>
@@ -238,20 +236,18 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
               <div className="flex flex-wrap gap-2">
                 <Button
                   size="sm"
-                  variant={theme === 'qixu' ? 'default' : 'outline'}
-                  disabled={busy}
+                  variant={theme === 'qixu' ? 'primary' : 'secondary'}
+                  isDisabled={busy}
                   onClick={() => setTheme('qixu')}
-                >
-                  栖序雅致
-                </Button>
+                  label="栖序雅致"
+                />
                 <Button
                   size="sm"
-                  variant={theme === 'noir' ? 'default' : 'outline'}
-                  disabled={busy}
+                  variant={theme === 'noir' ? 'primary' : 'secondary'}
+                  isDisabled={busy}
                   onClick={() => setTheme('noir')}
-                >
-                  墨金臻选
-                </Button>
+                  label="墨金臻选"
+                />
               </div>
             </div>
             <div className="space-y-3 rounded-xl border bg-muted/20 p-3 text-xs">
@@ -273,22 +269,33 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-muted-foreground">配套分享文案</p>
-                <Button variant="ghost" size="xs" onClick={() => void copyCaption()}>
-                  {copiedText ? <Check /> : <Copy />}
-                  {copiedText ? '已复制' : '复制文案'}
-                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => void copyCaption()}
+                  icon={<Check />}
+                  endContent={<Copy />}
+                  label="操作"
+                />
               </div>
               <pre className="whitespace-pre-wrap break-words rounded-xl border bg-muted/20 p-3 font-sans text-xs leading-relaxed">
                 {socialCaption}
               </pre>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
-              <Button disabled={busy} onClick={() => void downloadCurrent()}>
-                {busy ? <Loader2 className="animate-spin" /> : <ImageDown />}保存当前图片
-              </Button>
-              <Button variant="secondary" disabled={busy} onClick={() => void downloadGroup()}>
-                {busy ? <Loader2 className="animate-spin" /> : <FileArchive />}下载整组 ZIP
-              </Button>
+              <Button
+                isDisabled={busy}
+                onClick={() => void downloadCurrent()}
+                icon={<Loader2 />}
+                label="保存当前图片"
+              />
+              <Button
+                variant="secondary"
+                isDisabled={busy}
+                onClick={() => void downloadGroup()}
+                icon={<Loader2 />}
+                label="下载整组 ZIP"
+              />
             </div>
             {busy ? (
               <p className="text-xs text-muted-foreground" role="status">

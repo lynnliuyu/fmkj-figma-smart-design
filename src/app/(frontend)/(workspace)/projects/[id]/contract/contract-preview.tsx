@@ -15,7 +15,8 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -229,13 +230,12 @@ export function ContractSectionEdit({
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     className="-my-1 text-muted-foreground"
                     onClick={() => set({ amount: selectedQuote.total })}
-                  >
-                    <RotateCcw className="size-3" />
-                    按报价金额 {yuan(selectedQuote.total)}
-                  </Button>
+                    icon={<RotateCcw />}
+                    label="按报价金额"
+                  />
                 ) : null}
               </div>
               <div className="relative">
@@ -332,18 +332,19 @@ export function ContractSectionEdit({
                     已收
                   </label>
                   {receiptOnly ? null : (
-                    <Button
+                    <IconButton
                       type="button"
                       variant="ghost"
-                      size="icon-sm"
+
                       className="shrink-0 text-muted-foreground"
                       aria-label={`删除第 ${i + 1} 期`}
                       onClick={() =>
                         set({ payments: draft.payments.filter((x) => x.key !== p.key) })
                       }
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
+                      label="操作"
+                      icon={<Trash2 />}
+                      size="sm"
+                    />
                   )}
                 </li>
               ))}
@@ -372,10 +373,9 @@ export function ContractSectionEdit({
                     ],
                   })
                 }
-              >
-                <Plus className="size-4" />
-                添加一期
-              </Button>
+                icon={<Plus />}
+                label="添加一期"
+              />
             )}
           </div>
         )
@@ -388,13 +388,12 @@ export function ContractSectionEdit({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   className="-my-1 text-muted-foreground"
                   onClick={() => set({ terms: DEFAULT_CONTRACT_TERMS })}
-                >
-                  <RotateCcw className="size-3" />
-                  恢复默认条款
-                </Button>
+                  icon={<RotateCcw />}
+                  label="恢复默认条款"
+                />
               )}
             </div>
             <Textarea
@@ -414,19 +413,17 @@ export function ContractSectionEdit({
     <>
       <Button
         type="button"
-        size="xs"
-        variant="outline"
+        size="sm"
+        variant="secondary"
         // 按钮放在白色的合同纸上：用文档自己的纸色和墨色，深色主题下也保持清晰（不跟随应用的深色按钮）
         className="border-doc-rule bg-doc-paper text-doc-ink shadow-sm hover:bg-[color-mix(in_oklch,var(--doc-accent)_8%,var(--doc-paper))] hover:text-doc-accent aria-expanded:bg-doc-paper dark:bg-doc-paper dark:hover:bg-[color-mix(in_oklch,var(--doc-accent)_8%,var(--doc-paper))]"
         onClick={() => {
           setDraft(toDraft(values))
           setOpen(true)
         }}
-      >
-        <Pencil className="size-3" />
-        {receiptOnly ? '登记收款' : '编辑'}
-        <span className="sr-only">{meta.title}</span>
-      </Button>
+        icon={<Pencil />}
+        label="操作"
+      />
       <Dialog open={open} onOpenChange={(o) => !pending && setOpen(o)}>
         <DialogContent
           className={section === 'payments' || section === 'terms' ? 'sm:max-w-xl' : 'sm:max-w-md'}
@@ -448,15 +445,12 @@ export function ContractSectionEdit({
             <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
-                disabled={pending}
+                variant="secondary"
+                isDisabled={pending}
                 onClick={() => setOpen(false)}
-              >
-                取消
-              </Button>
-              <Button type="submit" disabled={pending}>
-                {pending ? <Loader2 className="size-4 animate-spin" /> : null}保存
-              </Button>
+                label="取消"
+              />
+              <Button type="submit" isDisabled={pending} icon={<Loader2 />} label="保存" />
             </DialogFooter>
           </form>
         </DialogContent>
@@ -514,34 +508,32 @@ export function ContractActions({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button asChild variant="outline" size="sm">
-        <a href={printHref} target="_blank" rel="noopener">
-          <Printer className="size-4" />
-          打印 / 导出 PDF
-        </a>
-      </Button>
+      <Button
+        variant="secondary"
+        size="sm"
+        href={printHref}
+        icon={<Printer />}
+        label="打印 / 导出 PDF"
+      />
       {readOnly ? null : signed ? (
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
-          disabled={busy !== null}
+          isDisabled={busy !== null}
           onClick={() => void changeStatus('draft')}
-        >
-          {busy === 'unsign' ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Undo2 className="size-4" />
-          )}
-          撤销签订
-        </Button>
+          icon={<Loader2 />}
+          label="撤销签订"
+        />
       ) : (
         <>
           <Popover open={signOpen} onOpenChange={setSignOpen}>
             <PopoverTrigger asChild>
-              <Button size="sm" disabled={busy !== null}>
-                <FileSignature className="size-4" />
-                标记为已签订
-              </Button>
+              <Button
+                size="sm"
+                isDisabled={busy !== null}
+                icon={<FileSignature />}
+                label="标记为已签订"
+              />
             </PopoverTrigger>
             <PopoverContent align="end" className="w-72">
               <form
@@ -567,22 +559,27 @@ export function ContractActions({
                     onChange={(e) => setSignDate(e.target.value)}
                   />
                 </div>
-                <Button type="submit" size="sm" disabled={busy !== null || !signDate}>
-                  {busy === 'sign' ? <Loader2 className="size-4 animate-spin" /> : null}确认签订
-                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  isDisabled={busy !== null || !signDate}
+                  icon={<Loader2 />}
+                  label="确认签订"
+                />
               </form>
             </PopoverContent>
           </Popover>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
+              <IconButton
                 variant="ghost"
-                size="icon-sm"
+
                 aria-label="更多合同操作"
-                disabled={busy !== null}
-              >
-                <MoreHorizontal className="size-4" />
-              </Button>
+                isDisabled={busy !== null}
+                label="更多合同操作"
+                icon={<MoreHorizontal />}
+                size="sm"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem variant="destructive" onSelect={() => setConfirmDelete(true)}>
@@ -604,24 +601,18 @@ export function ContractActions({
               </DialogHeader>
               <DialogFooter>
                 <Button
-                  variant="outline"
-                  disabled={busy === 'delete'}
+                  variant="secondary"
+                  isDisabled={busy === 'delete'}
                   onClick={() => setConfirmDelete(false)}
-                >
-                  取消
-                </Button>
+                  label="取消"
+                />
                 <Button
                   variant="destructive"
-                  disabled={busy === 'delete'}
+                  isDisabled={busy === 'delete'}
                   onClick={() => void remove()}
-                >
-                  {busy === 'delete' ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="size-4" />
-                  )}
-                  删除合同
-                </Button>
+                  icon={<Loader2 />}
+                  label="删除合同"
+                />
               </DialogFooter>
             </DialogContent>
           </Dialog>

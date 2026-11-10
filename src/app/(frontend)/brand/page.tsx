@@ -5,7 +5,7 @@ import { Check, Download, X } from 'lucide-react'
 
 import { BrandLogo, LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { SectionHeading } from '@/components/landing/section-heading'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { APP_NAME, COMPANY_NAME } from '@/lib/brand'
 import { cn } from '@/lib/utils'
 
@@ -202,14 +202,7 @@ const DONTS = [
 ]
 
 function DownloadButton({ href, label }: { href: string; label: string }) {
-  return (
-    <Button asChild size="xs" variant="outline">
-      <Link href={href} download>
-        <Download />
-        {label}
-      </Link>
-    </Button>
-  )
+  return <Button size="sm" variant="secondary" href={href} icon={<Download />} label="操作" />
 }
 
 function Surface({
@@ -272,26 +265,20 @@ export default function BrandPage() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button
-                asChild
                 size="lg"
                 className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-              >
-                <Link href={`${B}/fmkj-logo.svg`} download>
-                  <Download data-icon="inline-start" />
-                  下载横版标识
-                </Link>
-              </Button>
+                href={`${B}/fmkj-logo.svg`}
+                icon={<Download />}
+                label="下载横版标识"
+              />
               <Button
-                asChild
                 size="lg"
-                variant="outline"
+                variant="secondary"
                 className="h-11 rounded-full px-6 text-base"
-              >
-                <Link href={`${B}/fmkj-app-icon-1024.png`} download>
-                  <Download data-icon="inline-start" />
-                  下载应用图标
-                </Link>
-              </Button>
+                href={`${B}/fmkj-app-icon-1024.png`}
+                icon={<Download />}
+                label="下载应用图标"
+              />
             </div>
           </div>
         </section>

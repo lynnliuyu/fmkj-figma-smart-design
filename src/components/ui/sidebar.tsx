@@ -6,7 +6,8 @@ import { Slot } from 'radix-ui'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -275,25 +276,33 @@ function Sidebar({
   )
 }
 
-function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
+// label / icon 由本组件内的默认值提供，从调用方 props 里摘掉，
+// 这样调用点写 <SidebarTrigger className=… /> 就不会撞 IconButton 的必填字段。
+function SidebarTrigger({
+  className,
+  onClick,
+  ...props
+}: Omit<React.ComponentProps<typeof IconButton>, 'label' | 'icon'> & {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+}) {
   const { toggleSidebar } = useSidebar()
 
   return (
-    <Button
+    <IconButton
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      size="icon-sm"
+
       className={cn(className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
-    >
-      <PanelLeftIcon className="cn-rtl-flip" />
-      <span className="sr-only">切换侧边栏</span>
-    </Button>
+      label="切换侧边栏"
+      icon={<PanelLeftIcon />}
+      size="sm"
+    />
   )
 }
 

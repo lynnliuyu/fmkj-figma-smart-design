@@ -7,7 +7,7 @@ import { CopyPlus, Loader2, MessageSquareQuote } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { feedbackDecisionLabel, type DeferredItem } from '@/lib/client-feedback'
 import { yuan } from '@/lib/quotes'
 
@@ -141,27 +141,21 @@ export function ClientFeedbackList({
                   {canCreateQuote && f.quoteId && f.deferred.length ? (
                     <Button
                       size="sm"
-                      variant="outline"
-                      disabled={busy === `q:${f.id}`}
+                      variant="secondary"
+                      isDisabled={busy === `q:${f.id}`}
                       onClick={() => adjust(f)}
-                    >
-                      {busy === `q:${f.id}` ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <CopyPlus className="size-4" />
-                      )}
-                      按意向生成调整版
-                    </Button>
+                      icon={<Loader2 />}
+                      label="{busy === `q:$ ` ? ( ) : ( )} 按意向生成调整版"
+                    />
                   ) : null}
                   <Button
                     size="sm"
-                    variant={f.status === 'new' ? 'default' : 'ghost'}
-                    disabled={busy === f.id}
+                    variant={f.status === 'new' ? 'primary' : 'ghost'}
+                    isDisabled={busy === f.id}
                     onClick={() => toggle(f)}
-                  >
-                    {busy === f.id ? <Loader2 className="size-4 animate-spin" /> : null}
-                    {f.status === 'new' ? '标记已处理' : '设为待处理'}
-                  </Button>
+                    icon={<Loader2 />}
+                    label="操作"
+                  />
                 </div>
               )}
             </div>

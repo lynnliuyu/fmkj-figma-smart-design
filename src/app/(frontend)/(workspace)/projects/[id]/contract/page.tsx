@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { FileSignature, Lock, ReceiptText } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { ContractDocument } from '@/documents/contract-document'
 import { resolveDocSetup } from '@/documents/registry'
 import { relId } from '@/lib/access'
@@ -58,12 +58,13 @@ export default async function ProjectContractPage({ params }: { params: Promise<
             title="先生成一份报价"
             description="合同按报价生成，金额和设备清单都来自报价。"
             action={
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/projects/${pid}/quotes`}>
-                  <ReceiptText className="size-4" />
-                  去报价
-                </Link>
-              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                href={`/projects/${pid}/quotes`}
+                icon={<ReceiptText />}
+                label="去报价"
+              />
             }
           />
         )}

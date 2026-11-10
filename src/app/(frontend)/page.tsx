@@ -11,7 +11,7 @@ import { PlanDemo } from '@/components/landing/plan-demo'
 import { ProposalShowcase } from '@/components/landing/proposal-showcase'
 import { QuoteShowcase } from '@/components/landing/quote-showcase'
 import { Section } from '@/components/landing/section'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { MINIMAL_STYLE } from '@/documents/minimal'
 import { DOC_KINDS } from '@/documents/registry'
 import { APP_NAME, COMPANY_NAME } from '@/lib/brand'
@@ -116,24 +116,20 @@ export default async function HomePage() {
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Button
-                asChild
                 size="lg"
                 className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-              >
-                <Link href="/projects">
-                  进入工作台
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
+                href="/projects"
+                icon={<ArrowRight />}
+                label="进入工作台"
+              />
               {data?.quote ? (
                 <Button
-                  asChild
                   size="lg"
-                  variant="outline"
+                  variant="secondary"
                   className="h-11 rounded-full px-6 text-base"
-                >
-                  <Link href="#proposal">看方案与报价样张</Link>
-                </Button>
+                  href="#proposal"
+                  label="看方案与报价样张"
+                />
               ) : null}
             </div>
           </div>
@@ -189,26 +185,20 @@ export default async function HomePage() {
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Button
-                  asChild
                   size="lg"
                   className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
-                >
-                  <Link href="/projects">
-                    进入工作台
-                    <ArrowRight data-icon="inline-end" />
-                  </Link>
-                </Button>
+                  href="/projects"
+                  icon={<ArrowRight />}
+                  label="进入工作台"
+                />
                 <Button
-                  asChild
                   size="lg"
-                  variant="outline"
+                  variant="secondary"
                   className="h-11 rounded-full px-6 text-base"
-                >
-                  <Link href="/login?mode=register">
-                    <Gift className="size-4" />
-                    免费注册领 20 积分
-                  </Link>
-                </Button>
+                  href="/login?mode=register"
+                  icon={<Gift />}
+                  label="免费注册领 20 积分"
+                />
               </div>
             </div>
 

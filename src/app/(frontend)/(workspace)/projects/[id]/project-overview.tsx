@@ -6,7 +6,7 @@ import { Check, ChevronRight, Pencil } from 'lucide-react'
 
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { yuan } from '@/lib/quotes'
 import { cn } from '@/lib/utils'
 
@@ -106,10 +106,14 @@ export function ProjectOverview({
           </p>
         </div>
         {readOnly ? null : (
-          <Button ref={editButton} variant="outline" size="sm" onClick={() => setEditing(true)}>
-            <Pencil className="size-4" />
-            编辑信息
-          </Button>
+          <Button
+            ref={editButton}
+            variant="secondary"
+            size="sm"
+            onClick={() => setEditing(true)}
+            icon={<Pencil />}
+            label="编辑信息"
+          />
         )}
       </header>
 

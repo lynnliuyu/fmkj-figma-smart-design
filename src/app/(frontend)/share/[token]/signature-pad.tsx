@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Eraser } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { cn } from '@/lib/utils'
 
 /** 手写签名板：鼠标、触控笔与手指都可以签；每次落笔结束后把签名导出为 PNG data URL（空白时为 null） */
@@ -110,14 +110,13 @@ export function SignaturePad({
       <Button
         type="button"
         variant="ghost"
-        size="xs"
+        size="sm"
         className="absolute top-1.5 right-1.5"
         onClick={clear}
-        disabled={empty}
-      >
-        <Eraser />
-        重签
-      </Button>
+        isDisabled={empty}
+        icon={<Eraser />}
+        label="重签"
+      />
     </div>
   )
 }

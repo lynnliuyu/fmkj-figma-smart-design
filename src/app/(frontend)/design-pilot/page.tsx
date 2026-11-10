@@ -6,7 +6,7 @@ import { Stack as AstryxStack } from '@astryxdesign/core/Stack'
 import { Text as AstryxText } from '@astryxdesign/core/Text'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 /**
@@ -51,11 +51,11 @@ export default function DesignPilotPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button>主要操作</Button>
-            <Button variant="secondary">次要操作</Button>
-            <Button variant="outline">描边</Button>
-            <Button variant="ghost">幽灵</Button>
-            <Button variant="destructive">删除</Button>
+            <Button label="主要操作" />
+            <Button variant="secondary" label="次要操作" />
+            <Button variant="secondary" label="描边" />
+            <Button variant="ghost" label="幽灵" />
+            <Button variant="destructive" label="删除" />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
