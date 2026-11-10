@@ -70,7 +70,14 @@ jobs:
   # 这个 job 起真实 PostgreSQL + 真服务 + 真浏览器，断言用户能感知的东西。
   smoke:
     runs-on: ubuntu-latest
-    needs: verify
+    # ⚠️ 刻意**不加** `needs: verify`。
+    #
+    # smoke 用的是自己的 postgres service、自己装依赖、自己跑迁移与种子数据，
+    # **不消费 verify 的任何产物**。原来的 `needs: verify` 只带来一个后果：
+    # 前面 5 分钟跑完才开始后面 5 分钟 —— 白等一半时间（实测每轮 PR 8~15 分钟）。
+    #
+    # 并行后：两边同时跑，总时长≈较慢的那个。失败时两个 job 的日志各自独立，
+    # 反而更容易定位「是代码问题还是页面问题」。
     timeout-minutes: 20
 
     services:
