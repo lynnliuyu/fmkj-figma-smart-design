@@ -15,6 +15,15 @@ BACKUPS=/opt/fmkj/backups
 CADDY=/opt/fanmeng-gateway/releases/aad2e52/deploy/remote/caddy/gateway.Caddyfile
 CADDY_CONTAINER=fanmeng-gateway-edge-caddy-1
 STAMP=$(date +%Y%m%d-%H%M)
+# ⚠️ 每次部署用**独立的 compose project 名**，容器名才不会撞车。
+#
+# 2026-11-10 踩过：project 名固定为 `fmkj-shadow` → 容器名永远是 `fmkj-shadow-app-1`，
+# 于是第二次部署时 `up -d` **重建的正是线上正在跑的那个容器** ——
+# 新容器还没验证，旧容器就已经没了，线上出现一段「无人监听」的窗口（实测 502）。
+# 用 STAMP 做后缀后，每次部署是全新的一组容器，旧容器不受影响；
+# 切完流量再显式清掉旧 project。
+PROJECT="fmkj-shadow-$STAMP"
+APP_CONTAINER="$PROJECT-app-1"
 
 # ── 端口自动探测 ──────────────────────────────────────
 # 不要硬编码 13000/13001：每次发布端口都会变（13000 → 13001 → 13002 …）。
@@ -29,16 +38,29 @@ die() { printf '\n\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 # ── 回滚 ──────────────────────────────────────────────
 if [[ "${1:-}" == "--rollback" ]]; then
   ROLLBACK_TO=${2:-13000}
-  log "回滚：把 Caddy 指回 127.0.0.1:$ROLLBACK_TO（旧容器 fmkj-app-1）"
+  log "回滚：把 Caddy 指回 127.0.0.1:$ROLLBACK_TO"
+
+  # 先确认目标端口**真的有人监听** —— 「容器存在」不等于「服务在跑」。
+  # （2026-11-09 踩过：以为 13000 是好的，其实那个端口早就没服务了。）
+  if ! curl -s -o /dev/null --max-time 5 "http://127.0.0.1:$ROLLBACK_TO/login"; then
+    die "127.0.0.1:$ROLLBACK_TO 上没有服务在监听，回滚目标无效。请用 --rollback <其他端口>"
+  fi
+
   # Caddy 的 Caddyfile 是**只读 bind mount**，容器内改不了；必须改宿主机再重启容器。
   # reload 不够 —— bind mount 的 inode 在宿主机文件被替换后就和容器脱钩了。
-  sudo sed "s|reverse_proxy 127\.0\.0\.1:$CUR_PORT|reverse_proxy 127.0.0.1:$ROLLBACK_TO|" "$CADDY" > /tmp/caddy.rb
-  sudo cat /tmp/caddy.rb > "$CADDY"
-  sudo docker start fmkj-app-1 2>/dev/null || true
-  sudo docker restart "$CADDY_CONTAINER"
+  sudo cp "$CADDY" "$CADDY.bak-rb-$STAMP"
+  sudo sed "s|reverse_proxy 127\.0\.0\.1:$CUR_PORT|reverse_proxy 127.0.0.1:$ROLLBACK_TO|" "$CADDY" | sudo tee /tmp/caddy.rb > /dev/null
+  sudo cat /tmp/caddy.rb | sudo tee "$CADDY" > /dev/null
+
+  if ! sudo docker exec "$CADDY_CONTAINER" caddy validate --config /etc/caddy/Caddyfile >/dev/null 2>&1; then
+    sudo cat "$CADDY.bak-rb-$STAMP" | sudo tee "$CADDY" > /dev/null
+    die "Caddy 配置校验失败，已还原"
+  fi
+  sudo docker restart "$CADDY_CONTAINER" >/dev/null
   sleep 6
+
   log "已回滚。验证："
-  curl -s -o /dev/null -w '  https://fmkj.top → %{http_code}\n' https://fmkj.top/login
+  curl -s -o /dev/null -w '  https://fmkj.top/login → %{http_code}\n' https://fmkj.top/login
   exit 0
 fi
 
@@ -67,7 +89,7 @@ sudo chown "$(id -u):$(id -g)" "$REL/src/.env"
 log "2/7 构建镜像（.env 里的 PUBLIC_URL 会写进前端，必须正确）"
 cd "$REL/src"
 # 必须带 --profile tools：迁移需要 pnpm + payload CLI，runner 镜像里没有它们
-sudo docker compose -p fmkj-shadow --profile tools build 2>&1 | tail -20
+sudo docker compose -p "$PROJECT" --profile tools build 2>&1 | tail -20
 
 # ── 2.5 跑数据库迁移（⚠️ 绝不能跳过）─────────────────
 # 为什么单独一步：新版本常带 schema 变更（如 projects.display_profile）。
@@ -120,15 +142,15 @@ volumes:
     external: true
     name: fmkj_desktop
 YAML
-sudo docker compose -p fmkj-shadow -f docker-compose.yml -f "$REL/override.yml" up -d --no-deps app
+sudo docker compose -p "$PROJECT" -f docker-compose.yml -f "$REL/override.yml" up -d --no-deps app
 
 # ── 3.5 验证容器真的接上了生产资源（不能只看容器起来）────────
 # 这几条是"看得见的证据"：网络不对 → 数据空；卷不对 → 图片 404。
 log "3.5/7 验证容器接线"
-_net=$(sudo docker inspect fmkj-shadow-app-1 --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null)
+_net=$(sudo docker inspect "$APP_CONTAINER" --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null)
 [[ "$_net" == *"$PROD_NET"* ]] || die "影子容器没接生产网络（当前：$_net），中止"
 echo "  ✅ 网络：$_net"
-_img=$(sudo docker exec fmkj-shadow-app-1 sh -c 'ls /data/media 2>/dev/null | wc -l' 2>/dev/null || echo 0)
+_img=$(sudo docker exec "$APP_CONTAINER" sh -c 'ls /data/media 2>/dev/null | wc -l' 2>/dev/null || echo 0)
 if [[ "${_img:-0}" -lt 10 ]]; then
   die "素材卷是空的（只有 ${_img} 个文件）—— 容器挂到了 compose 自建的空卷，图片会全 404"
 fi
@@ -174,6 +196,26 @@ fi
 sudo docker restart "$CADDY_CONTAINER" >/dev/null
 sleep 6
 
+# ── 5.5 清理上一版容器（切完流量、确认新容器在跑之后）────────
+# 用独立 project 名后，旧容器不会在切换前被重建 —— 但也不会自动消失，
+# 留着会一直占端口和一点内存。这里显式清掉「不是当前 project」的那些。
+#
+# 只清 project 名以 fmkj-shadow- 开头、且不是本次 $PROJECT 的容器；
+# 手工创建的 `fmkj-shadow-app`（无 compose 标签）和 `fmkj-db-1` 一律不碰。
+log "5.5/7 清理上一版影子容器"
+for c in $(sudo docker ps -a --format '{{.Names}}' | grep -E '^fmkj-shadow-[0-9]{8}-[0-9]{4}-app-1$' || true); do
+  [[ "$c" == "$APP_CONTAINER" ]] && continue
+  # 只清 5 分钟以前的（避免误清并发的另一次部署）
+  started=$(sudo docker inspect "$c" --format '{{.State.StartedAt}}' 2>/dev/null || true)
+  if [[ -n "$started" ]]; then
+    age=$(( $(date +%s) - $(date -d "$started" +%s 2>/dev/null || echo 0) ))
+    if [[ $age -gt 300 ]]; then
+      sudo docker rm -f "$c" >/dev/null 2>&1 && echo "  已清理：$c"
+    fi
+  fi
+done
+echo "  ✅ 清理完成"
+
 # ── 6. 验证 ───────────────────────────────────────────
 log "6/7 验证线上"
 for p in /login / /projects; do
@@ -181,4 +223,5 @@ for p in /login / /projects; do
     "$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "https://fmkj.top$p")"
 done
 
-log "完成。回滚命令：bash deploy/shadow-release.sh --rollback"
+echo "  本次容器：$APP_CONTAINER（compose project: $PROJECT）"
+log "完成。回滚命令：bash deploy/shadow-release.sh --rollback $CUR_PORT"
