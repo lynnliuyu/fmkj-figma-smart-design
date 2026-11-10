@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- 1440×960 方案画布同源静态图片直接渲染以保持与打印导出完全一致 */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Maximize2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
 
 import { PointMarker } from '@/components/point-marker'
 import { Button } from '@/components/ui/button'
@@ -130,6 +130,8 @@ export function ProposalShowcase({
   const [themeId, setThemeId] = useState<DeckThemeId>('qixu')
   const [frameworkId, setFrameworkId] = useState<'full' | 'story' | 'budget'>('full')
   const [zoomOpen, setZoomOpen] = useState(false)
+  /** 首页预览只显示一页（其余用缩略图条切换）；放大弹窗仍显示全部页 */
+  const [page, setPage] = useState(0)
   const theme = DECK_THEMES[themeId] ?? DECK_THEMES.qixu
   const activeFramework = FRAMEWORKS.find((f) => f.value === frameworkId) ?? FRAMEWORKS[0]!
   const activeChapters = useMemo(
@@ -177,15 +179,21 @@ export function ProposalShowcase({
 
   return (
     <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-      <div className="lg:sticky lg:top-28 lg:col-span-5 lg:self-start xl:col-span-4">
+      <div className="lg:sticky lg:top-28 lg:col-span-4 lg:self-start xl:col-span-4">
         <h2 id="proposal-title" className="text-headline font-medium">
           方案演示
         </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          一套点位，出三种结构的方案；四种视觉主题，对应不同业主的偏好。
+        </p>
 
-        <div className="mt-6 space-y-2">
-          <div className="flex items-baseline justify-between text-xs">
-            <span className="font-medium text-foreground">方案结构</span>
-            <span className="text-muted-foreground">{activeChapters.length} 页</span>
+        {/* 方案结构：改成「分段选择器」——三种结构并排、当前项实心，一眼看出有几个选择 */}
+        <div className="mt-7">
+          <div className="mb-2 flex items-baseline justify-between">
+            <span className="text-xs font-medium text-foreground">方案结构</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {activeChapters.length} 页
+            </span>
           </div>
           <Tabs
             value={frameworkId}
@@ -193,14 +201,14 @@ export function ProposalShowcase({
           >
             <TabsList
               aria-label="方案结构"
-              className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+              className="grid h-auto w-full grid-cols-3 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
             >
               {FRAMEWORKS.map((f) => (
                 <TabsTrigger
                   key={f.value}
                   value={f.value}
                   aria-controls="proposal-slide-preview"
-                  className="h-8 justify-center px-2.5 text-xs font-normal data-[state=active]:font-medium data-[state=active]:shadow-sm"
+                  className="h-8 justify-center rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
                 >
                   {f.label}
                 </TabsTrigger>
@@ -209,96 +217,169 @@ export function ProposalShowcase({
           </Tabs>
         </div>
 
-        <div className="mt-5 space-y-2">
-          <div className="flex items-baseline justify-between text-xs">
-            <span className="font-medium text-foreground">视觉主题</span>
-            <span className="text-muted-foreground">{theme.label}</span>
+        {/* 视觉主题：色点 + 名字，两列。当前项用左侧竖线 + 实心标记，比下划线更清楚 */}
+        <div className="mt-5">
+          <div className="mb-2 flex items-baseline justify-between">
+            <span className="text-xs font-medium text-foreground">视觉主题</span>
+            <span className="text-xs text-muted-foreground">{theme.label}</span>
           </div>
-          <Tabs value={themeId} onValueChange={(v) => setThemeId(v as DeckThemeId)}>
-            <TabsList
-              aria-label="方案视觉主题"
-              className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto"
-            >
-              {THEME_IDS.map((id) => {
-                const t = DECK_THEMES[id]
-                return (
-                  <TabsTrigger
-                    key={id}
-                    value={id}
-                    aria-controls="proposal-slide-preview"
-                    className="h-9 justify-start gap-2.5 px-3 font-normal data-[state=active]:font-medium data-[state=active]:shadow-sm"
-                  >
-                    <span
-                      aria-hidden
-                      className="size-2.5 shrink-0 rounded-full ring-1 ring-foreground/15 dark:ring-foreground/40"
-                      style={{ backgroundColor: t.style.colors.accent }}
-                    />
-                    <span className="truncate">{t.label}</span>
-                  </TabsTrigger>
-                )
-              })}
-            </TabsList>
-          </Tabs>
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setZoomOpen(true)}
-          className="mt-6 h-10 w-full gap-2 rounded-full"
-        >
-          <Maximize2 className="size-4" />
-          放大查看方案
-        </Button>
-      </div>
-
-      <div className="relative min-w-0 rounded-2xl bg-muted/60 p-3 sm:p-8 lg:col-span-7 lg:p-10 xl:col-span-8">
-        <div
-          id="proposal-slide-preview"
-          ref={viewportRef}
-          role="region"
-          aria-label={`方案演示样张（${activeFramework.label} · ${theme.label}）`}
-        >
-          <DocRoot style={theme.style} className="space-y-4 overflow-hidden sm:space-y-6">
-            {activeChapters.map((chapterId, index) => {
-              const pageNo = String(index + 1).padStart(2, '0')
-              const pageTotal = String(activeChapters.length).padStart(2, '0')
+          <div role="radiogroup" aria-label="方案视觉主题" className="grid grid-cols-2 gap-1.5">
+            {THEME_IDS.map((id) => {
+              const t = DECK_THEMES[id]
+              const active = id === themeId
               return (
-                <div
-                  key={chapterId}
-                  onClick={() => setZoomOpen(true)}
-                  title="点击放大查看"
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setThemeId(id as DeckThemeId)}
                   className={cn(
-                    'relative aspect-3/2 w-full cursor-zoom-in overflow-hidden rounded-md shadow-sm ring-1 ring-foreground/10',
-                    // 手机上只预览前 3 页，其余在「放大查看」里看
-                    index >= 3 && 'max-sm:hidden',
+                    'flex items-center gap-2 rounded-[var(--radius-element)] border px-2.5 py-2 text-left text-xs transition-colors',
+                    active
+                      ? 'border-foreground/25 bg-background font-medium text-foreground shadow-xs'
+                      : 'border-transparent text-muted-foreground hover:bg-muted',
                   )}
                 >
+                  <span
+                    aria-hidden
+                    className="size-3 shrink-0 rounded-full ring-1 ring-foreground/15 dark:ring-foreground/40"
+                    style={{ backgroundColor: t.style.colors.accent }}
+                  />
+                  <span className="truncate">{t.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative min-w-0 lg:col-span-8 xl:col-span-8">
+        {/* 主视图：只显示当前一页，一屏看完整页（原来把 5 页竖排堆了 2.5 屏，每页只露一小段） */}
+        <div className="relative overflow-hidden rounded-[var(--radius-container)] border bg-muted/40 p-2 sm:p-4">
+          <button
+            type="button"
+            onClick={() => setZoomOpen(true)}
+            title="放大查看"
+            aria-label="放大查看方案"
+            className="absolute top-4 right-4 z-10 flex size-9 items-center justify-center rounded-[var(--radius-element)] bg-background/90 text-foreground shadow-sm ring-1 ring-foreground/10 backdrop-blur transition-colors hover:bg-background"
+          >
+            <Maximize2 className="size-4" />
+          </button>
+
+          <div
+            id="proposal-slide-preview"
+            ref={viewportRef}
+            role="region"
+            aria-label={`方案演示样张（${activeFramework.label} · ${theme.label}）第 ${page + 1} 页，共 ${activeChapters.length} 页`}
+            className="relative aspect-3/2 w-full overflow-hidden rounded-[var(--radius-element)] bg-doc-paper shadow-sm ring-1 ring-foreground/10"
+          >
+            <button
+              type="button"
+              onClick={() => setZoomOpen(true)}
+              title="点击放大查看"
+              className="absolute inset-0 z-[1] cursor-zoom-in"
+              aria-label="点击放大查看整套方案"
+            />
+            <DocRoot style={theme.style} className="size-full">
+              {[activeChapters[Math.min(page, activeChapters.length - 1)]!].map((chapterId, i) => (
+                <div
+                  key={`${chapterId}-${page}`}
+                  data-export-page="slide"
+                  style={{
+                    ...deckVars(theme),
+                    width: SLIDE_W,
+                    height: SLIDE_H,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                  }}
+                  className="bg-doc-paper text-doc-ink select-none"
+                >
+                  <ShowcaseSlide
+                    data={data}
+                    company={company}
+                    theme={theme}
+                    chapterId={chapterId}
+                    pageNo={String(page + 1).padStart(2, '0')}
+                    pageTotal={String(activeChapters.length).padStart(2, '0')}
+                  />
+                </div>
+              ))}
+            </DocRoot>
+          </div>
+        </div>
+
+        {/* 缩略图条：直接点某一页跳过去，比滚动找更快 */}
+        <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            onClick={() => setPage((n) => Math.max(0, n - 1))}
+            disabled={page === 0}
+            aria-label="上一页"
+            className="shrink-0"
+          >
+            <ChevronLeft className="size-4" />
+          </Button>
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            {activeChapters.map((chapterId, index) => {
+              const active = index === Math.min(page, activeChapters.length - 1)
+              return (
+                <button
+                  key={chapterId}
+                  type="button"
+                  onClick={() => setPage(index)}
+                  aria-label={`第 ${index + 1} 页`}
+                  aria-current={active ? 'true' : undefined}
+                  className={cn(
+                    'group relative shrink-0 overflow-hidden rounded-[var(--radius-inner)] ring-1 transition-all',
+                    active
+                      ? 'ring-2 ring-foreground/60'
+                      : 'opacity-60 ring-foreground/10 hover:opacity-100',
+                  )}
+                  style={{ width: 84, height: 56 }}
+                >
                   <div
-                    data-export-page="slide"
                     style={{
                       ...deckVars(theme),
                       width: SLIDE_W,
                       height: SLIDE_H,
-                      transform: `scale(${scale})`,
+                      transform: `scale(${84 / SLIDE_W})`,
                       transformOrigin: 'top left',
+                      pointerEvents: 'none',
                     }}
-                    className="bg-doc-paper text-doc-ink select-none"
+                    className="bg-doc-paper text-doc-ink"
                   >
                     <ShowcaseSlide
                       data={data}
                       company={company}
                       theme={theme}
                       chapterId={chapterId}
-                      pageNo={pageNo}
-                      pageTotal={pageTotal}
+                      pageNo={String(index + 1).padStart(2, '0')}
+                      pageTotal={String(activeChapters.length).padStart(2, '0')}
                     />
                   </div>
-                </div>
+                </button>
               )
             })}
-          </DocRoot>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            onClick={() => setPage((n) => Math.min(activeChapters.length - 1, n + 1))}
+            disabled={page >= activeChapters.length - 1}
+            aria-label="下一页"
+            className="shrink-0"
+          >
+            <ChevronRight className="size-4" />
+          </Button>
         </div>
+        <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+          第 {Math.min(page, activeChapters.length - 1) + 1} / {activeChapters.length} 页 ·
+          点击画面放大
+        </p>
       </div>
 
       <Dialog open={zoomOpen} onOpenChange={setZoomOpen}>

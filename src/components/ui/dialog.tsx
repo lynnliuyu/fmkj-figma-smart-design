@@ -8,6 +8,35 @@ import { XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
+ * 从调用点的 className 里读出「想要的宽度」，翻译成官方 Dialog 的 `width`。
+ *
+ * 本仓的弹窗宽度有两种写法：
+ *   - `sm:max-w-[min(94vw,1360px)]` / `max-w-5xl` → 上限型
+ *   - `w-[calc(100vw-1.5rem)]`                     → 固定型
+ * 官方 Dialog 的 `width` 接受数字（px）或任意 CSS 长度字符串，默认 400。
+ * 这里优先取 `max-w-[…]`（更明确），其次 `w-[…]`，都取不到就返回 undefined（沿用官方默认）。
+ */
+function widthFromClassName(className?: string): string | number | undefined {
+  if (!className) return undefined
+  // max-w-[calc(...)] / max-w-[min(...)] / max-w-[1200px]
+  const maxW = className.match(/max-w-\[(.+?)\]/)
+  if (maxW) return maxW[1].replace(/_/g, ' ')
+  // w-[calc(...)] 等
+  const w = className.match(/(?:^|\s)w-\[(.+?)\]/)
+  if (w) return w[1].replace(/_/g, ' ')
+  // 语义档位
+  if (className.includes('max-w-5xl')) return 1024
+  if (className.includes('max-w-4xl')) return 896
+  if (className.includes('max-w-3xl')) return 768
+  if (className.includes('max-w-2xl')) return 672
+  if (className.includes('max-w-xl')) return 576
+  if (className.includes('max-w-lg')) return 512
+  if (className.includes('max-w-md')) return 448
+  if (className.includes('max-w-sm')) return 384
+  return undefined
+}
+
+/**
  * 对话框：内部换成 Astryx 官方 Dialog，对外保留本仓 10 个部件的复合 API。
  *
  * ## 模型差异与解法
@@ -137,6 +166,15 @@ function DialogContent({
       isOpen={isOpen}
       onOpenChange={(next) => ctx?.setOpen(next)}
       padding={0}
+      /*
+        ⚠️ 宽度必须显式传给官方 Dialog。
+        官方默认 width=400px，而本仓调用点习惯用 `sm:max-w-[1360px]` / `w-[calc(100vw-1.5rem)]`
+        这类 Tailwind 类表达宽度 —— 这些类挂在内层 div 上时，外层官方 dialog 仍是 400px，
+        内层再宽也会被裁掉。
+        实测后果：首页「放大查看方案」的弹窗只有 400×675，里面塞 5 页整套方案 → 全压成邮票大小。
+        这里把 className 里的宽度意图翻译成官方的 width（官方接受任意 CSS 长度字符串）。
+      */
+      width={widthFromClassName(className)}
       data-slot="dialog-content"
       {...(props as object)}
     >

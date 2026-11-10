@@ -12,6 +12,8 @@ import { Toggle } from '@/components/ui/toggle'
 import { categoryOfType, DEVICE_CATEGORIES, deviceTypeOf } from '@/lib/device-types'
 import type { LandingShowcase, ShowcaseLine, ShowcasePoint } from '@/lib/landing-showcase'
 
+import { cn } from '@/lib/utils'
+
 import { money } from './section'
 
 /** 点位图坐标系：标准图纸 3:2 */
@@ -139,7 +141,7 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
         ) : null}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[11rem_minmax(0,1fr)_19rem] xl:grid-cols-[12rem_minmax(0,1fr)_21rem] [&>*]:min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[10.5rem_minmax(0,1fr)_21rem] xl:grid-cols-[11rem_minmax(0,1fr)_23rem] [&>*]:min-w-0">
         {/* 图例：设备类别，点一下隐藏 / 显示 */}
         <div className="flex flex-col gap-2 border-b border-border px-4 py-3 lg:border-r lg:border-b-0 lg:px-3 lg:py-4">
           <p className="px-1 text-xs text-muted-foreground">图例 · 点击筛选</p>
@@ -271,37 +273,47 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
                 {visible.length} 个点位 → {rows.length} 行
               </p>
             </div>
-            <ul className="max-h-80 min-h-0 flex-1 overflow-y-auto py-1 lg:max-h-none">
+            {/* 清单：外层给固定高度、内部滚动。原来写死 `max-h-80`（320px），
+                在窄栏里只能露出 3–4 行，一屏看不全 —— 改成撑满父容器的可用高度。 */}
+            <ul className="min-h-0 flex-1 divide-y divide-border/60 overflow-y-auto">
               {rows.map((r, i) => (
                 <li
                   key={r.type}
                   className="px-1.5 motion-safe:animate-ledger-in"
                   style={{ animationDelay: `${120 + i * 40}ms` }}
                 >
-                  <Toggle
-                    pressed={pinnedType === r.type}
-                    onPressedChange={(on) => setPinnedType(on ? r.type : null)}
+                  {/*
+                    行结构：图标 · 名称（最多两行，不再截断成省略号）· 数量×单价 · 小计。
+                    原来型号名和副标题都 truncate，一窄就只剩「电脑屏幕挂灯护眼…」这种，
+                    业主看不出具体型号 —— 现在名称允许折两行，副行只留「数量 × 单价」。
+                  */}
+                  <button
+                    type="button"
+                    aria-pressed={pinnedType === r.type}
+                    aria-label={`在图上高亮${typeName(r.type)}`}
+                    onClick={() => setPinnedType(pinnedType === r.type ? null : r.type)}
                     onMouseEnter={() => setHoverType(r.type)}
                     onMouseLeave={() => setHoverType(null)}
-                    aria-label={`在图上高亮${typeName(r.type)}`}
-                    className="h-auto w-full justify-start gap-3 rounded-lg px-2.5 py-2 text-left font-normal whitespace-normal focus-visible:ring-inset aria-pressed:bg-primary/10"
+                    className={cn(
+                      'flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition-colors',
+                      pinnedType === r.type ? 'bg-primary/8' : 'hover:bg-muted/60',
+                    )}
                   >
-                    <PointMarker type={r.type} className="size-7" />
+                    <PointMarker type={r.type} className="mt-0.5 size-6 shrink-0" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm">
+                      <span className="line-clamp-2 text-[13px] leading-snug text-foreground">
                         {r.line?.name ?? typeName(r.type)}
                       </span>
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {typeName(r.type)}
+                      <span className="mt-0.5 block text-[11px] text-muted-foreground tabular-nums">
                         {r.line
-                          ? ` · ${r.qty} ${r.line.unit} × ${money(r.line.price)}`
-                          : ` · ${r.qty} 个 · 未选型`}
+                          ? `${r.qty} ${r.line.unit} × ${money(r.line.price)}`
+                          : `${r.qty} 个 · 未选型`}
                       </span>
                     </span>
-                    <span className="text-sm font-medium tabular-nums">
+                    <span className="shrink-0 pt-0.5 text-right text-[13px] font-medium tabular-nums">
                       {r.line ? money(r.subtotal) : '—'}
                     </span>
-                  </Toggle>
+                  </button>
                 </li>
               ))}
             </ul>
