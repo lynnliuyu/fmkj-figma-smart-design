@@ -1,5 +1,6 @@
 import {
   Bot,
+  HousePlug,
   FileUp,
   Palette,
   Presentation,
@@ -22,4 +23,5 @@ export const PLUGIN_ICONS: Record<PluginId, LucideIcon> = {
   'ai-import': ScanSearch,
   'dwg-import': FileUp,
   'after-sales': Wrench,
+  'ha-mcp': HousePlug,
 }

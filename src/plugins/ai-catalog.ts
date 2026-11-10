@@ -1,6 +1,7 @@
 import { coreAiSpec } from './ai-copilot/core-ai'
 import { aiImportSpec } from './ai-import/ai'
 import type { AiSkillSpec, AiToolSpec, PluginAiSpec } from './ai-types'
+import { haMcpAiSpec } from './ha-mcp/ai'
 import { EXTRA_PLUGIN_AI_SPECS } from './plugin-ai-specs'
 import { proposalAiSpec } from './proposal/ai'
 import { roomInsightsAiSpec } from './room-insights/ai'
@@ -19,6 +20,7 @@ export const PLUGIN_AI_SPECS: Record<PluginId, PluginAiSpec> = {
   'doc-styles': EXTRA_PLUGIN_AI_SPECS['doc-styles']!,
   'dwg-import': EXTRA_PLUGIN_AI_SPECS['dwg-import']!,
   'after-sales': EXTRA_PLUGIN_AI_SPECS['after-sales']!,
+  'ha-mcp': haMcpAiSpec,
 }
 
 export type RegisteredToolSpec = AiToolSpec & {

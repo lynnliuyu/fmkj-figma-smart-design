@@ -23,6 +23,8 @@ export const AI_PERMISSIONS = [
   { value: 'documents:read', label: '生成打印与导出文档直达链接', mutates: false },
   { value: 'templates:read', label: '读取方案模板、适用客户与推荐匹配', mutates: false },
   { value: 'images:generate', label: '调用 AI 生成图片', mutates: true },
+  { value: 'smart-home:read', label: '读取客户现场智能家居设备与状态', mutates: false },
+  { value: 'smart-home:write', label: '控制客户现场智能家居设备', mutates: true },
 ] as const
 
 export type AiPermission = (typeof AI_PERMISSIONS)[number]['value']
