@@ -200,16 +200,18 @@ function TabsList({
          * 后，TabList 仍是 flex、宽度仍是外层 grid 的 1/3（111px / 341px）。
          * 内联样式优先级最高，能把栅格真正落到它身上。
          */
-        style={
-          wantsFill
-            ? {
-                display: 'grid',
-                gridTemplateColumns: `repeat(${colsOf(className)}, minmax(0, 1fr))`,
-                gap: 2,
-                width: '100%',
-              }
-            : undefined
-        }
+        /*
+         * ⚠️ 这里必须用 `display: block` 而不是 grid。
+         *
+         * 官方 TabList 的结构是**两层**：根元素 + 内层 strip（`role="tablist"` 在 strip 上）。
+         * 我一度给根元素设 `display:grid; grid-template-columns: repeat(3,1fr)`，
+         * 结果 grid 的三个格子只被**一个**子元素（strip）填 —— strip 就只占第 1 格，
+         * 宽度永远是父容器的 1/3（实测 111px / 341px），六个选项全挤在那一小条里。
+         *
+         * 正确做法：让根成为普通块级容器、宽度 100%，内层 strip 自然撑满；
+         * strip 本身是 flex，各个 Tab 由 `layout="fill"` 均分。
+         */
+        style={wantsFill ? { display: 'block', width: '100%' } : undefined}
       >
         {items.map((it) => (
           // 官方 Tab 不收 children：文案走 `label`（同时是无障碍名称），
