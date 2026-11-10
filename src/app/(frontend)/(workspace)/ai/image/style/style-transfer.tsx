@@ -61,29 +61,74 @@ export function StyleTransfer({
    *
    * 只在**首次挂载**读一次并立刻清掉 —— 否则用户回到本页会莫名其妙
    * 又被塞回上次那张图，覆盖掉他当前的选择。
+   *
+   * ⚠️ 交接过来的值**有两种形态**，都要认：
+   *  - `data:image/...` —— 画布内存里的 base64（刚上传、还没保存过）
+   *  - `/api/media/file/xxx.png` / `/demo-plans/xxx.png` —— 已保存过的底图，
+   *    点位图保存时会把内嵌图传进媒体库、**把 dataURL 字段替换成这个地址**
+   *    （见 point-map-editor 的 inlineFileIds 分支）。
+   *    只认 base64 会把「已保存的项目」全部交接失败 —— 线上实测踩到过。
+   *
+   * 官方接口只吃 base64，所以 URL 形态要先取回再转。
    */
   useEffect(() => {
-    let handoff: StyleTransferHandoff | null = null
+    let cancelled = false
+
+    const load = async (raw: string) => {
+      let parsed: Partial<StyleTransferHandoff>
+      try {
+        parsed = JSON.parse(raw) as Partial<StyleTransferHandoff>
+      } catch {
+        return
+      }
+      const image = typeof parsed?.image === 'string' ? parsed.image : ''
+      if (!image) return
+      const name = typeof parsed.name === 'string' ? parsed.name : '户型图'
+
+      // 形态一：已经是 base64，直接用
+      if (image.startsWith('data:image/')) {
+        if (cancelled) return
+        setSource(image)
+        setSourceName(name)
+        setError(null)
+        setResult(null)
+        return
+      }
+
+      // 形态二：站内地址（媒体库 / 示例图）→ 取回来转 base64
+      if (!image.startsWith('/')) return
+      try {
+        const res = await fetch(image)
+        if (!res.ok) throw new Error(String(res.status))
+        const blob = await res.blob()
+        const dataURL = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(String(reader.result || ''))
+          reader.onerror = () => reject(new Error('读取失败'))
+          reader.readAsDataURL(blob)
+        })
+        if (cancelled || !dataURL.startsWith('data:image/')) return
+        setSource(dataURL)
+        setSourceName(name)
+        setError(null)
+        setResult(null)
+      } catch {
+        if (!cancelled) setError('没能读取点位置图里的户型底图，请手动上传')
+      }
+    }
+
     try {
       const raw = sessionStorage.getItem(STYLE_TRANSFER_HANDOFF_KEY)
-      if (raw) {
-        sessionStorage.removeItem(STYLE_TRANSFER_HANDOFF_KEY)
-        const parsed = JSON.parse(raw) as Partial<StyleTransferHandoff>
-        if (typeof parsed?.image === 'string' && parsed.image.startsWith('data:image/')) {
-          handoff = {
-            image: parsed.image,
-            name: typeof parsed.name === 'string' ? parsed.name : '户型图',
-          }
-        }
-      }
+      // 无论成败都先清掉，避免下次回本页又被塞一次
+      if (raw) sessionStorage.removeItem(STYLE_TRANSFER_HANDOFF_KEY)
+      if (raw) void load(raw)
     } catch {
-      // 隐私模式或脏数据：静默忽略，用户仍然可以手动上传
+      // 隐私模式下读不到：静默忽略，用户仍然可以手动上传
     }
-    if (!handoff) return
-    setSource(handoff.image)
-    setSourceName(handoff.name)
-    setError(null)
-    setResult(null)
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const generate = async () => {
