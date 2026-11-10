@@ -1,0 +1,461 @@
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Breaks DuringSaveEditSurvives
+    lg1: Path to the DuringSaveEditSurvives bug
+  }
+  class lg0 breaks
+  class lg1 bugPath
+  s0: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=0 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s1: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=0 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s2: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s3: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s4: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s5: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s6: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=1 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s7: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s8: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s9: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=1 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s10: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s11: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s12: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=0 inflight="B" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s13: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s14: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s15: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s16: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s17: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s18: pendingDraft=FALSE doc="A" capturedVersion=1 savedAt=0 inflight="B" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s19: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s20: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s21: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=1 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s22: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s23: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s24: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s25: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s26: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s27: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=0 inflight="B" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s28: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s29: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s30: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s31: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s32: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s33: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s34: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s35: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s36: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s37: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s38: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s39: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s40: pendingDraft=FALSE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s41: pendingDraft=FALSE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s42: pendingDraft=FALSE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s43: pendingDraft=FALSE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s44: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s45: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s46: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s47: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=1 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s48: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s49: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s50: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=1 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s51: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s52: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s53: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s54: pendingDraft=TRUE doc="A" capturedVersion=0 savedAt=0 inflight="A" version=2 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s55: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s56: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s57: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s58: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s59: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=1 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s60: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s61: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s62: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s63: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s64: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s65: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s66: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s67: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s68: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s69: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s70: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s71: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s72: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s73: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s74: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s75: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s76: pendingDraft=FALSE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s77: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s78: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=1 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s79: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=1 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s80: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s81: pendingDraft=FALSE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s82: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s83: pendingDraft=FALSE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s84: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s85: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s86: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s87: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s88: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s89: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s90: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s91: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s92: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=0 inflight="B" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s93: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s94: pendingDraft=TRUE doc="A" capturedVersion=1 savedAt=1 inflight="B" version=2 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s95: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=0 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s96: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=1 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s97: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=1 inflight="A" version=2 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s98: pendingDraft=TRUE doc="A" capturedVersion=2 savedAt=2 inflight="A" version=2 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s99: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s100: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s101: pendingDraft=TRUE doc="B" capturedVersion=0 savedAt=0 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s102: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s103: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s104: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s105: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s106: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s107: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s108: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=1 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s109: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s110: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=FALSE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s111: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s112: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=TRUE saving=FALSE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s113: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s114: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=2 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s115: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=FALSE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s116: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s117: pendingDraft=FALSE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s118: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=1 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s119: pendingDraft=FALSE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s120: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s121: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s122: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s123: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=2 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s124: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=2 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s125: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s126: pendingDraft=FALSE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s127: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=0 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s128: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s129: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s130: pendingDraft=TRUE doc="B" capturedVersion=1 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s131: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=0 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s132: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=1 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s133: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=1 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=TRUE
+  s134: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=1 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=TRUE
+  s135: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=TRUE
+  s136: pendingDraft=TRUE doc="B" capturedVersion=2 savedAt=2 inflight="A" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=TRUE
+  s137: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=0 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s138: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s139: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="A" editedDuringSave=FALSE
+  s140: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=1 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  s141: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=2 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="A" draftDoc="B" editedDuringSave=FALSE
+  s142: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=2 inflight="B" version=3 draftExists=TRUE saving=TRUE serverDoc="A" draftDoc="A" editedDuringSave=FALSE
+  s143: pendingDraft=TRUE doc="B" capturedVersion=3 savedAt=3 inflight="B" version=3 draftExists=FALSE saving=TRUE serverDoc="B" draftDoc="B" editedDuringSave=FALSE
+  [*] --> s0
+  s0 --> s1: YouPressSave
+  s0 --> s2: YouEdit
+  s1 --> s0: ServerAcks
+  s1 --> s5: YouEdit
+  s2 --> s3: DraftWrites
+  s2 --> s4: YouEdit
+  s2 --> s6: YouPressSave
+  s3 --> s9: YouPressSave
+  s3 --> s11: YouEdit
+  s4 --> s7: DraftWrites
+  s4 --> s13: YouPressSave
+  s4 --> s15: YouEdit
+  s5 --> s8: DraftWrites
+  s5 --> s10: YouEdit
+  s5 --> s14: ServerAcks
+  s6 --> s9: DraftWrites
+  s6 --> s12: YouEdit
+  s6 --> s16: ServerAcks
+  s7 --> s19: YouPressSave
+  s7 --> s33: YouEdit
+  s8 --> s20: ServerAcks
+  s8 --> s26: YouEdit
+  s9 --> s23: ServerAcks
+  s9 --> s27: YouEdit
+  s10 --> s17: DraftWrites
+  s10 --> s25: ServerAcks
+  s10 --> s32: YouEdit
+  s11 --> s7: DraftWrites
+  s11 --> s30: YouPressSave
+  s11 --> s34: YouEdit
+  s12 --> s18: DraftWrites
+  s12 --> s29: ServerAcks
+  s12 --> s35: YouEdit
+  s13 --> s19: DraftWrites
+  s13 --> s31: ServerAcks
+  s13 --> s37: YouEdit
+  s14 --> s6: YouPressSave
+  s14 --> s21: DraftWrites
+  s14 --> s25: YouEdit
+  s15 --> s22: DraftWrites
+  s15 --> s38: YouPressSave
+  s16 --> s24: DraftWrites
+  s16 --> s28: YouEdit
+  s16 --> s36: YouPressSave
+  s17 --> s39: ServerAcks
+  s17 --> s63: YouEdit
+  s18 --> s41: ServerAcks
+  s18 --> s65: YouEdit
+  s19 --> s44: ServerAcks
+  s19 --> s69: YouEdit
+  s20 --> s47: YouPressSave
+  s20 --> s53: YouEdit
+  s21 --> s9: YouPressSave
+  s21 --> s54: YouEdit
+  s22 --> s52: YouPressSave
+  s23 --> s49: YouPressSave
+  s23 --> s55: YouEdit
+  s24 --> s50: YouPressSave
+  s24 --> s58: YouEdit
+  s25 --> s13: YouPressSave
+  s25 --> s40: DraftWrites
+  s25 --> s62: YouEdit
+  s26 --> s17: DraftWrites
+  s26 --> s53: ServerAcks
+  s26 --> s64: YouEdit
+  s27 --> s18: DraftWrites
+  s27 --> s56: ServerAcks
+  s27 --> s66: YouEdit
+  s28 --> s42: DraftWrites
+  s28 --> s59: YouPressSave
+  s28 --> s67: YouEdit
+  s29 --> s43: DraftWrites
+  s29 --> s59: YouPressSave
+  s29 --> s68: YouEdit
+  s30 --> s19: DraftWrites
+  s30 --> s60: ServerAcks
+  s30 --> s70: YouEdit
+  s31 --> s45: DraftWrites
+  s31 --> s61: YouPressSave
+  s31 --> s71: YouEdit
+  s32 --> s46: DraftWrites
+  s32 --> s62: ServerAcks
+  s33 --> s22: DraftWrites
+  s33 --> s73: YouPressSave
+  s34 --> s22: DraftWrites
+  s34 --> s74: YouPressSave
+  s35 --> s48: DraftWrites
+  s35 --> s68: ServerAcks
+  s36 --> s16: ServerAcks
+  s36 --> s50: DraftWrites
+  s36 --> s57: YouEdit
+  s37 --> s51: DraftWrites
+  s37 --> s72: ServerAcks
+  s38 --> s52: DraftWrites
+  s38 --> s75: ServerAcks
+  s39 --> s62: YouEdit
+  s39 --> s77: YouPressSave
+  s40 --> s19: YouPressSave
+  s40 --> s100: YouEdit
+  s41 --> s68: YouEdit
+  s41 --> s78: YouPressSave
+  s42 --> s79: YouPressSave
+  s42 --> s105: YouEdit
+  s43 --> s79: YouPressSave
+  s43 --> s106: YouEdit
+  s44 --> s71: YouEdit
+  s44 --> s80: YouPressSave
+  s45 --> s81: YouPressSave
+  s45 --> s112: YouEdit
+  s46 --> s82: ServerAcks
+  s47 --> s23: ServerAcks
+  s47 --> s92: YouEdit
+  s48 --> s84: ServerAcks
+  s49 --> s23: ServerAcks
+  s49 --> s93: YouEdit
+  s50 --> s23: ServerAcks
+  s50 --> s94: YouEdit
+  s51 --> s87: ServerAcks
+  s52 --> s90: ServerAcks
+  s53 --> s40: DraftWrites
+  s53 --> s95: YouPressSave
+  s53 --> s99: YouEdit
+  s54 --> s30: YouPressSave
+  s54 --> s40: DraftWrites
+  s54 --> s101: YouEdit
+  s55 --> s42: DraftWrites
+  s55 --> s96: YouPressSave
+  s55 --> s102: YouEdit
+  s56 --> s43: DraftWrites
+  s56 --> s96: YouPressSave
+  s56 --> s103: YouEdit
+  s57 --> s29: ServerAcks
+  s57 --> s76: DraftWrites
+  s57 --> s104: YouEdit
+  s58 --> s42: DraftWrites
+  s58 --> s97: YouPressSave
+  s58 --> s107: YouEdit
+  s59 --> s31: ServerAcks
+  s59 --> s79: DraftWrites
+  s59 --> s108: YouEdit
+  s60 --> s45: DraftWrites
+  s60 --> s98: YouPressSave
+  s60 --> s109: YouEdit
+  s61 --> s31: ServerAcks
+  s61 --> s81: DraftWrites
+  s61 --> s111: YouEdit
+  s62 --> s38: YouPressSave
+  s62 --> s83: DraftWrites
+  s63 --> s46: DraftWrites
+  s63 --> s62: ServerAcks
+  s64 --> s46: DraftWrites
+  s64 --> s99: ServerAcks
+  s65 --> s48: DraftWrites
+  s65 --> s68: ServerAcks
+  s66 --> s48: DraftWrites
+  s66 --> s103: ServerAcks
+  s67 --> s85: DraftWrites
+  s67 --> s113: YouPressSave
+  s68 --> s86: DraftWrites
+  s68 --> s113: YouPressSave
+  s69 --> s51: DraftWrites
+  s69 --> s72: ServerAcks
+  s70 --> s51: DraftWrites
+  s70 --> s110: ServerAcks
+  s71 --> s88: DraftWrites
+  s71 --> s114: YouPressSave
+  s72 --> s89: DraftWrites
+  s72 --> s114: YouPressSave
+  s73 --> s52: DraftWrites
+  s73 --> s75: ServerAcks
+  s74 --> s52: DraftWrites
+  s74 --> s115: ServerAcks
+  s75 --> s91: DraftWrites
+  s75 --> s116: YouPressSave
+  s76 --> s41: ServerAcks
+  s76 --> s129: YouEdit
+  s77 --> s37: YouEdit
+  s77 --> s44: ServerAcks
+  s78 --> s44: ServerAcks
+  s78 --> s108: YouEdit
+  s79 --> s44: ServerAcks
+  s79 --> s133: YouEdit
+  s80 --> s44: ServerAcks
+  s80 --> s111: YouEdit
+  s81 --> s44: ServerAcks
+  s81 --> s136: YouEdit
+  s82 --> s120: YouPressSave
+  s83 --> s52: YouPressSave
+  s84 --> s121: YouPressSave
+  s85 --> s122: YouPressSave
+  s86 --> s122: YouPressSave
+  s87 --> s123: YouPressSave
+  s88 --> s124: YouPressSave
+  s89 --> s124: YouPressSave
+  s90 --> s125: YouPressSave
+  s91 --> s126: YouPressSave
+  s92 --> s18: DraftWrites
+  s92 --> s56: ServerAcks
+  s92 --> s127: YouEdit
+  s93 --> s56: ServerAcks
+  s93 --> s76: DraftWrites
+  s93 --> s128: YouEdit
+  s94 --> s56: ServerAcks
+  s94 --> s76: DraftWrites
+  s94 --> s130: YouEdit
+  s95 --> s19: DraftWrites
+  s95 --> s60: ServerAcks
+  s95 --> s131: YouEdit
+  s96 --> s60: ServerAcks
+  s96 --> s79: DraftWrites
+  s96 --> s132: YouEdit
+  s97 --> s60: ServerAcks
+  s97 --> s79: DraftWrites
+  s97 --> s134: YouEdit
+  s98 --> s60: ServerAcks
+  s98 --> s81: DraftWrites
+  s98 --> s135: YouEdit
+  s99 --> s83: DraftWrites
+  s99 --> s137: YouPressSave
+  s100 --> s73: YouPressSave
+  s100 --> s83: DraftWrites
+  s101 --> s74: YouPressSave
+  s101 --> s83: DraftWrites
+  s102 --> s85: DraftWrites
+  s102 --> s138: YouPressSave
+  s103 --> s86: DraftWrites
+  s103 --> s138: YouPressSave
+  s104 --> s68: ServerAcks
+  s104 --> s117: DraftWrites
+  s105 --> s85: DraftWrites
+  s105 --> s139: YouPressSave
+  s106 --> s86: DraftWrites
+  s106 --> s139: YouPressSave
+  s107 --> s85: DraftWrites
+  s107 --> s140: YouPressSave
+  s108 --> s72: ServerAcks
+  s108 --> s118: DraftWrites
+  s109 --> s88: DraftWrites
+  s109 --> s141: YouPressSave
+  s110 --> s89: DraftWrites
+  s110 --> s141: YouPressSave
+  s111 --> s72: ServerAcks
+  s111 --> s119: DraftWrites
+  s112 --> s88: DraftWrites
+  s112 --> s142: YouPressSave
+  s113 --> s75: ServerAcks
+  s113 --> s122: DraftWrites
+  s114 --> s75: ServerAcks
+  s114 --> s124: DraftWrites
+  s115 --> s91: DraftWrites
+  s115 --> s143: YouPressSave
+  s116 --> s75: ServerAcks
+  s116 --> s126: DraftWrites
+  s117 --> s84: ServerAcks
+  s118 --> s87: ServerAcks
+  s119 --> s87: ServerAcks
+  s120 --> s90: ServerAcks
+  s121 --> s90: ServerAcks
+  s122 --> s90: ServerAcks
+  s123 --> s90: ServerAcks
+  s124 --> s90: ServerAcks
+  s125 --> s90: ServerAcks
+  s126 --> s90: ServerAcks
+  s127 --> s48: DraftWrites
+  s127 --> s103: ServerAcks
+  s128 --> s103: ServerAcks
+  s128 --> s117: DraftWrites
+  s129 --> s68: ServerAcks
+  s129 --> s117: DraftWrites
+  s130 --> s103: ServerAcks
+  s130 --> s117: DraftWrites
+  s131 --> s51: DraftWrites
+  s131 --> s110: ServerAcks
+  s132 --> s110: ServerAcks
+  s132 --> s118: DraftWrites
+  s133 --> s72: ServerAcks
+  s133 --> s118: DraftWrites
+  s134 --> s110: ServerAcks
+  s134 --> s118: DraftWrites
+  s135 --> s110: ServerAcks
+  s135 --> s119: DraftWrites
+  s136 --> s72: ServerAcks
+  s136 --> s119: DraftWrites
+  s137 --> s52: DraftWrites
+  s137 --> s115: ServerAcks
+  s138 --> s115: ServerAcks
+  s138 --> s122: DraftWrites
+  s139 --> s75: ServerAcks
+  s139 --> s122: DraftWrites
+  s140 --> s115: ServerAcks
+  s140 --> s122: DraftWrites
+  s141 --> s115: ServerAcks
+  s141 --> s124: DraftWrites
+  s142 --> s75: ServerAcks
+  s142 --> s124: DraftWrites
+  s143 --> s115: ServerAcks
+  s143 --> s126: DraftWrites
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 bugPath
+  class s1 bugPath
+  class s5 bugPath
+  class s8 bugPath
+  class s20 breaks
+  class s20 bugPath
+  class s39 breaks
+  class s41 breaks
+  class s82 breaks
+  class s84 breaks
+  class s87 breaks
