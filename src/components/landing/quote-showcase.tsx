@@ -62,23 +62,26 @@ export function QuoteShowcase({
         <h2 id="quote-title" className="text-headline font-medium">
           报价单
         </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          同一份清单，6 种版式应对不同场合；7 套视觉风格跟着方案走。
+        </p>
 
-        <div className="mt-6 space-y-2">
-          <div className="flex items-baseline justify-between text-xs">
-            <span className="font-medium text-foreground">报价版式</span>
-            <span className="text-muted-foreground">{activeLayout?.label}</span>
+        <div className="mt-7 space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-xs font-medium text-foreground">报价版式</span>
+            <span className="text-xs text-muted-foreground">{activeLayout?.label}</span>
           </div>
           <Tabs value={layoutId} onValueChange={setLayoutId}>
             <TabsList
               aria-label="报价单版式"
-              className="grid h-auto w-full grid-cols-3 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+              className="grid h-auto w-full grid-cols-3 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
             >
               {layouts.map((l) => (
                 <TabsTrigger
                   key={l.value}
                   value={l.value}
                   aria-controls="quote-preview"
-                  className="h-8 justify-center px-2.5 text-xs font-normal data-[state=active]:font-medium data-[state=active]:shadow-sm"
+                  className="h-8 justify-center rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
                 >
                   {l.label}
                 </TabsTrigger>
@@ -95,39 +98,38 @@ export function QuoteShowcase({
           <Tabs value={styleId} onValueChange={setStyleId}>
             <TabsList
               aria-label="报价单风格"
-              className="grid h-auto w-full grid-cols-2 gap-1 p-1 group-data-horizontal/tabs:h-auto"
+              className="grid h-auto w-full grid-cols-2 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
             >
               {styles.map((s) => (
                 <TabsTrigger
                   key={s.id}
                   value={s.id}
                   aria-controls="quote-preview"
-                  className="h-9 justify-start gap-2.5 px-3 font-normal data-[state=active]:font-medium data-[state=active]:shadow-sm"
+                  className="h-8 justify-start gap-2 rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
                 >
                   <span
                     aria-hidden
                     style={docVars(s)}
-                    className="size-2.5 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40"
+                    className="size-2.5 shrink-0 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40"
                   />
-                  {s.name}
+                  <span className="truncate">{s.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
         </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setZoomOpen(true)}
-          className="mt-6 h-10 w-full gap-2 rounded-full"
-        >
-          <Maximize2 className="size-4" />
-          放大查看报价单
-        </Button>
       </div>
 
-      <div className="min-w-0 rounded-2xl bg-muted/60 p-3 sm:p-8 lg:col-span-7 lg:p-10 xl:col-span-8">
+      <div className="relative min-w-0 rounded-[var(--radius-container)] bg-muted/40 p-2 sm:p-4 lg:col-span-7 xl:col-span-8">
+        <button
+          type="button"
+          onClick={() => setZoomOpen(true)}
+          title="放大查看"
+          aria-label="放大查看报价单"
+          className="absolute top-4 right-4 z-10 flex size-9 items-center justify-center rounded-[var(--radius-element)] bg-background/90 text-foreground shadow-sm ring-1 ring-foreground/10 backdrop-blur transition-colors hover:bg-background"
+        >
+          <Maximize2 className="size-4" />
+        </button>
         <div
           id="quote-preview"
           role="region"

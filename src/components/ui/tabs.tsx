@@ -131,16 +131,30 @@ function TabsList({
     }
   })
 
+  /*
+   * ⚠️ `layout` 必须跟着调用点的意图走。
+   *
+   * 官方 TabList 默认 `layout="hug"`（每个 tab 只贴合自身文字宽度）。
+   * 而本仓的调用点普遍写 `grid w-full grid-cols-3`，意思是「三等分撑满」——
+   * 若这里写死 hug，容器只有内容宽（实测 111px），三个 80px 的 tab 装不下，
+   * **渲染出来只剩一个 tab + 两侧箭头，看起来像「用箭头翻页」**。
+   * （2026-11-10 实测：报价区的「报价版式 6 选 1」「视觉风格 7 选 1」就是这样退化成箭头的。）
+   *
+   * 判断依据：className 里出现 `w-full` / `grid-cols-` → 要撑满，用 fill。
+   */
+  const wantsFill = Boolean(className && /(^|\s)(w-full|grid-cols-)/.test(className))
+
   return (
     <div data-slot="tabs-list" className={cn('w-full', className)}>
       <TabList
         value={ctx?.value ?? ''}
         onChange={(v) => ctx?.setValue(v)}
         size="md"
-        layout="hug"
+        layout={wantsFill ? 'fill' : 'hug'}
         role="tablist"
         hasDivider={false}
         aria-label={ariaLabel ?? '标签页'}
+        className="w-full"
       >
         {items.map((it) => (
           // 官方 Tab 不收 children：文案走 `label`（同时是无障碍名称），
