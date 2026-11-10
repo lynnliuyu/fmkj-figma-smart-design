@@ -159,50 +159,61 @@ function TabsList({
    */
   return (
     /*
-     * 结构说明（三层，各有职责）：
+     * ⚠️ 关键约束：**不能把调用点的 `grid-cols-*` 留在外层再套 contents**。
      *
-     * 1. 外层 div：承接调用点的栅格类（`grid-cols-3` / `grid-cols-2`）和灰槽底色。
-     * 2. 内层 div：`contents` —— 不参与布局，只是把官方 TabList 从外层 grid
-     *    的「第一个格子」里解放出来。**没有这层的话官方 TabList 只拿到 1/3 宽度**
-     *    （实测 111px），六个选项全挤在三分之一里。
-     * 3. 官方 TabList：真正渲染 tab 的地方。
+     * 试过 `display:contents` 包装：它会让内部元素变成外层 grid 的直接子项，
+     * 于是官方 TabList 只占**第一格**（实测 111px / 341px），六个选项挤在三分之一里。
      *
-     * 另外不要写「检测到调用点有 bg-* 就退让成 bg-transparent」这种逻辑：
-     * 第一版那样写时正则会匹配到**我自己刚加的 bg-muted**，把灰槽盖成透明
-     * （线上实测 background: rgba(0,0,0,0)、border-radius: 0px）。
-     * Tailwind 的类冲突由后写的赢，调用点 className 放最后即可，不需要提前让位。
+     * 正确做法：让**官方 TabList 自己**当那个 grid 容器。
+     * 把调用点的栅格类（`grid-cols-3` / `gap-*` 等）从外层摘掉、拼进 TabList 的 className，
+     * 外层只留「灰槽底色 + 圆角 + 内边距」。
+     *
+     * 另外不要再写「检测到调用点有 bg-* 就退让成 bg-transparent」：
+     * 正则会匹配到**我自己加的 bg-muted**，把灰槽盖成透明（线上实测过）。
+     * 直接让调用点 className 在后、覆盖前即可。
      */
     <div
       data-slot="tabs-list"
-      className={cn('w-full rounded-[var(--radius-element)] bg-muted p-0.5', className)}
+      className={cn(
+        'w-full rounded-[var(--radius-element)] bg-muted p-0.5',
+        // 外层不再承接栅格类，只接收「非布局」的覆盖类
+        (className ?? '')
+          .split(/\s+/)
+          .filter((c) => c && !/^(grid-cols-|gap-|grid$|h-auto$)/.test(c))
+          .join(' '),
+      )}
     >
-      <div className="contents">
-        <TabList
-          value={ctx?.value ?? ''}
-          onChange={(v) => ctx?.setValue(v)}
-          size="md"
-          layout={wantsFill ? 'fill' : 'hug'}
-          role="tablist"
-          hasDivider={false}
-          aria-label={ariaLabel ?? '标签页'}
-          className="w-full"
-        >
-          {items.map((it) => (
-            // 官方 Tab 不收 children：文案走 `label`（同时是无障碍名称），
-            // 额外的富内容（如「(12)」计数）走 `endContent`。
-            <Tab
-              key={it.value}
-              value={it.value}
-              label={it.label || it.value}
-              isLabelHidden={!it.label}
-              icon={it.icon as never}
-              endContent={it.end as never}
-            />
-          ))}
-        </TabList>
-      </div>
+      <TabList
+        value={ctx?.value ?? ''}
+        onChange={(v) => ctx?.setValue(v)}
+        size="md"
+        layout={wantsFill ? 'fill' : 'hug'}
+        role="tablist"
+        hasDivider={false}
+        aria-label={ariaLabel ?? '标签页'}
+        className={cn('w-full', wantsFill && 'grid gap-0.5', wantsFill && gridColsOf(className))}
+      >
+        {items.map((it) => (
+          // 官方 Tab 不收 children：文案走 `label`（同时是无障碍名称），
+          // 额外的富内容（如「(12)」计数）走 `endContent`。
+          <Tab
+            key={it.value}
+            value={it.value}
+            label={it.label || it.value}
+            isLabelHidden={!it.label}
+            icon={it.icon as never}
+            endContent={it.end as never}
+          />
+        ))}
+      </TabList>
     </div>
   )
+}
+
+/** 从调用点 className 里抠出 `grid-cols-N`，供官方 TabList 直接使用。 */
+function gridColsOf(className?: string): string {
+  const m = (className ?? '').match(/grid-cols-([a-z0-9]+)/)
+  return m ? `grid-cols-${m[1]}` : ''
 }
 
 function TabsContent({
