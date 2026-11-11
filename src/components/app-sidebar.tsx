@@ -26,7 +26,7 @@ import { BrandMark } from '@/components/brand/brand-mark'
 import { GuardedLink } from '@/components/guarded-link'
 import { LinkPending } from '@/components/link-pending'
 import { MembershipDialog } from '@/components/workspace-dialogs'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar } from '@astryxdesign/core/Avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -346,11 +346,7 @@ export function AppSidebar({
                           'h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
                         )}
                       >
-                        <Avatar className="size-7">
-                          <AvatarFallback className="bg-sidebar-primary/12 text-xs font-semibold text-sidebar-primary">
-                            {initials(user.name)}
-                          </AvatarFallback>
-                        </Avatar>
+                        <Avatar name={user.name} size={32} className="text-xs font-semibold" />
                         <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
                           {user.name}
                         </span>
@@ -363,11 +359,7 @@ export function AppSidebar({
                 </Tooltip>
                 <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2.5 p-2 font-normal">
-                    <Avatar className="size-9">
-                      <AvatarFallback className="bg-sidebar-primary/12 text-sm font-semibold text-sidebar-primary">
-                        {initials(user.name)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <Avatar name={user.name} size={36} className="text-sm font-semibold" />
                     <span className="grid min-w-0 flex-1 gap-0.5 leading-tight">
                       <span className="flex min-w-0 items-center gap-1.5">
                         <span className="truncate text-sm font-semibold">{user.name}</span>
