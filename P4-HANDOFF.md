@@ -10,7 +10,7 @@
 main 分支   干净（1070173 = PR #107 的合并提交）
 线上        fmkj.top/login 返回 200（本轮 curl 复核）；端口 13028 来自记忆未复核
 PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
-本批 PR     待开（P4 第 5 批低风险 3 文件）—— 开出来后回填真实编号与状态
+PR #108     待合并（P4 第 5 批低风险 3 文件）—— 详见文末「本批交付记录」
 ```
 
 **P4 进度：17 / 34 文件**
@@ -22,7 +22,7 @@ PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / squ
 | #104 | app-sidebar · reports-client · after-sales-board           |
 | #105 | delivery-package · social-poster-dialog · print-toolbar    |
 | #107 | delete-project · square-crop-dialog · project-share-dialog |
-| 待开 | proposal-showcase · quote-showcase · docs-client           |
+| #108 | proposal-showcase · quote-showcase · docs-client           |
 
 > 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
 > `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
@@ -250,3 +250,16 @@ HOST=ubuntu@124.222.225.26
 - **P4 不适合并行**（结构性重写，前置成本分摊到每个 agent 要重付一遍）
 - 4 个 agent 并行那轮只落地 2 个文件；自己顺序做那轮落地 3 个
 - 如果要用 agent：**按文件组拆**（同一文件只会用一种组件的情况很少，按组件拆必冲突）
+
+## 七、本批交付记录（P4 第 5 批）
+
+- **PR**：[#108](https://github.com/lynnliuyu/fmkj-figma-smart-design/pull/108)，
+  分支 `feat/astryx-native-p4f` → `main`，状态：**待合并**（以 CI verify + smoke 双绿为合并前提）。
+- **3 个代码文件**：`proposal-showcase.tsx` / `quote-showcase.tsx` / `docs-client.tsx`，
+  改动摘要见 §一 表格与本 PR 描述。
+- **验证**：
+  - `pnpm exec oxfmt` + `pnpm exec oxfmt --check`：全仓 580 文件通过（两次提交前都跑过）。
+  - 本地 `tsc --noEmit` / `knowledge:check` / `pnpm build` 与真机点开验证：上一轮已完成。
+  - `https://fmkj.top/login` 本轮 curl 复核返回 200；端口 `13028` 未复核。
+  - CI verify / smoke：待确认，未双绿前不合并。
+- **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
