@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { KeyRound, Loader2 } from 'lucide-react'
 
 import { Button } from '@astryxdesign/core/Button'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 
 import { unlockShareLink } from './actions'
@@ -51,13 +51,15 @@ export function UnlockForm({ token }: { token: string }) {
           <Label htmlFor="share-unlock-password" className="text-xs font-medium">
             访问密码
           </Label>
-          <Input
+          <TextInput
+            label={'请输入密码'}
+            isLabelHidden
             id="share-unlock-password"
             type="password"
             value={password}
-            autoFocus
+            hasAutoFocus
             autoComplete="off"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(v) => setPassword(v)}
             placeholder="请输入密码"
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? 'share-unlock-error' : undefined}

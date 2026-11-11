@@ -60,6 +60,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -2366,12 +2367,13 @@ export function PointMapEditor({
               if (renaming) renameSheet(renaming.id, renaming.name)
             }}
           >
-            <Input
-              autoFocus
+            <TextInput
+              label={'图纸名称'}
+              isLabelHidden
+              hasAutoFocus
               value={renaming?.name ?? ''}
-              maxLength={40}
               aria-label="图纸名称"
-              onChange={(e) => setRenaming((r) => (r ? { ...r, name: e.target.value } : r))}
+              onChange={(v) => setRenaming((r) => (r ? { ...r, name: v } : r))}
             />
           </form>
           <DialogFooter>
@@ -2425,12 +2427,14 @@ export function PointMapEditor({
             }}
             className="flex items-center gap-2"
           >
-            <Input
-              autoFocus
+            <TextInput
+              label={'实际长度（米）'}
+              isLabelHidden
+              hasAutoFocus
               inputMode="decimal"
               placeholder="例如 3.6"
               value={calib?.value ?? ''}
-              onChange={(e) => setCalib((c) => (c ? { ...c, value: e.target.value } : c))}
+              onChange={(v) => setCalib((c) => (c ? { ...c, value: v } : c))}
               aria-label="实际长度（米）"
             />
             <span className="text-sm text-muted-foreground">米</span>

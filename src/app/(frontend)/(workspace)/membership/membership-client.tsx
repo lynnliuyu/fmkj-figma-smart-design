@@ -10,7 +10,7 @@ import { PageHeader } from '@/components/page-header'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import {
   Table,
   TableBody,
@@ -142,14 +142,15 @@ export function MembershipClient({
             onSubmit={handleRedeem}
             className="flex flex-1 flex-col gap-2 sm:max-w-md sm:flex-row"
           >
-            <Input
+            <TextInput
+              label={'兑换码'}
+              isLabelHidden
               value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onChange={(v) => setCode(v.toUpperCase())}
               placeholder="FMKJ-XXXX-XXXX-XXXX"
               aria-label="兑换码"
-              maxLength={40}
-              disabled={pending}
-              className="font-mono tracking-wider uppercase"
+              isDisabled={pending}
+              controlClassName="font-mono tracking-wider uppercase"
             />
             <Button
               type="submit"

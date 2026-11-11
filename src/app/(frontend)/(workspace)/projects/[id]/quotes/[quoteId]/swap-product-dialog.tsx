@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -149,12 +149,14 @@ export function SwapProductDialog({
         <div className="space-y-2">
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
+            <TextInput
+              label={'搜索产品'}
+              isLabelHidden
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(v) => setQuery(v)}
               placeholder="搜索名称、型号或品牌"
               aria-label="搜索产品"
-              className="pl-9"
+              controlClassName="pl-9"
             />
           </div>
           {brands.length > 1 ? (

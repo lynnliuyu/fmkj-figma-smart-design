@@ -55,6 +55,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -691,12 +692,14 @@ export function QuoteEditor({
             <Label htmlFor="title" className="text-xs font-medium text-muted-foreground">
               报价方案名称
             </Label>
-            <Input
+            <TextInput
+              label={'title'}
+              isLabelHidden
               id="title"
               value={quote.title}
-              disabled={readOnly}
-              onChange={(e) => update({ title: e.target.value })}
-              className="h-9 border-border bg-subtle/50 text-base font-semibold text-foreground focus-visible:bg-background"
+              isDisabled={readOnly}
+              onChange={(v) => update({ title: v })}
+              controlClassName="h-9 border-border bg-subtle/50 text-base font-semibold text-foreground focus-visible:bg-background"
             />
           </div>
           <div className="grid gap-1.5">
@@ -947,12 +950,14 @@ export function QuoteEditor({
             {viewMode === 'summary' && quote.items.length > 0 ? (
               <div className="relative w-48 sm:w-56">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input
+                <TextInput
+                  label={'筛选报价明细'}
+                  isLabelHidden
                   value={lineQuery}
-                  onChange={(e) => setLineQuery(e.target.value)}
+                  onChange={(v) => setLineQuery(v)}
                   placeholder="筛选型号、SKU 或分类…"
                   aria-label="筛选报价明细"
-                  className="h-8 border-border bg-background pl-8 text-xs"
+                  controlClassName="h-8 border-border bg-background pl-8 text-xs"
                 />
                 {lineQuery ? (
                   <button
@@ -1601,13 +1606,15 @@ export function QuoteEditor({
             ) : null}
             {quote.fees.map((f) => (
               <div key={f.key} className="flex items-center gap-2">
-                <Input
+                <TextInput
+                  label={'费用名称'}
+                  isLabelHidden
                   value={f.name}
                   placeholder="费用名称"
                   aria-label="费用名称"
-                  className="h-8"
-                  disabled={readOnly}
-                  onChange={(e) => updateFee(f.key, { name: e.target.value })}
+                  controlClassName="h-8"
+                  isDisabled={readOnly}
+                  onChange={(v) => updateFee(f.key, { name: v })}
                 />
                 {numInput(
                   f.amount,

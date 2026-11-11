@@ -24,7 +24,7 @@ import { toast } from 'sonner'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { CustomerUsageReport } from '@/lib/usage-diagnostics'
 import { cn } from '@/lib/utils'
@@ -374,11 +374,13 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
               </div>
               <div className="relative w-full sm:w-64">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
+                <TextInput
+                  label={'搜索客户姓名、邮箱、电话…'}
+                  isLabelHidden
                   value={customerQuery}
-                  onChange={(e) => setCustomerQuery(e.target.value)}
+                  onChange={(v) => setCustomerQuery(v)}
                   placeholder="搜索客户姓名、邮箱、电话…"
-                  className="h-8 pl-8 text-xs"
+                  controlClassName="h-8 pl-8 text-xs"
                 />
               </div>
             </CardHeader>

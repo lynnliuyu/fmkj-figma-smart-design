@@ -5,6 +5,7 @@ import { CalendarClock, KeyRound, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { ShareConfig } from '@/lib/project-access'
@@ -93,14 +94,16 @@ export function ShareSettings({ projectId, config }: { projectId: string; config
           <Label htmlFor="share-password" className="text-xs font-medium">
             访问密码
           </Label>
-          <Input
+          <TextInput
+            label={'share-password'}
+            isLabelHidden
             id="share-password"
             type="text"
             value={password}
-            disabled={clearPassword}
+            isDisabled={clearPassword}
             placeholder={hasPassword ? '已设置；留空则保持不变' : '留空则不需要密码'}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full max-w-xs"
+            onChange={(v) => setPassword(v)}
+            controlClassName="w-full max-w-xs"
             autoComplete="new-password"
           />
           {hasPassword ? (

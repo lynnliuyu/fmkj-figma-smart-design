@@ -19,7 +19,7 @@ import { PointMarker } from '@/components/point-marker'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -119,12 +119,14 @@ export function PlacePanel({
         ) : null}
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
+            label={'搜索设备'}
+            isLabelHidden
             value={query}
-            onChange={(e) => onQuery(e.target.value)}
+            onChange={(v) => onQuery(v)}
             placeholder="搜索设备（点击或拖拽放置）"
             aria-label="搜索设备"
-            className="h-8 border-border bg-subtle/70 pl-8 text-xs"
+            controlClassName="h-8 border-border bg-subtle/70 pl-8 text-xs"
           />
         </div>
       </div>
@@ -352,15 +354,18 @@ export function SelectedArea({
         </div>
       </div>
       <div className="grid grid-cols-[1fr_7rem] gap-2">
-        <Input
+        <TextInput
+          label={'区域名称'}
+          isLabelHidden
           value={name}
-          disabled={readOnly}
-          maxLength={30}
+          isDisabled={readOnly}
           aria-label="区域名称"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(v) => setName(v)}
           onBlur={commit}
-          onKeyDown={(e) => e.key === 'Enter' && (e.currentTarget as HTMLInputElement).blur()}
-          className="h-8 border-border bg-background text-xs"
+          onKeyDown={(ev) => {
+            if (ev.key === 'Enter') (ev.currentTarget as HTMLInputElement).blur()
+          }}
+          controlClassName="h-8 border-border bg-background text-xs"
         />
         <Select
           value={area.areaType}

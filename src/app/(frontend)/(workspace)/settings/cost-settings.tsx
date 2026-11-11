@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { CostSettings } from '@/lib/quote-costs'
@@ -124,12 +125,14 @@ export function CostSettingsCard({
                 aria-hidden
                 className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
               />
-              <Input
+              <TextInput
+                label={'搜索品牌'}
+                isLabelHidden
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(v) => setQuery(v)}
                 placeholder="搜索品牌"
                 aria-label="搜索品牌"
-                className="h-8 w-44 pl-8"
+                controlClassName="h-8 w-44 pl-8"
               />
             </div>
           </div>

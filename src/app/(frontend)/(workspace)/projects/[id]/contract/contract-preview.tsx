@@ -32,6 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -146,6 +147,7 @@ export function ContractSectionEdit({
       <Label htmlFor={`contract-${id}`}>{label}</Label>
       <Input
         id={`contract-${id}`}
+        className="h-9"
         value={draft[id] ?? ''}
         onChange={(e) => set({ [id]: e.target.value })}
         {...props}
@@ -295,13 +297,14 @@ export function ContractSectionEdit({
                     </span>
                   ) : (
                     <>
-                      <Input
+                      <TextInput
+                        label={'款项名称'}
+                        isLabelHidden
                         aria-label={`第 ${i + 1} 期款项名称`}
                         value={p.name}
-                        maxLength={40}
                         placeholder="款项名称"
-                        className="h-8 min-w-0 flex-1"
-                        onChange={(e) => setPayment(p.key, { name: e.target.value })}
+                        controlClassName="h-8 min-w-0 flex-1"
+                        onChange={(v) => setPayment(p.key, { name: v })}
                       />
                       <div className="relative w-20 shrink-0">
                         <Input

@@ -38,7 +38,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import type { getManualSnapshot } from '@/lib/user-manual'
 import { cn } from '@/lib/utils'
 
@@ -593,12 +593,14 @@ export function DocsClient({ manual }: { manual: ManualData }) {
           </DialogHeader>
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              autoFocus
+            <TextInput
+              label={'输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…'}
+              isLabelHidden
+              hasAutoFocus
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(v) => setSearchQuery(v)}
               placeholder="输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…"
-              className="pl-9 text-xs"
+              controlClassName="pl-9 text-xs"
             />
           </div>
           <div className="max-h-80 space-y-1 overflow-y-auto pr-1">

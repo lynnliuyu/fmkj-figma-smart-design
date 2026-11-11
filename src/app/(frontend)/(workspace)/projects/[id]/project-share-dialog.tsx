@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -276,10 +276,12 @@ export function ProjectShareDialog({
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Input
-                        readOnly
+                      <TextInput
+                        label={'表单字段'}
+                        isLabelHidden
+                        isReadOnly
                         value={shareUrl}
-                        className="h-8 bg-background font-mono text-xs"
+                        controlClassName="h-8 bg-background font-mono text-xs"
                       />
                       <Button
                         type="button"

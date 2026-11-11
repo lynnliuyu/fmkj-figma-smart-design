@@ -7,7 +7,7 @@ import { money, SectionHeader } from '@/components/landing/section'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
@@ -437,11 +437,12 @@ export function ClientDecisionPanel({
                 <div className="mt-4 grid gap-3">
                   <div className="grid gap-1.5">
                     <Label htmlFor="fb-name">您的称呼</Label>
-                    <Input
+                    <TextInput
+                      label={'例如：王先生'}
+                      isLabelHidden
                       id="fb-name"
                       value={name}
-                      maxLength={40}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(v) => setName(v)}
                       aria-invalid={Boolean(errors.customerName)}
                       placeholder="例如：王先生"
                     />
@@ -451,12 +452,13 @@ export function ClientDecisionPanel({
                   </div>
                   <div className="grid gap-1.5">
                     <Label htmlFor="fb-phone">联系电话（可选）</Label>
-                    <Input
+                    <TextInput
+                      label={'fb-phone'}
+                      isLabelHidden
                       id="fb-phone"
                       value={phone}
-                      maxLength={30}
                       inputMode="tel"
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(v) => setPhone(v)}
                       aria-invalid={Boolean(errors.customerPhone)}
                     />
                     {errors.customerPhone ? (

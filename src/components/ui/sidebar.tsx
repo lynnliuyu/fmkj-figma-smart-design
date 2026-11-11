@@ -411,6 +411,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
   )
 }
 
+// 这层是「透传 props 的包装组件」，官方 TextInput 的收窄 props 表达不了
+// （className 会被 {...props} 覆盖、label 会被重复指定）——保留适配层更稳。
 function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input>) {
   return (
     <Input

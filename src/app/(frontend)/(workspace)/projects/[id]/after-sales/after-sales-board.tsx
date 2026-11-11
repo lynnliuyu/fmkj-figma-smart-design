@@ -45,6 +45,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -503,12 +504,13 @@ export function AfterSalesBoard({
                 </Field>
               </div>
               <Field label="摘要" error={errors.title} htmlFor="svc-title">
-                <Input
+                <TextInput
+                  label={'例如：主卧窗帘电机无响应'}
+                  isLabelHidden
                   id="svc-title"
                   value={editing.form.title}
-                  maxLength={120}
                   placeholder="例如：主卧窗帘电机无响应"
-                  onChange={(e) => patchForm({ title: e.target.value })}
+                  onChange={(v) => patchForm({ title: v })}
                 />
               </Field>
               <div className="grid gap-4 sm:grid-cols-3">
@@ -560,22 +562,24 @@ export function AfterSalesBoard({
                   </Field>
                 ) : (
                   <Field label="服务人员" htmlFor="svc-tech">
-                    <Input
+                    <TextInput
+                      label={'svc-tech'}
+                      isLabelHidden
                       id="svc-tech"
                       value={editing.form.technician}
-                      maxLength={40}
-                      onChange={(e) => patchForm({ technician: e.target.value })}
+                      onChange={(v) => patchForm({ technician: v })}
                     />
                   </Field>
                 )}
               </div>
               {editing.form.billing === 'paid' ? (
                 <Field label="服务人员" htmlFor="svc-tech2">
-                  <Input
+                  <TextInput
+                    label={'svc-tech2'}
+                    isLabelHidden
                     id="svc-tech2"
                     value={editing.form.technician}
-                    maxLength={40}
-                    onChange={(e) => patchForm({ technician: e.target.value })}
+                    onChange={(v) => patchForm({ technician: v })}
                   />
                 </Field>
               ) : null}

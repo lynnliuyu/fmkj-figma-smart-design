@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 
 /** 兑换码充值弹窗：不再有会员等级卡片，只保留「输入兑换码充值 AI 积分」 */
 export function MembershipDialog({
@@ -85,16 +85,17 @@ export function MembershipDialog({
         </DialogHeader>
 
         <form onSubmit={handleRedeem} className="flex flex-col gap-2 sm:flex-row">
-          <Input
+          <TextInput
+            label={'兑换码'}
+            isLabelHidden
             ref={inputRef}
-            autoFocus
+            hasAutoFocus
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            onChange={(v) => setCode(v.toUpperCase())}
             placeholder="输入兑换码（如 FMKJ-XXXX-XXXX）"
             aria-label="兑换码"
-            maxLength={40}
-            disabled={pending}
-            className="font-mono tracking-wider uppercase"
+            isDisabled={pending}
+            controlClassName="font-mono tracking-wider uppercase"
           />
           <Button
             type="submit"

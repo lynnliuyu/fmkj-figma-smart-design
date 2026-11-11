@@ -6,7 +6,7 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
-import { Input } from '@/components/ui/input'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import type { CollaboratorRole } from '@/lib/project-access'
 
@@ -86,12 +86,14 @@ export function JoinCard({
           <Label htmlFor="join-email" className="text-xs">
             成员邮箱
           </Label>
-          <Input
+          <TextInput
+            label={'name@example.com'}
+            isLabelHidden
             id="join-email"
             type="email"
-            required
+            isRequired
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(v) => setEmail(v)}
             placeholder="name@example.com"
           />
         </div>
@@ -99,13 +101,14 @@ export function JoinCard({
           <Label htmlFor="join-password" className="text-xs">
             密码
           </Label>
-          <Input
+          <TextInput
+            label={'••••••'}
+            isLabelHidden
             id="join-password"
             type="password"
-            required
-            minLength={6}
+            isRequired
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(v) => setPassword(v)}
             placeholder="••••••"
           />
         </div>
