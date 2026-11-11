@@ -24,7 +24,6 @@ import {
   Minimize2,
   MapPinPlus,
   Minus,
-  Palette,
   PencilLine,
   Plus,
   ReceiptText,
@@ -43,7 +42,7 @@ import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import { STYLE_TRANSFER_HANDOFF_KEY } from '@/lib/style-templates'
+import type { StyleTransferHandoff } from '@/lib/style-templates'
 import {
   Dialog,
   DialogContent,
@@ -77,7 +76,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { BoardCanvas, type CanvasContext } from '@/board/canvas/board-canvas'
 import { download, exportSheetPng } from '@/board/canvas/export'
-import { SHEET_STYLE_META } from '@/board/canvas/layers'
 import { useViewSettings } from '@/board/canvas/use-view-settings'
 import { fromDeg, toDeg, unionBox } from '@/board/core/geometry'
 import { useBoardHistory } from '@/board/core/history'
@@ -89,7 +87,6 @@ import type {
   BoardTool,
   Box,
   SheetObj,
-  SheetStyle,
   SymbolObj,
   SymbolTemplate,
   Vec,
@@ -151,19 +148,12 @@ import {
 } from './editor-panels'
 import { LightingPanel } from './lighting-panel'
 import { SheetCropper } from './sheet-cropper'
+import { AiStyleDialog } from './ai-style-dialog'
 
 export type { PointProduct } from './editor-panels'
 
 /** 图纸铺满画布时四周留一点边：这个状态显示为 100% */
 const FIT = 0.96
-/** 彩平风格的代表色（工具栏与菜单里的小色点） */
-const STYLE_DOT: Record<SheetStyle, string> = {
-  cad: '#f4f4f5',
-  warm: '#d6b48c',
-  modern: '#a5b4fc',
-  blueprint: '#3b82f6',
-}
-
 /** 工具栏图标按钮：幽灵样式 + 悬停提示 */
 function ToolbarIconButton({
   label,
@@ -258,6 +248,7 @@ export function PointMapEditor({
   initialFocus,
   readOnly,
   plugins,
+  aiCopilot = false,
 }: {
   projectId: string
   projectName: string
@@ -274,6 +265,8 @@ export function PointMapEditor({
   initialFocus?: InitialFocus
   readOnly: boolean
   plugins: PointMapPlugins
+  /** 「AI 对话侧栏（高级）」插件是否开启：决定 AI 精装彩平弹窗是否可用 */
+  aiCopilot?: boolean
 }) {
   const dwgEnabled = plugins.dwg
   const router = useRouter()
@@ -311,6 +304,7 @@ export function PointMapEditor({
   const [tab, setTab] = useState<PanelTab>(readOnly ? 'summary' : 'devices')
   const [calib, setCalib] = useState<{ sheetId: string; units: number; value: string } | null>(null)
   const [autoGenOpen, setAutoGenOpen] = useState(false)
+  const [aiStyleOpen, setAiStyleOpen] = useState(false)
   const [autoGenScope, setAutoGenScope] = useState<'current' | 'all'>('current')
   const [autoGenIncludeLighting, setAutoGenIncludeLighting] = useState(true)
   const [draft, setDraft] = useState<Draft | null>(null)
@@ -1280,58 +1274,18 @@ export function PointMapEditor({
   const armedDevice =
     armed && armed.symbolId === armed.data.deviceType ? String(armed.data.deviceType) : null
   const armedLabel = armed ? pack.look({ symbolId: armed.symbolId, data: armed.data }).name : ''
-  const sheetStyle: SheetStyle = view.sheetStyle ?? 'cad'
-  const isStylized = sheetStyle !== 'cad'
   /**
-   * 顶部主操作状态机：
-   * 1. 没有户型图 → 突出「上传户型图」
-   * 2. 有户型图但尚未彩平风格化 → 突出「风格化」
-   * 3. 已开启彩平风格化 → 突出「生成点位」
+   * 顶部主操作状态机：没有图纸时突出「上传户型图」，有图纸后突出「生成点位」。
+   * 本地渲染色「风格化」按钮组已下线，彩平统一走 AI 精装彩平弹窗。
    */
-  const primaryAction: 'upload' | 'stylize' | 'generate' = !snap.sheets.length
-    ? 'upload'
-    : !isStylized
-      ? 'stylize'
-      : 'generate'
+  const primaryAction: 'upload' | 'generate' = snap.sheets.length ? 'generate' : 'upload'
 
-  const applySheetStyle = useCallback(
-    (nextStyle: SheetStyle) => {
-      setView({ sheetStyle: nextStyle })
-      toast.success(
-        nextStyle === 'cad'
-          ? '已恢复原始 CAD 底图'
-          : `已切换为「${SHEET_STYLE_META[nextStyle].label}」彩平效果`,
-      )
-    },
-    [setView],
-  )
-
-  /**
-   * 把当前楼层底图交给「户型图风格化」（AI 出图）继续处理。
-   *
-   * 两者是**不同**的能力，别混：本页的「风格化」是**画布本地渲染色**（即时、免费），
-   * AI 页那个是**调用模型生成一张新图**（要等、扣积分）。这里只做交接，不改任何现有行为。
-   *
-   * 底图在客户端是 dataURL，尺寸超过 URL 上限，故经 sessionStorage 传递。
-   */
-  const handoffToAiStyle = useCallback(() => {
-    const sheet = snap.sheets[0]
-    const dataURL = sheet?.fileId ? files[sheet.fileId]?.dataURL : undefined
-    if (!dataURL) {
-      toast.error('没有可用的户型底图，请先上传')
-      return
-    }
-    try {
-      sessionStorage.setItem(
-        STYLE_TRANSFER_HANDOFF_KEY,
-        JSON.stringify({ image: dataURL, name: sheet.name || '户型图' }),
-      )
-    } catch {
-      toast.error('底图太大，无法带过去，请到 AI 页手动上传')
-      return
-    }
-    router.push('/ai/image/style')
-  }, [snap.sheets, files, router])
+  /** 打开弹窗时把「当前楼层」底图带过去（原来带图跳转用的是 snap.sheets[0]，会带错楼层） */
+  const aiStyleSource: StyleTransferHandoff | null = (() => {
+    const image = activeSheet?.fileId ? files[activeSheet.fileId]?.dataURL : undefined
+    // 底图可能还在上传中 / 媒体库读取失败：没图就不预载，让用户自己在弹窗里传
+    return image ? { image, name: activeSheet?.name || '户型图' } : null
+  })()
 
   return (
     <div
@@ -1602,71 +1556,13 @@ export function PointMapEditor({
               ) : null}
             </div>
 
-            <div className="flex items-center">
-              <Button
-                variant={primaryAction === 'stylize' ? 'primary' : 'secondary'}
-                isDisabled={!snap.sheets.length || !!cropFile}
-                onClick={() => applySheetStyle(isStylized ? 'cad' : 'warm')}
-                className="rounded-r-none"
-                tooltip={
-                  isStylized
-                    ? `当前：${SHEET_STYLE_META[sheetStyle].label}，点击恢复原始 CAD 底图`
-                    : '将户型底图与房间区域一键渲染为彩平图'
-                }
-                icon={<Palette />}
-                label="风格化"
-              />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <IconButton
-                    variant={primaryAction === 'stylize' ? 'primary' : 'secondary'}
-
-                    isDisabled={!snap.sheets.length || !!cropFile}
-                    aria-label="选择彩平图风格"
-                    className={cn(
-                      'w-7 rounded-l-none',
-                      primaryAction === 'stylize' ? 'border-l-primary-foreground/20' : '-ml-px',
-                    )}
-                    label="选择彩平图风格"
-                    icon={<ChevronDown />}
-                    size="md"
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-56">
-                  {(['warm', 'modern', 'blueprint', 'cad'] as SheetStyle[]).map((st) => (
-                    <DropdownMenuItem
-                      key={st}
-                      onSelect={() => applySheetStyle(st)}
-                      className="gap-2.5"
-                    >
-                      <span
-                        aria-hidden
-                        className="size-3 shrink-0 rounded-full ring-1 ring-black/10"
-                        style={{ background: STYLE_DOT[st] }}
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-medium">
-                          {SHEET_STYLE_META[st].label}
-                        </span>
-                        <span className="block text-xs text-muted-foreground">
-                          {SHEET_STYLE_META[st].desc}
-                        </span>
-                      </span>
-                      {sheetStyle === st ? <Check className="text-primary" /> : null}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* 与上面的「风格化」并列：一个是画布本地渲染色，一个是 AI 出图 */}
+            {/* 彩平统一走 AI 出图：就地开弹窗，不跳页、不丢画布上下文 */}
             <Button
-              variant="ghost"
+              variant="secondary"
               size="sm"
               isDisabled={!snap.sheets.length || !!cropFile}
-              onClick={handoffToAiStyle}
-              tooltip="用 AI 把户型图生成精装彩平图（消耗积分）"
-              className="text-muted-foreground"
+              onClick={() => setAiStyleOpen(true)}
+              tooltip="用 AI 把当前楼层户型图生成精装彩平图（消耗积分）"
               icon={<Sparkles />}
               label="AI 精装彩平"
             />
@@ -2532,6 +2428,15 @@ export function PointMapEditor({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {aiStyleOpen ? (
+        <AiStyleDialog
+          open={aiStyleOpen}
+          onOpenChange={setAiStyleOpen}
+          source={aiStyleSource}
+          enabled={aiCopilot}
+        />
+      ) : null}
     </div>
   )
 }

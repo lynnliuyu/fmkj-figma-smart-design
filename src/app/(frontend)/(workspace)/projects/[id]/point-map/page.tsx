@@ -104,6 +104,7 @@ export default async function PointMapPage({
         roomInsights: flags['room-insights'],
         proposal: flags.proposal,
       }}
+      aiCopilot={flags['ai-copilot']}
     />
   )
 }

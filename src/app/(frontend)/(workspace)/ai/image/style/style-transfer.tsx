@@ -21,10 +21,16 @@ export function StyleTransfer({
   templates,
   configured,
   cost,
+  initialSource = null,
+  compact = false,
 }: {
   templates: Template[]
   configured: boolean
   cost: number
+  /** 弹窗调用方直接带过来的底图（点位图当前楼层），优先于 sessionStorage 交接 */
+  initialSource?: StyleTransferHandoff | null
+  /** 弹窗内收紧纵向尺寸，让「生成」按钮落在首屏；独立页面保持原尺寸 */
+  compact?: boolean
 }) {
   const [source, setSource] = useState<string | null>(null)
   const [sourceName, setSourceName] = useState('')
@@ -57,12 +63,9 @@ export function StyleTransfer({
   }
 
   /**
-   * 从点位图编辑器「带图跳转」过来时，自动把那张户型图放进上传位。
+   * 把一张户型底图放进上传位。
    *
-   * 只在**首次挂载**读一次并立刻清掉 —— 否则用户回到本页会莫名其妙
-   * 又被塞回上次那张图，覆盖掉他当前的选择。
-   *
-   * ⚠️ 交接过来的值**有两种形态**，都要认：
+   * 底图**有两种形态**，都要认：
    *  - `data:image/...` —— 画布内存里的 base64（刚上传、还没保存过）
    *  - `/api/media/file/xxx.png` / `/demo-plans/xxx.png` —— 已保存过的底图，
    *    点位图保存时会把内嵌图传进媒体库、**把 dataURL 字段替换成这个地址**
@@ -70,33 +73,31 @@ export function StyleTransfer({
    *    只认 base64 会把「已保存的项目」全部交接失败 —— 线上实测踩到过。
    *
    * 官方接口只吃 base64，所以 URL 形态要先取回再转。
+   *
+   * `isCancelled` 让弹窗关闭时能中断异步取图，避免卸载后 setState。
    */
-  useEffect(() => {
-    let cancelled = false
+  const loadHandoff = (
+    handoff: Partial<StyleTransferHandoff>,
+    isCancelled: () => boolean,
+  ): Promise<void> | void => {
+    const image = typeof handoff.image === 'string' ? handoff.image : ''
+    if (!image) return
+    const name = typeof handoff.name === 'string' ? handoff.name : '户型图'
 
-    const load = async (raw: string) => {
-      let parsed: Partial<StyleTransferHandoff>
-      try {
-        parsed = JSON.parse(raw) as Partial<StyleTransferHandoff>
-      } catch {
-        return
-      }
-      const image = typeof parsed?.image === 'string' ? parsed.image : ''
-      if (!image) return
-      const name = typeof parsed.name === 'string' ? parsed.name : '户型图'
+    const apply = (dataURL: string) => {
+      if (isCancelled()) return
+      setSource(dataURL)
+      setSourceName(name)
+      setError(null)
+      setResult(null)
+    }
 
-      // 形态一：已经是 base64，直接用
-      if (image.startsWith('data:image/')) {
-        if (cancelled) return
-        setSource(image)
-        setSourceName(name)
-        setError(null)
-        setResult(null)
-        return
-      }
+    // 形态一：已经是 base64，直接用
+    if (image.startsWith('data:image/')) return apply(image)
 
-      // 形态二：站内地址（媒体库 / 示例图）→ 取回来转 base64
-      if (!image.startsWith('/')) return
+    // 形态二：站内地址（媒体库 / 示例图）→ 取回来转 base64
+    if (!image.startsWith('/')) return
+    return (async () => {
       try {
         const res = await fetch(image)
         if (!res.ok) throw new Error(String(res.status))
@@ -107,28 +108,49 @@ export function StyleTransfer({
           reader.onerror = () => reject(new Error('读取失败'))
           reader.readAsDataURL(blob)
         })
-        if (cancelled || !dataURL.startsWith('data:image/')) return
-        setSource(dataURL)
-        setSourceName(name)
-        setError(null)
-        setResult(null)
+        if (!isCancelled() && dataURL.startsWith('data:image/')) apply(dataURL)
       } catch {
-        if (!cancelled) setError('没能读取点位置图里的户型底图，请手动上传')
+        if (!isCancelled()) setError('没能读取点位图里的户型底图，请手动上传')
       }
-    }
+    })()
+  }
 
-    try {
-      const raw = sessionStorage.getItem(STYLE_TRANSFER_HANDOFF_KEY)
-      // 无论成败都先清掉，避免下次回本页又被塞一次
-      if (raw) sessionStorage.removeItem(STYLE_TRANSFER_HANDOFF_KEY)
-      if (raw) void load(raw)
-    } catch {
-      // 隐私模式下读不到：静默忽略，用户仍然可以手动上传
+  /**
+   * 两种入口，共用同一个 loadHandoff：
+   *  1. 弹窗（点位图顶栏「AI 精装彩平」）直接把当前楼层底图作为 props 带过来；
+   *  2. 独立 AI 页仍支持旧的「带图跳转」—— sessionStorage 交接。
+   *     **只在首次挂载读一次并立刻清掉**，否则回到本页会被塞回上次那张图。
+   */
+  useEffect(() => {
+    let cancelled = false
+    const isCancelled = () => cancelled
+
+    if (initialSource) {
+      void loadHandoff(initialSource, isCancelled)
+    } else {
+      try {
+        const raw = sessionStorage.getItem(STYLE_TRANSFER_HANDOFF_KEY)
+        // 无论成败都先清掉，避免下次回本页又被塞一次
+        if (raw) sessionStorage.removeItem(STYLE_TRANSFER_HANDOFF_KEY)
+        if (raw) {
+          let parsed: Partial<StyleTransferHandoff>
+          try {
+            parsed = JSON.parse(raw) as Partial<StyleTransferHandoff>
+          } catch {
+            parsed = {}
+          }
+          void loadHandoff(parsed, isCancelled)
+        }
+      } catch {
+        // 隐私模式下读不到：静默忽略，用户仍然可以手动上传
+      }
     }
 
     return () => {
       cancelled = true
     }
+    // initialSource 是打开弹窗时的快照，只认首次挂载；后续换楼层由弹窗重挂载处理
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const generate = async () => {
@@ -172,11 +194,18 @@ export function StyleTransfer({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="mt-1.5 flex min-h-[180px] w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-dashed bg-background p-3 text-center hover:bg-muted/40"
+            className={cn(
+              'mt-1.5 flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-dashed bg-background p-3 text-center hover:bg-muted/40',
+              compact ? 'min-h-[120px]' : 'min-h-[180px]',
+            )}
           >
             {source ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={source} alt="源户型图" className="max-h-[220px] w-full object-contain" />
+              <img
+                src={source}
+                alt="源户型图"
+                className={cn('w-full object-contain', compact ? 'max-h-[150px]' : 'max-h-[220px]')}
+              />
             ) : (
               <>
                 <ImagePlus className="size-8 text-muted-foreground" />
@@ -194,7 +223,12 @@ export function StyleTransfer({
 
         <div>
           <label className="text-xs font-medium text-muted-foreground">风格模板</label>
-          <div className="mt-2 grid max-h-[330px] grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
+          <div
+            className={cn(
+              'mt-2 grid grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3',
+              compact ? 'max-h-[196px]' : 'max-h-[330px]',
+            )}
+          >
             {templates.map((t) => (
               <button
                 key={t.id}
@@ -206,7 +240,11 @@ export function StyleTransfer({
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.file} alt={t.name} className="h-24 w-full object-cover" />
+                <img
+                  src={t.file}
+                  alt={t.name}
+                  className={cn('w-full object-cover', compact ? 'h-16' : 'h-24')}
+                />
                 <span className="block px-2 py-1.5">
                   <span className="block text-[11px] font-medium">{t.name}</span>
                   <span className="mt-0.5 line-clamp-1 block text-[10px] text-muted-foreground">
@@ -248,7 +286,12 @@ export function StyleTransfer({
         </p>
       </div>
 
-      <div className="flex min-h-[480px] flex-col rounded-2xl border bg-muted/25 p-4">
+      <div
+        className={cn(
+          'flex flex-col rounded-2xl border bg-muted/25 p-4',
+          compact ? 'min-h-[320px]' : 'min-h-[480px]',
+        )}
+      >
         {busy ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-sm text-muted-foreground">
             <Loader2 className="size-8 animate-spin text-primary" />
