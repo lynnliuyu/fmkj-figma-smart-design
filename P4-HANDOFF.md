@@ -14,17 +14,18 @@ PR #107     待合并（P4 第 4 批：delete-project / square-crop-dialog / pro
 
 **P4 进度：14 / 34 文件**
 
-| PR | 文件 |
-|---|---|
-| #99 | board-toolbar · lighting-panel |
-| #102 | beta-doc-link · workspace-dialogs · plan-demo |
-| #104 | app-sidebar · reports-client · after-sales-board |
-| #105 | delivery-package · social-poster-dialog · print-toolbar |
+| PR   | 文件                                                       |
+| ---- | ---------------------------------------------------------- |
+| #99  | board-toolbar · lighting-panel                             |
+| #102 | beta-doc-link · workspace-dialogs · plan-demo              |
+| #104 | app-sidebar · reports-client · after-sales-board           |
+| #105 | delivery-package · social-poster-dialog · print-toolbar    |
 | #107 | delete-project · square-crop-dialog · project-share-dialog |
 
 ## 二、还没做的（按风险排序）
 
 ### 低风险（Dialog 为主，模式已成熟）
+
 ```
 src/components/landing/proposal-showcase.tsx    Tabs 3 + Dialog 1  ⚠️ 宽度硬约束
 src/components/landing/quote-showcase.tsx       Tabs 4 + Dialog 1  ⚠️ 宽度硬约束
@@ -35,6 +36,7 @@ src/app/(frontend)/share/[token]/share-export-button.tsx  Dialog 5
 ```
 
 ### 中风险
+
 ```
 src/components/workspace-dialogs.tsx            已完成（勿重做）
 src/components/info-tip.tsx                     已删（死代码）
@@ -44,12 +46,14 @@ quote-editor.tsx                                 Popover 2 + Select 1 + Textarea
 ```
 
 ### 高风险（最后做）
+
 ```
 editor-panels.tsx          ScrollArea 3 + Select 3
 point-map-editor.tsx       五组件全有，4000+ 行，最重
 ```
 
 ### P3 剩余（表单型，需单独评估）
+
 ```
 Label 53 处    官方无独立 Label，只有复合 Field → 需重写表单结构
 Select 14 处   数据带 hint / 动态 filter 的要跳过
@@ -59,6 +63,7 @@ Card 40 处     官方只有单 Card，本仓 6 个复合组件 → 需重写结
 ```
 
 ### P5
+
 ```
 删适配层 31 个文件（src/components/ui/*.tsx）
 ```
@@ -110,12 +115,14 @@ git branch --show-current      # ⚠️ 必须确认！我曾误在别的分支�
 ```
 
 **import**：
+
 ```js
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 ```
 
 **三个必守**：
+
 1. `padding={5}` 必须给（否则标题贴边框）
 2. `width` 显式给（原 `sm:max-w-lg` → 512、`sm:max-w-xl` → 576）
 3. 删完旧块后**必须 grep 检查 `<Dialog>` / `</Dialog>` / 残留 `DialogHeader`**
@@ -146,6 +153,7 @@ for f in <文件>; do
   echo "$f: <Dialog>=$(grep -c '<Dialog\b' $f)  </Dialog>=$(grep -c '</Dialog>' $f)  残留DialogHeader=$(grep -c '<DialogHeader>' $f)"
 done
 ```
+
 - `<Dialog>` 与 `</Dialog>` 必须**成对**
 - `<DialogHeader>` 数量必须等于 Dialog 数量（残留说明旧块没删干净）
 
@@ -153,18 +161,21 @@ done
 
 ```js
 await btn.click()
-for (const ms of [600, 1500, 3000]) {   // ⚠️ 不要单点断言
+for (const ms of [600, 1500, 3000]) {
+  // ⚠️ 不要单点断言
   await wait(600)
-  const n = await page.$$eval('dialog[open]', ds => ds.length)
+  const n = await page.$$eval('dialog[open]', (ds) => ds.length)
   if (n > 0) break
 }
 ```
 
 本地起服务（验报表页需要运营权限）：
+
 ```sh
 export PLATFORM_ADMIN_EMAILS="demo@fmkj.local"
 nohup bash scripts/dev-up.sh 3000 > /tmp/dev.log 2>&1 &
 ```
+
 本地账号：`demo@fmkj.local` / `demo12345`（**只在本地库有**）
 
 ### 3.6 合并 + 上线
@@ -180,22 +191,26 @@ git branch -D <分支> && git push origin --delete <分支>
 ```
 
 **部署**（影子发布）：
+
 ```sh
 KEY=~/.ssh/fmkj_deploy_20261109
 HOST=ubuntu@124.222.225.26
 # 打包 → scp → 远端 docker compose build（~9 分钟）→ 切 Caddy 端口 → 验线上
 ```
+
 远端 Caddy 配置：`/opt/fanmeng-gateway/releases/aad2e52/deploy/remote/caddy/gateway.Caddyfile`
 端口递增规则：`130XX → 130XX+1`
 
 ## 四、踩过的坑（血泪清单，别再踩）
 
 ### 结构类（tsc 查不出）
+
 1. **外层 `<Dialog>` 标签被吃掉** → tsc 全绿但弹窗完全不出现。**必须真机点一次**
 2. **旧 `DialogHeader` 块残留在 LayoutContent 里** → 这个 tsc 能抓到（title 必填）
 3. **Fragment `</>` 漏补** → 语法错，tsc 能抓到
 
 ### 验证方式类（今天栽了 3 次）
+
 4. **查错属性**：官方 `Tab` 用 `data-selected` / `aria-current`，**不是** `aria-selected`
    → 查不到先怀疑查询方式
 5. **等太短**：弹窗 500ms 就开了，我等 3 秒才断言
@@ -203,14 +218,17 @@ HOST=ubuntu@124.222.225.26
 6. **grep 模式骗人**：`<Dialog$` 误报，要 `<Dialog\b`
 
 ### Git 类
+
 7. **开分支前没确认分支名** → 改动被 stash 带走（`git stash list` 能救）
 8. **删分支把未合并的 PR 一起关了** → 合并和删分支分两步
 
 ### 进程类
+
 9. **Next 启动后进程名变 `next-server`** → `pkill -f server.js` 匹配不到，要按端口杀
 10. **自托管 runner 工作区持久化** → 上一轮服务占端口
 
 ### 官方 API 类
+
 11. `ToggleButton` 没有 `variant` / `endContent`
 12. `Selector` 的 `value: string | null` 强制要 `hasClear: true`
 13. 官方**没有**：`TabsContent` / `DialogTrigger` / `DialogClose` / `DialogFooter` / 独立 `Label` / `Separator` / `Progress`
