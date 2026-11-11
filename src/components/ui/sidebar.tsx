@@ -399,7 +399,11 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'relative flex w-full flex-1 flex-col bg-canvas [&>main]:mx-auto [&>main]:w-full [&>main]:max-w-7xl md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        // ⚠️ 原来是 `w-full` —— 在 flex 行里 w-full = 父容器的 100%，
+        // 而父容器已被侧边栏占了 48px，于是 inset 右边缘超出视口 48px，
+        // 整页出现横向滚动条（实测：1440 视口下 scrollWidth=1488）。
+        // 改成 `min-w-0 flex-1` 让 flex 自己扣掉侧边栏的宽度。
+        'relative flex min-w-0 flex-1 flex-col bg-canvas [&>main]:mx-auto [&>main]:w-full [&>main]:max-w-7xl md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className,
       )}
       {...props}
