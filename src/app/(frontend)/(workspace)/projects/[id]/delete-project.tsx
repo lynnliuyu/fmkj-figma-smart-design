@@ -6,16 +6,8 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 
 import { deleteProject } from '../actions'
 
@@ -58,46 +50,63 @@ export function DeleteProject({
           删除后点位图、报价单和未签合同都会一并删除，无法恢复。不再跟进的项目也可以选择归档。
         </p>
       </div>
-      <Dialog open={open} onOpenChange={(v) => (setOpen(v), setError(''))}>
-        <DialogTrigger asChild>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="text-destructive-strong hover:text-destructive-strong"
-            icon={<Trash2 />}
-            label="删除项目"
+      <>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="text-destructive-strong hover:text-destructive-strong"
+          icon={<Trash2 />}
+          label="删除项目"
+          onClick={() => setOpen(true)}
+        />
+        <Dialog
+          isOpen={open}
+          onOpenChange={(v) => (setOpen(v), setError(''))}
+          width={400}
+          purpose="form"
+        >
+          <Layout
+            header={
+              <DialogHeader
+                title={`删除「${projectName}」？`}
+                subtitle={`将同时删除这个项目的点位图${quoteCount ? `、${quoteCount} 份报价单` : ''}和未签合同。删除后无法恢复。`}
+                onOpenChange={(v) => (setOpen(v), setError(''))}
+              />
+            }
+            content={
+              <LayoutContent padding={5}>
+                {error ? (
+                  <p
+                    role="alert"
+                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong"
+                  >
+                    {error}
+                  </p>
+                ) : null}
+              </LayoutContent>
+            }
+            footer={
+              <LayoutFooter hasDivider>
+                <div className="flex w-full justify-end gap-2">
+                  <Button
+                    variant="secondary"
+                    isDisabled={pending}
+                    label="取消"
+                    onClick={() => setOpen(false)}
+                  />
+                  <Button
+                    variant="destructive"
+                    onClick={confirm}
+                    isDisabled={pending}
+                    icon={<Loader2 />}
+                    label="确认删除"
+                  />
+                </div>
+              </LayoutFooter>
+            }
           />
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>删除「{projectName}」？</DialogTitle>
-            <DialogDescription>
-              将同时删除这个项目的点位图{quoteCount ? `、${quoteCount} 份报价单` : ''}
-              和未签合同。删除后无法恢复。
-            </DialogDescription>
-          </DialogHeader>
-          {error ? (
-            <p
-              role="alert"
-              className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive-strong"
-            >
-              {error}
-            </p>
-          ) : null}
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="secondary" isDisabled={pending} label="取消" />
-            </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={confirm}
-              isDisabled={pending}
-              icon={<Loader2 />}
-              label="确认删除"
-            />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </Dialog>
+      </>
     </section>
   )
 }

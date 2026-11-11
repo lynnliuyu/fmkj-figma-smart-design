@@ -5,14 +5,8 @@ import { Minus, Plus } from 'lucide-react'
 
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 
 const STAGE = 360
 /** 裁剪框边长与它在画布中的偏移 */
@@ -106,93 +100,100 @@ export function SquareCropDialog({
   }
 
   return (
-    <Dialog open={!!file} onOpenChange={(o) => (o ? null : onCancel())}>
-      <DialogContent className="sm:max-w-[420px]">
-        <DialogHeader>
-          <DialogTitle>裁剪为正方形</DialogTitle>
-          <DialogDescription>
-            拖动图片、用滑块缩放，让二维码完整落在亮色方框内；方框外的暗色部分会被裁掉。
-          </DialogDescription>
-        </DialogHeader>
-        <div
-          className="relative mx-auto size-[360px] cursor-grab touch-none overflow-hidden rounded-lg bg-muted active:cursor-grabbing"
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId)
-            drag.current = { x: e.clientX, y: e.clientY, px: view.x, py: view.y }
-          }}
-          onPointerMove={(e) => {
-            const d = drag.current
-            if (d) setPos(clamp({ x: d.px + e.clientX - d.x, y: d.py + e.clientY - d.y }))
-          }}
-          onPointerUp={() => (drag.current = null)}
-          onWheel={(e) => setZoomCentered(zoom - e.deltaY * 0.002)}
-        >
-          {src && img ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={src}
-              alt="待裁剪图片"
-              draggable={false}
-              className="pointer-events-none absolute max-w-none select-none"
-              style={{ left: view.x, top: view.y, width: dw, height: dh }}
-            />
-          ) : null}
-          {/* 方框外压暗（大阴影），方框白色粗边 + 三分线 + 中心十字 */}
-          <div className="pointer-events-none absolute top-[60px] left-[60px] size-[240px] rounded-sm shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] ring-2 ring-white">
-            <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <div key={i} className="border border-white/35" />
-              ))}
+    <Dialog isOpen={!!file} onOpenChange={(o) => (o ? null : onCancel())} width={420}>
+      <Layout
+        header={
+          <DialogHeader
+            title="裁剪为正方形"
+            subtitle="拖动图片、用滑块缩放，让二维码完整落在亮色方框内；方框外的暗色部分会被裁掉。"
+            onOpenChange={(o) => (o ? null : onCancel())}
+          />
+        }
+        content={
+          <LayoutContent padding={5}>
+            <div
+              className="relative mx-auto size-[360px] cursor-grab touch-none overflow-hidden rounded-lg bg-muted active:cursor-grabbing"
+              onPointerDown={(e) => {
+                e.currentTarget.setPointerCapture(e.pointerId)
+                drag.current = { x: e.clientX, y: e.clientY, px: view.x, py: view.y }
+              }}
+              onPointerMove={(e) => {
+                const d = drag.current
+                if (d) setPos(clamp({ x: d.px + e.clientX - d.x, y: d.py + e.clientY - d.y }))
+              }}
+              onPointerUp={() => (drag.current = null)}
+              onWheel={(e) => setZoomCentered(zoom - e.deltaY * 0.002)}
+            >
+              {src && img ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={src}
+                  alt="待裁剪图片"
+                  draggable={false}
+                  className="pointer-events-none absolute max-w-none select-none"
+                  style={{ left: view.x, top: view.y, width: dw, height: dh }}
+                />
+              ) : null}
+              {/* 方框外压暗（大阴影），方框白色粗边 + 三分线 + 中心十字 */}
+              <div className="pointer-events-none absolute top-[60px] left-[60px] size-[240px] rounded-sm shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] ring-2 ring-white">
+                <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <div key={i} className="border border-white/35" />
+                  ))}
+                </div>
+                <div className="absolute top-1/2 left-1/2 h-5 w-px -translate-1/2 bg-white" />
+                <div className="absolute top-1/2 left-1/2 h-px w-5 -translate-1/2 bg-white" />
+                {[
+                  'top-[-3px] left-[-3px] border-t-4 border-l-4',
+                  'top-[-3px] right-[-3px] border-t-4 border-r-4',
+                  'bottom-[-3px] left-[-3px] border-b-4 border-l-4',
+                  'bottom-[-3px] right-[-3px] border-b-4 border-r-4',
+                ].map((c) => (
+                  <div key={c} className={`absolute size-5 border-white ${c}`} />
+                ))}
+              </div>
             </div>
-            <div className="absolute top-1/2 left-1/2 h-5 w-px -translate-1/2 bg-white" />
-            <div className="absolute top-1/2 left-1/2 h-px w-5 -translate-1/2 bg-white" />
-            {[
-              'top-[-3px] left-[-3px] border-t-4 border-l-4',
-              'top-[-3px] right-[-3px] border-t-4 border-r-4',
-              'bottom-[-3px] left-[-3px] border-b-4 border-l-4',
-              'bottom-[-3px] right-[-3px] border-b-4 border-r-4',
-            ].map((c) => (
-              <div key={c} className={`absolute size-5 border-white ${c}`} />
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <IconButton
-            type="button"
-            variant="ghost"
+            <div className="flex items-center gap-3">
+              <IconButton
+                type="button"
+                variant="ghost"
 
-            aria-label="缩小"
-            onClick={() => setZoomCentered(zoom - 0.25)}
-            label="缩小"
-            icon={<Minus />}
-            size="sm"
-          />
-          <input
-            type="range"
-            min={1}
-            max={4}
-            step={0.01}
-            value={zoom}
-            aria-label="缩放"
-            onChange={(e) => setZoomCentered(Number(e.target.value))}
-            className="flex-1 accent-primary"
-          />
-          <IconButton
-            type="button"
-            variant="ghost"
+                aria-label="缩小"
+                onClick={() => setZoomCentered(zoom - 0.25)}
+                label="缩小"
+                icon={<Minus />}
+                size="sm"
+              />
+              <input
+                type="range"
+                min={1}
+                max={4}
+                step={0.01}
+                value={zoom}
+                aria-label="缩放"
+                onChange={(e) => setZoomCentered(Number(e.target.value))}
+                className="flex-1 accent-primary"
+              />
+              <IconButton
+                type="button"
+                variant="ghost"
 
-            aria-label="放大"
-            onClick={() => setZoomCentered(zoom + 0.25)}
-            label="放大"
-            icon={<Plus />}
-            size="sm"
-          />
-        </div>
-        <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onCancel} label="取消" />
-          <Button type="button" onClick={confirm} isDisabled={!img} label="确认裁剪" />
-        </DialogFooter>
-      </DialogContent>
+                aria-label="放大"
+                onClick={() => setZoomCentered(zoom + 0.25)}
+                label="放大"
+                icon={<Plus />}
+                size="sm"
+              />
+            </div>
+          </LayoutContent>
+        }
+        footer={
+          <LayoutFooter hasDivider>
+            <Button type="button" variant="secondary" onClick={onCancel} label="取消" />
+            <Button type="button" onClick={confirm} isDisabled={!img} label="确认裁剪" />
+          </LayoutFooter>
+        }
+      />
     </Dialog>
   )
 }
