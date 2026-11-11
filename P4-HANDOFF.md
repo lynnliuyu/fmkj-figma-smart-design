@@ -7,10 +7,10 @@
 ## 一、当前状态（截至 2026-11-12 01:10）
 
 ```
-main 分支   干净（1070173 = PR #107 的合并提交）
+main 分支   干净（ba5301b = PR #108 的 squash 合并提交）
 线上        fmkj.top/login 返回 200（本轮 curl 复核）；端口 13028 来自记忆未复核
 PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
-PR #108     待合并（P4 第 5 批低风险 3 文件）—— 详见文末「本批交付记录」
+PR #108     已合并 2026-11-11 17:20 UTC（P4 第 5 批低风险 3 文件）—— 详见文末「本批交付记录」
 ```
 
 **P4 进度：17 / 34 文件**
@@ -254,12 +254,13 @@ HOST=ubuntu@124.222.225.26
 ## 七、本批交付记录（P4 第 5 批）
 
 - **PR**：[#108](https://github.com/lynnliuyu/fmkj-figma-smart-design/pull/108)，
-  分支 `feat/astryx-native-p4f` → `main`，状态：**待合并**（以 CI verify + smoke 双绿为合并前提）。
+  分支 `feat/astryx-native-p4f` → `main`，状态：**已合并**（squash，
+  `ba5301b`，2026-11-11 17:20 UTC），本地与远端分支均已删除。
 - **3 个代码文件**：`proposal-showcase.tsx` / `quote-showcase.tsx` / `docs-client.tsx`，
   改动摘要见 §一 表格与本 PR 描述。
 - **验证**：
   - `pnpm exec oxfmt` + `pnpm exec oxfmt --check`：全仓 580 文件通过（两次提交前都跑过）。
   - 本地 `tsc --noEmit` / `knowledge:check` / `pnpm build` 与真机点开验证：上一轮已完成。
   - `https://fmkj.top/login` 本轮 curl 复核返回 200；端口 `13028` 未复核。
-  - CI verify / smoke：待确认，未双绿前不合并。
+  - CI verify / smoke：双 success（run `43066047832`，head `1b9ef71`；verify 含代码格式检查）。
 - **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
