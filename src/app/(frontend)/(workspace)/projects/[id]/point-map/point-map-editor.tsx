@@ -1681,7 +1681,7 @@ export function PointMapEditor({
           </div>
         )}
 
-        <div className="flex min-w-max flex-1 items-center justify-end gap-1">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-0.5">
           {readOnly ? null : (
             <ToolbarIconButton
               label={mobilePlaceOpen ? '收起设备面板' : '放置设备'}
@@ -1788,7 +1788,7 @@ export function PointMapEditor({
                     aria-label="导出 / 导入"
                     label="导出 / 导入"
                     icon={<Download />}
-                    size="md"
+                    size="sm"
                   />
                 </DropdownMenuTrigger>
               </TooltipTrigger>
@@ -1851,7 +1851,7 @@ export function PointMapEditor({
                         aria-label="选择要同步的报价，或新建报价"
                         label="选择要同步的报价，或新建报价"
                         icon={<ChevronDown />}
-                        size="md"
+                        size="sm"
                       />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-72">
