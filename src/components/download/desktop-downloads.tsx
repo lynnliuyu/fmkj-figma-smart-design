@@ -6,7 +6,7 @@ import { ArrowRight, Download, Laptop, Monitor, RefreshCw } from 'lucide-react'
 
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@astryxdesign/core/Skeleton'
 import {
   DESKTOP_DOWNLOADS_PATH,
   DESKTOP_FORMAT_LABELS,
@@ -168,8 +168,8 @@ export function DesktopHeroActions() {
   if (loading || !detected) {
     return (
       <div className="mt-8 flex flex-col gap-3" aria-hidden>
-        <Skeleton className="h-11 w-56 rounded-full" />
-        <Skeleton className="h-4 w-72" />
+        <Skeleton data-slot="skeleton" className="block h-11 w-56 rounded-full" />
+        <Skeleton data-slot="skeleton" className="block h-4 w-72" />
       </div>
     )
   }
@@ -261,8 +261,8 @@ export function DesktopPlatformCards() {
 
             {loading ? (
               <div className="mt-6 flex flex-1 flex-col justify-end gap-3" aria-hidden>
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-9 w-full rounded-full" />
+                <Skeleton data-slot="skeleton" className="block h-4 w-2/3" />
+                <Skeleton data-slot="skeleton" className="block h-9 w-full rounded-full" />
               </div>
             ) : asset && release ? (
               <div className="mt-6 flex flex-1 flex-col justify-end gap-4">
