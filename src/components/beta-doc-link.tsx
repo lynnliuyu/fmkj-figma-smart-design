@@ -1,9 +1,8 @@
 'use client'
 
-import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@astryxdesign/core/Badge'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { Button } from '@astryxdesign/core/Button'
+import { Tooltip } from '@astryxdesign/core/Tooltip'
 
 /** 悬停提示文案（产品已定，别改） */
 export const BETA_DOC_HINT = '功能未开发完整，仅测试，正在开发中'
@@ -25,19 +24,17 @@ export function BetaDocLink({
   className?: string
 }) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5', className)}
-        >
-          {label}
-          <Badge variant="warning" className="h-4 px-1.5 text-[10px]" label={'Beta'} />
-        </a>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">{BETA_DOC_HINT}</TooltipContent>
+    <Tooltip content={BETA_DOC_HINT} placement="below">
+      <Button
+        label={label}
+        variant="secondary"
+        size="sm"
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        endContent={<Badge variant="warning" label={'Beta'} />}
+      />
     </Tooltip>
   )
 }

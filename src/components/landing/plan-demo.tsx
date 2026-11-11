@@ -7,8 +7,8 @@ import { deviceLook } from '@/board/packs/smart-home/look'
 import { planAreaLabelAt } from '@/components/plan-figure'
 import { PointMarker } from '@/components/point-marker'
 import { Badge } from '@astryxdesign/core/Badge'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Toggle } from '@/components/ui/toggle'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
+import { ToggleButton } from '@astryxdesign/core/ToggleButton'
 import { categoryOfType, DEVICE_CATEGORIES, deviceTypeOf } from '@/lib/device-types'
 import type { LandingShowcase, ShowcaseLine, ShowcasePoint } from '@/lib/landing-showcase'
 
@@ -103,32 +103,30 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
         </p>
         {/* 系统内置的示例项目，不是真实客户案例 */}
         <Badge variant="neutral" className="shrink-0" label={'示例项目'} />
-        <Tabs
-          value={sheet.id}
-          onValueChange={(v) => {
-            setSheetId(v)
-            setTicket(null)
-            setPinnedType(null)
-          }}
-          className="order-last w-full sm:order-none sm:w-auto"
-        >
-          <TabsList
+        <div className="order-last w-full sm:order-none sm:w-auto">
+          <TabList
+            value={sheet.id}
+            onChange={(v: string) => {
+              setSheetId(v)
+              setTicket(null)
+              setPinnedType(null)
+            }}
+            size="sm"
             aria-label="楼层"
-            className="w-full bg-background/70 sm:w-auto dark:bg-background/40"
           >
             {data.sheets.map((s) => (
-              <TabsTrigger
+              <Tab
                 key={s.id}
                 value={s.id}
-                aria-controls="plan-canvas"
-                className="gap-1.5 px-3 text-xs"
-              >
-                {s.floor}
-                <span className="text-muted-foreground tabular-nums">{s.points.length}</span>
-              </TabsTrigger>
+                label={s.floor}
+                panelId="plan-canvas"
+                endContent={
+                  <span className="text-muted-foreground tabular-nums">{s.points.length}</span>
+                }
+              />
             ))}
-          </TabsList>
-        </Tabs>
+          </TabList>
+        </div>
         {quote ? (
           <p className="ml-auto flex shrink-0 items-center gap-2 text-sm">
             <Badge variant="success" className="hidden sm:inline-flex" label={'已确认'} />
@@ -147,21 +145,30 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
             aria-label="按设备类别显示"
           >
             {categories.map((c) => (
-              <Toggle
+              <ToggleButton
                 key={c.slug}
                 size="sm"
-                pressed={!hidden.has(c.slug)}
+                label={c.name}
+                isPressed={!hidden.has(c.slug)}
                 onPressedChange={(on) => toggleCategory(c.slug, on)}
-                className="h-8 justify-start gap-2 rounded-lg px-2 text-xs font-normal text-muted-foreground line-through decoration-muted-foreground/60 aria-pressed:bg-transparent aria-pressed:text-foreground aria-pressed:no-underline aria-pressed:hover:bg-muted lg:w-full"
-              >
-                <span
-                  aria-hidden
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ background: c.color }}
-                />
-                <span className="flex-1 text-left">{c.name}</span>
-                <span className="text-muted-foreground tabular-nums">{c.count}</span>
-              </Toggle>
+                icon={
+                  <span
+                    aria-hidden
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ background: c.color }}
+                  />
+                }
+                children={
+                  <>
+                    <span className="flex-1 text-left">{c.name}</span>
+                    <span className="text-muted-foreground tabular-nums">{c.count}</span>
+                  </>
+                }
+                className={cn(
+                  'h-8 justify-start gap-2 rounded-lg px-2 text-xs font-normal text-muted-foreground lg:w-full',
+                  !hidden.has(c.slug) && 'text-foreground',
+                )}
+              />
             ))}
           </div>
         </div>
