@@ -220,6 +220,14 @@ jobs:
           PORT: '3100'
           HOSTNAME: '127.0.0.1'
         run: |
+          # ⚠️ 自托管工作区持久化，上一轮的服务可能还占着 :3100。
+          # 而且 Next 启动后进程名会变成 `next-server`，`pkill -f server.js` 匹配不到。
+          # 所以按**端口**杀，最可靠。
+          if lsof -ti :3100 >/dev/null 2>&1; then
+            echo "  :3100 被占用，先杀掉：$(lsof -ti :3100 | tr '\n' ' ')"
+            for pid in $(lsof -ti :3100); do kill -9 "$pid" 2>/dev/null || true; done
+            sleep 2
+          fi
           # ⚠️ Payload 在启动时会问「你跑过 dev 模式，要迁移吗（会丢数据）？」。
           #    生产服务没有 stdin，会永远卡在这个提问上（实测：login API 一直超时）。
           #    喂 'n' 表示不迁移 —— 迁移已在上面单独跑过。
@@ -252,5 +260,6 @@ jobs:
       - name: 收尾（停服务 + 还原配置）
         if: always()
         run: |
-          pkill -f "standalone/server.js" 2>/dev/null || true
+          # Next 启动后进程名是 `next-server`，按端口杀更可靠
+          for pid in $(lsof -ti :3100 2>/dev/null); do kill -9 "$pid" 2>/dev/null || true; done
           git checkout -- src/payload.config.ts 2>/dev/null || true
