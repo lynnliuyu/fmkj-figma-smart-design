@@ -145,7 +145,7 @@ export function ClientFeedbackList({
                       isDisabled={busy === `q:${f.id}`}
                       onClick={() => adjust(f)}
                       icon={<Loader2 />}
-                      label="{busy === `q:$ ` ? ( ) : ( )} 按意向生成调整版"
+                      label={busy === `q:${f.id}` ? '生成调整版中…' : '按意向生成调整版'}
                     />
                   ) : null}
                   <Button

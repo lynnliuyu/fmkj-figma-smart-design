@@ -172,7 +172,7 @@ export function PlacePanel({
                             'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
                         )}
                         icon={<PointMarker type={null} />}
-                        label="{n ? ( ) : null}"
+                        label={n ? `${deviceTypeLabel(t.value)}（${n}）` : deviceTypeLabel(t.value)}
                       />
                     )
                   })}
@@ -283,7 +283,11 @@ export function AreasPanel({
                       selected && 'border-primary bg-primary/8 ring-1 ring-primary/20',
                     )}
                     icon={<ScoreBadge score={r?.score ?? 0} />}
-                    label="· 个点位 {r && r.missing.filter((m) => m.level !== 'optional').length ? ` · 建议补充 $ 项` : ''}"
+                    label={
+                      r && r.missing.filter((m) => m.level !== 'optional').length
+                        ? '点位数统计（有建议）'
+                        : '点位数统计'
+                    }
                   />
                 )
               })}

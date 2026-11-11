@@ -311,7 +311,7 @@ export function SwapProductDialog({
               onConfirm(chosen, sameTypeLines > 1 ? scope : 'line', canSetDefault && setDefault)
               reset(false)
             }}
-            label="{chosen ? `更换为 $ ` : '请选择产品'}"
+            label={chosen ? `更换为 ${chosen.name}` : '请选择产品'}
           />
         </DialogFooter>
       </DialogContent>

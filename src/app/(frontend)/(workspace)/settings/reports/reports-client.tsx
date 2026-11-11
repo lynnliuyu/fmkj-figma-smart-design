@@ -465,7 +465,11 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                 onClick={() => setOnlyZeroSheet((v) => !v)}
                 className="text-xs"
                 icon={<AlertTriangle />}
-                label="{onlyZeroSheet ? '显示全部图纸' : `只看 0 点位图纸 ($ )`}"
+                label={
+                  onlyZeroSheet
+                    ? '显示全部图纸'
+                    : `只看 0 点位图纸（${report.sheetInspections.filter((x) => x.pointCount === 0).length}）`
+                }
               />
             </CardHeader>
             <CardContent>

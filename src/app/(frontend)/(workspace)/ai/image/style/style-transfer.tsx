@@ -241,7 +241,7 @@ export function StyleTransfer({
           isDisabled={!configured || busy || !source || !styleId}
           className="h-11 w-full gap-2"
           icon={<Loader2 />}
-          label="{busy ? `风格化生成中… $ s` : `生成风格化户型图 · $ 积分`}"
+          label={busy ? `风格化生成中… ${elapsed}s` : `生成风格化户型图 · ${cost} 积分`}
         />
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           会保留原图墙体做 mask；通常 30–90 秒，成功后扣积分。

@@ -218,7 +218,11 @@ export function MembershipClient({
                         isDisabled={isBusy}
                         onClick={() => handleClaimTask(task.id)}
                         icon={<Loader2 />}
-                        label="{task.id === 'follow_official_account' ? '已关注 · 领 5 分' : `领取 +$ `}"
+                        label={
+                          task.id === 'follow_official_account'
+                            ? '已关注 · 领 5 分'
+                            : `领取 +${task.credits ?? 0} 积分`
+                        }
                       />
                     ) : task.id === 'complete_company_profile' ? (
                       <Button

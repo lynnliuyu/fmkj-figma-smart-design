@@ -356,7 +356,7 @@ export function PrintToolbar({
                   size="sm"
                   className="h-8 gap-1.5 text-xs"
                   icon={<SlidersHorizontal />}
-                  label="版式与选项 {summaryParts.length > 0 ? ( · ) : null}"
+                  label={summaryParts.length > 0 ? '版式与选项（已调整）' : '版式与选项'}
                 />
               </PopoverTrigger>
               <PopoverContent align="end" className="w-80 space-y-3.5 p-4">

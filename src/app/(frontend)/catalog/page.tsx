@@ -67,7 +67,7 @@ export default async function PublicCatalogPage() {
               variant="secondary"
               className="h-11 rounded-full px-6 text-base"
               href="#products"
-              label="{active.length > 0 ? `浏览在售产品 ($ )` : '查看点位图例'}"
+              label={active.length > 0 ? `浏览在售产品（${active.length}）` : '查看点位图例'}
             />
           </div>
         </div>

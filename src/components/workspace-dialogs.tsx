@@ -112,7 +112,7 @@ export function MembershipDialog({
           href="/membership"
           as={Link}
           icon={<ArrowRight />}
-          label="onOpenChange(false)}> 查看积分任务与明细"
+          label="查看积分任务与明细"
         />
       </DialogContent>
     </Dialog>

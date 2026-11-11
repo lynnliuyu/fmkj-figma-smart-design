@@ -137,7 +137,7 @@ export function ImageGenerator({ models, configured }: { models: Model[]; config
           isDisabled={!configured || busy || !prompt.trim()}
           className="h-11 w-full gap-2"
           icon={<Loader2 />}
-          label="{busy ? `生成中… $ s` : `生成图片 · $ 积分`}"
+          label={busy ? `生成中… ${elapsed}s` : `生成图片 · ${model?.cost ?? 5} 积分`}
         />
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           生图通常需要 30–90 秒。生成成功后才扣积分，失败不扣。

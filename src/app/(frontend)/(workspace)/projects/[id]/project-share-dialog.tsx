@@ -197,7 +197,7 @@ export function ProjectShareDialog({
           size="sm"
           className="h-7 gap-1.5 px-2.5 text-xs"
           icon={<Users />}
-          label="协作 {count > 0 ? ( ) : null}"
+          label={count > 0 ? `协作（${count}）` : '协作'}
         />
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

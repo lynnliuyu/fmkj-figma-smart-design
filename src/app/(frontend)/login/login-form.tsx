@@ -487,7 +487,7 @@ export function LoginForm({
               isDisabled={sendingOtp || countdown > 0}
               onClick={() => void handleSendOtp('register')}
               icon={<Loader2 />}
-              label="{countdown > 0 ? `$ s 后重发` : '获取验证码'}"
+              label={countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
             />
           </div>
         </div>
@@ -609,7 +609,7 @@ export function LoginForm({
                 isDisabled={sendingOtp || countdown > 0}
                 onClick={() => void handleSendOtp('reset')}
                 icon={<Loader2 />}
-                label="{countdown > 0 ? `$ s 后重发` : '获取验证码'}"
+                label={countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
               />
             </div>
           </div>
