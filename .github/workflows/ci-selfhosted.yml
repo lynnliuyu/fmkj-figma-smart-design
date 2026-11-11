@@ -199,10 +199,20 @@ jobs:
       # standalone 产物不自带静态资源，要手工把 .next/static 和 public 拷进去。
       - name: 组装 standalone 产物
         run: |
+          # ⚠️ `cp -r src dst` 在 dst 已存在时会套娃成 dst/src/ —— 自托管工作区
+          # 上一轮留下的 .next/standalone/.next/static 会让这一轮变成
+          # .next/standalone/.next/static/static/*，于是所有 JS chunk 取不到（500）。
+          # 所以先删再拷，并断言关键文件在位。
+          rm -rf .next/standalone/.next/static .next/standalone/public
           cp -r .next/static .next/standalone/.next/static
           if [ -d public ]; then cp -r public .next/standalone/public; fi
-          # standalone 的 server.js 期望在 .next（相对 cwd）下找产物；
-          # 在仓库根启动、用 HOSTNAME/PORT 指定监听地址即可。
+          # 断言：既不能套娃，也必须真有 chunk
+          if [ -d .next/standalone/.next/static/static ]; then
+            echo "❌ static 目录套娃了（static/static）"; exit 1
+          fi
+          chunks=$(find .next/standalone/.next/static -name '*.js' -o -name '*.css' | wc -l | tr -d ' ')
+          echo "  static 里的 js/css 文件数: $chunks"
+          [ "$chunks" -gt 10 ] || { echo "❌ static 内容过少，拷贝可能失败"; exit 1; }
           ls .next/standalone/server.js
 
       - name: 启动服务并等待就绪
