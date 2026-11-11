@@ -28,8 +28,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Popover } from '@astryxdesign/core/Popover'
+import { Tooltip } from '@astryxdesign/core/Tooltip'
 import type { SystemPack } from '@/board/core/pack'
 import { SYMBOL_SIZES } from '@/board/core/symbols'
 import type { BoardTool, LayerId, ViewSettings } from '@/board/core/types'
@@ -287,41 +287,47 @@ export function BoardViewPopover({
   const label = hiddenCount ? `显示设置（${hiddenCount} 项已隐藏）` : '显示设置'
 
   return (
-    <Popover>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-muted-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
-              aria-label={label}
-            >
-              <SlidersHorizontal />
-              {hiddenCount ? (
-                <span
-                  aria-hidden
-                  className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-warning"
-                />
-              ) : highlighted || overlayOn ? (
-                <span
-                  aria-hidden
-                  className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary"
-                />
-              ) : null}
-            </Button>
-          </PopoverTrigger>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">{label}</TooltipContent>
+    <Popover
+      label={label}
+      placement="below"
+      alignment="end"
+      // 调用点原来用 `w-72`；官方的 `width` 才是浮层外框的宽度（挂内层 div 会被外框裁掉）。
+      width={288}
+      padding={0}
+      hasLightDismiss
+      hasEscapeDismiss
+      content={
+        <div
+          className="max-h-[min(40rem,calc(100svh-7rem))] overflow-y-auto"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          {children}
+          <BoardLayersPanel view={view} onView={onView} pack={pack} />
+        </div>
+      }
+    >
+      <Tooltip content={label} placement="below">
+        <Button
+          variant="ghost"
+          size="icon"
+          // 官方浮层把开合状态写在触发器的 `aria-expanded` 上（不是 radix 的 `data-state`）。
+          className="relative text-muted-foreground aria-expanded:bg-muted aria-expanded:text-foreground"
+          aria-label={label}
+        >
+          <SlidersHorizontal />
+          {hiddenCount ? (
+            <span
+              aria-hidden
+              className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-warning"
+            />
+          ) : highlighted || overlayOn ? (
+            <span
+              aria-hidden
+              className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary"
+            />
+          ) : null}
+        </Button>
       </Tooltip>
-      <PopoverContent
-        align="end"
-        className="max-h-[min(40rem,calc(100svh-7rem))] w-72 gap-0 overflow-y-auto p-0"
-        onPointerDown={(e) => e.stopPropagation()}
-      >
-        {children}
-        <BoardLayersPanel view={view} onView={onView} pack={pack} />
-      </PopoverContent>
     </Popover>
   )
 }
@@ -425,166 +431,164 @@ export function BoardToolbar(props: {
       >
         <Grid3x3 className="size-4" />
       </Button>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={hiddenCount ? 'secondary' : 'ghost'}
-            size="icon"
-            className={cn(btn, 'relative')}
-            aria-label={hiddenCount ? `显示与隐藏（${hiddenCount} 项已隐藏）` : '显示与隐藏'}
-            title={
-              hiddenCount
-                ? `有 ${hiddenCount} 项已隐藏`
-                : '显示与隐藏：图层、代号、底图浓度、符号样式'
-            }
-          >
-            {hiddenCount ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-            {hiddenCount ? (
-              <span
-                aria-hidden
-                className="absolute top-1 right-1 size-1.5 rounded-full bg-warning"
-              />
-            ) : null}
-            {!hiddenCount && overlayOn ? (
-              <span
-                aria-hidden
-                className="absolute top-1 right-1 size-1.5 rounded-full bg-primary"
-              />
-            ) : null}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-72 gap-0 p-0"
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
-            <p className="text-sm font-medium">显示与隐藏</p>
-            {hiddenCount ? (
-              <Button variant="ghost" size="xs" onClick={showAll}>
-                全部显示
-              </Button>
-            ) : null}
-          </div>
-          {/* 每个图层一行：眼睛图标就是开关，隐藏的行变灰 */}
-          <ul className="px-1.5 pb-1.5">
-            {LAYER_ROWS.map((row) => {
-              const on = view.layers[row.id]
-              return (
-                <li key={row.id}>
-                  <LayerRow
-                    on={on}
-                    name={layerName(row.id)}
-                    hint={row.hint}
-                    onToggle={() => onView({ layers: { ...view.layers, [row.id]: !on } })}
-                  />
-                  {row.id === 'symbol' ? (
+      <Popover
+        label={hiddenCount ? `显示与隐藏（${hiddenCount} 项已隐藏）` : '显示与隐藏'}
+        placement="below"
+        alignment="start"
+        width={288}
+        padding={0}
+        hasLightDismiss
+        hasEscapeDismiss
+        content={
+          <div onPointerDown={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
+              <p className="text-sm font-medium">显示与隐藏</p>
+              {hiddenCount ? (
+                <Button variant="ghost" size="xs" onClick={showAll}>
+                  全部显示
+                </Button>
+              ) : null}
+            </div>
+            {/* 每个图层一行：眼睛图标就是开关，隐藏的行变灰 */}
+            <ul className="px-1.5 pb-1.5">
+              {LAYER_ROWS.map((row) => {
+                const on = view.layers[row.id]
+                return (
+                  <li key={row.id}>
                     <LayerRow
-                      on={view.labels}
-                      name="点位代号"
-                      hint="图标下方的编号"
-                      indent
-                      disabled={!on}
-                      onToggle={() => onView({ labels: !view.labels })}
+                      on={on}
+                      name={layerName(row.id)}
+                      hint={row.hint}
+                      onToggle={() => onView({ layers: { ...view.layers, [row.id]: !on } })}
                     />
-                  ) : null}
-                </li>
-              )
-            })}
-          </ul>
-          {overlays.length ? (
-            <div className="border-t px-1.5 py-1.5">
-              <p className="px-1.5 pt-1 pb-1 text-xs font-medium text-muted-foreground">
-                智能辅助图层（只显示，不写进图纸）
-              </p>
-              <ul>
-                {overlays.map((o) => {
-                  const on = Boolean(view.overlays?.[o.id])
-                  const Icon = OVERLAY_ICONS[o.id] ?? Sparkles
-                  return (
-                    <li key={o.id}>
-                      <Button
-                        variant="ghost"
-                        role="switch"
-                        aria-checked={on}
-                        disabled={!view.layers.symbol}
-                        onClick={() => onView({ overlays: { ...view.overlays, [o.id]: !on } })}
-                        className={cn(
-                          'h-auto w-full justify-start gap-2.5 px-1.5 py-1.5 text-left font-normal disabled:opacity-40',
-                          !on && 'text-muted-foreground',
-                        )}
-                      >
-                        <Icon className={cn('size-4 shrink-0', on && 'text-primary')} />
-                        <span className="flex min-w-0 flex-1 flex-col">
-                          <span>{o.name}</span>
-                          <span className="truncate text-xs text-muted-foreground">{o.hint}</span>
-                        </span>
-                        <span
+                    {row.id === 'symbol' ? (
+                      <LayerRow
+                        on={view.labels}
+                        name="点位代号"
+                        hint="图标下方的编号"
+                        indent
+                        disabled={!on}
+                        onToggle={() => onView({ labels: !view.labels })}
+                      />
+                    ) : null}
+                  </li>
+                )
+              })}
+            </ul>
+            {overlays.length ? (
+              <div className="border-t px-1.5 py-1.5">
+                <p className="px-1.5 pt-1 pb-1 text-xs font-medium text-muted-foreground">
+                  智能辅助图层（只显示，不写进图纸）
+                </p>
+                <ul>
+                  {overlays.map((o) => {
+                    const on = Boolean(view.overlays?.[o.id])
+                    const Icon = OVERLAY_ICONS[o.id] ?? Sparkles
+                    return (
+                      <li key={o.id}>
+                        <Button
+                          variant="ghost"
+                          role="switch"
+                          aria-checked={on}
+                          disabled={!view.layers.symbol}
+                          onClick={() => onView({ overlays: { ...view.overlays, [o.id]: !on } })}
                           className={cn(
-                            'h-4 w-7 shrink-0 rounded-full p-0.5 transition-colors',
-                            on ? 'bg-primary' : 'bg-muted',
+                            'h-auto w-full justify-start gap-2.5 px-1.5 py-1.5 text-left font-normal disabled:opacity-40',
+                            !on && 'text-muted-foreground',
                           )}
-                          aria-hidden
                         >
+                          <Icon className={cn('size-4 shrink-0', on && 'text-primary')} />
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span>{o.name}</span>
+                            <span className="truncate text-xs text-muted-foreground">{o.hint}</span>
+                          </span>
                           <span
                             className={cn(
-                              'block size-3 rounded-full bg-background shadow-sm transition-transform',
-                              on && 'translate-x-3',
+                              'h-4 w-7 shrink-0 rounded-full p-0.5 transition-colors',
+                              on ? 'bg-primary' : 'bg-muted',
                             )}
-                          />
-                        </span>
-                      </Button>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          ) : null}
-          <div className="space-y-3 border-t px-3 py-3 text-xs">
-            <label className="block">
-              <span className="mb-1.5 flex justify-between text-muted-foreground">
-                <span>底图浓度</span>
-                <span className="tabular-nums">{Math.round(view.sheetOpacity * 100)}%</span>
-              </span>
-              <input
-                type="range"
-                min={15}
-                max={100}
-                step={5}
-                value={Math.round(view.sheetOpacity * 100)}
-                onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })}
-                className="w-full accent-primary"
-                aria-label="底图浓度"
+                            aria-hidden
+                          >
+                            <span
+                              className={cn(
+                                'block size-3 rounded-full bg-background shadow-sm transition-transform',
+                                on && 'translate-x-3',
+                              )}
+                            />
+                          </span>
+                        </Button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ) : null}
+            <div className="space-y-3 border-t px-3 py-3 text-xs">
+              <label className="block">
+                <span className="mb-1.5 flex justify-between text-muted-foreground">
+                  <span>底图浓度</span>
+                  <span className="tabular-nums">{Math.round(view.sheetOpacity * 100)}%</span>
+                </span>
+                <input
+                  type="range"
+                  min={15}
+                  max={100}
+                  step={5}
+                  value={Math.round(view.sheetOpacity * 100)}
+                  onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })}
+                  className="w-full accent-primary"
+                  aria-label="底图浓度"
+                />
+              </label>
+              <Segmented
+                label="符号样式"
+                value={view.symbolStyle}
+                options={[
+                  { value: 'plan', label: '平面符号' },
+                  { value: 'marker', label: '实心标记' },
+                ]}
+                onChange={(v) => onView({ symbolStyle: v as ViewSettings['symbolStyle'] })}
               />
-            </label>
-            <Segmented
-              label="符号样式"
-              value={view.symbolStyle}
-              options={[
-                { value: 'plan', label: '平面符号' },
-                { value: 'marker', label: '实心标记' },
-              ]}
-              onChange={(v) => onView({ symbolStyle: v as ViewSettings['symbolStyle'] })}
-            />
-            <Segmented
-              label="符号大小"
-              value={String(view.symbolSize)}
-              options={SYMBOL_SIZES.map((s) => ({ value: String(s.value), label: s.label }))}
-              onChange={(v) => onView({ symbolSize: Number(v) })}
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">标尺（Shift + R）</span>
-              <Button
-                variant={view.rulers ? 'secondary' : 'outline'}
-                size="xs"
-                aria-pressed={view.rulers}
-                onClick={() => onView({ rulers: !view.rulers })}
-              >
-                {view.rulers ? '已显示' : '已隐藏'}
-              </Button>
+              <Segmented
+                label="符号大小"
+                value={String(view.symbolSize)}
+                options={SYMBOL_SIZES.map((s) => ({ value: String(s.value), label: s.label }))}
+                onChange={(v) => onView({ symbolSize: Number(v) })}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">标尺（Shift + R）</span>
+                <Button
+                  variant={view.rulers ? 'secondary' : 'outline'}
+                  size="xs"
+                  aria-pressed={view.rulers}
+                  onClick={() => onView({ rulers: !view.rulers })}
+                >
+                  {view.rulers ? '已显示' : '已隐藏'}
+                </Button>
+              </div>
             </div>
           </div>
-        </PopoverContent>
+        }
+      >
+        <Button
+          variant={hiddenCount ? 'secondary' : 'ghost'}
+          size="icon"
+          className={cn(btn, 'relative')}
+          aria-label={hiddenCount ? `显示与隐藏（${hiddenCount} 项已隐藏）` : '显示与隐藏'}
+          title={
+            hiddenCount
+              ? `有 ${hiddenCount} 项已隐藏`
+              : '显示与隐藏：图层、代号、底图浓度、符号样式'
+          }
+        >
+          {hiddenCount ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          {hiddenCount ? (
+            <span aria-hidden className="absolute top-1 right-1 size-1.5 rounded-full bg-warning" />
+          ) : null}
+          {!hiddenCount && overlayOn ? (
+            <span aria-hidden className="absolute top-1 right-1 size-1.5 rounded-full bg-primary" />
+          ) : null}
+        </Button>
       </Popover>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

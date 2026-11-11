@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 import { Button } from '@astryxdesign/core/Button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollableArea } from '@astryxdesign/core/ScrollableArea'
 import { Switch } from '@astryxdesign/core/Switch'
 import type { SymbolTemplate } from '@/board/core/types'
 import {
@@ -56,7 +56,12 @@ export function LightingPanel({
   const fam = LIGHTING_GROUPS.flatMap((g) => g.families).find((f) => f.id === famId)!
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <ScrollArea className="min-h-0 flex-1">
+      <ScrollableArea
+        label="灯光款式"
+        axis="block"
+        data-slot="scroll-area"
+        className="relative min-h-0 flex-1"
+      >
         <div className="space-y-4 px-3.5 pt-2.5 pb-4">
           {LIGHTING_GROUPS.map((g) => (
             <section key={g.name}>
@@ -99,7 +104,7 @@ export function LightingPanel({
             </section>
           ))}
         </div>
-      </ScrollArea>
+      </ScrollableArea>
       <div className="space-y-2 border-t border-border bg-subtle/50 p-3.5">
         <div className="flex items-center justify-between gap-2 text-xs">
           <span className="font-semibold text-foreground">{fam.name} · 尺寸档</span>
