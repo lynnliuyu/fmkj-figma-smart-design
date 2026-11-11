@@ -10,13 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@astryxdesign/core/Button'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { Progress } from '@/components/ui/progress'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Selector } from '@astryxdesign/core/Selector'
 import { COLLECT_MESSAGE, type CollectResult } from '@/lib/doc-collect'
 import {
   buildPdfFromJpegs,
@@ -268,26 +262,15 @@ export function DeliveryPackage({
               ) : null}
             </label>
             {d.key === 'quote' && quotes.length > 1 ? (
-              <Select
-                value={finalQuote.id ?? undefined}
-                disabled={!editable || finalQuote.locked || saving || busy}
-                onValueChange={(v) => save({ finalQuote: v }, '已设为定稿报价')}
-              >
-                <SelectTrigger
-                  size="sm"
-                  className="ml-7 max-w-56 sm:ml-0"
-                  aria-label="选择定稿报价"
-                >
-                  <SelectValue placeholder="选择定稿报价" />
-                </SelectTrigger>
-                <SelectContent>
-                  {quotes.map((q) => (
-                    <SelectItem key={q.value} value={q.value}>
-                      {q.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Selector
+                label="选择定稿报价"
+                isLabelHidden
+                size="sm"
+                value={finalQuote.id ?? ''}
+                options={quotes}
+                isDisabled={!editable || finalQuote.locked || saving || busy}
+                onChange={(v) => save({ finalQuote: v }, '已设为定稿报价')}
+              />
             ) : null}
             {d.key === 'proposal' && proposalPicker && !busy ? proposalPicker : null}
             {d.url ? (

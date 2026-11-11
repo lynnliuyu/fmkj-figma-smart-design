@@ -19,20 +19,15 @@ import {
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Popover } from '@astryxdesign/core/Popover'
 import { COLLECT_MESSAGE, type CollectResult } from '@/lib/doc-collect'
 import {
   downloadBlob,
@@ -349,39 +344,42 @@ export function PrintToolbar({
           {picker}
 
           {groups.length > 0 ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="h-8 gap-1.5 text-xs"
-                  icon={<SlidersHorizontal />}
-                  label={summaryParts.length > 0 ? '版式与选项（已调整）' : '版式与选项'}
-                />
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 space-y-3.5 p-4">
-                {groups.map((g) => (
-                  <div key={g.label} className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground">{g.label}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {g.options.map((o) => {
-                        const active = o.value === g.value
-                        return (
-                          <Button
-                            key={o.value}
-                            size="sm"
-                            variant={active ? 'primary' : 'secondary'}
-                            className="h-7 rounded-md px-2.5 text-xs"
-                            href={o.href}
-                            as={Link}
-                            label={o.label}
-                          />
-                        )
-                      })}
+            <Popover
+              alignment="end"
+              width={320}
+              content={
+                <div className="space-y-3.5">
+                  {groups.map((g) => (
+                    <div key={g.label} className="space-y-1.5">
+                      <p className="text-xs font-medium text-muted-foreground">{g.label}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {g.options.map((o) => {
+                          const active = o.value === g.value
+                          return (
+                            <Button
+                              key={o.value}
+                              size="sm"
+                              variant={active ? 'primary' : 'secondary'}
+                              className="h-7 rounded-md px-2.5 text-xs"
+                              href={o.href}
+                              as={Link}
+                              label={o.label}
+                            />
+                          )
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </PopoverContent>
+                  ))}
+                </div>
+              }
+            >
+              <Button
+                variant="secondary"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                icon={<SlidersHorizontal />}
+                label={summaryParts.length > 0 ? '版式与选项（已调整）' : '版式与选项'}
+              />
             </Popover>
           ) : null}
 
@@ -424,94 +422,108 @@ export function PrintToolbar({
         </div>
       </div>
 
-      <Dialog open={exportResult !== null} onOpenChange={(open) => !open && setExportResult(null)}>
-        <DialogContent className="max-h-[88vh] max-w-lg gap-4 overflow-y-auto p-5 sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">
-              {exportResult?.kind === 'img' ? '高清图片已生成' : 'PDF 文档已生成'}
-            </DialogTitle>
-            <DialogDescription className="text-xs leading-relaxed">
-              {exportResult?.fileName}（共 {exportResult?.pageCount} 页
-              {exportResult?.sizeKb ? ` · 约 ${exportResult.sizeKb} KB` : ''}）
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-2.5 rounded-xl border bg-muted/35 p-3.5 text-xs leading-relaxed">
-            <p className="font-medium text-foreground">文件导出到哪里了？</p>
-            <ul className="list-disc space-y-1.5 pl-4 text-muted-foreground">
-              {!isMpView ? (
-                <li>
-                  <strong className="text-foreground">电脑浏览器</strong>：已自动下载到系统默认的
-                  <strong className="text-foreground">「下载 (Downloads)」文件夹</strong>
-                  （可在浏览器右上角下载图标中查看，或点击下方「选择位置另存为」指定目录）。
-                </li>
-              ) : null}
-              <li>
-                <strong className="text-foreground">微信小程序 / 手机端</strong>
-                ：受微信内置浏览器限制无法直接静默写入系统文件夹。您可以点击下方
-                <strong className="text-foreground">「复制 PDF 下载链接」</strong>
-                发到微信聊天/手机浏览器打开保存，或直接
-                <strong className="text-foreground">长按下方预览图</strong>
-                保存到手机相册、转发给客户。
-              </li>
-            </ul>
-          </div>
-
-          {exportResult?.kind === 'pdf' ? (
-            <div className="flex flex-wrap gap-2">
-              {!isMpView ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => void savePdfWithPicker()}
-                  icon={<FolderDown />}
-                  label="下载 / 选择位置另存为"
-                />
-              ) : null}
-              {exportResult.downloadUrl ? (
-                <Button
-                  type="button"
-                  variant={isMpView ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => void copyDownloadUrl()}
-                  icon={<Check />}
-                  endContent={<Copy />}
-                  label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
-                />
-              ) : null}
-              {!isMpView && exportResult.previewUrl ? (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  href={exportResult.previewUrl}
-                  icon={<ExternalLink />}
-                  label="新窗口打开 PDF"
-                />
-              ) : null}
-            </div>
-          ) : null}
-
-          {exportResult?.previewImages.length ? (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">
-                页面高清预览（手机 / 小程序内可直接长按下方图片保存到相册或转发给微信好友）：
-              </p>
-              <div
-                className={cn(
-                  'space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5',
-                  isMpView ? 'max-h-[48vh]' : 'max-h-64',
-                )}
-              >
-                {exportResult.previewImages.map((src, idx) => (
-                  <div key={idx} className="overflow-hidden rounded-lg border bg-white shadow-2xs">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt={`第 ${idx + 1} 页预览`} className="block h-auto w-full" />
-                  </div>
-                ))}
+      <Dialog
+        isOpen={exportResult !== null}
+        onOpenChange={(open) => !open && setExportResult(null)}
+        width={512}
+        maxHeight="88vh"
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={exportResult?.kind === 'img' ? '高清图片已生成' : 'PDF 文档已生成'}
+              subtitle={`${exportResult?.fileName}（共 ${exportResult?.pageCount} 页${exportResult?.sizeKb ? ` · 约 ${exportResult.sizeKb} KB` : ''}）`}
+              onOpenChange={(open) => !open && setExportResult(null)}
+            />
+          }
+          content={
+            <LayoutContent padding={5}>
+              <div className="space-y-2.5 rounded-xl border bg-muted/35 p-3.5 text-xs leading-relaxed">
+                <p className="font-medium text-foreground">文件导出到哪里了？</p>
+                <ul className="list-disc space-y-1.5 pl-4 text-muted-foreground">
+                  {!isMpView ? (
+                    <li>
+                      <strong className="text-foreground">电脑浏览器</strong>
+                      ：已自动下载到系统默认的
+                      <strong className="text-foreground">「下载 (Downloads)」文件夹</strong>
+                      （可在浏览器右上角下载图标中查看，或点击下方「选择位置另存为」指定目录）。
+                    </li>
+                  ) : null}
+                  <li>
+                    <strong className="text-foreground">微信小程序 / 手机端</strong>
+                    ：受微信内置浏览器限制无法直接静默写入系统文件夹。您可以点击下方
+                    <strong className="text-foreground">「复制 PDF 下载链接」</strong>
+                    发到微信聊天/手机浏览器打开保存，或直接
+                    <strong className="text-foreground">长按下方预览图</strong>
+                    保存到手机相册、转发给客户。
+                  </li>
+                </ul>
               </div>
-            </div>
-          ) : null}
-        </DialogContent>
+
+              {exportResult?.kind === 'pdf' ? (
+                <div className="flex flex-wrap gap-2">
+                  {!isMpView ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => void savePdfWithPicker()}
+                      icon={<FolderDown />}
+                      label="下载 / 选择位置另存为"
+                    />
+                  ) : null}
+                  {exportResult.downloadUrl ? (
+                    <Button
+                      type="button"
+                      variant={isMpView ? 'primary' : 'secondary'}
+                      size="sm"
+                      onClick={() => void copyDownloadUrl()}
+                      icon={<Check />}
+                      endContent={<Copy />}
+                      label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
+                    />
+                  ) : null}
+                  {!isMpView && exportResult.previewUrl ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      href={exportResult.previewUrl}
+                      icon={<ExternalLink />}
+                      label="新窗口打开 PDF"
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+
+              {exportResult?.previewImages.length ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    页面高清预览（手机 / 小程序内可直接长按下方图片保存到相册或转发给微信好友）：
+                  </p>
+                  <div
+                    className={cn(
+                      'space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5',
+                      isMpView ? 'max-h-[48vh]' : 'max-h-64',
+                    )}
+                  >
+                    {exportResult.previewImages.map((src, idx) => (
+                      <div
+                        key={idx}
+                        className="overflow-hidden rounded-lg border bg-white shadow-2xs"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={src}
+                          alt={`第 ${idx + 1} 页预览`}
+                          className="block h-auto w-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </LayoutContent>
+          }
+        />
       </Dialog>
     </div>
   )
