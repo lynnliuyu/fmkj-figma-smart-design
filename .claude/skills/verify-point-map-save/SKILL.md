@@ -77,8 +77,8 @@ it turns each violation into its shortest path in plain words.
 
 | Version                    | Draft delete                          | Result                              |
 | -------------------------- | ------------------------------------- | ----------------------------------- |
-| `Save.tla` (today's code)  | unconditional                         | `DuringSaveEditSurvives` **breaks** |
-| `SaveFixed.tla` (proposed) | only when `capturedVersion = version` | **Rules that hold**                 |
+| `Buggy.tla` (today's code)  | unconditional                         | `DuringSaveEditSurvives` **breaks** |
+| `FixedCase.tla` (proposed) | only when `capturedVersion = version` | **Rules that hold**                 |
 
 Same rule, same model, one changed line — the check flips from broken to holding.
 That is the proof this check can fail, which is the only thing that makes it worth
