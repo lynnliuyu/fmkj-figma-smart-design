@@ -110,7 +110,7 @@ function ImageField({
               setFileName(null)
               setRemoved(true)
             }}
-            label="操作"
+            label={`移除${label}`}
             icon={<X />}
             size="sm"
           />

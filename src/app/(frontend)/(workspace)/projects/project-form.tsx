@@ -326,7 +326,7 @@ export function ProjectForm({
               isDisabled={pending || (!isNew && !dirty)}
               icon={<Loader2 />}
               endContent={<Save />}
-              label="操作"
+              label={isNew ? '创建项目' : '保存'}
             />
           </CardFooter>
         )}

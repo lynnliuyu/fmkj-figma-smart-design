@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import {
@@ -288,7 +288,7 @@ export function ProjectShareDialog({
                         onClick={() => void copyLink()}
                         icon={<Check />}
                         endContent={<Copy />}
-                        label="操作"
+                        label={copied ? '已复制' : '复制链接'}
                       />
                       <IconButton
                         type="button"
@@ -297,7 +297,7 @@ export function ProjectShareDialog({
                         tooltip="重置链接（旧链接立即失效）"
                         isDisabled={busy}
                         onClick={() => void updateConfig({ resetToken: true })}
-                        label="操作"
+                        label="重置链接"
                         icon={<RefreshCw />}
                         size="sm"
                       />
@@ -325,10 +325,7 @@ export function ProjectShareDialog({
                       </div>
                     ) : null}
                   </div>
-                  <Badge variant="outline" className="shrink-0 gap-1 text-xs">
-                    <Shield className="size-3 text-primary" />
-                    创建者
-                  </Badge>
+                  <Badge variant="neutral" className="shrink-0 gap-1 text-xs" label={'创建者'} />
                 </div>
 
                 {/* 协作者列表 */}
@@ -368,15 +365,17 @@ export function ProjectShareDialog({
                           isDisabled={busy}
                           className="text-muted-foreground hover:text-destructive"
                           onClick={() => void updateCollaborator(c.userId, { remove: true })}
-                          label="操作"
+                          label={`移除 ${c.name}`}
                           icon={<Trash2 />}
                           size="sm"
                         />
                       </div>
                     ) : (
-                      <Badge variant="secondary" className="text-xs">
-                        {c.role === 'edit' ? '可编辑' : '仅查看'}
-                      </Badge>
+                      <Badge
+                        variant="neutral"
+                        className="text-xs"
+                        label={c.role === 'edit' ? '可编辑' : '仅查看'}
+                      />
                     )}
                   </div>
                 ))}

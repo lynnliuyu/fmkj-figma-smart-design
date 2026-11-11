@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Blocks, ChevronRight } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -78,9 +78,11 @@ export function PluginList({
             </CardTitle>
           </div>
           {pending ? (
-            <Badge variant="outline" className="shrink-0 text-xs text-muted-foreground">
-              规划中
-            </Badge>
+            <Badge
+              variant="neutral"
+              className="shrink-0 text-xs text-muted-foreground"
+              label={'规划中'}
+            />
           ) : null}
         </CardHeader>
 

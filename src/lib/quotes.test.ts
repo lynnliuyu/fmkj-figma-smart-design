@@ -83,9 +83,9 @@ describe('报价状态取值', () => {
   it('徽章样式：accepted → success，sent → warning，其余 → outline', () => {
     expect(quoteStatusVariant('accepted')).toBe('success')
     expect(quoteStatusVariant('sent')).toBe('warning')
-    expect(quoteStatusVariant('draft')).toBe('outline')
-    expect(quoteStatusVariant(undefined)).toBe('outline')
-    expect(quoteStatusVariant(null)).toBe('outline')
+    expect(quoteStatusVariant('draft')).toBe('neutral')
+    expect(quoteStatusVariant(undefined)).toBe('neutral')
+    expect(quoteStatusVariant(null)).toBe('neutral')
   })
 
   it('标签未知时回落到「草稿」', () => {

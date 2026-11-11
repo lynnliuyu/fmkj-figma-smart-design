@@ -48,7 +48,7 @@ export function SmartSelect({
             aria-checked={tier === t.value}
             className={cn('h-7 text-xs', tier === t.value && 'bg-background shadow-sm')}
             onClick={() => setTier(t.value)}
-            label="操作"
+            label={t.label}
           />
         ))}
       </div>

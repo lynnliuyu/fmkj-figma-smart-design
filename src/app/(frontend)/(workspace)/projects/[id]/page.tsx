@@ -34,16 +34,16 @@ export default async function ProjectInfoPage({ params }: { params: Promise<{ id
   const points = project.pointCount ?? 0
 
   const stage: ProjectOverviewData['stage'] = archived
-    ? { label: '已归档', variant: 'secondary' }
+    ? { label: '已归档', variant: 'neutral' }
     : signed
       ? { label: '已签约', variant: 'success' }
       : contract
         ? { label: '合同待签', variant: 'warning' }
         : quotes.length
-          ? { label: '报价中', variant: 'brand' }
+          ? { label: '报价中', variant: 'info' }
           : points
-            ? { label: '布点中', variant: 'outline' }
-            : { label: '新建', variant: 'outline' }
+            ? { label: '布点中', variant: 'neutral' }
+            : { label: '新建', variant: 'neutral' }
 
   const data: ProjectOverviewData = {
     id: pid,

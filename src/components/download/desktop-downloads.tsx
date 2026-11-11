@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { ArrowRight, Download, Laptop, Monitor, RefreshCw } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -148,9 +148,11 @@ export function DesktopHeroActions() {
   if (bridge) {
     return (
       <div className="mt-8 flex flex-wrap items-center gap-3">
-        <Badge variant="outline" className="h-9 rounded-full bg-card px-4 text-sm">
-          你正在使用桌面客户端 v{bridge.version}
-        </Badge>
+        <Badge
+          variant="neutral"
+          className="h-9 rounded-full bg-card px-4 text-sm"
+          label={`你正在使用桌面客户端 v${bridge.version}`}
+        />
         <Button
           size="lg"
           variant="secondary"
@@ -186,7 +188,7 @@ export function DesktopHeroActions() {
             href={asset.url}
             as={Link}
             icon={<Download />}
-            label="操作"
+            label={target.cta}
           />
           <Button
             size="lg"
@@ -251,9 +253,7 @@ export function DesktopPlatformCards() {
             <div className="flex items-center justify-between gap-3">
               <Icon aria-hidden className="size-5 text-muted-foreground" />
               {isRecommended ? (
-                <Badge variant="secondary" className="rounded-full">
-                  推荐你的电脑
-                </Badge>
+                <Badge variant="neutral" className="rounded-full" label={'推荐你的电脑'} />
               ) : null}
             </div>
             <h3 className="mt-6 font-medium">{target.title}</h3>

@@ -57,7 +57,7 @@ export function LandingNav() {
               variant="ghost"
               className="rounded-full px-3 font-normal text-muted-foreground hover:text-foreground"
               href={item.href}
-              label="操作"
+              label={item.label}
             />
           ))}
         </nav>

@@ -318,7 +318,7 @@ export function PrintToolbar({
             href={back.href}
             as={Link}
             icon={<ChevronLeft />}
-            label="操作"
+            label={back.label}
           />
         )}
 
@@ -374,7 +374,7 @@ export function PrintToolbar({
                             className="h-7 rounded-md px-2.5 text-xs"
                             href={o.href}
                             as={Link}
-                            label="操作"
+                            label={o.label}
                           />
                         )
                       })}
@@ -393,7 +393,7 @@ export function PrintToolbar({
               onClick={() => void exportPdf()}
               icon={<Loader2 />}
               endContent={<FileDown />}
-              label="操作"
+              label={busy ? '生成中…' : '导出 PDF'}
             />
           ) : (
             <DropdownMenu>
@@ -404,7 +404,9 @@ export function PrintToolbar({
                   isDisabled={busy !== null || Boolean(locked)}
                   icon={<Loader2 />}
                   endContent={<ChevronDown />}
-                  label="操作"
+                  label={
+                    busy === 'pdf' ? '生成 PDF 中…' : busy === 'img' ? '生成图片中…' : '导出 PDF'
+                  }
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
@@ -474,7 +476,7 @@ export function PrintToolbar({
                   onClick={() => void copyDownloadUrl()}
                   icon={<Check />}
                   endContent={<Copy />}
-                  label="操作"
+                  label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
                 />
               ) : null}
               {!isMpView && exportResult.previewUrl ? (

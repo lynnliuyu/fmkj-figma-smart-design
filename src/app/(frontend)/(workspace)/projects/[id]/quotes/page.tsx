@@ -3,7 +3,7 @@ import { AlertCircle, FileText, MapPinned } from 'lucide-react'
 
 import { EmptyState } from '@/components/empty-state'
 import { BetaDocLink } from '@/components/beta-doc-link'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { relId } from '@/lib/access'
 import { resolveFinalQuote } from '@/lib/deliverables'
@@ -127,11 +127,12 @@ export default async function ProjectQuotesPage({
                   </Link>
                   <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {isFinal && quotes.length > 1 ? (
-                      <Badge className="bg-primary text-primary-foreground">定稿</Badge>
+                      <Badge className="bg-primary text-primary-foreground" label={'定稿'} />
                     ) : null}
-                    <Badge variant={quoteStatusVariant(q.status)}>
-                      {quoteStatusLabel(q.status)}
-                    </Badge>
+                    <Badge
+                      variant={quoteStatusVariant(q.status)}
+                      label={quoteStatusLabel(q.status)}
+                    />
                     {usedByContract ? <span>已用于合同 {contract?.number}</span> : null}
                     <span className="tabular-nums">更新于 {fmtDate(q.updatedAt)}</span>
                   </div>

@@ -26,7 +26,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -783,9 +783,9 @@ function RecordItem({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-medium">{r.title}</span>
-          <Badge variant="outline">{serviceTypeLabel(r.type)}</Badge>
+          <Badge variant="neutral" label={serviceTypeLabel(r.type)} />
           {r.status !== 'done' ? (
-            <Badge variant="warning">{serviceStatusLabel(r.status)}</Badge>
+            <Badge variant="warning" label={serviceStatusLabel(r.status)} />
           ) : null}
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -826,7 +826,7 @@ function RecordItem({
 
               aria-label={`更多操作：${r.title}`}
               isDisabled={busy}
-              label="操作"
+              label="更多操作"
               icon={<Loader2 />}
               size="sm"
             />

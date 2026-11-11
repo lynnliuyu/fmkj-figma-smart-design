@@ -341,7 +341,7 @@ export function ContractSectionEdit({
                       onClick={() =>
                         set({ payments: draft.payments.filter((x) => x.key !== p.key) })
                       }
-                      label="操作"
+                      label={`删除第 ${i + 1} 期`}
                       icon={<Trash2 />}
                       size="sm"
                     />
@@ -422,7 +422,7 @@ export function ContractSectionEdit({
           setOpen(true)
         }}
         icon={<Pencil />}
-        label="操作"
+        label={'恢复默认条款'}
       />
       <Dialog open={open} onOpenChange={(o) => !pending && setOpen(o)}>
         <DialogContent

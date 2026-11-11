@@ -40,7 +40,7 @@ import {
 import { toast } from 'sonner'
 
 import { BetaDocLink } from '@/components/beta-doc-link'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { STYLE_TRANSFER_HANDOFF_KEY } from '@/lib/style-templates'
@@ -1546,7 +1546,7 @@ export function PointMapEditor({
           <div className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
             <MapPinned className="size-3.5" />
             <span className="font-medium text-fg-secondary">{activeSheet?.name ?? '点位图'}</span>
-            <Badge variant="secondary">只读</Badge>
+            <Badge variant="neutral" label={'只读'} />
           </div>
         ) : (
           <div className="flex shrink-0 items-center gap-1.5">

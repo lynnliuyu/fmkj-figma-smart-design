@@ -8,7 +8,7 @@ import { EmptyState } from '@/components/empty-state'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { SearchSubmit } from '@/components/search-submit'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -340,9 +340,11 @@ export default async function ProjectsPage({
                           {display}
                         </Link>
                         {isDemo(p.name) ? (
-                          <Badge variant="brand" className="h-4.5 shrink-0 px-1.5 text-[11px]">
-                            示例
-                          </Badge>
+                          <Badge
+                            variant="info"
+                            className="h-4.5 shrink-0 px-1.5 text-[11px]"
+                            label={'示例'}
+                          />
                         ) : null}
                       </div>
                       <div className="mt-0.5 truncate text-xs text-muted-foreground">
@@ -352,9 +354,7 @@ export default async function ProjectsPage({
                     </TableCell>
                     <TableCell className="hidden w-32 md:table-cell">
                       {p.platform ? (
-                        <Badge variant="outline" className="rounded-md">
-                          {p.platform}
-                        </Badge>
+                        <Badge variant="neutral" className="rounded-md" label={p.platform} />
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}

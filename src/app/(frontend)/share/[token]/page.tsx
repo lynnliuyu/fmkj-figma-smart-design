@@ -8,7 +8,7 @@ import { PlanDemo } from '@/components/landing/plan-demo'
 import { ProposalShowcase } from '@/components/landing/proposal-showcase'
 import { QuoteShowcase } from '@/components/landing/quote-showcase'
 import { money, Section } from '@/components/landing/section'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { MINIMAL_STYLE } from '@/documents/minimal'
 import { DOC_KINDS } from '@/documents/registry'
@@ -315,9 +315,7 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
                 {company.phone}
               </span>
             ) : null}
-            <Badge variant="outline" className="hidden sm:inline-flex">
-              业主方案预览
-            </Badge>
+            <Badge variant="neutral" className="hidden sm:inline-flex" label={'业主方案预览'} />
             <ShareExportButton projectName={data.project.name} />
             {compare.length ? (
               <Button size="sm" className="rounded-full" href="#decide" label="确认意向" />
@@ -395,9 +393,7 @@ export default async function ClientSharePage({ params }: { params: Promise<{ to
           {/* 左侧：本方案专属设计师 / 服务商联系卡 */}
           <div className="flex flex-col justify-between gap-4 rounded-2xl border bg-card p-6 sm:flex-row sm:items-center lg:col-span-6">
             <div className="space-y-2">
-              <Badge variant="secondary" className="text-xs">
-                方案设计及交付团队
-              </Badge>
+              <Badge variant="neutral" className="text-xs" label={'方案设计及交付团队'} />
               <p className="text-lg font-semibold">{company.name}</p>
               {company.slogan ? (
                 <p className="text-xs text-muted-foreground">{company.slogan}</p>

@@ -6,7 +6,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { PointMarker } from '@/components/point-marker'
 import { ProductThumb } from '@/components/product-thumb'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { pageTitle } from '@/lib/brand'
 import { getCatalog } from '@/lib/cached-data'
@@ -92,9 +92,11 @@ export default async function PublicCatalogPage() {
                     style={{ backgroundColor: category.color }}
                   />
                   <h3 className="text-base font-medium">{category.name}</h3>
-                  <Badge variant="outline" className="font-mono text-xs">
-                    代号前缀 {category.code}1, {category.code}2…
-                  </Badge>
+                  <Badge
+                    variant="neutral"
+                    className="font-mono text-xs"
+                    label={`代号前缀 ${category.code}1, ${category.code}2…`}
+                  />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {types.map((t) => {

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { deviceLook } from '@/board/packs/smart-home/look'
 import { planAreaLabelAt } from '@/components/plan-figure'
 import { PointMarker } from '@/components/point-marker'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Toggle } from '@/components/ui/toggle'
 import { categoryOfType, DEVICE_CATEGORIES, deviceTypeOf } from '@/lib/device-types'
@@ -102,9 +102,7 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
           <span className="hidden font-normal text-muted-foreground sm:inline"> · 点位图</span>
         </p>
         {/* 系统内置的示例项目，不是真实客户案例 */}
-        <Badge variant="secondary" className="shrink-0">
-          示例项目
-        </Badge>
+        <Badge variant="neutral" className="shrink-0" label={'示例项目'} />
         <Tabs
           value={sheet.id}
           onValueChange={(v) => {
@@ -133,9 +131,7 @@ export function PlanDemo({ data }: { data: LandingShowcase }) {
         </Tabs>
         {quote ? (
           <p className="ml-auto flex shrink-0 items-center gap-2 text-sm">
-            <Badge variant="success" className="hidden sm:inline-flex">
-              已确认
-            </Badge>
+            <Badge variant="success" className="hidden sm:inline-flex" label={'已确认'} />
             <span className="font-semibold tabular-nums">{money(quote.total)}</span>
           </p>
         ) : null}

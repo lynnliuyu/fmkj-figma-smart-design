@@ -144,7 +144,7 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
         onClick={() => void handleExport()}
         icon={<Loader2 />}
         endContent={<FileDown />}
-        label="操作"
+        label={busy ? '生成 PDF 中…' : '下载方案与报价 PDF'}
       />
 
       <Dialog open={result !== null} onOpenChange={(open) => !open && setResult(null)}>
@@ -184,7 +184,7 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
                 onClick={() => void copyLink()}
                 icon={<Check />}
                 endContent={<Copy />}
-                label="操作"
+                label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
               />
             ) : null}
             {result?.previewUrl ? (

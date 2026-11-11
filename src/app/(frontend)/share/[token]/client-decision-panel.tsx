@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from 'react'
 import { CheckCircle2, Loader2, PenLine, Send } from 'lucide-react'
 
 import { money, SectionHeader } from '@/components/landing/section'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -191,7 +191,7 @@ export function ClientDecisionPanel({
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-sm font-medium">{q.title}</span>
                       {q.isMain ? (
-                        <Badge variant={active ? 'secondary' : 'outline'}>设计师推荐</Badge>
+                        <Badge variant={active ? 'neutral' : 'neutral'} label={'设计师推荐'} />
                       ) : null}
                     </div>
                     <p className="mt-4 text-2xl font-semibold tracking-tight tabular-nums">
@@ -333,7 +333,7 @@ export function ClientDecisionPanel({
                             .join(' · ')}
                         </span>
                       </span>
-                      {off ? <Badge variant="warning">暂缓</Badge> : null}
+                      {off ? <Badge variant="warning" label={'暂缓'} /> : null}
                       <span
                         className={cn(
                           'w-20 text-right text-sm tabular-nums',
@@ -525,7 +525,13 @@ export function ClientDecisionPanel({
                 isDisabled={!canSubmit || pending}
                 icon={<Loader2 />}
                 endContent={<Send />}
-                label="操作"
+                label={
+                  canSubmit
+                    ? decision === 'confirm'
+                      ? '签名确认意向'
+                      : '提交调整意见'
+                    : '演示链接不能提交'
+                }
               />
             </form>
           )}

@@ -18,7 +18,7 @@ import { POINT_SCOPES } from '@/lib/point-scopes'
 
 import { createQuoteFromProject, deleteQuote } from './actions'
 
-function SubmitButton({ children }: { children: React.ReactNode }) {
+function SubmitButton({ children }: { children: string }) {
   const { pending } = useFormStatus()
   return (
     <Button
@@ -26,11 +26,10 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
       isDisabled={pending}
       icon={<Loader2 />}
       endContent={<FilePlus2 />}
-      label="操作"
+      label={children}
     />
   )
 }
-
 /** 从点位图生成报价：可选统计范围（全部 / 不含灯具 / 仅开关 …）；没有点位时生成空白报价。 */
 export function GenerateQuoteForm({
   projectId,

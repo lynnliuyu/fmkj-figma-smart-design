@@ -16,7 +16,7 @@ import {
 
 import { BrandLogo } from '@/components/brand-logo'
 import { PointMarker } from '@/components/point-marker'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Input } from '@/components/ui/input'
@@ -194,11 +194,10 @@ export function PlacePanel({
 export function ScoreBadge({ score }: { score: number }) {
   return (
     <Badge
-      variant={score >= 100 ? 'success' : score >= 60 ? 'outline' : 'warning'}
+      variant={score >= 100 ? 'success' : score >= 60 ? 'neutral' : 'warning'}
       className="h-5 px-1.5 text-xs tabular-nums"
-    >
-      {score}%
-    </Badge>
+      label={`${score}%`}
+    />
   )
 }
 

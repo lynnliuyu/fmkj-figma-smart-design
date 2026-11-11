@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -764,9 +764,11 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
-                            异常
-                          </Badge>
+                          <Badge
+                            variant="error"
+                            className="px-1.5 py-0 text-[10px]"
+                            label={'异常'}
+                          />
                           <span className="font-semibold text-foreground">{err.errorMessage}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">

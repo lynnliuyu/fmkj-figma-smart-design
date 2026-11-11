@@ -36,7 +36,7 @@ import { GuardedLink } from '@/components/guarded-link'
 import { PlanFigure } from '@/components/plan-figure'
 import { PointMarker } from '@/components/point-marker'
 import { ProductThumb } from '@/components/product-thumb'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -644,17 +644,13 @@ export function QuoteEditor({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {readOnly ? (
-            <Badge variant="secondary">
-              <Lock className="size-3" />
-              只读
-            </Badge>
+            <Badge variant="neutral" label={'只读'} />
           ) : dirty ? (
             <Badge
-              variant="outline"
+              variant="neutral"
               className="border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
-            >
-              未保存修改
-            </Badge>
+              label={'未保存修改'}
+            />
           ) : null}
           <Button
             variant="secondary"
@@ -940,7 +936,7 @@ export function QuoteEditor({
                           planMode === v && 'bg-background font-semibold text-primary shadow-2xs',
                         )}
                         onClick={() => setPlanMode(v)}
-                        label="操作"
+                        label={label}
                       />
                     ))}
                   </div>
@@ -1311,7 +1307,7 @@ export function QuoteEditor({
                           onClick={() =>
                             update({ items: quote.items.filter((x) => x.key !== l.key) })
                           }
-                          label="操作"
+                          label={`删除 ${l.name}`}
                           icon={<Trash2 />}
                           size="sm"
                         />
@@ -1514,7 +1510,7 @@ export function QuoteEditor({
                                 onClick={() =>
                                   update({ items: quote.items.filter((x) => x.key !== l.key) })
                                 }
-                                label="操作"
+                                label={`删除 ${l.name}`}
                                 icon={<Trash2 />}
                                 size="sm"
                               />
@@ -1878,10 +1874,9 @@ function MarginCapsule({
           <div className="mb-2 flex items-center justify-between">
             <p className="text-sm font-medium">内部毛利核算</p>
             <Badge
-              variant={tone === 'below' ? 'destructive' : tone === 'near' ? 'warning' : 'success'}
-            >
-              {tone === 'below' ? '低于底线' : tone === 'near' ? '接近底线' : '毛利健康'}
-            </Badge>
+              variant={tone === 'below' ? 'error' : tone === 'near' ? 'warning' : 'success'}
+              label={tone === 'below' ? '低于底线' : tone === 'near' ? '接近底线' : '毛利健康'}
+            />
           </div>
           <MarginBreakdown margin={margin} settings={settings} />
           <p className="mt-3 text-xs text-muted-foreground">

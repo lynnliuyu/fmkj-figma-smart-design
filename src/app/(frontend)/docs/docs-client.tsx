@@ -29,7 +29,7 @@ import {
 
 import { AppearanceMenuItems } from '@/components/appearance-menu'
 import { BrandLogo } from '@/components/landing/landing-chrome'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -362,9 +362,11 @@ export function DocsClient({ manual }: { manual: ManualData }) {
               <BookOpen className="size-4 text-primary" />
               <span>Docs</span>
             </button>
-            <Badge variant="secondary" className="hidden font-mono text-[10px] sm:inline-flex">
-              {manual.lastUpdated} · 实时同步
-            </Badge>
+            <Badge
+              variant="neutral"
+              className="hidden font-mono text-[10px] sm:inline-flex"
+              label={`${manual.lastUpdated} · 实时同步`}
+            />
           </div>
 
           {/* 全局文档搜索框（⌘K） */}
@@ -455,11 +457,10 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                             <span className="truncate">{item.title}</span>
                             {item.badge ? (
                               <Badge
-                                variant={active ? 'default' : 'secondary'}
+                                variant={active ? 'neutral' : 'neutral'}
                                 className="ml-1.5 h-4 shrink-0 px-1 text-[10px]"
-                              >
-                                {item.badge}
-                              </Badge>
+                                label={item.badge}
+                              />
                             ) : null}
                           </button>
                         </li>
@@ -1017,7 +1018,7 @@ function SectionAutoPoints() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             03. 智能生成点位与一键撤销
           </h1>
-          <Badge>核心功能</Badge>
+          <Badge label={'核心功能'} />
         </div>
         <p className="text-sm text-muted-foreground">
           根据图纸上的房间区域一键排布全屋智能设备与照明灯具点位，自带覆盖前确认提示与多入口无损撤销。
@@ -1479,9 +1480,11 @@ function SectionAiBilling({ manual }: { manual: ManualData }) {
                     </code>
                   </td>
                   <td className="px-3 py-2.5">
-                    <Badge variant="outline" className="text-[10px] font-normal">
-                      {t.category}
-                    </Badge>
+                    <Badge
+                      variant="neutral"
+                      className="text-[10px] font-normal"
+                      label={t.category}
+                    />
                   </td>
                   <td className="px-3 py-2.5 text-center font-mono font-semibold text-primary tabular-nums">
                     +{t.cost}
@@ -1607,9 +1610,11 @@ function SectionTemplates({ manual }: { manual: ManualData }) {
             <div key={s.id} className="rounded-xl border p-3.5 text-xs">
               <div className="flex items-center justify-between">
                 <span className="font-semibold">{s.name}</span>
-                <Badge variant={s.isBuiltin ? 'secondary' : 'outline'} className="text-[10px]">
-                  {s.isBuiltin ? '内置风格' : '扩展风格包'}
-                </Badge>
+                <Badge
+                  variant={s.isBuiltin ? 'neutral' : 'neutral'}
+                  className="text-[10px]"
+                  label={s.isBuiltin ? '内置风格' : '扩展风格包'}
+                />
               </div>
               <p className="mt-1 text-muted-foreground">{s.description}</p>
             </div>

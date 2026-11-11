@@ -7,7 +7,7 @@ import { Check, ImageIcon, Search } from 'lucide-react'
 
 import { BrandLogo } from '@/components/brand-logo'
 import { DeviceSymbol } from '@/components/device-symbol'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -225,9 +225,12 @@ export function SwapProductDialog({
                             <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
                               <span>{p.sku}</span>
                               {p.platforms.map((pl) => (
-                                <Badge key={pl} variant="outline" className="h-4 px-1 text-xs">
-                                  {pl}
-                                </Badge>
+                                <Badge
+                                  key={pl}
+                                  variant="neutral"
+                                  className="h-4 px-1 text-xs"
+                                  label={pl}
+                                />
                               ))}
                             </span>
                           </span>

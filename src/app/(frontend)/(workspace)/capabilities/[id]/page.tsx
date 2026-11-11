@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Bot, Clock, ExternalLink, FolderKanban, Settings } from 'lucide-react'
 
 import { PageHeader } from '@/components/page-header'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { EmptyState } from '@/components/empty-state'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -90,15 +90,13 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
         description={plugin.description}
         actions={
           pending ? (
-            <Badge variant="outline" className="text-muted-foreground">
-              规划中
-            </Badge>
+            <Badge variant="neutral" className="text-muted-foreground" label={'规划中'} />
           ) : null
         }
       />
 
       <div className="-mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <Badge variant="secondary">项目阶段 · {stage.label}</Badge>
+        <Badge variant="neutral" label={`项目阶段 · ${stage.label}`} />
         <span>{plugin.tagline}</span>
       </div>
 
@@ -114,9 +112,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {plugin.provides.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
+              <Badge key={item} variant="neutral" label={item} />
             ))}
           </div>
 
@@ -144,9 +140,11 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                       <div key={tpl.id} className="rounded-lg border p-3">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm font-medium">{tpl.name}</span>
-                          <Badge variant="outline" className="h-4 px-1.5 text-xs">
-                            {tpl.category}
-                          </Badge>
+                          <Badge
+                            variant="neutral"
+                            className="h-4 px-1.5 text-xs"
+                            label={tpl.category}
+                          />
                         </div>
                         <p className="mt-1 text-xs text-muted-foreground">{tpl.description}</p>
                         <div className="mt-1.5 text-xs text-muted-foreground tabular-nums">
@@ -246,12 +244,11 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                     return (
                       <Badge
                         key={perm}
-                        variant="outline"
+                        variant="neutral"
                         className="font-mono text-[10px] font-normal"
-                        title={meta?.label}
-                      >
-                        {perm}
-                      </Badge>
+                        aria-label={meta?.label}
+                        label={perm}
+                      />
                     )
                   })}
                 </div>
@@ -263,9 +260,11 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                     <div key={tool.name} className="rounded-lg border p-3 text-xs">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium">{tool.title}</span>
-                        <Badge variant="secondary" className="font-mono text-[10px]">
-                          +{tool.cost} 积分 · {tool.mutates ? '写入' : '只读'}
-                        </Badge>
+                        <Badge
+                          variant="neutral"
+                          className="font-mono text-[10px]"
+                          label={`+${tool.cost} 积分 · ${tool.mutates ? '写入' : '只读'}`}
+                        />
                       </div>
                       <code className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
                         {tool.name}
@@ -349,7 +348,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
                       size="sm"
                       href={targetHref}
                       icon={<ExternalLink />}
-                      label="操作"
+                      label={targetLabel}
                     />
                   </div>
                 )

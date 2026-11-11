@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { AlertTriangle, Eye, PencilLine, Users } from 'lucide-react'
 
 import { BrandLockup } from '@/components/brand/brand-mark'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { appAuth } from '@/lib/app-auth'
@@ -83,10 +83,12 @@ export default async function JoinProjectPage({
               <Users className="size-4 text-primary" />
               项目协作邀请
             </span>
-            <Badge variant={canEdit ? 'default' : 'secondary'} className="gap-1">
-              {canEdit ? <PencilLine className="size-3" /> : <Eye className="size-3" />}
-              {canEdit ? '可编辑权限' : '仅查看权限'}
-            </Badge>
+            <Badge
+              variant={canEdit ? 'neutral' : 'neutral'}
+              className="gap-1"
+              icon={canEdit ? <PencilLine className="size-3" /> : <Eye className="size-3" />}
+              label={canEdit ? '可编辑权限' : '仅查看权限'}
+            />
           </div>
           <div className="space-y-1">
             <CardTitle className="text-xl">{project.name}</CardTitle>

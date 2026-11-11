@@ -1,7 +1,7 @@
 'use client'
 
 import { buttonVariants } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
@@ -34,9 +34,7 @@ export function BetaDocLink({
           className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5', className)}
         >
           {label}
-          <Badge variant="warning" className="h-4 px-1.5 text-[10px]">
-            Beta
-          </Badge>
+          <Badge variant="warning" className="h-4 px-1.5 text-[10px]" label={'Beta'} />
         </a>
       </TooltipTrigger>
       <TooltipContent side="bottom">{BETA_DOC_HINT}</TooltipContent>

@@ -19,7 +19,7 @@ import { LinkPending } from '@/components/link-pending'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { SearchSubmit } from '@/components/search-submit'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Input } from '@/components/ui/input'
 import { appAuth } from '@/lib/app-auth'
@@ -397,9 +397,11 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                       {t?.name ?? '设备'}
                     </span>
                     {p.status === 'inactive' ? (
-                      <Badge variant="secondary" className="absolute top-2 right-2">
-                        已下架
-                      </Badge>
+                      <Badge
+                        variant="neutral"
+                        className="absolute top-2 right-2"
+                        label={'已下架'}
+                      />
                     ) : null}
                   </div>
                   <div className="flex flex-1 flex-col justify-between gap-2 border-t p-3">

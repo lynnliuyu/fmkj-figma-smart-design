@@ -2,7 +2,7 @@ import { EmptyState } from '@/components/empty-state'
 import Link from 'next/link'
 import { FileSignature, Lock, ReceiptText } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { ContractDocument } from '@/documents/contract-document'
 import { resolveDocSetup } from '@/documents/registry'
@@ -147,9 +147,10 @@ export default async function ProjectContractPage({ params }: { params: Promise<
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold tracking-tight">合同</h2>
-            <Badge variant={signed ? 'success' : 'outline'}>
-              {contractStatusLabel(contract.status)}
-            </Badge>
+            <Badge
+              variant={signed ? 'success' : 'neutral'}
+              label={contractStatusLabel(contract.status)}
+            />
           </div>
           <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
             <span className="font-mono">{contract.number}</span>

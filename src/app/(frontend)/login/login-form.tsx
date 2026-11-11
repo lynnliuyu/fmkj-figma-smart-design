@@ -381,7 +381,7 @@ export function LoginForm({
         isDisabled={loading}
         icon={<Loader2 />}
         endContent={<LogIn />}
-        label="操作"
+        label={loading ? '登录中' : '登录'}
       />
       {previewDemo ? (
         <div className="space-y-2 rounded-xl border border-border/80 bg-muted/40 p-3 text-xs">
@@ -546,7 +546,7 @@ export function LoginForm({
         isDisabled={loading}
         icon={<Loader2 />}
         endContent={<UserPlus />}
-        label="操作"
+        label={loading ? '正在创建工作台…' : '注册并进入工作台'}
       />
     </form>
   )
@@ -636,7 +636,7 @@ export function LoginForm({
             className="h-10 w-full rounded-full bg-foreground text-background hover:bg-foreground/85"
             isDisabled={loading}
             icon={<Loader2 />}
-            label="操作"
+            label={loading ? '正在重置密码…' : '重置密码并登录'}
           />
         </form>
       ) : qrAvailable ? (
@@ -710,7 +710,11 @@ export function LoginForm({
                     setQrPreferMode(next)
                     void createQr(next)
                   }}
-                  label="操作"
+                  label={
+                    qrPreferMode === 'wxacode'
+                      ? '扫码后只进小程序没弹窗？切换为「小程序内扫码」'
+                      : '切换回「微信扫一扫小程序码」'
+                  }
                 />
               </div>
             </div>

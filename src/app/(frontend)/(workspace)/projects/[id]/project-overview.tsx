@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Check, ChevronRight, Pencil } from 'lucide-react'
 
 import { BetaDocLink } from '@/components/beta-doc-link'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { yuan } from '@/lib/quotes'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,7 @@ export type ProjectOverviewData = {
   notes: string | null
   updated: string
   roleText: string
-  stage: { label: string; variant: 'outline' | 'brand' | 'warning' | 'success' | 'secondary' }
+  stage: { label: string; variant: 'neutral' | 'info' | 'warning' | 'success' }
   progress: { key: string; label: string; value: string; done: boolean; href: string }[]
 }
 
@@ -95,7 +95,7 @@ export function ProjectOverview({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold tracking-tight">项目信息</h2>
-            <Badge variant={data.stage.variant}>{data.stage.label}</Badge>
+            <Badge variant={data.stage.variant} label={data.stage.label} />
           </div>
           <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
             <span>更新于 {data.updated}</span>

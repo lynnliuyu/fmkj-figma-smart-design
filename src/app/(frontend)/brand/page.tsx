@@ -202,7 +202,7 @@ const DONTS = [
 ]
 
 function DownloadButton({ href, label }: { href: string; label: string }) {
-  return <Button size="sm" variant="secondary" href={href} icon={<Download />} label="操作" />
+  return <Button size="sm" variant="secondary" href={href} icon={<Download />} label={label} />
 }
 
 function Surface({

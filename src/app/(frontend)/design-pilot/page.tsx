@@ -5,7 +5,7 @@ import { Heading as AstryxHeading } from '@astryxdesign/core/Heading'
 import { Stack as AstryxStack } from '@astryxdesign/core/Stack'
 import { Text as AstryxText } from '@astryxdesign/core/Text'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -43,11 +43,11 @@ export default function DesignPilotPage() {
           <h2 className="text-sm font-semibold text-muted-foreground">现有组件</h2>
 
           <div className="flex flex-wrap gap-2">
-            <Badge>默认</Badge>
-            <Badge variant="secondary">次要</Badge>
-            <Badge variant="outline">描边</Badge>
-            <Badge variant="success">已确认</Badge>
-            <Badge variant="warning">待处理</Badge>
+            <Badge label={'默认'} />
+            <Badge variant="neutral" label={'次要'} />
+            <Badge variant="neutral" label={'描边'} />
+            <Badge variant="success" label={'已确认'} />
+            <Badge variant="warning" label={'待处理'} />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -66,7 +66,7 @@ export default function DesignPilotPage() {
                   <CardDescription>{f.desc}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Badge variant="outline">{f.tag}</Badge>
+                  <Badge variant="neutral" label={f.tag} />
                 </CardContent>
               </Card>
             ))}

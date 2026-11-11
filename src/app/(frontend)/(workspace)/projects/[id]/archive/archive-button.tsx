@@ -34,7 +34,7 @@ export function ArchiveButton({
       }
       icon={<Loader2 />}
       endContent={<Archive />}
-      label="操作"
+      label={archived ? '恢复项目' : '归档项目'}
     />
   )
 }

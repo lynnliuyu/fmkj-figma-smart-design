@@ -16,7 +16,7 @@ import { toast } from 'sonner'
 
 import { ScaledFrame } from '@/components/scaled-frame'
 import { SocialPoster, type SocialPosterTheme } from '@/components/social-poster'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import {
@@ -221,15 +221,15 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
                   aria-pressed={i === active}
                   onClick={() => setCurrent(i)}
                   className="h-auto min-w-0 justify-start whitespace-normal py-1.5 text-left leading-snug"
-                  label="操作"
+                  label={''}
                 />
               ))}
             </div>
           </div>
           <div className="min-w-0 space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{pages.length} 张独立图片</Badge>
-              <Badge variant="outline">1080 × 1440 / 张</Badge>
+              <Badge variant="neutral" label={`${pages.length} 张独立图片`} />
+              <Badge variant="neutral" label={'1080 × 1440 / 张'} />
             </div>
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground">图组风格</p>
@@ -275,7 +275,7 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
                   onClick={() => void copyCaption()}
                   icon={<Check />}
                   endContent={<Copy />}
-                  label="操作"
+                  label={'栖序雅致'}
                 />
               </div>
               <pre className="whitespace-pre-wrap break-words rounded-xl border bg-muted/20 p-3 font-sans text-xs leading-relaxed">

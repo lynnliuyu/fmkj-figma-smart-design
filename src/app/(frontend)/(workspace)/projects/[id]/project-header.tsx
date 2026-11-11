@@ -5,7 +5,7 @@ import { Archive, ChevronRight } from 'lucide-react'
 
 import { GuardedLink } from '@/components/guarded-link'
 import { ThemeMenu } from '@/components/site-header'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import type { ProjectRole } from '@/lib/project-access'
@@ -70,9 +70,11 @@ export function ProjectHeader({
                 {name}
               </h1>
               {demo ? (
-                <Badge variant="brand" className="h-4.5 shrink-0 px-1.5 text-[11px]">
-                  示例
-                </Badge>
+                <Badge
+                  variant="info"
+                  className="h-4.5 shrink-0 px-1.5 text-[11px]"
+                  label={'示例'}
+                />
               ) : null}
             </div>
             {subtitle ? (
@@ -82,16 +84,13 @@ export function ProjectHeader({
         </div>
         <div className="flex h-12 items-center gap-1.5 pr-3 md:order-last md:ml-auto md:pr-4">
           {role !== 'owner' ? (
-            <Badge variant={role === 'edit' ? 'outline' : 'secondary'} className="text-xs">
-              {role === 'edit' ? '协作 · 可编辑' : '协作 · 仅查看'}
-            </Badge>
+            <Badge
+              variant={role === 'edit' ? 'neutral' : 'neutral'}
+              className="text-xs"
+              label={role === 'edit' ? '协作 · 可编辑' : '协作 · 仅查看'}
+            />
           ) : null}
-          {archived ? (
-            <Badge variant="secondary">
-              <Archive className="size-3" />
-              已归档
-            </Badge>
-          ) : null}
+          {archived ? <Badge variant="neutral" label={'已归档'} /> : null}
           <ProjectShareDialog
             projectId={projectId}
             projectName={name}

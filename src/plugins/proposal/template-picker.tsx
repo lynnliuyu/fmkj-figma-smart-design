@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, Columns3, ExternalLink, Eye, Loader2, X } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import {
@@ -254,7 +254,7 @@ export function TemplatePicker({
                 setCompareIds([])
               }}
               icon={<Columns3 />}
-              label="操作"
+              label={compareMode ? '退出对比' : '对比模板'}
             />
           ) : null}
           <IconButton
@@ -300,7 +300,7 @@ export function TemplatePicker({
                     isDisabled={!canChoose(activeT) || busy}
                     onClick={() => void choose(activeT.value)}
                     icon={<Loader2 />}
-                    label="操作"
+                    label="应用模板"
                   />
                 ) : null}
               </div>
@@ -385,7 +385,7 @@ export function TemplatePicker({
                           className="w-full"
                           isDisabled={!canChoose(t) || busy}
                           onClick={() => void choose(t.value)}
-                          label="操作"
+                          label={'预览样张'}
                         />
                       ) : null}
                     </td>
@@ -453,7 +453,7 @@ export function TemplatePicker({
                         <div className="relative border-b bg-muted/40">
                           {thumbs[t.value]}
                           {t.value === value ? (
-                            <Badge className="absolute top-2 left-2 shadow-sm">当前使用</Badge>
+                            <Badge className="absolute top-2 left-2 shadow-sm" label={'当前使用'} />
                           ) : null}
                           {compareMode ? (
                             <span
@@ -540,7 +540,7 @@ export function TemplatePicker({
                       size="sm"
                       isDisabled={!canChoose(activeT) || busy}
                       onClick={() => void choose(activeT.value)}
-                      label="操作"
+                      label={'预览'}
                     />
                   ) : null}
                 </div>
@@ -633,7 +633,7 @@ export function TemplatePicker({
                       isDisabled={!canChoose(activeT) || busy}
                       onClick={() => void choose(activeT.value)}
                       icon={<Loader2 />}
-                      label="操作"
+                      label={'预览样张'}
                     />
                   ) : null}
                 </div>

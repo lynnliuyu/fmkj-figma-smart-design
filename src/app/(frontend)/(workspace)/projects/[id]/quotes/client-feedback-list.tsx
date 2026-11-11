@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { CopyPlus, Loader2, MessageSquareQuote } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { feedbackDecisionLabel, type DeferredItem } from '@/lib/client-feedback'
 import { yuan } from '@/lib/quotes'
@@ -75,7 +75,7 @@ export function ClientFeedbackList({
         <h3 id="feedback-title" className="flex items-center gap-2 text-base font-semibold">
           <MessageSquareQuote className="size-4 text-muted-foreground" />
           业主意向反馈
-          {pending ? <Badge variant="warning">{pending} 条待处理</Badge> : null}
+          {pending ? <Badge variant="warning" label={`${pending} 条待处理`} /> : null}
         </h3>
         <span className="text-xs text-muted-foreground">来自业主分享页 · 不会改动原报价</span>
       </div>
@@ -86,10 +86,11 @@ export function ClientFeedbackList({
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{f.customerName}</span>
-                  <Badge variant={f.decision === 'confirm' ? 'success' : 'warning'}>
-                    {feedbackDecisionLabel(f.decision)}
-                  </Badge>
-                  {f.status === 'handled' ? <Badge variant="outline">已处理</Badge> : null}
+                  <Badge
+                    variant={f.decision === 'confirm' ? 'success' : 'warning'}
+                    label={feedbackDecisionLabel(f.decision)}
+                  />
+                  {f.status === 'handled' ? <Badge variant="neutral" label={'已处理'} /> : null}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {[
@@ -154,7 +155,7 @@ export function ClientFeedbackList({
                     isDisabled={busy === f.id}
                     onClick={() => toggle(f)}
                     icon={<Loader2 />}
-                    label="操作"
+                    label={f.status === 'new' ? '标记已处理' : '设为待处理'}
                   />
                 </div>
               )}

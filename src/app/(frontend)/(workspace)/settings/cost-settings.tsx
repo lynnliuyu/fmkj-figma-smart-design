@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { EyeOff, Loader2, Save, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -72,10 +72,7 @@ export function CostSettingsCard({
       <CardHeader>
         <CardTitle className="flex flex-wrap items-center gap-2">
           报价成本与毛利
-          <Badge variant="outline">
-            <EyeOff />
-            仅自己可见
-          </Badge>
+          <Badge variant="neutral" label={'仅自己可见'} />
         </CardTitle>
         <CardDescription>
           设置你的拿货折扣后，报价台会实时估算成本、毛利率和最低成交价。打印的报价单、合同和业主分享页都不会出现任何成本信息。

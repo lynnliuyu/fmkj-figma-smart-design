@@ -7,7 +7,7 @@ import { BookOpen, Check, Coins, Gift, History, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { PageHeader } from '@/components/page-header'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -177,10 +177,11 @@ export function MembershipClient({
                   积分；每项任务每个账号限领一次，自动记入积分流水。
                 </p>
               </div>
-              <Badge variant="outline" className="text-xs">
-                已完成 {initial.creditTasks.filter((t) => t.claimed).length} /{' '}
-                {initial.creditTasks.length}
-              </Badge>
+              <Badge
+                variant="neutral"
+                className="text-xs"
+                label={`已完成 ${initial.creditTasks.filter((t) => t.claimed).length} /${' '}${initial.creditTasks.length}`}
+              />
             </div>
           </CardHeader>
           <CardContent className="grid gap-2.5 sm:grid-cols-2">
@@ -207,10 +208,7 @@ export function MembershipClient({
                   </div>
                   <div className="shrink-0">
                     {task.claimed ? (
-                      <Badge variant="secondary" className="gap-1">
-                        <Check className="size-3" />
-                        已领取
-                      </Badge>
+                      <Badge variant="neutral" className="gap-1" label={'已领取'} />
                     ) : task.eligible ? (
                       <Button
                         size="sm"
@@ -243,9 +241,7 @@ export function MembershipClient({
                         label="去生成"
                       />
                     ) : (
-                      <Badge variant="outline" className="text-muted-foreground">
-                        待绑定
-                      </Badge>
+                      <Badge variant="neutral" className="text-muted-foreground" label={'待绑定'} />
                     )}
                   </div>
                 </div>

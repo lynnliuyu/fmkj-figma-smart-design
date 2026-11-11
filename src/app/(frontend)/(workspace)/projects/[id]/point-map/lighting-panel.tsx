@@ -92,7 +92,7 @@ export function LightingPanel({
                         'border-primary bg-primary/8 font-medium text-primary ring-2 ring-primary/20',
                     )}
                     icon={<Art id="lighting" />}
-                    label="操作"
+                    label={f.name}
                   />
                 ))}
               </div>
@@ -132,7 +132,7 @@ export function LightingPanel({
               )}
               onClick={() => onArm(armedId === v.id ? null : variantTemplate(fam, v.id, real))}
               icon={<Art id="lighting" />}
-              label="操作"
+              label={v.label}
             />
           ))}
         </div>
