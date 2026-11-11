@@ -898,7 +898,7 @@ export function QuoteEditor({
                     )}
                     onClick={() => setViewMode('floors')}
                     icon={<Layers />}
-                    label="按房间（ ）"
+                    label={`按房间（${floorGroups.reduce((s, f) => s + f.rooms.length, 0)}）`}
                   />
                   <Button
                     type="button"

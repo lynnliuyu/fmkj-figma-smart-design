@@ -1393,7 +1393,7 @@ export function PointMapEditor({
                       <Button
                         variant="ghost"
                         className="h-8 max-w-44 shrink-0 gap-1.5 px-2 text-xs font-medium data-[state=open]:bg-muted"
-                        label="楼层图纸：当前「」"
+                        label={activeSheet?.name ?? '全部楼层'}
                         icon={<Layers />}
                         endContent={<ChevronDown />}
                       />
@@ -2468,7 +2468,7 @@ export function PointMapEditor({
                     size="sm"
                     variant={autoGenScope === 'current' ? 'primary' : 'secondary'}
                     onClick={() => setAutoGenScope('current')}
-                    label="当前图纸（ ）"
+                    label={`当前图纸（${activeSheet?.name ?? '当前层'}）`}
                   />
                   <Button
                     type="button"
