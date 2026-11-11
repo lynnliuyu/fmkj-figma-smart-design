@@ -25,7 +25,7 @@ import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TextInput } from '@astryxdesign/core/TextInput'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 import type { CustomerUsageReport } from '@/lib/usage-diagnostics'
 import { cn } from '@/lib/utils'
 
@@ -84,6 +84,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
   const router = useRouter()
   const [refreshing, setRefreshing] = useState(false)
   const [copiedSummary, setCopiedSummary] = useState(false)
+  const [activeTab, setActiveTab] = useState('customers')
   const [customerQuery, setCustomerQuery] = useState('')
   const [onlyZeroSheet, setOnlyZeroSheet] = useState(false)
   const [previewImg, setPreviewImg] = useState<{ url: string; title: string } | null>(null)
@@ -337,471 +338,501 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
         </Card>
       </div>
 
-      <Tabs defaultValue="customers" className="w-full">
-        <TabsList className="flex flex-wrap">
-          <TabsTrigger value="customers">客户使用明细 ({report.customers.length})</TabsTrigger>
-          <TabsTrigger value="sheets">
-            图纸识别复盘 ({report.sheetInspections.length})
-            {kpis.zeroPointSheets > 0 ? (
-              <span className="ml-1.5 rounded-full bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-amber-800 dark:text-amber-300">
-                {kpis.zeroPointSheets} 待查
-              </span>
-            ) : null}
-          </TabsTrigger>
-          <TabsTrigger value="ai">
-            AI 模型与对话追踪 ({report.recentConversations.length})
-          </TabsTrigger>
-          <TabsTrigger value="errors">
-            异常与排障日志 ({report.errorLogs.length})
-            {report.errorLogs.length > 0 ? (
-              <span className="ml-1.5 rounded-full bg-destructive/15 px-1.5 py-0.2 text-[10px] font-semibold text-destructive">
-                {report.errorLogs.length}
-              </span>
-            ) : null}
-          </TabsTrigger>
-        </TabsList>
+      <div className="w-full">
+        <TabList
+          value={activeTab}
+          onChange={setActiveTab}
+          size="sm"
+          layout="fill"
+          aria-label="报表分类"
+        >
+          <Tab
+            value="customers"
+            label={`客户使用明细 (${report.customers.length})`}
+            panelId="reports-panel"
+          />
+          <Tab
+            value="sheets"
+            label={`图纸识别复盘 (${report.sheetInspections.length})`}
+            panelId="reports-panel"
+            endContent={
+              kpis.zeroPointSheets > 0 ? (
+                <span className="ml-1.5 rounded-full bg-amber-500/20 px-1.5 text-[10px] font-semibold text-amber-800 dark:text-amber-300">
+                  {kpis.zeroPointSheets} 待查
+                </span>
+              ) : null
+            }
+          />
+          <Tab
+            value="ai"
+            label={`AI 模型与对话追踪 (${report.recentConversations.length})`}
+            panelId="reports-panel"
+          />
+          <Tab
+            value="errors"
+            label={`异常与排障日志 (${report.errorLogs.length})`}
+            panelId="reports-panel"
+            endContent={
+              report.errorLogs.length > 0 ? (
+                <span className="ml-1.5 rounded-full bg-destructive/15 px-1.5 text-[10px] font-semibold text-destructive">
+                  {report.errorLogs.length}
+                </span>
+              ) : null
+            }
+          />
+        </TabList>
 
         {/* Tab 1: 客户使用明细 */}
-        <TabsContent value="customers" className="mt-4">
-          <Card>
-            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-3">
-              <div>
-                <CardTitle className="text-base">客户全链路使用统计</CardTitle>
-                <CardDescription>
-                  按最近活跃时间排序，快速定位每位客户在「建项目 → 传图纸 → 落点位 → 出报价 →
-                  签合同」各环节的使用深度
-                </CardDescription>
-              </div>
-              <div className="relative w-full sm:w-64">
-                <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                <TextInput
-                  label={'搜索客户姓名、邮箱、电话…'}
-                  isLabelHidden
-                  value={customerQuery}
-                  onChange={(v) => setCustomerQuery(v)}
-                  placeholder="搜索客户姓名、邮箱、电话…"
-                  controlClassName="h-8 pl-8 text-xs"
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-y bg-muted/50 text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-2.5 font-medium">客户 / 账号</th>
-                      <th className="px-3 py-2.5 text-right font-medium">剩余 / 已用积分</th>
-                      <th className="px-3 py-2.5 text-right font-medium">项目数</th>
-                      <th className="px-3 py-2.5 text-right font-medium">户型图 / 点位</th>
-                      <th className="px-3 py-2.5 text-right font-medium">报价 / 合同</th>
-                      <th className="px-3 py-2.5 text-right font-medium">AI 对话 / 消息</th>
-                      <th className="px-4 py-2.5 text-right font-medium">最近活跃</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {filteredCustomers.length === 0 ? (
-                      <tr>
-                        <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                          没有匹配的客户记录
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredCustomers.map((c) => (
-                        <tr key={c.userId} className="hover:bg-muted/35">
-                          <td className="px-4 py-2.5">
-                            <div className="font-medium text-foreground">{c.name}</div>
-                            <div className="text-[11px] text-muted-foreground">
-                              {c.email}
-                              {c.phone ? ` · ${c.phone}` : ''}
-                            </div>
-                          </td>
-                          <td className="px-3 py-2.5 text-right tabular-nums">
-                            <span
-                              className={cn('font-medium', c.aiCredits < 5 && 'text-destructive')}
-                            >
-                              {c.aiCredits}
-                            </span>
-                            <span className="text-muted-foreground"> / {c.creditsConsumed}</span>
-                          </td>
-                          <td className="px-3 py-2.5 text-right font-medium tabular-nums">
-                            {c.projectCount}
-                          </td>
-                          <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.sheetCount} 张{' '}
-                            <span className="text-muted-foreground">({c.pointCount} 点)</span>
-                          </td>
-                          <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.quoteCount}{' '}
-                            <span className="text-muted-foreground">/ {c.contractCount}</span>
-                          </td>
-                          <td className="px-3 py-2.5 text-right tabular-nums">
-                            {c.conversationCount}{' '}
-                            <span className="text-muted-foreground">({c.messageCount} 条)</span>
-                          </td>
-                          <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
-                            {formatDateTime(c.lastActiveAt)}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Tab 2: 图纸识别复盘 */}
-        <TabsContent value="sheets" className="mt-4 space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-3">
-              <div>
-                <CardTitle className="text-base">客户上传图纸与点位识别诊断</CardTitle>
-                <CardDescription>
-                  当客户反馈「图纸没识别出来」或「开关数量不对」时，可在此直接点击缩略图查看客户上传的原图，或一键进入该项目点位图协助处理
-                </CardDescription>
-              </div>
-              <Button
-                variant={onlyZeroSheet ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setOnlyZeroSheet((v) => !v)}
-                className="text-xs"
-                icon={<AlertTriangle />}
-                label={
-                  onlyZeroSheet
-                    ? '显示全部图纸'
-                    : `只看 0 点位图纸（${report.sheetInspections.filter((x) => x.pointCount === 0).length}）`
-                }
-              />
-            </CardHeader>
-            <CardContent>
-              {filteredSheets.length === 0 ? (
-                <EmptyState compact title="暂无符合条件的图纸记录" />
-              ) : (
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredSheets.map((sh) => {
-                    const mBadge = methodLabel(sh.method)
-                    return (
-                      <div
-                        key={sh.id}
-                        className="flex flex-col justify-between rounded-[var(--radius-container)] border bg-card p-3 shadow-2xs"
-                      >
-                        <div className="flex gap-3">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setPreviewImg({
-                                url: sh.url,
-                                title: `${sh.projectName} · ${sh.sheetName}`,
-                              })
-                            }
-                            className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border bg-muted"
-                            title="点击放大查看客户上传的原图"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={sh.url}
-                              alt={sh.sheetName}
-                              className="size-full object-cover transition-transform group-hover:scale-105"
-                            />
-                          </button>
-                          <div className="min-w-0 flex-1 space-y-1">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="truncate text-xs font-semibold text-foreground">
-                                {sh.sheetName}
-                              </span>
-                              <span
-                                className={cn(
-                                  'shrink-0 rounded border px-1.5 py-0.2 text-[10px] font-medium',
-                                  mBadge.cls,
-                                )}
-                              >
-                                {mBadge.text}
-                              </span>
-                            </div>
-                            <div className="truncate text-xs text-muted-foreground">
-                              项目：{sh.projectName}（{sh.ownerName}）
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs tabular-nums">
-                              <span
-                                className={cn(
-                                  'font-medium',
-                                  sh.pointCount === 0
-                                    ? 'text-amber-600 dark:text-amber-400'
-                                    : 'text-foreground',
-                                )}
-                              >
-                                总点位 {sh.pointCount}
-                              </span>
-                              <span className="text-muted-foreground">开关 {sh.switchCount}</span>
-                              <span className="text-muted-foreground">灯具 {sh.lightCount}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-2.5 flex items-center justify-between border-t pt-2 text-[11px] text-muted-foreground">
-                          <span>{formatDateTime(sh.updatedAt)}</span>
-                          <Link
-                            href={`/projects/${sh.projectId}/point-map`}
-                            className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
-                          >
-                            打开点位图排查
-                            <ExternalLink className="size-3" />
-                          </Link>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {report.uploadLogs.length > 0 ? (
+        {activeTab === 'customers' ? (
+          <div className="mt-4">
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">最近实时上传识别耗时流水</CardTitle>
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-3">
+                <div>
+                  <CardTitle className="text-base">客户全链路使用统计</CardTitle>
+                  <CardDescription>
+                    按最近活跃时间排序，快速定位每位客户在「建项目 → 传图纸 → 落点位 → 出报价 →
+                    签合同」各环节的使用深度
+                  </CardDescription>
+                </div>
+                <div className="relative w-full sm:w-64">
+                  <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <TextInput
+                    label={'搜索客户姓名、邮箱、电话…'}
+                    isLabelHidden
+                    value={customerQuery}
+                    onChange={(v) => setCustomerQuery(v)}
+                    placeholder="搜索客户姓名、邮箱、电话…"
+                    controlClassName="h-8 pl-8 text-xs"
+                  />
+                </div>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead className="border-y bg-muted/50 text-muted-foreground">
                       <tr>
-                        <th className="px-4 py-2 font-medium">时间</th>
-                        <th className="px-3 py-2 font-medium">上传文件名</th>
-                        <th className="px-3 py-2 font-medium">识别通道</th>
-                        <th className="px-3 py-2 text-right font-medium">开关 / 灯具 / 区域</th>
-                        <th className="px-4 py-2 text-right font-medium">识别耗时</th>
+                        <th className="px-4 py-2.5 font-medium">客户 / 账号</th>
+                        <th className="px-3 py-2.5 text-right font-medium">剩余 / 已用积分</th>
+                        <th className="px-3 py-2.5 text-right font-medium">项目数</th>
+                        <th className="px-3 py-2.5 text-right font-medium">户型图 / 点位</th>
+                        <th className="px-3 py-2.5 text-right font-medium">报价 / 合同</th>
+                        <th className="px-3 py-2.5 text-right font-medium">AI 对话 / 消息</th>
+                        <th className="px-4 py-2.5 text-right font-medium">最近活跃</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {report.uploadLogs.slice(0, 15).map((u) => {
-                        const mb = methodLabel(u.method)
-                        return (
-                          <tr key={u.id}>
-                            <td className="px-4 py-2 text-muted-foreground tabular-nums">
-                              {formatDateTime(u.createdAt)}
+                      {filteredCustomers.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                            没有匹配的客户记录
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredCustomers.map((c) => (
+                          <tr key={c.userId} className="hover:bg-muted/35">
+                            <td className="px-4 py-2.5">
+                              <div className="font-medium text-foreground">{c.name}</div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {c.email}
+                                {c.phone ? ` · ${c.phone}` : ''}
+                              </div>
                             </td>
-                            <td className="px-3 py-2 font-medium">{u.fileName}</td>
-                            <td className="px-3 py-2">
+                            <td className="px-3 py-2.5 text-right tabular-nums">
                               <span
-                                className={cn('rounded border px-1.5 py-0.2 text-[10px]', mb.cls)}
+                                className={cn('font-medium', c.aiCredits < 5 && 'text-destructive')}
                               >
-                                {mb.text}
+                                {c.aiCredits}
                               </span>
+                              <span className="text-muted-foreground"> / {c.creditsConsumed}</span>
                             </td>
-                            <td className="px-3 py-2 text-right tabular-nums">
-                              开关 {u.switches} · 灯具 {u.lights} · 区域 {u.areas}
+                            <td className="px-3 py-2.5 text-right font-medium tabular-nums">
+                              {c.projectCount}
                             </td>
-                            <td className="px-4 py-2 text-right text-muted-foreground tabular-nums">
-                              {u.durationMs} ms
+                            <td className="px-3 py-2.5 text-right tabular-nums">
+                              {c.sheetCount} 张{' '}
+                              <span className="text-muted-foreground">({c.pointCount} 点)</span>
+                            </td>
+                            <td className="px-3 py-2.5 text-right tabular-nums">
+                              {c.quoteCount}{' '}
+                              <span className="text-muted-foreground">/ {c.contractCount}</span>
+                            </td>
+                            <td className="px-3 py-2.5 text-right tabular-nums">
+                              {c.conversationCount}{' '}
+                              <span className="text-muted-foreground">({c.messageCount} 条)</span>
+                            </td>
+                            <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
+                              {formatDateTime(c.lastActiveAt)}
                             </td>
                           </tr>
-                        )
-                      })}
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
               </CardContent>
             </Card>
-          ) : null}
-        </TabsContent>
+          </div>
+        ) : null}
 
-        {/* Tab 3: AI 模型与对话追踪 */}
-        <TabsContent value="ai" className="mt-4 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        {/* Tab 2: 图纸识别复盘 */}
+        {activeTab === 'sheets' ? (
+          <div className="mt-4 space-y-4">
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">模型调用与 Auto 路由分布</CardTitle>
-                <CardDescription className="text-xs">
-                  统计各底层模型的实际调用次数、Auto 自动路由命中次数与消耗积分
-                </CardDescription>
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-3">
+                <div>
+                  <CardTitle className="text-base">客户上传图纸与点位识别诊断</CardTitle>
+                  <CardDescription>
+                    当客户反馈「图纸没识别出来」或「开关数量不对」时，可在此直接点击缩略图查看客户上传的原图，或一键进入该项目点位图协助处理
+                  </CardDescription>
+                </div>
+                <Button
+                  variant={onlyZeroSheet ? 'primary' : 'secondary'}
+                  size="sm"
+                  onClick={() => setOnlyZeroSheet((v) => !v)}
+                  className="text-xs"
+                  icon={<AlertTriangle />}
+                  label={
+                    onlyZeroSheet
+                      ? '显示全部图纸'
+                      : `只看 0 点位图纸（${report.sheetInspections.filter((x) => x.pointCount === 0).length}）`
+                  }
+                />
               </CardHeader>
-              <CardContent className="space-y-2">
-                {report.modelStats.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-muted-foreground">
-                    暂无模型调用记录
-                  </div>
+              <CardContent>
+                {filteredSheets.length === 0 ? (
+                  <EmptyState compact title="暂无符合条件的图纸记录" />
                 ) : (
-                  report.modelStats.map((m) => (
-                    <div
-                      key={m.model}
-                      className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
-                    >
-                      <div>
-                        <span className="font-medium text-foreground">{m.model}</span>
-                        {m.autoRoutedCount > 0 ? (
-                          <span className="ml-2 rounded bg-primary/10 px-1.5 py-0.2 text-[10px] text-primary">
-                            Auto 路由 {m.autoRoutedCount} 次
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="text-right tabular-nums">
-                        <span className="font-medium">{m.calls} 次</span>
-                        <span className="ml-2 text-muted-foreground">· {m.credits} 积分</span>
-                      </div>
-                    </div>
-                  ))
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {filteredSheets.map((sh) => {
+                      const mBadge = methodLabel(sh.method)
+                      return (
+                        <div
+                          key={sh.id}
+                          className="flex flex-col justify-between rounded-[var(--radius-container)] border bg-card p-3 shadow-2xs"
+                        >
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPreviewImg({
+                                  url: sh.url,
+                                  title: `${sh.projectName} · ${sh.sheetName}`,
+                                })
+                              }
+                              className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border bg-muted"
+                              title="点击放大查看客户上传的原图"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={sh.url}
+                                alt={sh.sheetName}
+                                className="size-full object-cover transition-transform group-hover:scale-105"
+                              />
+                            </button>
+                            <div className="min-w-0 flex-1 space-y-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="truncate text-xs font-semibold text-foreground">
+                                  {sh.sheetName}
+                                </span>
+                                <span
+                                  className={cn(
+                                    'shrink-0 rounded border px-1.5 py-0.2 text-[10px] font-medium',
+                                    mBadge.cls,
+                                  )}
+                                >
+                                  {mBadge.text}
+                                </span>
+                              </div>
+                              <div className="truncate text-xs text-muted-foreground">
+                                项目：{sh.projectName}（{sh.ownerName}）
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs tabular-nums">
+                                <span
+                                  className={cn(
+                                    'font-medium',
+                                    sh.pointCount === 0
+                                      ? 'text-amber-600 dark:text-amber-400'
+                                      : 'text-foreground',
+                                  )}
+                                >
+                                  总点位 {sh.pointCount}
+                                </span>
+                                <span className="text-muted-foreground">开关 {sh.switchCount}</span>
+                                <span className="text-muted-foreground">灯具 {sh.lightCount}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-2.5 flex items-center justify-between border-t pt-2 text-[11px] text-muted-foreground">
+                            <span>{formatDateTime(sh.updatedAt)}</span>
+                            <Link
+                              href={`/projects/${sh.projectId}/point-map`}
+                              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                            >
+                              打开点位图排查
+                              <ExternalLink className="size-3" />
+                            </Link>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 )}
               </CardContent>
             </Card>
 
+            {report.uploadLogs.length > 0 ? (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">最近实时上传识别耗时流水</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-y bg-muted/50 text-muted-foreground">
+                        <tr>
+                          <th className="px-4 py-2 font-medium">时间</th>
+                          <th className="px-3 py-2 font-medium">上传文件名</th>
+                          <th className="px-3 py-2 font-medium">识别通道</th>
+                          <th className="px-3 py-2 text-right font-medium">开关 / 灯具 / 区域</th>
+                          <th className="px-4 py-2 text-right font-medium">识别耗时</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {report.uploadLogs.slice(0, 15).map((u) => {
+                          const mb = methodLabel(u.method)
+                          return (
+                            <tr key={u.id}>
+                              <td className="px-4 py-2 text-muted-foreground tabular-nums">
+                                {formatDateTime(u.createdAt)}
+                              </td>
+                              <td className="px-3 py-2 font-medium">{u.fileName}</td>
+                              <td className="px-3 py-2">
+                                <span
+                                  className={cn('rounded border px-1.5 py-0.2 text-[10px]', mb.cls)}
+                                >
+                                  {mb.text}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-right tabular-nums">
+                                开关 {u.switches} · 灯具 {u.lights} · 区域 {u.areas}
+                              </td>
+                              <td className="px-4 py-2 text-right text-muted-foreground tabular-nums">
+                                {u.durationMs} ms
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* Tab 3: AI 模型与对话追踪 */}
+        {activeTab === 'ai' ? (
+          <div className="mt-4 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">模型调用与 Auto 路由分布</CardTitle>
+                  <CardDescription className="text-xs">
+                    统计各底层模型的实际调用次数、Auto 自动路由命中次数与消耗积分
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {report.modelStats.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-muted-foreground">
+                      暂无模型调用记录
+                    </div>
+                  ) : (
+                    report.modelStats.map((m) => (
+                      <div
+                        key={m.model}
+                        className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
+                      >
+                        <div>
+                          <span className="font-medium text-foreground">{m.model}</span>
+                          {m.autoRoutedCount > 0 ? (
+                            <span className="ml-2 rounded bg-primary/10 px-1.5 py-0.2 text-[10px] text-primary">
+                              Auto 路由 {m.autoRoutedCount} 次
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="text-right tabular-nums">
+                          <span className="font-medium">{m.calls} 次</span>
+                          <span className="ml-2 text-muted-foreground">· {m.credits} 积分</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">系统工具调用排行榜</CardTitle>
+                  <CardDescription className="text-xs">
+                    客户在 AI 对话中最常触发的自动化工具
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {report.toolStats.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-muted-foreground">
+                      暂无工具调用记录
+                    </div>
+                  ) : (
+                    report.toolStats.map((t) => (
+                      <div
+                        key={t.toolName}
+                        className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
+                      >
+                        <span className="font-medium text-foreground">{t.toolName}</span>
+                        <span className="font-medium tabular-nums">{t.calls} 次</span>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">系统工具调用排行榜</CardTitle>
+                <CardTitle className="text-sm">最近客户 AI 对话会话追踪</CardTitle>
                 <CardDescription className="text-xs">
-                  客户在 AI 对话中最常触发的自动化工具
+                  查看客户最近在用 AI 处理什么项目、调用了几个工具以及最后回复摘要
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {report.toolStats.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-muted-foreground">
-                    暂无工具调用记录
-                  </div>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="border-y bg-muted/50 text-muted-foreground">
+                      <tr>
+                        <th className="px-4 py-2.5 font-medium">时间</th>
+                        <th className="px-3 py-2.5 font-medium">客户</th>
+                        <th className="px-3 py-2.5 font-medium">对话标题 / 关联项目</th>
+                        <th className="px-3 py-2.5 font-medium">调度模型</th>
+                        <th className="px-3 py-2.5 text-right font-medium">消息 / 工具 / 积分</th>
+                        <th className="px-4 py-2.5 font-medium">AI 最后回复摘要</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {report.recentConversations.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                            暂无对话记录
+                          </td>
+                        </tr>
+                      ) : (
+                        report.recentConversations.map((c) => (
+                          <tr key={c.id} className="hover:bg-muted/35">
+                            <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground tabular-nums">
+                              {formatDateTime(c.updatedAt)}
+                            </td>
+                            <td className="px-3 py-2.5 font-medium whitespace-nowrap">
+                              {c.userName}
+                            </td>
+                            <td className="px-3 py-2.5">
+                              <div className="max-w-48 truncate font-medium">{c.title}</div>
+                              {c.projectName ? (
+                                <div className="max-w-48 truncate text-[11px] text-muted-foreground">
+                                  项目：{c.projectName}
+                                </div>
+                              ) : null}
+                            </td>
+                            <td className="px-3 py-2.5 whitespace-nowrap">
+                              <span className="rounded bg-muted px-1.5 py-0.5 text-[11px]">
+                                {c.model}
+                              </span>
+                            </td>
+                            <td className="px-3 py-2.5 text-right whitespace-nowrap tabular-nums">
+                              {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
+                            </td>
+                            <td className="max-w-xs truncate px-4 py-2.5 text-muted-foreground">
+                              {c.lastAssistantPreview || '—'}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : null}
+
+        {/* Tab 4: 异常与排障日志 */}
+        {activeTab === 'errors' ? (
+          <div className="mt-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Activity className="size-4 text-primary" />
+                  AI 与接口异常排障中心
+                </CardTitle>
+                <CardDescription>
+                  自动捕获 AI
+                  密钥失效（401）、余额不足（402）、网关拦截（403）、限流（429）或超时等异常。点击右侧复制按钮即可将完整排障上下文复制出来定位问题。
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {report.errorLogs.length === 0 ? (
+                  <EmptyState
+                    compact
+                    title="当前系统运行良好"
+                    description="没有捕获到 AI 对话或工具异常记录"
+                  />
                 ) : (
-                  report.toolStats.map((t) => (
-                    <div
-                      key={t.toolName}
-                      className="flex items-center justify-between rounded-lg border bg-muted/25 px-3 py-2 text-xs"
-                    >
-                      <span className="font-medium text-foreground">{t.toolName}</span>
-                      <span className="font-medium tabular-nums">{t.calls} 次</span>
-                    </div>
-                  ))
+                  <div className="space-y-2.5">
+                    {report.errorLogs.map((err) => (
+                      <div
+                        key={err.id}
+                        className="flex flex-col gap-1.5 rounded-xl border border-destructive/25 bg-destructive/5 p-3 text-xs"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="error"
+                              className="px-1.5 py-0 text-[10px]"
+                              label={'异常'}
+                            />
+                            <span className="font-semibold text-foreground">
+                              {err.errorMessage}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <span>{formatDateTime(err.createdAt)}</span>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="h-6 px-2 text-[11px]"
+                              onClick={() => {
+                                const text = `[排障日志] 时间: ${err.createdAt}\n客户: ${err.userName} (${err.userId})\n模型: ${err.modelName} (${err.modelId})\n项目ID: ${err.projectId ?? '无'}\n用户指令: ${err.promptPreview}\n报错信息: ${err.errorMessage}`
+                                void navigator.clipboard?.writeText(text)
+                                toast.success('已复制该条排障上下文')
+                              }}
+                              icon={<Copy />}
+                              label="复制排障信息"
+                            />
+                          </div>
+                        </div>
+                        <div className="text-muted-foreground">
+                          客户：<strong className="text-foreground">{err.userName}</strong> · 模型：
+                          <strong className="text-foreground">{err.modelName}</strong>
+                          {err.promptPreview ? ` · 触发指令：「${err.promptPreview}」` : ''}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </CardContent>
             </Card>
           </div>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">最近客户 AI 对话会话追踪</CardTitle>
-              <CardDescription className="text-xs">
-                查看客户最近在用 AI 处理什么项目、调用了几个工具以及最后回复摘要
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-y bg-muted/50 text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-2.5 font-medium">时间</th>
-                      <th className="px-3 py-2.5 font-medium">客户</th>
-                      <th className="px-3 py-2.5 font-medium">对话标题 / 关联项目</th>
-                      <th className="px-3 py-2.5 font-medium">调度模型</th>
-                      <th className="px-3 py-2.5 text-right font-medium">消息 / 工具 / 积分</th>
-                      <th className="px-4 py-2.5 font-medium">AI 最后回复摘要</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {report.recentConversations.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                          暂无对话记录
-                        </td>
-                      </tr>
-                    ) : (
-                      report.recentConversations.map((c) => (
-                        <tr key={c.id} className="hover:bg-muted/35">
-                          <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground tabular-nums">
-                            {formatDateTime(c.updatedAt)}
-                          </td>
-                          <td className="px-3 py-2.5 font-medium whitespace-nowrap">
-                            {c.userName}
-                          </td>
-                          <td className="px-3 py-2.5">
-                            <div className="max-w-48 truncate font-medium">{c.title}</div>
-                            {c.projectName ? (
-                              <div className="max-w-48 truncate text-[11px] text-muted-foreground">
-                                项目：{c.projectName}
-                              </div>
-                            ) : null}
-                          </td>
-                          <td className="px-3 py-2.5 whitespace-nowrap">
-                            <span className="rounded bg-muted px-1.5 py-0.5 text-[11px]">
-                              {c.model}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2.5 text-right whitespace-nowrap tabular-nums">
-                            {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
-                          </td>
-                          <td className="max-w-xs truncate px-4 py-2.5 text-muted-foreground">
-                            {c.lastAssistantPreview || '—'}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Tab 4: 异常与排障日志 */}
-        <TabsContent value="errors" className="mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Activity className="size-4 text-primary" />
-                AI 与接口异常排障中心
-              </CardTitle>
-              <CardDescription>
-                自动捕获 AI
-                密钥失效（401）、余额不足（402）、网关拦截（403）、限流（429）或超时等异常。点击右侧复制按钮即可将完整排障上下文复制出来定位问题。
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {report.errorLogs.length === 0 ? (
-                <EmptyState
-                  compact
-                  title="当前系统运行良好"
-                  description="没有捕获到 AI 对话或工具异常记录"
-                />
-              ) : (
-                <div className="space-y-2.5">
-                  {report.errorLogs.map((err) => (
-                    <div
-                      key={err.id}
-                      className="flex flex-col gap-1.5 rounded-xl border border-destructive/25 bg-destructive/5 p-3 text-xs"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="error"
-                            className="px-1.5 py-0 text-[10px]"
-                            label={'异常'}
-                          />
-                          <span className="font-semibold text-foreground">{err.errorMessage}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <span>{formatDateTime(err.createdAt)}</span>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="h-6 px-2 text-[11px]"
-                            onClick={() => {
-                              const text = `[排障日志] 时间: ${err.createdAt}\n客户: ${err.userName} (${err.userId})\n模型: ${err.modelName} (${err.modelId})\n项目ID: ${err.projectId ?? '无'}\n用户指令: ${err.promptPreview}\n报错信息: ${err.errorMessage}`
-                              void navigator.clipboard?.writeText(text)
-                              toast.success('已复制该条排障上下文')
-                            }}
-                            icon={<Copy />}
-                            label="复制排障信息"
-                          />
-                        </div>
-                      </div>
-                      <div className="text-muted-foreground">
-                        客户：<strong className="text-foreground">{err.userName}</strong> · 模型：
-                        <strong className="text-foreground">{err.modelName}</strong>
-                        {err.promptPreview ? ` · 触发指令：「${err.promptPreview}」` : ''}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        ) : null}
+      </div>
 
       {/* 原图放大预览弹窗 */}
       {previewImg ? (

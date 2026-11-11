@@ -48,8 +48,8 @@ import {
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
+import { Tooltip } from '@astryxdesign/core/Tooltip'
 import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
 import { cn } from '@/lib/utils'
 import type { PluginId } from '@/plugins/types'
@@ -215,22 +215,23 @@ export function AppSidebar({
         {/* 侧边栏模式：导航 | AI 对话（仅在启用「AI 对话侧栏（高级）」插件时显示） */}
         {aiCopilotEnabled ? (
           <>
-            <Tabs
-              value={effectiveMode}
-              onValueChange={(v) => setMode(v === 'chat' ? 'chat' : 'nav')}
-              className="group-data-[collapsible=icon]:hidden"
-            >
-              <TabsList className="w-full">
-                <TabsTrigger value="nav" aria-controls="sidebar-panel" className="text-xs">
-                  <LayoutGrid className="size-3.5" />
-                  导航
-                </TabsTrigger>
-                <TabsTrigger value="chat" aria-controls="sidebar-panel" className="text-xs">
-                  <MessageSquareText className="size-3.5" />
-                  AI 对话
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="group-data-[collapsible=icon]:hidden">
+              <TabList
+                value={effectiveMode}
+                onChange={(v) => setMode(v === 'chat' ? 'chat' : 'nav')}
+                size="sm"
+                layout="fill"
+                aria-label="侧边栏模式"
+              >
+                <Tab value="nav" label="导航" icon={<LayoutGrid />} panelId="sidebar-panel" />
+                <Tab
+                  value="chat"
+                  label="AI 对话"
+                  icon={<MessageSquareText />}
+                  panelId="sidebar-panel"
+                />
+              </TabList>
+            </div>
 
             {/* 折叠为图标模式时，提供一键展开到 AI 对话侧栏的按钮 */}
             <SidebarMenu className="hidden group-data-[collapsible=icon]:flex">
@@ -333,27 +334,22 @@ export function AppSidebar({
           <SidebarFooter className="border-t border-sidebar-border">
             <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
               <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label={`账户：${user.name}`}
-                        className={cn(
-                          footerButton,
-                          'h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
-                        )}
-                      >
-                        <Avatar name={user.name} size={32} className="text-xs font-semibold" />
-                        <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
-                          {user.name}
-                        </span>
-                      </button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" hidden={!collapsed}>
-                    {user.name}
-                  </TooltipContent>
+                <Tooltip content={user.name} placement="end" isEnabled={collapsed}>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={`账户：${user.name}`}
+                      className={cn(
+                        footerButton,
+                        'h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
+                      )}
+                    >
+                      <Avatar name={user.name} size={32} className="text-xs font-semibold" />
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
+                        {user.name}
+                      </span>
+                    </button>
+                  </DropdownMenuTrigger>
                 </Tooltip>
                 <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2.5 p-2 font-normal">
@@ -382,23 +378,20 @@ export function AppSidebar({
               </DropdownMenu>
 
               <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label="设置"
-                        data-active={inSettings || undefined}
-                        className={cn(
-                          footerButton,
-                          'size-8 shrink-0 justify-center text-sidebar-foreground/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground',
-                        )}
-                      >
-                        <Settings className="size-4" />
-                      </button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent side={collapsed ? 'right' : 'top'}>设置</TooltipContent>
+                <Tooltip content="设置" placement={collapsed ? 'end' : 'above'}>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="设置"
+                      data-active={inSettings || undefined}
+                      className={cn(
+                        footerButton,
+                        'size-8 shrink-0 justify-center text-sidebar-foreground/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground',
+                      )}
+                    >
+                      <Settings className="size-4" />
+                    </button>
+                  </DropdownMenuTrigger>
                 </Tooltip>
                 <DropdownMenuContent
                   side="top"

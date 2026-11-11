@@ -30,14 +30,8 @@ import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,7 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+import { TextArea } from '@astryxdesign/core/TextArea'
 import {
   inWarranty,
   longDay,
@@ -461,169 +455,184 @@ export function AfterSalesBoard({
         </div>
       </div>
 
-      <Dialog open={Boolean(editing)} onOpenChange={(o) => !o && !pending && setEditing(null)}>
-        <DialogContent className="sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>{editing?.id ? '编辑维保记录' : '新建维保记录'}</DialogTitle>
-            <DialogDescription>
-              {editing
-                ? SERVICE_RECORD_TYPES.find((t) => t.value === editing.form.type)?.hint
-                : null}
-            </DialogDescription>
-          </DialogHeader>
-          {editing ? (
-            <div className="grid gap-4 py-1">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="类型" error={errors.type}>
-                  <Select
-                    value={editing.form.type}
-                    onValueChange={(v) => changeType(v as ServiceRecordType)}
-                    disabled={editing.form.type === 'backup'}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SERVICE_RECORD_TYPES.filter(
-                        (t) => t.value !== 'backup' || editing.form.type === 'backup',
-                      ).map((t) => (
-                        <SelectItem key={t.value} value={t.value}>
-                          {t.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="服务日期" error={errors.serviceDate} htmlFor="svc-date">
-                  <Input
-                    id="svc-date"
-                    type="date"
-                    value={editing.form.serviceDate}
-                    onChange={(e) => changeDate(e.target.value)}
-                  />
-                </Field>
-              </div>
-              <Field label="摘要" error={errors.title} htmlFor="svc-title">
-                <TextInput
-                  label={'例如：主卧窗帘电机无响应'}
-                  isLabelHidden
-                  id="svc-title"
-                  value={editing.form.title}
-                  placeholder="例如：主卧窗帘电机无响应"
-                  onChange={(v) => patchForm({ title: v })}
-                />
-              </Field>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <Field label="状态">
-                  <Select
-                    value={editing.form.status}
-                    onValueChange={(v) => patchForm({ status: v })}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SERVICE_RECORD_STATUSES.map((s) => (
-                        <SelectItem key={s.value} value={s.value}>
-                          {s.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="收费方式">
-                  <Select
-                    value={editing.form.billing}
-                    onValueChange={(v) => patchForm({ billing: v })}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SERVICE_BILLING.map((b) => (
-                        <SelectItem key={b.value} value={b.value}>
-                          {b.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                {editing.form.billing === 'paid' ? (
-                  <Field label="收费金额（元）" error={errors.fee} htmlFor="svc-fee">
-                    <Input
-                      id="svc-fee"
-                      type="number"
-                      min={0}
-                      step="any"
-                      inputMode="decimal"
-                      value={editing.form.fee}
-                      onChange={(e) => patchForm({ fee: e.target.value })}
-                    />
-                  </Field>
-                ) : (
-                  <Field label="服务人员" htmlFor="svc-tech">
-                    <TextInput
-                      label={'svc-tech'}
-                      isLabelHidden
-                      id="svc-tech"
-                      value={editing.form.technician}
-                      onChange={(v) => patchForm({ technician: v })}
-                    />
-                  </Field>
-                )}
-              </div>
-              {editing.form.billing === 'paid' ? (
-                <Field label="服务人员" htmlFor="svc-tech2">
-                  <TextInput
-                    label={'svc-tech2'}
-                    isLabelHidden
-                    id="svc-tech2"
-                    value={editing.form.technician}
-                    onChange={(v) => patchForm({ technician: v })}
-                  />
-                </Field>
-              ) : null}
-              <Field label="涉及设备 / 更换明细" htmlFor="svc-devices">
-                <Textarea
-                  id="svc-devices"
-                  rows={2}
-                  maxLength={500}
-                  value={editing.form.devices}
-                  placeholder="例如：主卧 C2 窗帘电机 → 更换为同型号新件（SN 后四位 8812）"
-                  onChange={(e) => patchForm({ devices: e.target.value })}
-                />
-              </Field>
-              <Field label="处理过程与结果" htmlFor="svc-detail">
-                <Textarea
-                  id="svc-detail"
-                  rows={3}
-                  maxLength={2000}
-                  value={editing.form.detail}
-                  onChange={(e) => patchForm({ detail: e.target.value })}
-                />
-              </Field>
-              <Field label="下次回访（可选）" error={errors.nextVisitAt} htmlFor="svc-next">
-                <Input
-                  id="svc-next"
-                  type="date"
-                  className="sm:w-48"
-                  value={editing.form.nextVisitAt}
-                  min={today}
-                  onChange={(e) => patchForm({ nextVisitAt: e.target.value })}
-                />
-              </Field>
-            </div>
-          ) : null}
-          <DialogFooter>
-            <Button
-              variant="secondary"
-              isDisabled={pending}
-              onClick={() => setEditing(null)}
-              label="取消"
+      <Dialog
+        isOpen={Boolean(editing)}
+        onOpenChange={(o) => !o && !pending && setEditing(null)}
+        width={576}
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={editing?.id ? '编辑维保记录' : '新建维保记录'}
+              subtitle={
+                editing
+                  ? SERVICE_RECORD_TYPES.find((t) => t.value === editing.form.type)?.hint
+                  : null
+              }
+              onOpenChange={(o) => !o && !pending && setEditing(null)}
             />
-            <Button isDisabled={pending} onClick={submit} icon={<Loader2 />} label="保存" />
-          </DialogFooter>
-        </DialogContent>
+          }
+          content={
+            <LayoutContent padding={5}>
+              {editing ? (
+                <div className="grid gap-4 py-1">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="类型" error={errors.type}>
+                      <Select
+                        value={editing.form.type}
+                        onValueChange={(v) => changeType(v as ServiceRecordType)}
+                        disabled={editing.form.type === 'backup'}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SERVICE_RECORD_TYPES.filter(
+                            (t) => t.value !== 'backup' || editing.form.type === 'backup',
+                          ).map((t) => (
+                            <SelectItem key={t.value} value={t.value}>
+                              {t.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="服务日期" error={errors.serviceDate} htmlFor="svc-date">
+                      <Input
+                        id="svc-date"
+                        type="date"
+                        value={editing.form.serviceDate}
+                        onChange={(e) => changeDate(e.target.value)}
+                      />
+                    </Field>
+                  </div>
+                  <Field label="摘要" error={errors.title} htmlFor="svc-title">
+                    <TextInput
+                      label={'例如：主卧窗帘电机无响应'}
+                      isLabelHidden
+                      id="svc-title"
+                      value={editing.form.title}
+                      placeholder="例如：主卧窗帘电机无响应"
+                      onChange={(v) => patchForm({ title: v })}
+                    />
+                  </Field>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <Field label="状态">
+                      <Select
+                        value={editing.form.status}
+                        onValueChange={(v) => patchForm({ status: v })}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SERVICE_RECORD_STATUSES.map((s) => (
+                            <SelectItem key={s.value} value={s.value}>
+                              {s.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="收费方式">
+                      <Select
+                        value={editing.form.billing}
+                        onValueChange={(v) => patchForm({ billing: v })}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SERVICE_BILLING.map((b) => (
+                            <SelectItem key={b.value} value={b.value}>
+                              {b.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    {editing.form.billing === 'paid' ? (
+                      <Field label="收费金额（元）" error={errors.fee} htmlFor="svc-fee">
+                        <Input
+                          id="svc-fee"
+                          type="number"
+                          min={0}
+                          step="any"
+                          inputMode="decimal"
+                          value={editing.form.fee}
+                          onChange={(e) => patchForm({ fee: e.target.value })}
+                        />
+                      </Field>
+                    ) : (
+                      <Field label="服务人员" htmlFor="svc-tech">
+                        <TextInput
+                          label={'svc-tech'}
+                          isLabelHidden
+                          id="svc-tech"
+                          value={editing.form.technician}
+                          onChange={(v) => patchForm({ technician: v })}
+                        />
+                      </Field>
+                    )}
+                  </div>
+                  {editing.form.billing === 'paid' ? (
+                    <Field label="服务人员" htmlFor="svc-tech2">
+                      <TextInput
+                        label={'svc-tech2'}
+                        isLabelHidden
+                        id="svc-tech2"
+                        value={editing.form.technician}
+                        onChange={(v) => patchForm({ technician: v })}
+                      />
+                    </Field>
+                  ) : null}
+                  <Field label="涉及设备 / 更换明细" htmlFor="svc-devices">
+                    <TextArea
+                      id="svc-devices"
+                      label="涉及设备 / 更换明细"
+                      isLabelHidden
+                      rows={2}
+                      value={editing.form.devices}
+                      placeholder="例如：主卧 C2 窗帘电机 → 更换为同型号新件（SN 后四位 8812）"
+                      onChange={(v) => patchForm({ devices: v })}
+                    />
+                  </Field>
+                  <Field label="处理过程与结果" htmlFor="svc-detail">
+                    <TextArea
+                      id="svc-detail"
+                      label="处理过程与结果"
+                      isLabelHidden
+                      rows={3}
+                      value={editing.form.detail}
+                      onChange={(v) => patchForm({ detail: v })}
+                    />
+                  </Field>
+                  <Field label="下次回访（可选）" error={errors.nextVisitAt} htmlFor="svc-next">
+                    <Input
+                      id="svc-next"
+                      type="date"
+                      className="sm:w-48"
+                      value={editing.form.nextVisitAt}
+                      min={today}
+                      onChange={(e) => patchForm({ nextVisitAt: e.target.value })}
+                    />
+                  </Field>
+                </div>
+              ) : null}
+            </LayoutContent>
+          }
+          footer={
+            <LayoutFooter hasDivider>
+              <Button
+                variant="secondary"
+                isDisabled={pending}
+                onClick={() => setEditing(null)}
+                label="取消"
+              />
+              <Button isDisabled={pending} onClick={submit} icon={<Loader2 />} label="保存" />
+            </LayoutFooter>
+          }
+        />
       </Dialog>
     </section>
   )
