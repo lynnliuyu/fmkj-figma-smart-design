@@ -111,8 +111,6 @@ const capabilityNav = [
   },
 ] as const
 
-const initials = (name: string) => name.trim().slice(0, 1).toUpperCase() || '我'
-
 /** 左下角两个按钮共用的样式：图标模式下都收成 32px 的方块 */
 const footerButton =
   'flex items-center rounded-lg outline-hidden transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
