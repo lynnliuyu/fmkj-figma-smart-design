@@ -606,8 +606,12 @@
   max-width: none;
 }
 
-/* 侧栏滚动区域：内容按容器宽度换行，长产品名不会把面板撑宽 */
-.point-map-aside [data-slot='scroll-area-viewport'] > div {
+/* 侧栏滚动区域：内容按容器宽度换行，长产品名不会把面板撑宽。
+     - `[data-slot='scroll-area-viewport']` 是本仓旧适配层（radix 三段式）的标记
+     - `.scrollable-area > div` 是 Astryx 官方 ScrollableArea 的结构（实测确认类名）
+     两条都留着，迁移过程中两种结构都可能出现。 */
+.point-map-aside [data-slot='scroll-area-viewport'] > div,
+.point-map-aside .scrollable-area > div {
   display: block !important;
   min-width: 0 !important;
 }

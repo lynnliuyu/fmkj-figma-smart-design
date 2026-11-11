@@ -78,15 +78,22 @@ function splitParts(children: React.ReactNode): {
   content: React.ReactNode
   side?: string
   align?: string
+  hidden?: boolean
 } {
   let trigger: React.ReactNode = null
   let content: React.ReactNode = null
   let side: string | undefined
   let align: string | undefined
+  let hidden: boolean | undefined
 
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return
-    const p = child.props as { children?: React.ReactNode; side?: string; align?: string }
+    const p = child.props as {
+      children?: React.ReactNode
+      side?: string
+      align?: string
+      hidden?: boolean
+    }
     // 用静态标记识别，不靠函数名（生产压缩会把名字改成匿名函数，见 TooltipTrigger 注释）
     const slot = (child.type as { __tooltipSlot?: string }).__tooltipSlot
 
@@ -95,10 +102,11 @@ function splitParts(children: React.ReactNode): {
       content = p.children
       side = p.side
       align = p.align
+      hidden = p.hidden
     }
   })
 
-  return { trigger, content, side, align }
+  return { trigger, content, side, align, hidden }
 }
 
 /** radix 的方位名 → 官方的逻辑方位名。 */
@@ -123,10 +131,13 @@ export function Tooltip({
   onOpenChange?: (open: boolean) => void
   delayDuration?: number
 }) {
-  const { trigger, content, side, align } = splitParts(children)
+  const { trigger, content, side, align, hidden } = splitParts(children)
 
   // 文案可能被包在 <p> 之类的节点里；官方只想要文本，这里退化成「原样传 ReactNode」。
-  if (content === null || content === undefined) {
+  // `hidden` 是 radix 时代的遗留写法（<TooltipContent hidden={…}>）——
+  // 之前适配层声明了这个 prop 但从不读取，导致 3 处「折叠时才显示」的逻辑从未生效。
+  // 现在把它当成「不显示提示」，与「没有内容」同一条路。
+  if (content === null || content === undefined || hidden) {
     // 没有内容就没有提示 —— 直接渲染触发物，避免出现空气泡
     return <>{trigger}</>
   }
