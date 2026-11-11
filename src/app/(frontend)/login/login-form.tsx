@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@astryxdesign/core/Button'
+import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -326,16 +327,18 @@ export function LoginForm({
         <Label htmlFor="email">邮箱</Label>
         <div className="relative">
           <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
             id="email"
-            className="h-10 rounded-lg pl-9"
+            label="邮箱"
+            isLabelHidden
             type="email"
+            controlClassName="h-10 rounded-lg pl-9"
             placeholder="name@example.com"
             autoComplete="email"
-            autoFocus={!qrAvailable}
+            hasAutoFocus={!qrAvailable}
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value)
+            onChange={(v) => {
+              setEmail(v)
               setError('')
             }}
           />
@@ -361,15 +364,17 @@ export function LoginForm({
         </div>
         <div className="relative">
           <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
             id="password"
-            className="h-10 rounded-lg pl-9"
+            label={'输入密码'}
+            isLabelHidden
             type="password"
+            controlClassName="h-10 rounded-lg pl-9"
             placeholder="输入密码"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
+            onChange={(v) => {
+              setPassword(v)
               setError('')
             }}
           />
@@ -429,15 +434,18 @@ export function LoginForm({
         <Label htmlFor="reg-name">姓名 / 团队名称</Label>
         <div className="relative">
           <UserRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
             id="reg-name"
-            className="h-10 rounded-lg pl-9"
+            label={'例如：张工 / 栖序智能设计'}
+            isLabelHidden
+            type="text"
+            controlClassName="h-10 rounded-lg pl-9"
             placeholder="例如：张工 / 栖序智能设计"
             autoComplete="name"
-            autoFocus
+            hasAutoFocus
             value={name}
-            onChange={(e) => {
-              setName(e.target.value)
+            onChange={(v) => {
+              setName(v)
               setError('')
             }}
           />
@@ -447,15 +455,17 @@ export function LoginForm({
         <Label htmlFor="reg-email">邮箱</Label>
         <div className="relative">
           <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
             id="reg-email"
-            className="h-10 rounded-lg pl-9"
+            label={'name@example.com'}
+            isLabelHidden
             type="email"
+            controlClassName="h-10 rounded-lg pl-9"
             placeholder="name@example.com"
             autoComplete="email"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value)
+            onChange={(v) => {
+              setEmail(v)
               setError('')
             }}
           />
@@ -467,15 +477,17 @@ export function LoginForm({
           <div className="flex gap-2">
             <div className="relative flex-1">
               <ShieldCheck className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
+              <TextInput
                 id="reg-otp"
-                className="h-10 rounded-lg pl-9 font-mono tracking-widest"
+                label={'6位数字验证码'}
+                isLabelHidden
+                type="text"
+                controlClassName="h-10 rounded-lg pl-9 font-mono tracking-widest"
                 inputMode="numeric"
-                maxLength={6}
                 placeholder="6位数字验证码"
                 value={otpCode}
-                onChange={(e) => {
-                  setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                onChange={(v) => {
+                  setOtpCode(v.replace(/\D/g, '').slice(0, 6))
                   setError('')
                 }}
               />
@@ -496,15 +508,17 @@ export function LoginForm({
         <Label htmlFor="reg-password">设置密码</Label>
         <div className="relative">
           <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <TextInput
             id="reg-password"
-            className="h-10 rounded-lg pl-9"
+            label={'至少 8 位密码'}
+            isLabelHidden
             type="password"
+            controlClassName="h-10 rounded-lg pl-9"
             placeholder="至少 8 位密码"
             autoComplete="new-password"
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
+            onChange={(v) => {
+              setPassword(v)
               setError('')
             }}
           />
@@ -515,14 +529,16 @@ export function LoginForm({
           <Label htmlFor="reg-phone">手机号（选填）</Label>
           <div className="relative">
             <Phone className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
+            <TextInput
               id="reg-phone"
-              className="h-10 rounded-lg pl-9"
+              label={'报价单联系人'}
+              isLabelHidden
               type="tel"
+              controlClassName="h-10 rounded-lg pl-9"
               placeholder="报价单联系人"
               autoComplete="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(v) => setPhone(v)}
             />
           </div>
         </div>
@@ -530,12 +546,15 @@ export function LoginForm({
           <Label htmlFor="reg-code">兑换码（选填）</Label>
           <div className="relative">
             <Gift className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
+            <TextInput
               id="reg-code"
-              className="h-10 rounded-lg pl-9 font-mono uppercase"
+              label={'FMKJ-...'}
+              isLabelHidden
+              type="text"
+              controlClassName="h-10 rounded-lg pl-9 font-mono uppercase"
               placeholder="FMKJ-..."
               value={redeemCode}
-              onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
+              onChange={(v) => setRedeemCode(v.toUpperCase())}
             />
           </div>
         </div>
@@ -570,15 +589,17 @@ export function LoginForm({
             <Label htmlFor="reset-email">注册邮箱</Label>
             <div className="relative">
               <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
+              <TextInput
                 id="reset-email"
-                className="h-10 rounded-lg pl-9"
+                label={'name@example.com'}
+                isLabelHidden
                 type="email"
+                controlClassName="h-10 rounded-lg pl-9"
                 placeholder="name@example.com"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
+                onChange={(v) => {
+                  setEmail(v)
                   setError('')
                 }}
               />
@@ -589,15 +610,17 @@ export function LoginForm({
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <ShieldCheck className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
+                <TextInput
                   id="reset-otp"
-                  className="h-10 rounded-lg pl-9 font-mono tracking-widest"
+                  label={'6位数字验证码'}
+                  isLabelHidden
+                  type="text"
+                  controlClassName="h-10 rounded-lg pl-9 font-mono tracking-widest"
                   inputMode="numeric"
-                  maxLength={6}
                   placeholder="6位数字验证码"
                   value={otpCode}
-                  onChange={(e) => {
-                    setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                  onChange={(v) => {
+                    setOtpCode(v.replace(/\D/g, '').slice(0, 6))
                     setError('')
                   }}
                 />
@@ -617,15 +640,17 @@ export function LoginForm({
             <Label htmlFor="reset-password">设置新密码</Label>
             <div className="relative">
               <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
+              <TextInput
                 id="reset-password"
-                className="h-10 rounded-lg pl-9"
+                label={'至少 8 位新密码'}
+                isLabelHidden
                 type="password"
+                controlClassName="h-10 rounded-lg pl-9"
                 placeholder="至少 8 位新密码"
                 autoComplete="new-password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
+                onChange={(v) => {
+                  setPassword(v)
                   setError('')
                 }}
               />
