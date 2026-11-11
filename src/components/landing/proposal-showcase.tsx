@@ -6,9 +6,10 @@ import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
 
 import { PointMarker } from '@/components/point-marker'
 import { Button } from '@astryxdesign/core/Button'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 import { brandLatin, DocCheckbox, DocRoot } from '@/documents/parts'
 import { DEFAULT_PAYMENTS, paymentAmounts } from '@/lib/contracts'
 import { categoryOfType, DEVICE_CATEGORIES, deviceTypeOf } from '@/lib/device-types'
@@ -196,26 +197,17 @@ export function ProposalShowcase({
               {activeChapters.length} 页
             </span>
           </div>
-          <Tabs
+          <TabList
             value={frameworkId}
-            onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
+            onChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
+            layout="fill"
+            size="sm"
+            aria-label="方案结构"
           >
-            <TabsList
-              aria-label="方案结构"
-              className="grid h-auto w-full grid-cols-3 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
-            >
-              {FRAMEWORKS.map((f) => (
-                <TabsTrigger
-                  key={f.value}
-                  value={f.value}
-                  aria-controls="proposal-slide-preview"
-                  className="h-8 justify-center rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
-                >
-                  {f.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+            {FRAMEWORKS.map((f) => (
+              <Tab key={f.value} value={f.value} label={f.label} panelId="proposal-slide-preview" />
+            ))}
+          </TabList>
         </div>
 
         {/* 视觉主题：色点 + 名字，两列。当前项用左侧竖线 + 实心标记，比下划线更清楚 */}
@@ -385,85 +377,98 @@ export function ProposalShowcase({
         </p>
       </div>
 
-      <Dialog open={zoomOpen} onOpenChange={setZoomOpen}>
-        <DialogContent className="flex h-[92vh] max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(94vw,1360px)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-5 py-3 pr-14">
-            <div>
-              <DialogTitle className="text-sm font-medium">
-                方案演示 · {data.project.name}
-              </DialogTitle>
-              <DialogDescription className="sr-only">
-                高清放大浏览整套横版智能家居方案，支持切换方案结构与视觉主题
-              </DialogDescription>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Tabs
-                value={frameworkId}
-                onValueChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
-              >
-                <TabsList className="h-8 p-0.5">
+      <Dialog
+        isOpen={zoomOpen}
+        onOpenChange={setZoomOpen}
+        width="min(94vw,1360px)"
+        maxHeight="92vh"
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={`方案演示 · ${data.project.name}`}
+              subtitle="高清放大浏览整套横版智能家居方案，支持切换方案结构与视觉主题"
+              onOpenChange={setZoomOpen}
+              hasDivider
+            />
+          }
+          content={
+            <LayoutContent padding={5} className="bg-muted/60">
+              {/* 切换器从标题区挪到内容区：官方 DialogHeader 的 endContent 只适合图标按钮，
+                  两组 Tab 放进去会把标题挤成一条竖线（真机截图验证过）。 */}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <TabList
+                  value={frameworkId}
+                  onChange={(v) => setFrameworkId(v as 'full' | 'story' | 'budget')}
+                  size="sm"
+                  aria-label="方案结构"
+                >
                   {FRAMEWORKS.map((f) => (
-                    <TabsTrigger key={f.value} value={f.value} className="h-7 px-2.5 text-xs">
-                      {f.label}
-                    </TabsTrigger>
+                    <Tab key={f.value} value={f.value} label={f.label} />
                   ))}
-                </TabsList>
-              </Tabs>
-              <Tabs value={themeId} onValueChange={(v) => setThemeId(v as DeckThemeId)}>
-                <TabsList className="h-8 p-0.5">
+                </TabList>
+                <TabList
+                  value={themeId}
+                  onChange={(v) => setThemeId(v as DeckThemeId)}
+                  size="sm"
+                  aria-label="方案视觉主题"
+                >
                   {THEME_IDS.map((id) => {
                     const t = DECK_THEMES[id]
                     return (
-                      <TabsTrigger key={id} value={id} className="h-7 gap-1.5 px-2.5 text-xs">
-                        <span
-                          className="size-2 rounded-full"
-                          style={{ backgroundColor: t.style.colors.accent }}
-                        />
-                        {t.label}
-                      </TabsTrigger>
+                      <Tab
+                        key={id}
+                        value={id}
+                        label={t.label}
+                        icon={
+                          <span
+                            aria-hidden
+                            className="size-2 rounded-full"
+                            style={{ backgroundColor: t.style.colors.accent }}
+                          />
+                        }
+                      />
                     )
                   })}
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto bg-muted/60 p-4 sm:p-8">
-            <div ref={modalViewportRef} className="mx-auto max-w-[1240px]">
-              <DocRoot style={theme.style} className="space-y-6 overflow-hidden">
-                {activeChapters.map((chapterId, index) => {
-                  const pageNo = String(index + 1).padStart(2, '0')
-                  const pageTotal = String(activeChapters.length).padStart(2, '0')
-                  return (
-                    <div
-                      key={chapterId}
-                      className="relative aspect-3/2 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10"
-                    >
+                </TabList>
+              </div>
+              <div ref={modalViewportRef} className="mx-auto max-w-[1240px]">
+                <DocRoot style={theme.style} className="space-y-6 overflow-hidden">
+                  {activeChapters.map((chapterId, index) => {
+                    const pageNo = String(index + 1).padStart(2, '0')
+                    const pageTotal = String(activeChapters.length).padStart(2, '0')
+                    return (
                       <div
-                        style={{
-                          ...deckVars(theme),
-                          width: SLIDE_W,
-                          height: SLIDE_H,
-                          transform: `scale(${modalScale})`,
-                          transformOrigin: 'top left',
-                        }}
-                        className="bg-doc-paper text-doc-ink select-none"
+                        key={chapterId}
+                        className="relative aspect-3/2 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10"
                       >
-                        <ShowcaseSlide
-                          data={data}
-                          company={company}
-                          theme={theme}
-                          chapterId={chapterId}
-                          pageNo={pageNo}
-                          pageTotal={pageTotal}
-                        />
+                        <div
+                          style={{
+                            ...deckVars(theme),
+                            width: SLIDE_W,
+                            height: SLIDE_H,
+                            transform: `scale(${modalScale})`,
+                            transformOrigin: 'top left',
+                          }}
+                          className="bg-doc-paper text-doc-ink select-none"
+                        >
+                          <ShowcaseSlide
+                            data={data}
+                            company={company}
+                            theme={theme}
+                            chapterId={chapterId}
+                            pageNo={pageNo}
+                            pageTotal={pageTotal}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </DocRoot>
-            </div>
-          </div>
-        </DialogContent>
+                    )
+                  })}
+                </DocRoot>
+              </div>
+            </LayoutContent>
+          }
+        />
       </Dialog>
     </div>
   )

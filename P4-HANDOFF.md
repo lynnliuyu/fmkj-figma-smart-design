@@ -1,18 +1,19 @@
 # P4 浮层原生化 —— 交接文档
 
-> 2026-11-11 22:06 由 Alma 落档。
+> 2026-11-12 01:10 由 fmkj-builder 更新（P4 第 5 批 · 低风险 3 文件）。
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-11 22:00）
+## 一、当前状态（截至 2026-11-12 01:10）
 
 ```
-main 分支   干净
-线上        13027（fmkj.top / 200）
-PR #107     待合并（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
+main 分支   干净（1070173 = PR #107 的合并提交）
+线上        fmkj.top/login 返回 200（本轮 curl 复核）；端口 13028 来自记忆未复核
+PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
+本批 PR     待开（P4 第 5 批低风险 3 文件）—— 开出来后回填真实编号与状态
 ```
 
-**P4 进度：14 / 34 文件**
+**P4 进度：17 / 34 文件**
 
 | PR   | 文件                                                       |
 | ---- | ---------------------------------------------------------- |
@@ -21,15 +22,17 @@ PR #107     待合并（P4 第 4 批：delete-project / square-crop-dialog / pro
 | #104 | app-sidebar · reports-client · after-sales-board           |
 | #105 | delivery-package · social-poster-dialog · print-toolbar    |
 | #107 | delete-project · square-crop-dialog · project-share-dialog |
+| 待开 | proposal-showcase · quote-showcase · docs-client           |
+
+> 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
+> `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
+> 本批完成后这 3 个文件已不在「还没做」清单里。
 
 ## 二、还没做的（按风险排序）
 
 ### 低风险（Dialog 为主，模式已成熟）
 
 ```
-src/components/landing/proposal-showcase.tsx    Tabs 3 + Dialog 1  ⚠️ 宽度硬约束
-src/components/landing/quote-showcase.tsx       Tabs 4 + Dialog 1  ⚠️ 宽度硬约束
-src/app/(frontend)/docs/docs-client.tsx         Dialog 4
 src/app/(frontend)/design-pilot/detail/page.tsx Dialog 2
 src/plugins/proposal/template-picker.tsx        Dialog 5
 src/app/(frontend)/share/[token]/share-export-button.tsx  Dialog 5

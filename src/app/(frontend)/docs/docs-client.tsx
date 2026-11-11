@@ -31,8 +31,9 @@ import { AppearanceMenuItems } from '@/components/appearance-menu'
 import { BrandLogo } from '@/components/landing/landing-chrome'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -586,46 +587,52 @@ export function DocsClient({ manual }: { manual: ManualData }) {
       </div>
 
       {/* ⌘K 全局文档搜索弹窗 */}
-      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <DialogContent className="max-w-lg gap-3 p-4">
-          <DialogHeader className=" pb-1">
-            <DialogTitle className="text-sm font-medium">搜索繁梦空间文档</DialogTitle>
-          </DialogHeader>
-          <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <TextInput
-              label={'输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…'}
-              isLabelHidden
-              hasAutoFocus
-              value={searchQuery}
-              onChange={(v) => setSearchQuery(v)}
-              placeholder="输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…"
-              controlClassName="pl-9 text-xs"
-            />
-          </div>
-          <div className="max-h-80 space-y-1 overflow-y-auto pr-1">
-            {searchResults.length === 0 ? (
-              <p className="py-6 text-center text-xs text-muted-foreground">
-                没有找到匹配的文档章节
-              </p>
-            ) : (
-              searchResults.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => selectSection(item.id)}
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-muted"
-                >
-                  <div>
-                    <span className="font-semibold text-foreground">{item.title}</span>
-                    <span className="ml-2 text-[11px] text-muted-foreground">{item.group}</span>
-                  </div>
-                  <ArrowRight className="size-3.5 text-muted-foreground" />
-                </button>
-              ))
-            )}
-          </div>
-        </DialogContent>
+      <Dialog isOpen={searchOpen} onOpenChange={setSearchOpen} width={512}>
+        <Layout
+          header={<DialogHeader title="搜索繁梦空间文档" onOpenChange={setSearchOpen} />}
+          content={
+            <LayoutContent padding={5}>
+              <div className="space-y-3">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <TextInput
+                    label={'输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…'}
+                    isLabelHidden
+                    hasAutoFocus
+                    value={searchQuery}
+                    onChange={(v) => setSearchQuery(v)}
+                    placeholder="输入关键词，如：智能生成点位、撤销、计费公式、DeepSeek、快捷键…"
+                    controlClassName="pl-9 text-xs"
+                  />
+                </div>
+                <div className="max-h-80 space-y-1 overflow-y-auto pr-1">
+                  {searchResults.length === 0 ? (
+                    <p className="py-6 text-center text-xs text-muted-foreground">
+                      没有找到匹配的文档章节
+                    </p>
+                  ) : (
+                    searchResults.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => selectSection(item.id)}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-muted"
+                      >
+                        <div>
+                          <span className="font-semibold text-foreground">{item.title}</span>
+                          <span className="ml-2 text-[11px] text-muted-foreground">
+                            {item.group}
+                          </span>
+                        </div>
+                        <ArrowRight className="size-3.5 text-muted-foreground" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            </LayoutContent>
+          }
+        />
       </Dialog>
     </div>
   )

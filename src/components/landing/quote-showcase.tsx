@@ -6,9 +6,9 @@ import { Maximize2 } from 'lucide-react'
 import { BrandLogo } from '@/components/brand-logo'
 import { PointMarker } from '@/components/point-marker'
 import { ProductThumb } from '@/components/product-thumb'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 import {
   DocFacts,
   DocFooter,
@@ -71,23 +71,17 @@ export function QuoteShowcase({
             <span className="text-xs font-medium text-foreground">报价版式</span>
             <span className="text-xs text-muted-foreground">{activeLayout?.label}</span>
           </div>
-          <Tabs value={layoutId} onValueChange={setLayoutId}>
-            <TabsList
-              aria-label="报价单版式"
-              className="grid h-auto w-full grid-cols-3 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
-            >
-              {layouts.map((l) => (
-                <TabsTrigger
-                  key={l.value}
-                  value={l.value}
-                  aria-controls="quote-preview"
-                  className="h-8 justify-center rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
-                >
-                  {l.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <TabList
+            value={layoutId}
+            onChange={setLayoutId}
+            layout="fill"
+            size="sm"
+            aria-label="报价单版式"
+          >
+            {layouts.map((l) => (
+              <Tab key={l.value} value={l.value} label={l.label} panelId="quote-preview" />
+            ))}
+          </TabList>
         </div>
 
         <div className="mt-5 space-y-2">
@@ -95,28 +89,29 @@ export function QuoteShowcase({
             <span className="font-medium text-foreground">视觉风格</span>
             <span className="text-muted-foreground">{active.name}</span>
           </div>
-          <Tabs value={styleId} onValueChange={setStyleId}>
-            <TabsList
-              aria-label="报价单风格"
-              className="grid h-auto w-full grid-cols-2 gap-0.5 rounded-[var(--radius-element)] bg-muted p-0.5 group-data-horizontal/tabs:h-auto"
-            >
-              {styles.map((s) => (
-                <TabsTrigger
-                  key={s.id}
-                  value={s.id}
-                  aria-controls="quote-preview"
-                  className="h-8 justify-start gap-2 rounded-[calc(var(--radius-element)-2px)] px-2 text-xs font-normal text-muted-foreground data-[state=active]:bg-background data-[state=active]:font-medium data-[state=active]:text-foreground data-[state=active]:shadow-xs"
-                >
+          <TabList
+            value={styleId}
+            onChange={setStyleId}
+            layout="fill"
+            size="sm"
+            aria-label="报价单风格"
+          >
+            {styles.map((s) => (
+              <Tab
+                key={s.id}
+                value={s.id}
+                label={s.name}
+                panelId="quote-preview"
+                icon={
                   <span
                     aria-hidden
                     style={docVars(s)}
-                    className="size-2.5 shrink-0 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40"
+                    className="size-2.5 rounded-full bg-doc-accent ring-1 ring-foreground/15 dark:ring-foreground/40"
                   />
-                  <span className="truncate">{s.name}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                }
+              />
+            ))}
+          </TabList>
         </div>
       </div>
 
@@ -163,50 +158,59 @@ export function QuoteShowcase({
         </div>
       </div>
 
-      <Dialog open={zoomOpen} onOpenChange={setZoomOpen}>
-        <DialogContent className="flex h-[92vh] max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(94vw,1080px)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-5 py-3 pr-14">
-            <div>
-              <DialogTitle className="text-sm font-medium">
-                报价单 · {data.project.name}
-              </DialogTitle>
-              <DialogDescription className="sr-only">
-                高清放大浏览完整报价单，支持切换版式与视觉风格
-              </DialogDescription>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Tabs value={layoutId} onValueChange={setLayoutId}>
-                <TabsList className="h-8 p-0.5">
-                  {layouts.map((l) => (
-                    <TabsTrigger key={l.value} value={l.value} className="h-7 px-2.5 text-xs">
-                      {l.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
-              <Tabs value={styleId} onValueChange={setStyleId}>
-                <TabsList className="h-8 p-0.5">
-                  {styles.map((s) => (
-                    <TabsTrigger key={s.id} value={s.id} className="h-7 gap-1.5 px-2.5 text-xs">
-                      <span style={docVars(s)} className="size-2 rounded-full bg-doc-accent" />
-                      {s.name}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto bg-muted/60 p-4 sm:p-8">
-            <QuoteSheet
-              style={active}
-              layout={layoutId}
-              quote={quote}
-              data={data}
-              company={company}
-              expanded
+      <Dialog
+        isOpen={zoomOpen}
+        onOpenChange={setZoomOpen}
+        width="min(94vw,1080px)"
+        maxHeight="92vh"
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={`报价单 · ${data.project.name}`}
+              subtitle="高清放大浏览完整报价单，支持切换版式与视觉风格"
+              onOpenChange={setZoomOpen}
+              hasDivider
             />
-          </div>
-        </DialogContent>
+          }
+          content={
+            <LayoutContent padding={5} className="bg-muted/60">
+              {/* 切换器从标题区挪到内容区：官方 DialogHeader 的 endContent 只适合图标按钮，
+                  两组 Tab 放进去会把标题挤成一条竖线（真机截图验证过）。 */}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <TabList value={layoutId} onChange={setLayoutId} size="sm" aria-label="报价单版式">
+                  {layouts.map((l) => (
+                    <Tab key={l.value} value={l.value} label={l.label} />
+                  ))}
+                </TabList>
+                <TabList value={styleId} onChange={setStyleId} size="sm" aria-label="报价单风格">
+                  {styles.map((s) => (
+                    <Tab
+                      key={s.id}
+                      value={s.id}
+                      label={s.name}
+                      icon={
+                        <span
+                          aria-hidden
+                          style={docVars(s)}
+                          className="size-2 rounded-full bg-doc-accent"
+                        />
+                      }
+                    />
+                  ))}
+                </TabList>
+              </div>
+              <QuoteSheet
+                style={active}
+                layout={layoutId}
+                quote={quote}
+                data={data}
+                company={company}
+                expanded
+              />
+            </LayoutContent>
+          }
+        />
       </Dialog>
     </div>
   )
