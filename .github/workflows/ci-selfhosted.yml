@@ -220,10 +220,21 @@ jobs:
           tail -40 /tmp/serve.log
           exit 1
 
+      # ⚠️ 必须有整体超时：实测冒烟曾在某一页无限等待，把 runner 占住 12 分钟不结束。
+      # `timeout` 命令在 macOS 上不存在，用 perl 的 alarm 实现（同 CI 里的其它写法）。
       - name: 页面冒烟测试
         env:
           SMOKE_PROJECT_ID: ${{ steps.seed.outputs.project_id }}
-        run: node e2e/smoke.mjs
+        run: |
+          set +e
+          perl -e 'alarm 420; exec @ARGV' node e2e/smoke.mjs
+          code=$?
+          set -e
+          if [ $code -eq 142 ] || [ $code -eq 124 ]; then
+            echo "❌ 冒烟测试超过 7 分钟被强制结束（有页面在无限等待）"
+            exit 1
+          fi
+          exit $code
 
       - name: 收尾（停服务 + 还原配置）
         if: always()

@@ -108,7 +108,7 @@ async function main() {
 
   // ── 登录 ──────────────────────────────────────────────
   console.log(`\n▶ 冒烟测试  ${BASE}\n`)
-  await page.goto(`${BASE}/login`, { waitUntil: 'load' })
+  await page.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 15000 })
   await sleep(2500)
   const tab = page.getByRole('tab', { name: /邮箱/ }).first()
   if (await tab.count()) {
@@ -156,7 +156,7 @@ async function main() {
     const anon = await anonCtx.newPage()
     const anonErrs = []
     anon.on('pageerror', (e) => anonErrs.push(`PAGEERROR ${e.message.slice(0, 160)}`))
-    await anon.goto(`${BASE}/login`, { waitUntil: 'load' }).catch(() => {})
+    await anon.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 15000 }).catch(() => {})
     await sleep(2500)
     const m = await anon.evaluate(() => ({
       url: location.pathname,
@@ -244,7 +244,7 @@ async function check(page, spec, { gated, loggedIn, errs }) {
   errs.list = []
   const problems = []
 
-  await page.goto(`${BASE}${path}`, { waitUntil: 'load' }).catch(() => {})
+  await page.goto(`${BASE}${path}`, { waitUntil: 'load', timeout: 15000 }).catch(() => {})
   await sleep(2200)
   // 整页滚一遍触发 lazy-load（图片密集页面的内容否则拿不到）
   await page
