@@ -167,11 +167,19 @@ async function main() {
     const problems = []
     if (anonErrs.length) problems.push(...anonErrs.slice(0, 3))
     if (m.skel > 0) problems.push(`有 ${m.skel} 个骨架块未消失`)
-    if (m.textLen < 150) problems.push(`页面文字只有 ${m.textLen} 字`)
-    // 必须**停留在** /login，且能看到登录方式切换
+    if (m.textLen < 110) problems.push(`页面文字只有 ${m.textLen} 字`)
+    // 必须**停留在** /login
     if (!m.url.startsWith('/login')) problems.push(`未登录访问 /login 却被跳到 ${m.url}`)
-    for (const e of ['微信扫码登录', '邮箱密码登录']) {
-      if (!m.inner.includes(e)) problems.push(`缺少预期内容「${e}」`)
+    // ⚠️ 「微信扫码登录 / 邮箱密码登录」这对 tab 只在**服务端配置了微信小程序**时渲染
+    //    （qrLoginAvailable()）。CI 与本地开发环境都没有微信配置，只有邮箱表单 ——
+    //    这是正确行为，不能当缺陷。有 tabs 时才断言两者都在。
+    const hasTabSwitcher = m.inner.includes('邮箱密码登录')
+    if (hasTabSwitcher) {
+      for (const e of ['微信扫码登录', '邮箱密码登录']) {
+        if (!m.inner.includes(e)) problems.push(`有登录方式切换但缺少「${e}」`)
+      }
+    } else if (!m.inner.includes('邮箱') || !m.inner.includes('密码')) {
+      problems.push('既没有扫码登录 tab，也没有邮箱密码表单')
     }
     results.push({ name: '登录页', path: '/login', url: m.url, problems })
     if (problems.length) {

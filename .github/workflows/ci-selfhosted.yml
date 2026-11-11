@@ -210,7 +210,10 @@ jobs:
           PORT: '3100'
           HOSTNAME: '127.0.0.1'
         run: |
-          node .next/standalone/server.js > /tmp/serve.log 2>&1 &
+          # ⚠️ Payload 在启动时会问「你跑过 dev 模式，要迁移吗（会丢数据）？」。
+          #    生产服务没有 stdin，会永远卡在这个提问上（实测：login API 一直超时）。
+          #    喂 'n' 表示不迁移 —— 迁移已在上面单独跑过。
+          echo 'n' | node .next/standalone/server.js > /tmp/serve.log 2>&1 &
           for i in $(seq 1 60); do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:3100/login || true)
             if [ "$code" = "200" ]; then echo "服务就绪（第 ${i} 次探测）"; exit 0; fi
