@@ -37,7 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@astryxdesign/core/Switch'
 import type { CollaboratorRole, ProjectRole, ShareConfig } from '@/lib/project-access'
 import { cn } from '@/lib/utils'
 
@@ -229,10 +229,12 @@ export function ProjectShareDialog({
                     </Label>
                   </div>
                   <Switch
+                    label={'开关'}
+                    isLabelHidden
                     id="share-enabled"
-                    checked={state.shareConfig.enabled}
-                    disabled={busy}
-                    onCheckedChange={(checked) => void updateConfig({ enabled: checked })}
+                    value={state.shareConfig.enabled}
+                    isDisabled={busy}
+                    onChange={(checked) => void updateConfig({ enabled: checked })}
                   />
                 </div>
 

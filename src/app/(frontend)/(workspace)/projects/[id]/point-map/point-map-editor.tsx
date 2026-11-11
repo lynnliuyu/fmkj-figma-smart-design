@@ -71,7 +71,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useSidebar } from '@/components/ui/sidebar'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@astryxdesign/core/Switch'
 import { Kbd } from '@/components/ui/kbd'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -2111,11 +2111,11 @@ export function PointMapEditor({
                         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           按比例
                           <Switch
-                            checked={selectedSymbol.real}
-                            disabled={!selectedSymbol.sizeCm}
-                            onCheckedChange={(v) =>
-                              commit((d) => setPointReal(d, [selectedSymbol.id], v))
-                            }
+                            label={'按真实尺寸落图'}
+                            isLabelHidden
+                            value={selectedSymbol.real}
+                            isDisabled={!selectedSymbol.sizeCm}
+                            onChange={(v) => commit((d) => setPointReal(d, [selectedSymbol.id], v))}
                             aria-label="按真实尺寸落图"
                           />
                         </label>
@@ -2493,8 +2493,10 @@ export function PointMapEditor({
                 </div>
               </div>
               <Switch
-                checked={autoGenIncludeLighting}
-                onCheckedChange={setAutoGenIncludeLighting}
+                label={'开关'}
+                isLabelHidden
+                value={autoGenIncludeLighting}
+                onChange={setAutoGenIncludeLighting}
               />
             </div>
 

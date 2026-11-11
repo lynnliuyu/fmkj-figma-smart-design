@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { Button } from '@astryxdesign/core/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@astryxdesign/core/Switch'
 import type { SymbolTemplate } from '@/board/core/types'
 import {
   artOf,
@@ -106,8 +106,10 @@ export function LightingPanel({
           <label className="flex items-center gap-1.5 text-muted-foreground">
             按比例
             <Switch
-              checked={real}
-              onCheckedChange={(next) => {
+              label={'按真实尺寸落图'}
+              isLabelHidden
+              value={real}
+              onChange={(next) => {
                 setReal(next)
                 if (armedId && fam.variants.some((v) => v.id === armedId)) {
                   onArm(variantTemplate(fam, armedId, next))

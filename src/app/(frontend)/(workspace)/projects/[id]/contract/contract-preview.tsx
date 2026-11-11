@@ -17,7 +17,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import {
   Dialog,
   DialogContent,
@@ -327,9 +327,11 @@ export function ContractSectionEdit({
                     {yuan(amounts[i])}
                   </span>
                   <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-                    <Checkbox
-                      checked={p.received}
-                      onCheckedChange={(c) => setPayment(p.key, { received: c === true })}
+                    <CheckboxInput
+                      label={'选择'}
+                      isLabelHidden
+                      value={p.received}
+                      onChange={(c) => setPayment(p.key, { received: c === true })}
                       aria-label={`第 ${i + 1} 期已收款`}
                     />
                     已收

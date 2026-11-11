@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@astryxdesign/core/Button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { Progress } from '@/components/ui/progress'
 import {
   Select,
@@ -246,11 +246,13 @@ export function DeliveryPackage({
       <ul className="divide-y">
         {docs.map((d) => (
           <li key={d.key} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-5 py-3">
-            <Checkbox
+            <CheckboxInput
+              label={'选择'}
+              isLabelHidden
               id={`pkg-${d.key}`}
-              checked={Boolean(d.url && selected[d.key])}
-              disabled={!d.url || busy}
-              onCheckedChange={(v) => setSelected((s) => ({ ...s, [d.key]: v === true }))}
+              value={Boolean(d.url && selected[d.key])}
+              isDisabled={!d.url || busy}
+              onChange={(v) => setSelected((s) => ({ ...s, [d.key]: v === true }))}
               aria-label={`资料包包含${d.title}`}
             />
             <label

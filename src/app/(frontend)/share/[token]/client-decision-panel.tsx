@@ -6,7 +6,7 @@ import { CheckCircle2, Loader2, PenLine, Send } from 'lucide-react'
 import { money, SectionHeader } from '@/components/landing/section'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -312,10 +312,12 @@ export function ClientDecisionPanel({
                         (done || !canSubmit) && 'cursor-default',
                       )}
                     >
-                      <Checkbox
-                        checked={!off}
-                        disabled={Boolean(done) || !canSubmit}
-                        onCheckedChange={() => toggleLine(l.itemId)}
+                      <CheckboxInput
+                        label={'选择'}
+                        isLabelHidden
+                        value={!off}
+                        isDisabled={Boolean(done) || !canSubmit}
+                        onChange={() => toggleLine(l.itemId)}
                         aria-label={`${off ? '恢复' : '暂缓'}：${l.name}`}
                       />
                       <span className="min-w-0 flex-1">
@@ -497,9 +499,11 @@ export function ClientDecisionPanel({
                     ) : null}
                   </div>
                   <label className="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
-                    <Checkbox
-                      checked={agree}
-                      onCheckedChange={(v) => setAgree(v === true)}
+                    <CheckboxInput
+                      label={'选择'}
+                      isLabelHidden
+                      value={agree}
+                      onChange={(v) => setAgree(v === true)}
                       className="mt-0.5"
                       aria-invalid={Boolean(errors.agree)}
                     />

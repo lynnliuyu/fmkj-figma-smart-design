@@ -40,7 +40,7 @@ import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import {
   Command,
   CommandEmpty,
@@ -1375,9 +1375,11 @@ export function QuoteEditor({
                     <TableRow>
                       {readOnly ? null : (
                         <TableHead className="w-10 pl-5">
-                          <Checkbox
-                            checked={allFilteredSelected}
-                            onCheckedChange={(v) => toggleSelectAllFiltered(Boolean(v))}
+                          <CheckboxInput
+                            label={'全选当前列表中的设备'}
+                            isLabelHidden
+                            value={allFilteredSelected}
+                            onChange={(v) => toggleSelectAllFiltered(Boolean(v))}
                             aria-label="全选当前列表中的设备"
                           />
                         </TableHead>
@@ -1410,9 +1412,11 @@ export function QuoteEditor({
                         >
                           {readOnly ? null : (
                             <TableCell className="pl-5">
-                              <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={(v) => toggleSelectLine(l.key, Boolean(v))}
+                              <CheckboxInput
+                                label={'选择'}
+                                isLabelHidden
+                                value={isSelected}
+                                onChange={(v) => toggleSelectLine(l.key, Boolean(v))}
                                 aria-label={`选择 ${l.name}`}
                               />
                             </TableCell>

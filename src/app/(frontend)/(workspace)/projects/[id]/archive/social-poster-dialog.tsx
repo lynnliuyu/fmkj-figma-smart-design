@@ -27,7 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@astryxdesign/core/Switch'
 import { downloadBlob } from '@/lib/export-pdf'
 import {
   buildSocialPosterPages,
@@ -254,16 +254,24 @@ export function SocialPosterDialog({ data }: { data: SocialPosterData }) {
               <label className="flex items-center justify-between gap-3">
                 <span>隐藏具体金额，使用预算区间</span>
                 <Switch
-                  checked={hideExactPrice}
-                  disabled={busy}
-                  onCheckedChange={setHideExactPrice}
+                  label={'开关'}
+                  isLabelHidden
+                  value={hideExactPrice}
+                  isDisabled={busy}
+                  onChange={setHideExactPrice}
                 />
               </label>
               <label className="flex items-center justify-between gap-3">
                 <span>
                   {data.miniAppCodeUrl ? '收尾页附带小程序码' : '收尾页附带服务方联系二维码'}
                 </span>
-                <Switch checked={showQr} disabled={busy} onCheckedChange={setShowQr} />
+                <Switch
+                  label={'开关'}
+                  isLabelHidden
+                  value={showQr}
+                  isDisabled={busy}
+                  onChange={setShowQr}
+                />
               </label>
             </div>
             <div className="space-y-2">

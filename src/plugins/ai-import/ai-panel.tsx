@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Textarea } from '@/components/ui/textarea'
@@ -109,10 +109,12 @@ export function AiPanel({
               className="font-mono text-xs"
             />
             <div className="flex items-center gap-2">
-              <Checkbox
+              <CheckboxInput
+                label={'选择'}
+                isLabelHidden
                 id="ai-replace"
-                checked={replace}
-                onCheckedChange={(v) => setReplace(v === true)}
+                value={replace}
+                onChange={(v) => setReplace(v === true)}
               />
               <Label htmlFor="ai-replace" className="text-xs font-normal">
                 导入前清空对应图纸上的点位和区域

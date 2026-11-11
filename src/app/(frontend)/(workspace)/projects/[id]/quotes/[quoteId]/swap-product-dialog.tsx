@@ -9,7 +9,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { DeviceSymbol } from '@/components/device-symbol'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import {
   Dialog,
   DialogContent,
@@ -296,7 +296,12 @@ export function SwapProductDialog({
           ) : null}
           {canSetDefault ? (
             <Label className="flex items-center gap-2 font-normal">
-              <Checkbox checked={setDefault} onCheckedChange={(v) => setSetDefault(v === true)} />
+              <CheckboxInput
+                label={'选择'}
+                isLabelHidden
+                value={setDefault}
+                onChange={(v) => setSetDefault(v === true)}
+              />
               同时设为项目默认型号（之后从点位图生成报价也用这个型号）
             </Label>
           ) : null}
