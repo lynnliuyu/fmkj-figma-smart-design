@@ -127,6 +127,19 @@ const RAW_PLUGINS: AppPlugin[] = [
     where: '项目 → 归档 →「售后维保」、项目工具箱',
     provides: ['质保倒计时', '维保记录', '配置备份', '售后维保卡'],
   },
+  {
+    id: 'ha-mcp',
+    category: 'ai', // AI 能力：让助手直接读写客户现场的设备
+    stage: 'global',
+    tagline: '助手直接读取并把控客户现场的真实设备',
+    name: '智能家居现场对接（HA-MCP）',
+    description:
+      '通过 MCP 协议连接客户现场的 Home Assistant：读取真实设备与状态、搜索实体、' +
+      '按区域核对点位，也能直接开关设备做现场调试。不中转 HA 的运维能力（改 YAML、装 HACS、备份）。',
+    status: 'ready',
+    where: 'AI 对话（助手工具）、能力中心 → AI 能力',
+    provides: ['设备总览', '实体搜索', '区域核对', '历史排查', '系统健康', '设备控制'],
+  },
 ]
 
 export const PLUGINS: AppPlugin[] = RAW_PLUGINS.map((p) => ({
