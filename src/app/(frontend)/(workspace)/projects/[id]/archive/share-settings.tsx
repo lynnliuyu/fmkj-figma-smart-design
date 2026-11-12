@@ -5,9 +5,9 @@ import { CalendarClock, KeyRound, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import type { ShareConfig } from '@/lib/project-access'
 
 import { setShareSettings } from './actions'
@@ -74,10 +74,7 @@ export function ShareSettings({ projectId, config }: { projectId: string; config
       </div>
 
       <div className="flex flex-col gap-4 px-5 py-4">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="share-expires" className="text-xs font-medium">
-            有效期
-          </Label>
+        <Field label="有效期" inputID="share-expires">
           <Input
             id="share-expires"
             type="datetime-local"
@@ -88,12 +85,9 @@ export function ShareSettings({ projectId, config }: { projectId: string; config
           <p className="text-xs text-muted-foreground">
             留空 = 永久有效。到期后业主打开链接会看到「链接已过期」，不影响你自己登录查看。
           </p>
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="share-password" className="text-xs font-medium">
-            访问密码
-          </Label>
+        <Field label="访问密码" inputID="share-password">
           <TextInput
             label={'share-password'}
             isLabelHidden
@@ -123,7 +117,7 @@ export function ShareSettings({ projectId, config }: { projectId: string; config
               设置后，业主首次打开链接需要输入密码。密码只保存摘要，无法找回，只能重设。
             </p>
           )}
-        </div>
+        </Field>
 
         <div className="flex items-center gap-3">
           <Button

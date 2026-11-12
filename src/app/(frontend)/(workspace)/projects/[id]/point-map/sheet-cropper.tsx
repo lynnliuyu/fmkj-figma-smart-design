@@ -5,8 +5,8 @@ import { Crop, Loader2, Maximize, ScanSearch } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
-import { Label } from '@/components/ui/label'
 import { clampRect, detectPlanBounds, fitIntoSheet, type Rect } from '@/lib/floor-plan-crop'
 import { SHEET } from '@/lib/sheet-spec'
 import { cn } from '@/lib/utils'
@@ -269,8 +269,7 @@ export function SheetCropper({
               已自动去掉图框和标题栏，可拖动边框微调。
             </p>
           </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="sheet-name">图纸名称</Label>
+          <Field label="图纸名称" inputID="sheet-name">
             <TextInput
               label={'例如：一层开关布置图'}
               isLabelHidden
@@ -279,7 +278,7 @@ export function SheetCropper({
               onChange={(v) => setName(v)}
               placeholder="例如：一层开关布置图"
             />
-          </div>
+          </Field>
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="secondary"

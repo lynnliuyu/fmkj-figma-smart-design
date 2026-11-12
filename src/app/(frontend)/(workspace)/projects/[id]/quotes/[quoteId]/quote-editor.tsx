@@ -41,6 +41,7 @@ import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
+import { Field } from '@astryxdesign/core/Field'
 import {
   Command,
   CommandEmpty,
@@ -57,7 +58,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Popover } from '@astryxdesign/core/Popover'
 import { Selector } from '@astryxdesign/core/Selector'
 import { TextArea } from '@astryxdesign/core/TextArea'
@@ -682,10 +682,7 @@ export function QuoteEditor({
       {/* Untitled UI + IBM Carbon 顶部报价概览与 4 格 KPI 指标条 */}
       <div className="overflow-hidden rounded-xl border border-border bg-background shadow-2xs">
         <div className="grid gap-4 border-b border-border p-4 sm:p-5 md:grid-cols-[1fr_11rem]">
-          <div className="grid gap-1.5">
-            <Label htmlFor="title" className="text-xs font-medium text-muted-foreground">
-              报价方案名称
-            </Label>
+          <Field label="报价方案名称" inputID="title">
             <TextInput
               label={'title'}
               isLabelHidden
@@ -695,11 +692,8 @@ export function QuoteEditor({
               onChange={(v) => update({ title: v })}
               controlClassName="h-9 border-border bg-subtle/50 text-base font-semibold text-foreground focus-visible:bg-background"
             />
-          </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="status" className="text-xs font-medium text-muted-foreground">
-              报价状态
-            </Label>
+          </Field>
+          <Field label="报价状态" inputID="status">
             <Selector
               id="status"
               label="报价状态"
@@ -712,7 +706,7 @@ export function QuoteEditor({
               onChange={(v) => update({ status: v })}
               controlClassName="h-9 border-border bg-subtle/50 text-xs font-medium"
             />
-          </div>
+          </Field>
         </div>
 
         {/* 4 格核心数据指标条 */}
@@ -1694,8 +1688,7 @@ export function QuoteEditor({
         </Card>
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="notes">报价备注</Label>
+      <Field label="报价备注" inputID="notes">
         <TextArea
           id="notes"
           label="报价备注"
@@ -1706,7 +1699,7 @@ export function QuoteEditor({
           placeholder="例如：报价有效期 30 天；含一年免费上门维护"
           onChange={(v) => update({ notes: v })}
         />
-      </div>
+      </Field>
 
       {margin ? (
         <MarginCapsule
