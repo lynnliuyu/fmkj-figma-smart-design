@@ -39,6 +39,17 @@ type ContentConfig = {
 type PopoverCtx = {
   open: boolean
   setOpen: (v: boolean) => void
+  /**
+   * 调用点是否自己托管开关状态。
+   *
+   * 只有调用点**同时**给了 `open` 和 `onOpenChange` 时才算受控；否则必须让官方
+   * 自己管状态（官方 `isControlled = isOpen !== undefined`）。
+   *
+   * ⚠️ 历史 bug（2026-11-12 修）：从前这里无条件给官方传 `isOpen`，
+   * 于是「非受控」调用点（如毛利胶囊 `<Popover>` 裸用）被强行当成受控，
+   * 而 `setOpen` 落到一个空实现上 → 状态永远 false → **真实点击永远打不开**。
+   */
+  controlled: boolean
   /** 内容的当前配置。放 ref 里而不是 state —— 见 PopoverContent 的说明。 */
   contentRef: React.RefObject<ContentConfig | null>
 }
@@ -47,7 +58,7 @@ const Ctx = React.createContext<PopoverCtx | null>(null)
 const usePopover = () => React.useContext(Ctx)
 
 export function Popover({
-  open = false,
+  open,
   onOpenChange,
   modal: _modal,
   children,
@@ -58,9 +69,15 @@ export function Popover({
   children?: React.ReactNode
 }) {
   const contentRef = React.useRef<ContentConfig | null>(null)
+  const controlled = open !== undefined && typeof onOpenChange === 'function'
   const ctx = React.useMemo<PopoverCtx>(
-    () => ({ open, setOpen: (v) => onOpenChange?.(v), contentRef }),
-    [open, onOpenChange],
+    () => ({
+      open: Boolean(open),
+      setOpen: (v) => onOpenChange?.(v),
+      controlled,
+      contentRef,
+    }),
+    [open, onOpenChange, controlled],
   )
   return <Ctx.Provider value={ctx}>{children}</Ctx.Provider>
 }
@@ -75,6 +92,23 @@ const PLACEMENT: Record<string, 'above' | 'below' | 'start' | 'end'> = {
 /**
  * 触发物：组装官方 Popover —— 自己作 children，内容从 context 取。
  * 内容还没注册时（首帧）只渲染触发物，避免官方组件拿到空内容。
+ *
+ * ## ⚠️ 不要在这里自己 toggle（2026-11-12 修掉的真 bug）
+ *
+ * 官方 Popover 对 children 触发物是**主动接管**的：它给按钮挂了原生
+ * `click` 监听（`Popover.js` → `button.addEventListener('click', handleTriggerClick)`
+ * → `popover.toggle()`），并通过 `onOpenChange` 回传下一次状态。
+ *
+ * 早先这个适配层又额外给按钮注入了 React `onClick` 去 `setOpen(!open)`，
+ * 于是**一次真实点击切换两次**（React onClick 一次 + 官方原生监听一次），
+ * 净结果 = 关 → 浮层永远打不开。
+ *
+ * 阴险之处：`element.click()`（合成事件）只走官方监听那一条路，所以自动化
+ * 测试里「看起来是好的」，真实鼠标点才暴露。实测：「添加产品」真实鼠标点击
+ * 三次采样均 `aria-expanded=false` / 内容 `0×0`；合成 `.click()` 则
+ * `aria-expanded=true` / `384×112`。
+ *
+ * → 正确做法：**触发语义完全交给官方**，这里只保留调用点自己的 onClick。
  */
 export function PopoverTrigger({
   asChild,
@@ -83,10 +117,6 @@ export function PopoverTrigger({
   ...props
 }: React.ComponentProps<'button'> & { asChild?: boolean }) {
   const ctx = usePopover()
-  const toggle = (e: unknown) => {
-    ;(onClick as ((e: unknown) => void) | undefined)?.(e)
-    ctx?.setOpen(!ctx.open)
-  }
 
   const child = children as React.ReactElement<{ onClick?: (e: unknown) => void }>
   const triggerNode =
@@ -94,11 +124,11 @@ export function PopoverTrigger({
       React.cloneElement(child, {
         onClick: (e: unknown) => {
           child.props.onClick?.(e)
-          toggle(e)
+          ;(onClick as ((e: unknown) => void) | undefined)?.(e)
         },
       } as object)
     ) : (
-      <button type="button" data-slot="popover-trigger" onClick={toggle} {...props}>
+      <button type="button" data-slot="popover-trigger" onClick={onClick} {...props}>
         {children}
       </button>
     )
@@ -108,7 +138,9 @@ export function PopoverTrigger({
 
   return (
     <AstryxPopover
-      isOpen={Boolean(ctx?.open)}
+      // 非受控调用点必须**不传** isOpen，否则官方判定为受控、由我们托管，
+      // 而我们的 setOpen 在非受控时是空实现 → 打不开（见 PopoverCtx.controlled 注释）。
+      {...(ctx?.controlled ? { isOpen: ctx.open } : {})}
       onOpenChange={(next) => ctx?.setOpen(next)}
       placement={PLACEMENT[content.side ?? 'bottom'] ?? 'below'}
       alignment={content.align ?? 'start'}
