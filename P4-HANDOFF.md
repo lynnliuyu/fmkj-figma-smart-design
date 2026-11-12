@@ -99,7 +99,7 @@ point-map-editor（#117）：Dialog ×4（384/384/384/448）+ ScrollArea + Selec
 Label          ✅ 已完成（#122/#123/#124/#126/#127/#128）
                37 处转换 + 16 处按规则保留 —— 剩余全部是规则保留项，无需再动
 Select 14 处   数据带 hint / 动态 filter 的要跳过
-Textarea 8 处
+Textarea       ✅ 受控的 2 处已转（#130）；剩 3 处非受控**不可转**（见下）
 Input 20 处    已判定的保留项（type=number/date、defaultValue 非受控）
 Card 40 处     官方只有单 Card，本仓 6 个复合组件 → 需重写结构
 ```
@@ -134,6 +134,26 @@ Card 40 处     官方只有单 Card，本仓 6 个复合组件 → 需重写结
 
 剩余 13 个文件里的 `<Label>` 全部是上面三类保留项（Switch 行 / 无 htmlFor / 非纯 string / canvas），
 **已无「可转但未转」的**。P3 的 Label 部分到此收口。
+
+#### Textarea 迁移结论（#130）
+
+| 文件                             | 用法                    | 结论         |
+| -------------------------------- | ----------------------- | ------------ |
+| contract-preview 约定内容        | `value` + `onChange`    | ✅ 已转      |
+| client-decision-panel 留言       | `value` + `onChange`    | ✅ 已转      |
+| company-form 报价备注 / 合同条款 | `defaultValue` + `name` | ❌ 不能转    |
+| project-form 项目备注            | `defaultValue` + `name` | ❌ 不能转    |
+| ai-panel                         | ——                      | 死代码，不计 |
+
+**为什么非受控的不能转**（实测确认，不是推测）：
+
+- `company-form.tsx:166` 提交用 `new FormData(e.currentTarget)`
+- `project-form.tsx:72` 提交用 `useActionState(..., FormData)`
+
+官方 `TextArea` **只有 `value`（必填）、没有 `defaultValue`、也不会把 `name` 输出到 FormData**。
+强行转换会让这两个字段**静默不上传** —— 表单看起来正常、保存后数据丢失，属于最难发现的一类 bug。
+
+要转的前提是把整表改成受控 state 并重写提交逻辑，属结构性改动，需 owner 点头。
 
 #### 已核实为死代码 / 适配层本体，不进 P3
 
