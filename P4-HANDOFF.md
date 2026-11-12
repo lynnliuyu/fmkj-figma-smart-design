@@ -1,23 +1,26 @@
 # P4 浮层原生化 —— 交接文档
 
-> 2026-11-12 12:25 由 Alma 更新（P4 第 7 批 · 中风险 2 文件）。
+> 2026-11-12 13:55 由 Alma 更新（P4 第 8/9 批 · quote-editor + editor-panels）。
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-12 12:25）
+## 一、当前状态（截至 2026-11-12 13:55）
 
 ```
-main 分支   干净（00269c3 = PR #111 的 squash 合并提交）
+main 分支   干净（d858efe = PR #115 的 squash 合并提交）
 线上        fmkj.top/login 返回 200；端口 13028 来自记忆未复核
-PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
-PR #108     已合并 2026-11-11 17:20 UTC（P4 第 5 批低风险 3 文件）
-PR #109     已合并（纯文档，回填 #108 状态）
-PR #110     已合并 2026-11-12 03:49 UTC（P4 第 6 批：template-picker / share-export-button；merge b209d72）
-PR #111     已合并（纯文档，修正 #110 的 CI 引证；merge 00269c3）
-PR #112     本批（P4 第 7 批：swap-product-dialog / contract-preview）—— 状态见文末「本批交付记录」
+PR #107     已合并（P4 第 4 批）
+PR #108     已合并（P4 第 5 批）
+PR #109     已合并（纯文档）
+PR #110     已合并（P4 第 6 批：template-picker / share-export-button）
+PR #111     已合并（纯文档）
+PR #112     已合并（P4 第 7 批：swap-product-dialog / contract-preview）
+PR #113     已合并（fix：Popover 适配层「真实鼠标点不开」双重 toggle —— 见 §十）
+PR #114     已合并（P4 第 8 批：quote-editor）
+PR #115     已合并（P4 第 9 批：editor-panels）
 ```
 
-**P4 进度：22 / 34 文件**
+**P4 进度：25 / 34 文件**
 
 | PR   | 文件                                                                                   |
 | ---- | -------------------------------------------------------------------------------------- |
@@ -29,6 +32,8 @@ PR #112     本批（P4 第 7 批：swap-product-dialog / contract-preview）—
 | #108 | proposal-showcase · quote-showcase · docs-client                                       |
 | #110 | template-picker · share-export-button（+ `design-pilot/detail/page.tsx` 核实无需改动） |
 | #112 | swap-product-dialog · contract-preview                                                 |
+| #114 | quote-editor                                                                           |
+| #115 | editor-panels                                                                          |
 
 > 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
 > `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
@@ -55,7 +60,8 @@ PR #112     本批（P4 第 7 批：swap-product-dialog / contract-preview）—
 ```
 src/components/workspace-dialogs.tsx            已完成（勿重做）
 src/components/info-tip.tsx                     已删（死代码）
-quote-editor.tsx                                 Popover 2 + Select 1 + Textarea 1  ⚠️ 1 个 Popover 塞 cmdk
+
+（quote-editor 已在 #114 完成：Popover ×2 / Select / Textarea 全部迁移，无跳过项）
 
 （已在 #112 完成 —— 旧文档计数又是错的，实测：
  swap-product-dialog.tsx  Dialog 1（文档写 1 ✓）+ ScrollArea 1 ✓
@@ -65,8 +71,11 @@ quote-editor.tsx                                 Popover 2 + Select 1 + Textarea
 ### 高风险（最后做）
 
 ```
-editor-panels.tsx          ScrollArea 3 + Select 3
-point-map-editor.tsx       五组件全有，4000+ 行，最重
+point-map-editor.tsx       五组件全有，4000+ 行，最重（唯一剩下的高风险）
+
+（editor-panels 已在 #115 完成 —— 旧文档写「ScrollArea 3」是错的，实测 **2**；
+  Select 3 全部迁移，其中第 3 处设备类型是富内容，改用 SelectorSection.title + renderOption，
+  色点挪到每项 option 的 icon）
 ```
 
 ### P3 剩余（表单型，需单独评估）
@@ -385,3 +394,51 @@ HOST=ubuntu@124.222.225.26
 ### 边界
 
 不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
+
+---
+
+## 十、P4 第 8/9 批（#114 / #115）+ 顺带修掉的真 bug（#113）
+
+### #113 —— Popover 适配层「真实鼠标点不开」（既有缺陷，线上同样存在）
+
+**两层根因**：
+
+1. `PopoverTrigger` 额外注入 React `onClick` 去 `setOpen(!open)`，而官方 Popover 对 children
+   触发物已挂原生 `click` 监听 → `popover.toggle()`。一次真实点击**切换两次** → 净结果关闭。
+2. 适配层**无条件**给官方传 `isOpen`，把非受控调用点也当成受控，`setOpen` 落到空实现 → 状态永远 false。
+
+**为什么藏了很久**：合成 `element.click()` 只走官方那条路，自动化测试「看起来是好的」。
+
+实测（真实鼠标）：修复前「添加产品」「毛利」点三次均 `aria-expanded=false` / 内容 `0×0`；
+修复后均 **600ms 内可见**（384×112 / 320×250），Esc 可关、可反复开关、console error 0。
+
+> **验证纪律**：交互验证必须用 `page.mouse.click(x,y)`，不要用 `element.click()`。
+> 视口外元素（`y > 900`）必须先 `scrollIntoViewIfNeeded()`，否则点击落空会被误判成"打不开"。
+
+### #114 —— quote-editor（第 8 批）
+
+- Popover ×2（「添加产品」内含 cmdk、受控；「毛利」非受控）→ 官方单体 `Popover`
+- Select（报价状态）→ `Selector`
+- Textarea（报价备注）→ `TextArea`
+- **无跳过项**，旧适配层 import 全部归零
+- 真机：Selector 600ms 可见 176×92（选值后文案 草稿→已发送）；添加产品 384×112；
+  毛利 320×274 且 `above=true`；备注 TextArea 真实输入生效；console error 0
+
+### #115 —— editor-panels（第 9 批）
+
+- ScrollArea ×2 → `ScrollableArea`（`label` 必填、`axis="block"`、保留 `min-h-0 flex-1`
+  与 `data-slot="scroll-area"`，与既有 `lighting-panel.tsx` 惯例一致）
+- Select #1/#2（区域类型）→ `Selector`
+- Select #3（设备类型，富内容）→ `SelectorSection.title` + `renderOption`；
+  色点挪到每项 option 的 `icon`（`SelectorSection.title` 只收 string 的硬约束）
+- 真机：设备页 ScrollArea 287×695 / 内容 1375 / `scrollTop 0→200` 真滚动 / 无横向溢出(287=287)；
+  区域页 1295/690 可滚、无横向溢出；区域 Selector 600ms 可见 153×300 / 17 选项；
+  设备类型富内容 Selector 600ms 可见 259×300 / **34 选项且 34/34 带图标**；console error 0
+
+### 剩下什么
+
+```
+point-map-editor.tsx        高风险，五组件全有，4000+ 行 —— P4 最后 1 个文件（25/34 → 26/34）
+P3 表单剩余                 Label 53 / Select 14 / Textarea 8 / Input 20 / Card 40
+P5                          删适配层 30 个文件（先 grep 确认零引用）
+```
