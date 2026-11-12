@@ -96,8 +96,8 @@ point-map-editor（#117）：Dialog ×4（384/384/384/448）+ ScrollArea + Selec
 > #122/#123/#124 共 17 处一次通过。
 
 ```
-Label          已完成 #122/#123/#124（17 处转换 + 11 处按规则跳过）
-               剩 5 个文件含 Switch 风格行，需逐个判断（见下方规则）
+Label          ✅ 已完成（#122/#123/#124/#126/#127/#128）
+               37 处转换 + 16 处按规则保留 —— 剩余全部是规则保留项，无需再动
 Select 14 处   数据带 hint / 动态 filter 的要跳过
 Textarea 8 处
 Input 20 处    已判定的保留项（type=number/date、defaultValue 非受控）
@@ -119,6 +119,21 @@ Card 40 处     官方只有单 Card，本仓 6 个复合组件 → 需重写结
 | `project-share-dialog` 开启协作开关 | 规则 1                                                                                                               |
 | `client-decision-panel` 手写签名    | **它包的是 `<canvas>`，canvas 不可被 label 关联**（`'labels' in canvas === false`）——不是「有图标」的问题            |
 | `document-plugin-settings` 文档样式 | **一个 label 盖着两个 Select，而它们连 `id` 都没有**。真要转，前置是拆成两个带 id 的独立字段 = 改结构，需 owner 点头 |
+
+#### Label 迁移完整账（2026-11-12 收口）
+
+| PR       | 文件                               | 转换   | 保留           |
+| -------- | ---------------------------------- | ------ | -------------- |
+| #122     | company-form                       | 4      | 1（Switch 行） |
+| #123     | share/join（3 文件）               | 7      | 5              |
+| #124     | quotes/archive/point-map（3 文件） | 6      | 3              |
+| #126     | contract-preview                   | 4      | 2              |
+| #127     | login-form                         | 9      | 2              |
+| #128     | project-form / cost-settings       | 3      | 3              |
+| **合计** |                                    | **33** | **16**         |
+
+剩余 13 个文件里的 `<Label>` 全部是上面三类保留项（Switch 行 / 无 htmlFor / 非纯 string / canvas），
+**已无「可转但未转」的**。P3 的 Label 部分到此收口。
 
 #### 已核实为死代码 / 适配层本体，不进 P3
 
