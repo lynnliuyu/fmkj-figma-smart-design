@@ -88,15 +88,44 @@ point-map-editor（#117）：Dialog ×4（384/384/384/448）+ ScrollArea + Selec
 线上或补数据后应点一次确认。
 ```
 
-### P3 剩余（表单型，需单独评估）
+### P3 剩余（表单型）
+
+> ⚠️ **2026-11-12 实测纠正**：旧文档写的「官方无独立 Label，只有复合 Field → 需重写表单结构」
+> **两处都错**。官方有 `Field` / `FieldLabel`，且**不需要重写结构**——
+> `<div><Label htmlFor><Input/></div>` 直接换 `<Field label inputID><Input/></Field>` 即可，
+> #122/#123/#124 共 17 处一次通过。
 
 ```
-Label 53 处    官方无独立 Label，只有复合 Field → 需重写表单结构
+Label          已完成 #122/#123/#124（17 处转换 + 11 处按规则跳过）
+               剩 5 个文件含 Switch 风格行，需逐个判断（见下方规则）
 Select 14 处   数据带 hint / 动态 filter 的要跳过
 Textarea 8 处
 Input 20 处    已判定的保留项（type=number/date、defaultValue 非受控）
 Card 40 处     官方只有单 Card，本仓 6 个复合组件 → 需重写结构
 ```
+
+#### Label 迁移的四条跳过规则（实测固化，别每次重新盘点）
+
+1. **`flex justify-between` 的 Switch 行不转** —— `Field` 垂直布局会把 label 撑宽并与控件上下堆叠
+   （实测：label 442px、行高 24px → 两行、Switch 从右对齐变整行摊开）
+2. **无 `htmlFor` 的 Label 不转** —— `Field.inputID` 必填，硬转造假关联
+3. **label 内容非纯 string 跳过** —— 含 Icon / 多 span / 预览组件时 `Field.label` 收不下
+4. **水平排的 Switch/Checkbox 不转** —— 同上，垂直布局破坏内联排版
+
+#### 三项永久保留（不要再进 P3 待办）
+
+| 位置                                | 理由                                                                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `project-share-dialog` 开启协作开关 | 规则 1                                                                                                               |
+| `client-decision-panel` 手写签名    | **它包的是 `<canvas>`，canvas 不可被 label 关联**（`'labels' in canvas === false`）——不是「有图标」的问题            |
+| `document-plugin-settings` 文档样式 | **一个 label 盖着两个 Select，而它们连 `id` 都没有**。真要转，前置是拆成两个带 id 的独立字段 = 改结构，需 owner 点头 |
+
+#### 已核实为死代码 / 适配层本体，不进 P3
+
+- `src/plugins/ai-import/ai-panel.tsx` —— 全仓无引用，仓库 `proposals/2026-11-08` 已标死代码 → 归 P5 清理
+- `src/components/ui/field.tsx` —— 适配层本体 → 归 P5 删除
+- `src/app/(frontend)/(workspace)/projects/[id]/after-sales/after-sales-board.tsx` ——
+  它用的 `Field` 是**文件内自定义的 Label 薄包装**（第 870 行），不是官方组件，不该动
 
 ### P5
 
