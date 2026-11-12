@@ -324,5 +324,10 @@ HOST=ubuntu@124.222.225.26
 - **静态门禁**（本地自托管垫片下实测，退出码）：`oxfmt --check` **0**（580 文件）、
   `tsc --noEmit` **0**、`eslint . --max-warnings 0` **0**、`knowledge:check` **16/16 通过**、
   `pnpm test` **113/113 通过**、`pnpm build` **0**（`.next/BUILD_ID` 已生成）。
-- **CI**：run `43148576258`（push，head `c769a1e`）—— `verify` **success**、`smoke` **success**（双绿）。
+- **CI**（合并前的最终 head `235de9c`）：push run `43149200059` 与 PR run `43149206739`
+  双双 `verify` **success** / `smoke` **success**（4 个 job 全绿）。首轮 head `c769a1e` 的
+  run `43148576258` 亦为双绿，但那只覆盖代码改动，文档回填后的最终 head 才是上表这两个 run。
+- **合并**：PR #110 squash 合并，`merged=true`，merge commit `b209d72`
+  （2026-11-12 03:49:43 UTC）；本地与远端分支均已删除；`main` 已 `pull --ff-only`，
+  `HEAD == origin/main == b209d72`，工作区干净。
 - **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
