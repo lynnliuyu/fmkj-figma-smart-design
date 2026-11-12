@@ -1,21 +1,23 @@
 # P4 浮层原生化 —— 交接文档
 
-> 2026-11-12 11:35 由 fmkj-builder 更新（P4 第 6 批 · 低风险 2 文件 + 1 文件核实无需改动）。
+> 2026-11-12 12:25 由 Alma 更新（P4 第 7 批 · 中风险 2 文件）。
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-12 11:35）
+## 一、当前状态（截至 2026-11-12 12:25）
 
 ```
-main 分支   干净（d025faf = PR #109 的 squash 合并提交）
+main 分支   干净（00269c3 = PR #111 的 squash 合并提交）
 线上        fmkj.top/login 返回 200；端口 13028 来自记忆未复核
 PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
 PR #108     已合并 2026-11-11 17:20 UTC（P4 第 5 批低风险 3 文件）
-PR #109     已合并 2026-11-11（纯文档 docs/p4-handoff-post-merge，回填 #108 状态）
-PR #110     本批（P4 第 6 批：template-picker / share-export-button）—— 状态见文末「本批交付记录」
+PR #109     已合并（纯文档，回填 #108 状态）
+PR #110     已合并 2026-11-12 03:49 UTC（P4 第 6 批：template-picker / share-export-button；merge b209d72）
+PR #111     已合并（纯文档，修正 #110 的 CI 引证；merge 00269c3）
+PR #112     本批（P4 第 7 批：swap-product-dialog / contract-preview）—— 状态见文末「本批交付记录」
 ```
 
-**P4 进度：20 / 34 文件**
+**P4 进度：22 / 34 文件**
 
 | PR   | 文件                                                                                   |
 | ---- | -------------------------------------------------------------------------------------- |
@@ -26,6 +28,7 @@ PR #110     本批（P4 第 6 批：template-picker / share-export-button）—�
 | #107 | delete-project · square-crop-dialog · project-share-dialog                             |
 | #108 | proposal-showcase · quote-showcase · docs-client                                       |
 | #110 | template-picker · share-export-button（+ `design-pilot/detail/page.tsx` 核实无需改动） |
+| #112 | swap-product-dialog · contract-preview                                                 |
 
 > 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
 > `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
@@ -52,9 +55,11 @@ PR #110     本批（P4 第 6 批：template-picker / share-export-button）—�
 ```
 src/components/workspace-dialogs.tsx            已完成（勿重做）
 src/components/info-tip.tsx                     已删（死代码）
-swap-product-dialog.tsx                          Dialog 1 + ScrollArea 1
-contract-preview.tsx                             Dialog 1 + Popover 1 + Select 1 + Textarea 1  ⚠️ Select 是富内容
 quote-editor.tsx                                 Popover 2 + Select 1 + Textarea 1  ⚠️ 1 个 Popover 塞 cmdk
+
+（已在 #112 完成 —— 旧文档计数又是错的，实测：
+ swap-product-dialog.tsx  Dialog 1（文档写 1 ✓）+ ScrollArea 1 ✓
+ contract-preview.tsx     Dialog **2**（文档写 1 ✗，实际是「区块编辑」+「删除确认」两个）
 ```
 
 ### 高风险（最后做）
@@ -331,3 +336,52 @@ HOST=ubuntu@124.222.225.26
   （2026-11-12 03:49:43 UTC）；本地与远端分支均已删除；`main` 已 `pull --ff-only`，
   `HEAD == origin/main == b209d72`，工作区干净。
 - **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
+
+---
+
+## 九、本批交付记录（P4 第 7 批 · 中风险）
+
+- **PR**：[#112](https://github.com/lynnliuyu/fmkj-figma-smart-design/pull/112)，
+  分支 `feat/astryx-native-p4h` → `main`。
+
+### 改了什么（2 文件，均为 Dialog 迁移）
+
+- `src/app/(frontend)/(workspace)/projects/[id]/quotes/[quoteId]/swap-product-dialog.tsx`
+  - Dialog 1 处转官方：`open` → `isOpen`、`sm:max-w-2xl` → `width={672}`、`max-h-[85svh]` → `maxHeight="85svh"`。
+  - 标题保留 `DeviceSymbol` 图标（`<span className="flex items-center gap-2">`）；内容进
+    `LayoutContent padding={5} className="flex min-h-0 flex-col gap-4"`（保留原 `gap-4` 与 flex 骨架）；操作行进 `LayoutFooter hasDivider`。
+  - **ScrollArea 适配层按批次范围原样保留**（未转）。
+- `src/app/(frontend)/(workspace)/projects/[id]/contract/contract-preview.tsx`
+  - **2 个** Dialog 转官方：区块编辑 `576`、`448`；删除确认 `384` + `purpose="form"`（防误点背板）。
+  - 「保存」按钮外移到 `LayoutFooter` 后用 **`form={formId}`** 关联同一个 `<form id="contract-edit-…">`，
+    保证回车提交与点按钮同路径。
+  - **Popover / 富内容 Select / Textarea 适配层按批次范围原样保留**，包裹结构未破坏。
+
+### 结构自检（grep，改后）
+
+- swap：`<Dialog`=1 `</Dialog>`=1、`DialogHeader`=1、旧 `DialogContent/Trigger/Close/Footer/Title/Description`=**0**、`@/components/ui/dialog`=**0**。
+- contract：`<Dialog`=2 `</Dialog>`=2、`DialogHeader`=2、其余旧件全 **0**。
+
+### 静态门禁（本地自托管垫片下实测，退出码）
+
+`oxfmt --check` **0**（580 文件）· `tsc --noEmit` **0** · `eslint . --max-warnings 0` **0** ·
+`knowledge:check` **16/16** · `pnpm test` **113/113** · `pnpm build` **0**（`.next/BUILD_ID=Z0xT1vk0BYQxi6PdZiejk`；`payload-types.ts`/`importMap.js` md5 无漂移）。
+
+### 真机验证（Playwright，本地 dev `:3000`，分时采样 600 / 1500 / 3000ms）
+
+- `swap-product-dialog`（报价 `1c5f2333…` →「更换型号」）：三档均命中（600ms 即中）；**672×590**；标题横排未挤竖；Esc 后关闭。
+- `contract-preview` 区块编辑（「恢复默认条款」外观按钮）：三档均命中；**448×223**；页脚「取消 / 保存」；Esc 后关闭。
+- `contract-preview` 删除确认：三档均命中；**384×136**。
+- **富内容 Select**：弹窗内 `combobox` 展开后选项完整渲染（「湖山赋 全屋智能报价（不含灯具）¥7,562.00 / 整装报价（含灯具）¥29,063.00」），键盘选中后值更新 ✓。
+- **内容可滚**：默认 1440×900 下三个弹窗内容未溢出（fit-content），故改**压缩视口**验证 —— `vh=360` 时 ScrollArea `clientHeight 36 / scrollHeight 94`、`overflowY:auto`、`scrollTop` 移动 58px；全程无横向滚动条。
+- **console error = 0**；仓库自带冒烟 `e2e/smoke.mjs` **22 页通过 / 0 有问题**（无回归）。
+- 截图目录：`/tmp/p4h-shots/`（临时产物，交付后清理）。
+
+### 顺带发现的既有缺陷（**未改，避免越界**）
+
+`contract-preview.tsx` 中 `ContractSectionEdit` 的触发按钮文案写错：`icon={<Pencil/>} label={'恢复默认条款'}`，
+应为「编辑」。这是**既有 bug、与本批 Dialog 迁移无关**，已回退未纳入本批，留待单独修复。
+
+### 边界
+
+不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
