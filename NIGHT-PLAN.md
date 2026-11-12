@@ -215,3 +215,40 @@ design-pilot/page.tsx     ← 按三档策略 T3 永久保留（左右对照页�
 4. **派活时明确告诉 agent：如果发现文件已被改过，先停下报告，不要覆盖。**
 
 这条是今晚最贵的一课：三个 agent 里有两个在并发上浪费了时间。
+| C3 | ✅ 合并 PR #138（剩余 6 文件 / 13 张卡） | squash `00686b6`；真机验 6 页 |
+
+### C3 收官记录
+
+card 迁移完成，全仓只剩 `design-pilot/page.tsx` 一处引用——那是**官方批准的对照页**（§11.5），
+左栏故意保留旧组件作为对照组，删掉它就消掉了这个页面的意义。**这条是永久保留，不是欠账。**
+
+C3 真机验证（分时采样 800/1800/3200ms）：
+
+| 页面             | 卡片 | 几何            | hScroll | console |
+| ---------------- | ---- | --------------- | ------- | ------- |
+| 能力中心         | 9    | 331×195 r=12px  | 0       | 0       |
+| 会员页           | 4    | 1024×116 r=12px | 0       | 0       |
+| 新建项目         | 1    | 768×608 r=12px  | 0       | 0       |
+| 报价编辑         | 3    | 1120×960 r=12px | 0       | 0       |
+| 售后看板         | 7    | 247×78 r=12px   | 0       | 0       |
+| join（失效链接） | —    | 正常降级文案    | 0       | 0       |
+
+### 又两个验证坑（这次记牢）
+
+1. **项目详情页没有站内链接**：`/projects` 列表只给 `/projects/<id>`，进详情后页内
+   **不再有** `/projects/<id>/quotes` 这类链接（Tab 是客户端切换）。
+   → 验证子路由要**手拼 URL**，别指望点链接点进去。真实 ID 可从 `/projects` 抓。
+2. **`/capabilities/<id>` 不存在**，插件详情是 `/plugins/<id>`（上批已记，这次又差点踩）。
+
+### 适配层剩余（22 个文件）
+
+零引用已清（avatar / checkbox）。剩余按引用数：
+
+```
+1x badge card command dialog input-group sheet sonner switch
+2x button kbd progress radio-group scroll-area
+3x separator table
+4x tooltip   5x select sidebar
+```
+
+`card` 那 1 处就是 design-pilot，**不会归零**。
