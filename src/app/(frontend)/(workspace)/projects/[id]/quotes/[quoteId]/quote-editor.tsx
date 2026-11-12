@@ -58,14 +58,9 @@ import {
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Popover } from '@astryxdesign/core/Popover'
+import { Selector } from '@astryxdesign/core/Selector'
+import { TextArea } from '@astryxdesign/core/TextArea'
 import {
   Table,
   TableBody,
@@ -75,7 +70,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
 import { contractStatusLabel } from '@/lib/contracts'
 import { DEVICE_TYPE_ORDER, deviceTypeLabel } from '@/lib/device-types'
 import { registerLeaveGuard } from '@/lib/leave-guard'
@@ -706,25 +700,18 @@ export function QuoteEditor({
             <Label htmlFor="status" className="text-xs font-medium text-muted-foreground">
               报价状态
             </Label>
-            <Select
+            <Selector
+              id="status"
+              label="报价状态"
+              isLabelHidden
+              size="sm"
+              width="100%"
               value={quote.status}
-              onValueChange={(v) => update({ status: v })}
-              disabled={readOnly}
-            >
-              <SelectTrigger
-                id="status"
-                className="h-9 w-full border-border bg-subtle/50 text-xs font-medium"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {QUOTE_STATUSES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              options={QUOTE_STATUSES.map((s) => ({ value: s.value, label: s.label }))}
+              isDisabled={readOnly}
+              onChange={(v) => update({ status: v })}
+              controlClassName="h-9 border-border bg-subtle/50 text-xs font-medium"
+            />
           </div>
         </div>
 
@@ -1013,11 +1000,17 @@ export function QuoteEditor({
                   </DropdownMenu>
                 </div>
               ) : null}
-              <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="secondary" size="sm" icon={<Plus />} label="添加产品" />
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-96 p-0">
+              <Popover
+                label="添加产品"
+                placement="below"
+                alignment="end"
+                // 原 `PopoverContent className="w-96 p-0"`：`w-96` = 384 是浮层外框宽度，
+                // 官方只有 `width` 能设；`p-0` 对应 `padding={0}`，内边距交给 cmdk 自己。
+                width={384}
+                padding={0}
+                isOpen={pickerOpen}
+                onOpenChange={setPickerOpen}
+                content={
                   <Command>
                     <CommandInput placeholder="搜索产品名称、型号、品牌或设备类型" />
                     <CommandList className="max-h-96">
@@ -1061,7 +1054,9 @@ export function QuoteEditor({
                       ))}
                     </CommandList>
                   </Command>
-                </PopoverContent>
+                }
+              >
+                <Button variant="secondary" size="sm" icon={<Plus />} label="添加产品" />
               </Popover>
             </div>
           )}
@@ -1701,13 +1696,15 @@ export function QuoteEditor({
 
       <div className="grid gap-2">
         <Label htmlFor="notes">报价备注</Label>
-        <Textarea
+        <TextArea
           id="notes"
+          label="报价备注"
+          isLabelHidden
           rows={3}
           value={quote.notes}
-          disabled={readOnly}
+          isDisabled={readOnly}
           placeholder="例如：报价有效期 30 天；含一年免费上门维护"
-          onChange={(e) => update({ notes: e.target.value })}
+          onChange={(v) => update({ notes: v })}
         />
       </div>
 
@@ -1862,52 +1859,60 @@ function MarginCapsule({
   }
   return (
     <div className="fixed right-4 bottom-4 z-30 flex items-center rounded-full bg-foreground text-background shadow-xl md:right-6 md:bottom-6 print:hidden">
-      <Popover>
-        <PopoverTrigger asChild>
-          <button
-            type="button"
-            className="flex h-10 items-center gap-2.5 rounded-l-full pr-2 pl-4 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            aria-label="查看内部毛利核算"
-          >
-            <span
-              aria-hidden
-              className={cn(
-                'size-2 rounded-full',
-                tone === 'below' ? 'bg-destructive' : tone === 'near' ? 'bg-warning' : 'bg-success',
-              )}
-            />
-            <span className="text-background/70">毛利</span>
-            <span className="font-semibold tabular-nums">{yuan(margin.profit)}</span>
-            <span className="tabular-nums text-background/80">{pct(margin.rate)}</span>
-          </button>
-        </PopoverTrigger>
-        <PopoverContent side="top" align="end" className="w-80">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-sm font-medium">内部毛利核算</p>
-            <Badge
-              variant={tone === 'below' ? 'error' : tone === 'near' ? 'warning' : 'success'}
-              label={tone === 'below' ? '低于底线' : tone === 'near' ? '接近底线' : '毛利健康'}
-            />
-          </div>
-          <MarginBreakdown margin={margin} settings={settings} />
-          <p className="mt-3 text-xs text-muted-foreground">
-            成本依据：
-            {[
-              margin.sources.brand ? `品牌折扣 ${margin.sources.brand} 行` : null,
-              margin.sources.catalog ? `产品库成本 ${margin.sources.catalog} 行` : null,
-              margin.sources.default ? `默认折扣 ${margin.sources.default} 行` : null,
-            ]
-              .filter(Boolean)
-              .join(' · ') || '暂无'}
-            。仅你自己可见，不会打印或出现在分享页。
-          </p>
-          <GuardedLink
-            href="/settings#cost"
-            className="mt-2 inline-flex text-xs font-medium underline-offset-4 hover:underline"
-          >
-            调整拿货折扣与毛利率底线 →
-          </GuardedLink>
-        </PopoverContent>
+      <Popover
+        label="内部毛利核算"
+        // 原 `side="top" align="end"` → 官方 `placement` / `alignment`。
+        placement="above"
+        alignment="end"
+        // 原 `PopupContent className="w-80"`：`w-80` = 320。padding 保持官方默认 3 —— 原浮层
+        // 有内边距（内容直接贴 PopoverContent，没有 p-0），转官方后默认 12px 与之相当。
+        width={320}
+        content={
+          <>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium">内部毛利核算</p>
+              <Badge
+                variant={tone === 'below' ? 'error' : tone === 'near' ? 'warning' : 'success'}
+                label={tone === 'below' ? '低于底线' : tone === 'near' ? '接近底线' : '毛利健康'}
+              />
+            </div>
+            <MarginBreakdown margin={margin} settings={settings} />
+            <p className="mt-3 text-xs text-muted-foreground">
+              成本依据：
+              {[
+                margin.sources.brand ? `品牌折扣 ${margin.sources.brand} 行` : null,
+                margin.sources.catalog ? `产品库成本 ${margin.sources.catalog} 行` : null,
+                margin.sources.default ? `默认折扣 ${margin.sources.default} 行` : null,
+              ]
+                .filter(Boolean)
+                .join(' · ') || '暂无'}
+              。仅你自己可见，不会打印或出现在分享页。
+            </p>
+            <GuardedLink
+              href="/settings#cost"
+              className="mt-2 inline-flex text-xs font-medium underline-offset-4 hover:underline"
+            >
+              调整拿货折扣与毛利率底线 →
+            </GuardedLink>
+          </>
+        }
+      >
+        <button
+          type="button"
+          className="flex h-10 items-center gap-2.5 rounded-l-full pr-2 pl-4 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          aria-label="查看内部毛利核算"
+        >
+          <span
+            aria-hidden
+            className={cn(
+              'size-2 rounded-full',
+              tone === 'below' ? 'bg-destructive' : tone === 'near' ? 'bg-warning' : 'bg-success',
+            )}
+          />
+          <span className="text-background/70">毛利</span>
+          <span className="font-semibold tabular-nums">{yuan(margin.profit)}</span>
+          <span className="tabular-nums text-background/80">{pct(margin.rate)}</span>
+        </button>
       </Popover>
       <span aria-hidden className="h-5 w-px bg-background/20" />
       <button
