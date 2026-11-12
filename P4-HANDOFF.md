@@ -4,10 +4,10 @@
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-12 13:55）
+## 一、当前状态（截至 2026-11-12 14:35）
 
 ```
-main 分支   干净（d858efe = PR #115 的 squash 合并提交）
+main 分支   干净（2eed1f4 = PR #117 的 squash 合并提交）
 线上        fmkj.top/login 返回 200；端口 13028 来自记忆未复核
 PR #107     已合并（P4 第 4 批）
 PR #108     已合并（P4 第 5 批）
@@ -18,9 +18,11 @@ PR #112     已合并（P4 第 7 批：swap-product-dialog / contract-preview）
 PR #113     已合并（fix：Popover 适配层「真实鼠标点不开」双重 toggle —— 见 §十）
 PR #114     已合并（P4 第 8 批：quote-editor）
 PR #115     已合并（P4 第 9 批：editor-panels）
+PR #116     已合并（纯文档）
+PR #117     已合并（P4 第 10 批：point-map-editor —— **P4 最后一个文件**）
 ```
 
-**P4 进度：25 / 34 文件**
+**P4 进度：26 / 34 文件 —— P4 浮层档位已全部迁完**
 
 | PR   | 文件                                                                                   |
 | ---- | -------------------------------------------------------------------------------------- |
@@ -34,6 +36,7 @@ PR #115     已合并（P4 第 9 批：editor-panels）
 | #112 | swap-product-dialog · contract-preview                                                 |
 | #114 | quote-editor                                                                           |
 | #115 | editor-panels                                                                          |
+| #117 | point-map-editor                                                                       |
 
 > 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
 > `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
@@ -71,11 +74,15 @@ src/components/info-tip.tsx                     已删（死代码）
 ### 高风险（最后做）
 
 ```
-point-map-editor.tsx       五组件全有，4000+ 行，最重（唯一剩下的高风险）
+（**本档已清空** —— editor-panels 在 #115 完成、point-map-editor 在 #117 完成）
 
-（editor-panels 已在 #115 完成 —— 旧文档写「ScrollArea 3」是错的，实测 **2**；
-  Select 3 全部迁移，其中第 3 处设备类型是富内容，改用 SelectorSection.title + renderOption，
-  色点挪到每项 option 的 icon）
+editor-panels（#115）纠正：旧文档写「ScrollArea 3」是错的，实测 **2**；Select 3 全迁，
+第 3 处设备类型富内容改用 SelectorSection.title + renderOption，色点挪到 option 的 icon。
+
+point-map-editor（#117）：Dialog ×4（384/384/384/448）+ ScrollArea + Select + Tabs 全迁。
+**唯一未验项**：灯具「尺寸」Selector 的真机展开选值 —— demo 项目 41 个点位无灯具点位
+（无 lt- 前缀），本地库无 point_maps 表无法造数，仅有静态证据（tsc + 官方 API 签名核对）。
+线上或补数据后应点一次确认。
 ```
 
 ### P3 剩余（表单型，需单独评估）
@@ -442,3 +449,37 @@ point-map-editor.tsx        高风险，五组件全有，4000+ 行 —— P4 �
 P3 表单剩余                 Label 53 / Select 14 / Textarea 8 / Input 20 / Card 40
 P5                          删适配层 30 个文件（先 grep 确认零引用）
 ```
+
+---
+
+## 十一、P4 收官（2026-11-12 14:35）
+
+### 浮层档位（Dialog / Popover / Drawer 系）已全部迁完：26 / 34
+
+`#99 #102 #104 #105 #107 #108 #110 #112 #114 #115 #117` 共 **11 个批次 PR**，
+另加 4 个纯文档/修复 PR（`#109 #111 #113 #116`）。
+
+**`#113` 是这轮最有价值的一笔**：它修的不是迁移，而是一个**线上用户真实遇到的 bug** ——
+Popover 适配层的双重 toggle + 非受控判定错误，导致「添加产品」「毛利」两个浮层
+**用真实鼠标点不开**。而这个 bug 之所以能藏很久，是因为自动化测试用 `element.click()`
+只走官方那条监听路径，**合成事件测不出真实缺陷**。
+
+### 剩下 21 个文件的真实构成（不是浮层）
+
+grep `@/components/ui/(dialog|tabs|popover|select|scroll-area|dropdown-menu|sheet|tooltip)`
+仍命中的文件，主要是 **dropdown-menu / tooltip / sheet / command / sidebar** 这几类，
+**不在 P4 的 Dialog/Popover 档位里**，属于：
+
+```
+P3 表单剩余     Label 53 / Select 14 / Textarea 8 / Input 20 / Card 40
+P5 适配层清理   删 src/components/ui/*.tsx（先 grep 确认零引用）
+其他浮层类      dropdown-menu / tooltip / sheet / command / sidebar（需单独评估档位）
+```
+
+### 本轮沉淀的验证纪律（写进肌肉记忆）
+
+1. **交互验证必须用真实鼠标 `page.mouse.click(x,y)`**，不要 `element.click()`。
+2. **视口外元素先 `scrollIntoViewIfNeeded()`** 再取 boundingBox，否则点击落空会被误判成"打不开"。
+3. **分时采样 600 / 1500 / 3000ms**，不要单点断言。
+4. **Tab 选中态只信 `data-selected`** —— 实测本仓 `aria-current` 全为 `null`，`aria-selected` 也不可靠。
+5. **旧文档的组件计数不可信**，每批开工先 grep 定界。
