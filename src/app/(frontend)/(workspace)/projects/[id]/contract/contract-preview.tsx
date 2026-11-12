@@ -29,7 +29,7 @@ import {
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Popover } from '@astryxdesign/core/Popover'
 import {
   Select,
   SelectContent,
@@ -548,16 +548,14 @@ export function ContractActions({
         />
       ) : (
         <>
-          <Popover open={signOpen} onOpenChange={setSignOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                size="sm"
-                isDisabled={busy !== null}
-                icon={<FileSignature />}
-                label="标记为已签订"
-              />
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-72">
+          <Popover
+            isOpen={signOpen}
+            onOpenChange={setSignOpen}
+            placement="below"
+            alignment="end"
+            label="标记为已签订"
+            width={288}
+            content={
               <form
                 className="grid gap-3"
                 onSubmit={(e) => {
@@ -589,7 +587,14 @@ export function ContractActions({
                   label="确认签订"
                 />
               </form>
-            </PopoverContent>
+            }
+          >
+            <Button
+              size="sm"
+              isDisabled={busy !== null}
+              icon={<FileSignature />}
+              label="标记为已签订"
+            />
           </Popover>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
