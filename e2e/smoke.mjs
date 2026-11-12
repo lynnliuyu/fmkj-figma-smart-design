@@ -110,7 +110,13 @@ async function main() {
   console.log(`\n▶ 冒烟测试  ${BASE}\n`)
   await page.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 15000 })
   await sleep(2500)
-  const tab = page.getByRole('tab', { name: /邮箱/ }).first()
+  // ⚠️ 官方 Astryx `Tab` 渲染成 `button.astryx-tab`，**没有 `role="tab"`**
+  // （2026-11-12 实测：getByRole('tab') 得 0 个元素 → 登录页冒烟失败）。
+  // 选中态只有 `data-selected="selected"`。
+  const tab = page
+    .locator('button.astryx-tab')
+    .filter({ hasText: /邮箱/ })
+    .first()
   if (await tab.count()) {
     await tab.click()
     await sleep(800)
