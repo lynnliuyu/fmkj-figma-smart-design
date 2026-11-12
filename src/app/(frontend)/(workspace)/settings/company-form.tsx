@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
+import { Field } from '@astryxdesign/core/Field'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -58,8 +59,7 @@ function ImageField({
     setRemoved(false)
   }
   return (
-    <div className="grid gap-2">
-      <Label htmlFor={name}>{label}</Label>
+    <Field label={label} inputID={name}>
       <div className="flex items-center gap-3">
         <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted/40">
           {preview ? (
@@ -137,7 +137,7 @@ function ImageField({
           }}
         />
       ) : null}
-    </div>
+    </Field>
   )
 }
 
@@ -186,8 +186,7 @@ export function CompanyForm({
     label: string,
     props: React.ComponentProps<typeof Input> = {},
   ) => (
-    <div className="grid gap-2">
-      <Label htmlFor={name}>{label}</Label>
+    <Field label={label} inputID={name}>
       <Input
         id={name}
         name={name}
@@ -195,7 +194,7 @@ export function CompanyForm({
         aria-invalid={error?.field === name ? true : undefined}
         {...props}
       />
-    </div>
+    </Field>
   )
 
   return (
@@ -258,8 +257,7 @@ export function CompanyForm({
           <CardDescription>新建报价与合同时自动带入</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-5">
-          <div className="grid gap-2">
-            <Label htmlFor="quoteNotes">报价备注</Label>
+          <Field label="报价备注" inputID="quoteNotes">
             <Textarea
               id="quoteNotes"
               name="quoteNotes"
@@ -268,9 +266,8 @@ export function CompanyForm({
               defaultValue={initial.quoteNotes}
               placeholder="例如：报价有效期 30 天；设备质保一年，含一年免费上门维护"
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="contractTerms">合同条款</Label>
+          </Field>
+          <Field label="合同条款" inputID="contractTerms">
             <Textarea
               id="contractTerms"
               name="contractTerms"
@@ -279,7 +276,7 @@ export function CompanyForm({
               defaultValue={initial.contractTerms}
               className="leading-relaxed"
             />
-          </div>
+          </Field>
           <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
             <Label htmlFor="printProductImages">打印报价单时显示产品缩略图</Label>
             <Switch
