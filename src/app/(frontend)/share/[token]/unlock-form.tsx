@@ -4,8 +4,8 @@ import { useState, useTransition } from 'react'
 import { KeyRound, Loader2 } from 'lucide-react'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
-import { Label } from '@/components/ui/label'
 
 import { unlockShareLink } from './actions'
 
@@ -47,10 +47,7 @@ export function UnlockForm({ token }: { token: string }) {
           </p>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="share-unlock-password" className="text-xs font-medium">
-            访问密码
-          </Label>
+        <Field label="访问密码" inputID="share-unlock-password">
           <TextInput
             label={'请输入密码'}
             isLabelHidden
@@ -69,7 +66,7 @@ export function UnlockForm({ token }: { token: string }) {
               {error}
             </p>
           ) : null}
-        </div>
+        </Field>
 
         <Button
           type="submit"

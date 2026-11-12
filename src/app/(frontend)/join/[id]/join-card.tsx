@@ -6,8 +6,8 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
-import { Label } from '@/components/ui/label'
 import type { CollaboratorRole } from '@/lib/project-access'
 
 export function JoinCard({
@@ -82,10 +82,7 @@ export function JoinCard({
           void submit('login')
         }}
       >
-        <div className="grid gap-1.5">
-          <Label htmlFor="join-email" className="text-xs">
-            成员邮箱
-          </Label>
+        <Field label="成员邮箱" inputID="join-email">
           <TextInput
             label={'name@example.com'}
             isLabelHidden
@@ -96,11 +93,8 @@ export function JoinCard({
             onChange={(v) => setEmail(v)}
             placeholder="name@example.com"
           />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="join-password" className="text-xs">
-            密码
-          </Label>
+        </Field>
+        <Field label="密码" inputID="join-password">
           <TextInput
             label={'••••••'}
             isLabelHidden
@@ -111,7 +105,7 @@ export function JoinCard({
             onChange={(v) => setPassword(v)}
             placeholder="••••••"
           />
-        </div>
+        </Field>
         {error ? <p className="text-xs text-destructive">{error}</p> : null}
         <Button
           type="submit"

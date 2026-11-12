@@ -7,6 +7,7 @@ import { money, SectionHeader } from '@/components/landing/section'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -437,8 +438,7 @@ export function ClientDecisionPanel({
                 </div>
 
                 <div className="mt-4 grid gap-3">
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="fb-name">您的称呼</Label>
+                  <Field label="您的称呼" inputID="fb-name">
                     <TextInput
                       label={'例如：王先生'}
                       isLabelHidden
@@ -451,9 +451,8 @@ export function ClientDecisionPanel({
                     {errors.customerName ? (
                       <p className="text-xs text-destructive-strong">{errors.customerName}</p>
                     ) : null}
-                  </div>
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="fb-phone">联系电话（可选）</Label>
+                  </Field>
+                  <Field label="联系电话（可选）" inputID="fb-phone">
                     <TextInput
                       label={'fb-phone'}
                       isLabelHidden
@@ -466,11 +465,11 @@ export function ClientDecisionPanel({
                     {errors.customerPhone ? (
                       <p className="text-xs text-destructive-strong">{errors.customerPhone}</p>
                     ) : null}
-                  </div>
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="fb-message">
-                      {decision === 'revise' ? '希望调整的地方' : '给设计师的留言（可选）'}
-                    </Label>
+                  </Field>
+                  <Field
+                    label={decision === 'revise' ? '希望调整的地方' : '给设计师的留言（可选）'}
+                    inputID="fb-message"
+                  >
                     <Textarea
                       id="fb-message"
                       rows={3}
@@ -487,7 +486,7 @@ export function ClientDecisionPanel({
                     {errors.message ? (
                       <p className="text-xs text-destructive-strong">{errors.message}</p>
                     ) : null}
-                  </div>
+                  </Field>
                   <div className="grid gap-1.5">
                     <Label className="flex items-center gap-1.5">
                       <PenLine className="size-3.5" />
