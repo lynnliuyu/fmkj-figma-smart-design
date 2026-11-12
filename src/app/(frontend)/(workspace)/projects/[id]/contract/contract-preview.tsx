@@ -29,6 +29,7 @@ import {
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Field } from '@astryxdesign/core/Field'
 import { Popover } from '@astryxdesign/core/Popover'
 import {
   Select,
@@ -140,8 +141,7 @@ export function ContractSectionEdit({
     label: string,
     props: React.ComponentProps<typeof Input> = {},
   ) => (
-    <div className="grid gap-2">
-      <Label htmlFor={`contract-${id}`}>{label}</Label>
+    <Field label={label} inputID={`contract-${id}`}>
       <Input
         id={`contract-${id}`}
         className="h-9"
@@ -149,11 +149,10 @@ export function ContractSectionEdit({
         onChange={(e) => set({ [id]: e.target.value })}
         {...props}
       />
-    </div>
+    </Field>
   )
   const int = (id: 'durationDays' | 'warrantyMonths', label: string, unit: string, max: number) => (
-    <div className="grid gap-2">
-      <Label htmlFor={`contract-${id}`}>{label}</Label>
+    <Field label={label} inputID={`contract-${id}`}>
       <div className="relative">
         <Input
           id={`contract-${id}`}
@@ -172,7 +171,7 @@ export function ContractSectionEdit({
           {unit}
         </span>
       </div>
-    </div>
+    </Field>
   )
 
   const fields = () => {
@@ -196,8 +195,7 @@ export function ContractSectionEdit({
       case 'amount':
         return (
           <>
-            <div className="grid gap-2">
-              <Label htmlFor="contract-quote">依据报价</Label>
+            <Field label="依据报价" inputID="contract-quote">
               <Select
                 value={draft.quoteId}
                 onValueChange={(v) => {
@@ -221,7 +219,7 @@ export function ContractSectionEdit({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </Field>
             <div className="grid gap-2">
               <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="contract-amount">合同金额</Label>
@@ -569,8 +567,7 @@ export function ContractActions({
                     签订后合同与依据的报价都会锁定，仍可登记收款。
                   </p>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="contract-sign-date">签订日期</Label>
+                <Field label="签订日期" inputID="contract-sign-date">
                   <Input
                     id="contract-sign-date"
                     type="date"
@@ -578,7 +575,7 @@ export function ContractActions({
                     max={shanghaiDate()}
                     onChange={(e) => setSignDate(e.target.value)}
                   />
-                </div>
+                </Field>
                 <Button
                   type="submit"
                   size="sm"
