@@ -1,41 +1,50 @@
 # P4 浮层原生化 —— 交接文档
 
-> 2026-11-12 01:10 由 fmkj-builder 更新（P4 第 5 批 · 低风险 3 文件）。
+> 2026-11-12 11:35 由 fmkj-builder 更新（P4 第 6 批 · 低风险 2 文件 + 1 文件核实无需改动）。
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-12 01:10）
+## 一、当前状态（截至 2026-11-12 11:35）
 
 ```
-main 分支   干净（ba5301b = PR #108 的 squash 合并提交）
-线上        fmkj.top/login 返回 200（本轮 curl 复核）；端口 13028 来自记忆未复核
+main 分支   干净（d025faf = PR #109 的 squash 合并提交）
+线上        fmkj.top/login 返回 200；端口 13028 来自记忆未复核
 PR #107     已合并 2026-11-11 14:23 UTC（P4 第 4 批：delete-project / square-crop-dialog / project-share-dialog）
-PR #108     已合并 2026-11-11 17:20 UTC（P4 第 5 批低风险 3 文件）—— 详见文末「本批交付记录」
+PR #108     已合并 2026-11-11 17:20 UTC（P4 第 5 批低风险 3 文件）
+PR #109     已合并 2026-11-11（纯文档 docs/p4-handoff-post-merge，回填 #108 状态）
+PR #110     本批（P4 第 6 批：template-picker / share-export-button）—— 状态见文末「本批交付记录」
 ```
 
-**P4 进度：17 / 34 文件**
+**P4 进度：20 / 34 文件**
 
-| PR   | 文件                                                       |
-| ---- | ---------------------------------------------------------- |
-| #99  | board-toolbar · lighting-panel                             |
-| #102 | beta-doc-link · workspace-dialogs · plan-demo              |
-| #104 | app-sidebar · reports-client · after-sales-board           |
-| #105 | delivery-package · social-poster-dialog · print-toolbar    |
-| #107 | delete-project · square-crop-dialog · project-share-dialog |
-| #108 | proposal-showcase · quote-showcase · docs-client           |
+| PR   | 文件                                                                                   |
+| ---- | -------------------------------------------------------------------------------------- |
+| #99  | board-toolbar · lighting-panel                                                         |
+| #102 | beta-doc-link · workspace-dialogs · plan-demo                                          |
+| #104 | app-sidebar · reports-client · after-sales-board                                       |
+| #105 | delivery-package · social-poster-dialog · print-toolbar                                |
+| #107 | delete-project · square-crop-dialog · project-share-dialog                             |
+| #108 | proposal-showcase · quote-showcase · docs-client                                       |
+| #110 | template-picker · share-export-button（+ `design-pilot/detail/page.tsx` 核实无需改动） |
 
 > 注：仓库实际核对结果 —— `docs-client.tsx` 只有 **1 个 Dialog**（旧文档写「Dialog 4」是错的）；
 > `proposal-showcase` 3 组 Tabs、`quote-showcase` 4 组 Tabs 均与旧文档一致。
 > 本批完成后这 3 个文件已不在「还没做」清单里。
+>
+> 本批（#110）核对结果 —— 剩余清单里这 3 个文件的 Dialog 数旧文档全部写错：
+> `design-pilot/detail/page.tsx`、`template-picker.tsx`、`share-export-button.tsx`
+> **实际各只有 1 个 `<Dialog>`**（旧文档分别写 2 / 5 / 5）。已 grep 核对 `<Dialog\b` 与 `</Dialog>` 均成对为 1。
+>
+> 其中 `design-pilot/detail/page.tsx` 进一步核实为**纯官方写法、无需改动**（已 `import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'`，
+> 用的就是官方 `isOpen` / `onOpenChange` / `header={<DialogHeader …/>}` 三槽模型），
+> 已从剩余清单移除。故本批净推进 **3 个文件**（2 个改动 + 1 个核实无需改）。
 
 ## 二、还没做的（按风险排序）
 
 ### 低风险（Dialog 为主，模式已成熟）
 
 ```
-src/app/(frontend)/design-pilot/detail/page.tsx Dialog 2
-src/plugins/proposal/template-picker.tsx        Dialog 5
-src/app/(frontend)/share/[token]/share-export-button.tsx  Dialog 5
+（本批已清空 —— 原 3 项中 2 项已在 #110 改造、1 项核实无需改动，见 §一 注）
 ```
 
 ### 中风险
@@ -44,7 +53,7 @@ src/app/(frontend)/share/[token]/share-export-button.tsx  Dialog 5
 src/components/workspace-dialogs.tsx            已完成（勿重做）
 src/components/info-tip.tsx                     已删（死代码）
 swap-product-dialog.tsx                          Dialog 1 + ScrollArea 1
-contract-preview.tsx                             Dialog 2 + Popover 1 + Select 1 + Textarea 1  ⚠️ Select 是富内容
+contract-preview.tsx                             Dialog 1 + Popover 1 + Select 1 + Textarea 1  ⚠️ Select 是富内容
 quote-editor.tsx                                 Popover 2 + Select 1 + Textarea 1  ⚠️ 1 个 Popover 塞 cmdk
 ```
 
@@ -132,21 +141,37 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 
 ### 3.3 改完必跑
 
+> **⚠️ 修正（2026-11-12，第 6 批实测）：** 本节旧文写的「`cp` 备份 → 覆盖成自托管垫片 → 跑完
+> `git checkout -- src/payload.config.ts` 还原成 `buildFigmaConfig`」**在本仓已失效**。
+> `main` 上的 `src/payload.config.ts` **本身就是自托管垫片**，内容就是
+> `export { default } from './payload.selfhost.config'`（第 6 批 `head -1` 实测确认）。
+> 所以既**不需要**先覆盖，也**不能**在跑完后 `git checkout` 还原 —— 还原会把垫片换回来（no-op），
+> 而若有人误把它还原成 Figma 版，反而会被 `git status` 抓到脏改动。
+> 正确做法：**直接设环境变量跑门禁，不要动 `src/payload.config.ts`**（`scripts/dev-local.sh` 内部
+> 那套 `mktemp` 备份 + `trap restore` 的逻辑就是防这个，它也是把垫片写进去，跑完还原成垫片）。
+
 ```sh
 cd /Users/noonebook/Downloads/DreamStars/fmkj-latest
-cp src/payload.config.ts /tmp/pc.bak
-printf "export { default } from './payload.selfhost.config'\n" > src/payload.config.ts
-export PAYLOAD_CONFIG_PATH=src/payload.selfhost.config.ts PAYLOAD_SECRET=x
-export DATABASE_URI="postgres://fmkj@127.0.0.1:55432/fmkj_ci" NEXT_TELEMETRY_DISABLED=1
+# 先确认当前配置就是自托管垫片（必须打印出 export { default } from './payload.selfhost.config'）
+head -1 src/payload.config.ts
+
+export PAYLOAD_CONFIG_PATH=src/payload.selfhost.config.ts
+export PAYLOAD_SECRET=ci-build-placeholder-not-for-runtime
+export DATABASE_URI="postgres://fmkj:build-only@127.0.0.1:5432/fmkj"   # 静态门禁不连库，占位即可
+export PUBLIC_URL=http://localhost:3000 NEXT_TELEMETRY_DISABLED=1
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 pnpm exec oxfmt                    # 先格式化（否则 --check 会挂）
 pnpm exec oxfmt --check
 pnpm exec tsc --noEmit
 pnpm exec eslint . --max-warnings 0
+pnpm run knowledge:check
 pnpm test
-git checkout -- src/payload.config.ts
+pnpm build                         # ⚠️ 会重写 src/payload-types.ts 与 importMap.js，跑完必须还原
+git checkout -- src/payload-types.ts "src/app/(payload)/admin/importMap.js"
 ```
+
+**真机验证**用 `bash scripts/dev-up.sh 3000`（需要真实库 `:55432`）。
 
 ### 3.4 结构自检（**tsc 查不出的坑**）
 
@@ -263,4 +288,41 @@ HOST=ubuntu@124.222.225.26
   - 本地 `tsc --noEmit` / `knowledge:check` / `pnpm build` 与真机点开验证：上一轮已完成。
   - `https://fmkj.top/login` 本轮 curl 复核返回 200；端口 `13028` 未复核。
   - CI verify / smoke：双 success（run `43066047832`，head `1b9ef71`；verify 含代码格式检查）。
+- **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
+
+## 八、本批交付记录（P4 第 6 批）
+
+- **PR**：[#110](https://github.com/lynnliuyu/fmkj-figma-smart-design/pull/110)，
+  分支 `feat/astryx-native-p4g` → `main`（squash 合并）。
+- **3 个文件**（2 改动 + 1 核实无需改动）：
+  - `src/plugins/proposal/template-picker.tsx` —— `Dialog` 1 处转官方。
+  - `src/app/(frontend)/share/[token]/share-export-button.tsx` —— `Dialog` 1 处转官方。
+  - `src/app/(frontend)/design-pilot/detail/page.tsx` —— **核实已是纯官方写法，无需改动**
+    （已 `import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'`），从剩余清单移除。
+- **template-picker 的三个结构点**：
+  1. 宽的用途 TabList **不进** `DialogHeader.endContent`（会挤竖标题），移进内容区顶部；
+     `endContent` 只留窄按钮「对比模板」。
+  2. `padding={0}` + 内联 `style={{ height: 'min(880px,94vh)' }}` 补回原 `h-[…]` 定高 ——
+     预览视图的 iframe 靠容器高度算缩放比例，fit-content 会算成 0。
+  3. 官方无 `DialogTrigger`，用 `cloneElement` 把 `reset(true)` 合成到调用点传入的 `trigger` 上。
+- **share-export-button：与 twin 对齐（可验证的理由）**：
+  上一轮擅自加了 2 处 `mt-4`，与同型已合并文件 `print-toolbar.tsx` 不一致。本批删除。
+  旧适配层 `DialogContent` 的内层是 `<div className={cn('relative', className)}>` ——
+  **纯 block、不是 flex/grid**，故旧的 `gap-4` 从未生效、子元素本就紧贴；`print-toolbar.tsx`
+  转官方后亦无 `mt-4`，即**忠实迁移**。以 twin 写法为准，不另创一套。
+- **真机验证**（Playwright，本地 dev `:3000`，分时采样 600 / 1500 / 3000ms，不单点断言）：
+  - `template-picker`（`/projects/431ffb2c-…/archive` → 「交付方案模板」入口）：
+    首次命中 **607ms**；弹窗 **1220×846**；标题 `1070×32` **横排未被挤竖**；
+    内容区 `scrollHeight 1449 / clientHeight 772` 确实可滚（`scrollTop 0 → 300` 生效）；
+    `endContent` 窄按钮「对比模板」106px；预览视图 iframe `1220×769`（定高生效）；
+    console error **0**。
+  - `share-export-button`（本地库 `proj 431ffb2c-…` 的 `share_config.token`，`enabled:true`、
+    无过期、无密码；真实点「下载方案与报价 PDF」导出 3 页 PDF）：
+    首次命中 **1504ms**；弹窗 **512×566**；console error **0**。
+  - `mt-4` 视觉对比（同一指标 = 说明框 bottom → 按钮行 top 的间距）：
+    删前 `gapPx=16` / twin `gapPx=0` / 删后 `gapPx=0` → **已与 twin 一致**。
+- **静态门禁**（本地自托管垫片下实测，退出码）：`oxfmt --check` **0**（580 文件）、
+  `tsc --noEmit` **0**、`eslint . --max-warnings 0` **0**、`knowledge:check` **16/16 通过**、
+  `pnpm test` **113/113 通过**、`pnpm build` **0**（`.next/BUILD_ID` 已生成）。
+- **CI**：run `43148576258`（push，head `c769a1e`）—— `verify` **success**、`smoke` **success**（双绿）。
 - **边界**：不含生产部署 / 影子发布 / Caddy 端口切换，留给 owner。
