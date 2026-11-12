@@ -22,7 +22,7 @@ import { Button } from '@astryxdesign/core/Button'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 
 const LOGIN_METHOD_KEY = 'fmkj-login-method'
 const rememberMethod = (method: 'wechat' | 'password') => {
@@ -665,88 +665,85 @@ export function LoginForm({
           />
         </form>
       ) : qrAvailable ? (
-        <Tabs
-          value={loginTab}
-          onValueChange={(v) => {
-            setLoginTab(v === 'password' ? 'password' : 'wechat')
-            setError('')
-          }}
-          className="gap-6"
-        >
-          <TabsList className="w-full">
-            <TabsTrigger value="wechat">
-              <QrCode className="size-3.5" />
-              微信扫码登录
-            </TabsTrigger>
-            <TabsTrigger value="password">
-              <Mail className="size-3.5" />
-              邮箱密码登录
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col gap-6">
+          <TabList
+            value={loginTab}
+            onChange={(v: string) => {
+              setLoginTab(v === 'password' ? 'password' : 'wechat')
+              setError('')
+            }}
+            layout="fill"
+            aria-label="登录方式"
+          >
+            <Tab value="wechat" label="微信扫码登录" icon={<QrCode className="size-3.5" />} />
+            <Tab value="password" label="邮箱密码登录" icon={<Mail className="size-3.5" />} />
+          </TabList>
 
-          <TabsContent value="wechat" className="space-y-4">
-            {errorAlert}
-            <div className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-6 text-center">
-              {/* 二维码需要白底才能被稳定识别，深色模式下也保持白底 */}
-              <div className="relative flex size-48 items-center justify-center overflow-hidden rounded-xl border bg-white p-2 shadow-2xs">
-                {qrStatus === 'loading' ? (
-                  <Loader2 className="size-6 animate-spin text-muted-foreground" />
-                ) : qrImage ? (
-                  <Image
-                    src={qrImage}
-                    alt="微信小程序扫码登录"
-                    width={176}
-                    height={176}
-                    unoptimized
-                    className="size-full object-contain"
-                  />
-                ) : null}
+          {loginTab === 'wechat' ? (
+            <div className="space-y-4">
+              {errorAlert}
+              <div className="flex flex-col items-center gap-3 rounded-2xl border bg-card p-6 text-center">
+                {/* 二维码需要白底才能被稳定识别，深色模式下也保持白底 */}
+                <div className="relative flex size-48 items-center justify-center overflow-hidden rounded-xl border bg-white p-2 shadow-2xs">
+                  {qrStatus === 'loading' ? (
+                    <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                  ) : qrImage ? (
+                    <Image
+                      src={qrImage}
+                      alt="微信小程序扫码登录"
+                      width={176}
+                      height={176}
+                      unoptimized
+                      className="size-full object-contain"
+                    />
+                  ) : null}
 
-                {qrStatus === 'expired' ? (
+                  {qrStatus === 'expired' ? (
+                    <Button
+                      variant="ghost"
+                      onClick={() => void createQr()}
+                      className="absolute inset-0 h-auto flex-col gap-2 rounded-none bg-background/90 text-xs backdrop-blur-xs hover:bg-background/95"
+                      icon={<RefreshCw />}
+                      label="二维码已过期，点击刷新"
+                    />
+                  ) : qrStatus === 'confirmed' ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/95 text-xs font-medium text-success">
+                      <CheckCircle2 className="size-6" />
+                      <span>扫码成功，正在进入工作台…</span>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-sm font-medium">请使用微信小程序扫码登录</div>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {qrPreferMode === 'wxacode'
+                      ? '直接用微信扫一扫，或打开小程序点「扫码登录电脑」'
+                      : '请打开小程序 → 点击首页或「我的」里的「扫码登录电脑」扫此码'}
+                  </p>
                   <Button
+                    type="button"
                     variant="ghost"
-                    onClick={() => void createQr()}
-                    className="absolute inset-0 h-auto flex-col gap-2 rounded-none bg-background/90 text-xs backdrop-blur-xs hover:bg-background/95"
-                    icon={<RefreshCw />}
-                    label="二维码已过期，点击刷新"
+                    size="sm"
+                    className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      const next = qrPreferMode === 'wxacode' ? 'qrcode' : 'wxacode'
+                      setQrPreferMode(next)
+                      void createQr(next)
+                    }}
+                    label={
+                      qrPreferMode === 'wxacode'
+                        ? '扫码后只进小程序没弹窗？切换为「小程序内扫码」'
+                        : '切换回「微信扫一扫小程序码」'
+                    }
                   />
-                ) : qrStatus === 'confirmed' ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/95 text-xs font-medium text-success">
-                    <CheckCircle2 className="size-6" />
-                    <span>扫码成功，正在进入工作台…</span>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-sm font-medium">请使用微信小程序扫码登录</div>
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {qrPreferMode === 'wxacode'
-                    ? '直接用微信扫一扫，或打开小程序点「扫码登录电脑」'
-                    : '请打开小程序 → 点击首页或「我的」里的「扫码登录电脑」扫此码'}
-                </p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-                  onClick={() => {
-                    const next = qrPreferMode === 'wxacode' ? 'qrcode' : 'wxacode'
-                    setQrPreferMode(next)
-                    void createQr(next)
-                  }}
-                  label={
-                    qrPreferMode === 'wxacode'
-                      ? '扫码后只进小程序没弹窗？切换为「小程序内扫码」'
-                      : '切换回「微信扫一扫小程序码」'
-                  }
-                />
+                </div>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="password">{passwordForm}</TabsContent>
-        </Tabs>
+          ) : (
+            passwordForm
+          )}
+        </div>
       ) : (
         passwordForm
       )}
