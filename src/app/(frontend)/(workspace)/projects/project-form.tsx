@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -110,8 +111,7 @@ export function ProjectForm({
     label: string,
     props: React.ComponentProps<typeof Input> = {},
   ) => (
-    <div className="grid content-start gap-2">
-      <Label htmlFor={name}>{label}</Label>
+    <Field label={label} inputID={name}>
       <Input
         id={name}
         name={name}
@@ -126,7 +126,7 @@ export function ProjectForm({
         }}
       />
       {errors[name] ? <p className="text-xs text-destructive-strong">{errors[name]}</p> : null}
-    </div>
+    </Field>
   )
 
   const select = (
@@ -136,8 +136,7 @@ export function ProjectForm({
     fallback: string,
     allowNone = false,
   ) => (
-    <div className="grid content-start gap-2">
-      <Label htmlFor={name}>{label}</Label>
+    <Field label={label} inputID={name}>
       <Select
         name={name}
         defaultValue={(initial[name] as string | null | undefined) || fallback}
@@ -157,7 +156,7 @@ export function ProjectForm({
         </SelectContent>
       </Select>
       {errors[name] ? <p className="text-xs text-destructive-strong">{errors[name]}</p> : null}
-    </div>
+    </Field>
   )
 
   const group = (

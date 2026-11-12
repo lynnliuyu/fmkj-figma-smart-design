@@ -7,6 +7,7 @@ import { EyeOff, Loader2, Save, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@astryxdesign/core/Badge'
+import { Field } from '@astryxdesign/core/Field'
 import { Button } from '@astryxdesign/core/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TextInput } from '@astryxdesign/core/TextInput'
@@ -222,8 +223,7 @@ function NumberField({
   placeholder?: string
 }) {
   return (
-    <div className="grid content-start gap-1.5">
-      <Label htmlFor={id}>{label}</Label>
+    <Field label={label} inputID={id}>
       <div className="relative">
         <Input
           id={id}
@@ -243,6 +243,6 @@ function NumberField({
       <p className={cn('text-xs', error ? 'text-destructive-strong' : 'text-muted-foreground')}>
         {error ?? hint}
       </p>
-    </div>
+    </Field>
   )
 }
