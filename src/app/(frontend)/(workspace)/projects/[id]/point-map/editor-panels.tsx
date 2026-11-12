@@ -20,17 +20,9 @@ import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { TextInput } from '@astryxdesign/core/TextInput'
+import { ScrollableArea } from '@astryxdesign/core/ScrollableArea'
+import { Selector, SelectorOption } from '@astryxdesign/core/Selector'
 import { Progress } from '@/components/ui/progress'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { LEVEL_LABEL, type AreaAnalysis } from '@/lib/area-analysis'
 import { AREA_TYPES, areaTypeLabel } from '@/lib/area-types'
 import {
@@ -60,6 +52,31 @@ export type PointProduct = {
 
 export const DEFAULT_VALUE = '__default'
 export const NONE_VALUE = '__none'
+
+/** 区域类型的下拉选项。提到模块作用域，避免每次渲染重建数组导致 Selector 重算选项。 */
+const AREA_TYPE_OPTIONS = AREA_TYPES.map((t) => ({ value: t.value, label: t.label }))
+
+/**
+ * 设备类型的分组下拉选项：官方 `SelectorSection.title` 只收字符串，
+ * 分类色点挂在每个 option 的 `icon` 上，图标由 `renderOption` 画。
+ */
+const DEVICE_TYPE_SECTIONS = DEVICE_GROUPS.map(({ category, types }) => ({
+  type: 'section' as const,
+  title: category.name,
+  options: types.map((t) => ({
+    value: t.value,
+    label: deviceTypeLabel(t.value),
+    icon: (
+      <span className="flex items-center gap-2">
+        <span
+          className="size-2 shrink-0 rounded-full"
+          style={{ backgroundColor: category.color }}
+        />
+        <PointMarker type={t.value} className="size-4" />
+      </span>
+    ),
+  })),
+}))
 export const yuan = (n: number) => `¥${n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}`
 export const DRAG_TYPE = 'application/x-fmkj-device'
 
@@ -130,7 +147,12 @@ export function PlacePanel({
           />
         </div>
       </div>
-      <ScrollArea className="min-h-0 flex-1">
+      <ScrollableArea
+        label="设备列表"
+        axis="block"
+        data-slot="scroll-area"
+        className="min-h-0 flex-1"
+      >
         <div className="space-y-4 px-3.5 pt-1.5 pb-4">
           {groups.map(({ category, types }) => {
             const placed = types.reduce((s, t) => s + (counts.get(t.value) ?? 0), 0)
@@ -186,7 +208,7 @@ export function PlacePanel({
             <p className="py-6 text-center text-xs text-muted-foreground">没有匹配的设备</p>
           ) : null}
         </div>
-      </ScrollArea>
+      </ScrollableArea>
     </div>
   )
 }
@@ -236,18 +258,17 @@ export function AreasPanel({
       {readOnly ? null : (
         <div className="border-b border-border px-3.5 py-3">
           <div className="flex gap-2">
-            <Select value={type} onValueChange={setType}>
-              <SelectTrigger size="sm" className="h-8 flex-1 border-border bg-subtle/70 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {AREA_TYPES.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Selector
+              label="新区域类型"
+              isLabelHidden
+              size="sm"
+              width="100%"
+              value={type}
+              options={AREA_TYPE_OPTIONS}
+              onChange={setType}
+              controlClassName="h-8 border-border bg-subtle/70 text-xs"
+              containerClassName="flex-1"
+            />
             <Button
               size="sm"
               className="h-8 bg-primary text-xs text-primary-foreground hover:bg-primary/90"
@@ -259,7 +280,12 @@ export function AreasPanel({
           </div>
         </div>
       )}
-      <ScrollArea className="min-h-0 flex-1">
+      <ScrollableArea
+        label="区域列表"
+        axis="block"
+        data-slot="scroll-area"
+        className="min-h-0 flex-1"
+      >
         <div className="space-y-3.5 p-3.5">
           {groups.length === 0 ? (
             <p className="text-xs text-muted-foreground">
@@ -301,7 +327,7 @@ export function AreasPanel({
             </p>
           ) : null}
         </div>
-      </ScrollArea>
+      </ScrollableArea>
     </div>
   )
 }
@@ -367,22 +393,17 @@ export function SelectedArea({
           }}
           controlClassName="h-8 border-border bg-background text-xs"
         />
-        <Select
+        <Selector
+          label="区域类型"
+          isLabelHidden
+          size="sm"
+          width="100%"
           value={area.areaType}
-          disabled={readOnly}
-          onValueChange={(v) => onChange({ areaType: v })}
-        >
-          <SelectTrigger className="h-8 w-full border-border bg-background text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {AREA_TYPES.map((t) => (
-              <SelectItem key={t.value} value={t.value}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          options={AREA_TYPE_OPTIONS}
+          isDisabled={readOnly}
+          onChange={(v) => onChange({ areaType: v })}
+          controlClassName="h-8 border-border bg-background text-xs"
+        />
       </div>
       {readOnly ? null : (
         <p className="text-[11px] text-muted-foreground">
@@ -537,32 +558,20 @@ export function SelectedPoint({
       </div>
       <div className="grid gap-1.5">
         <div className="text-[11px] font-medium text-muted-foreground">设备类型</div>
-        <Select value={deviceType} disabled={readOnly} onValueChange={onChangeType}>
-          <SelectTrigger className="h-8 w-full max-w-full min-w-0 overflow-hidden border-border bg-background text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {DEVICE_GROUPS.map(({ category, types }) => (
-              <SelectGroup key={category.slug}>
-                <SelectLabel className="flex items-center gap-1.5 text-xs">
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: category.color }}
-                  />
-                  {category.name}
-                </SelectLabel>
-                {types.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    <span className="flex items-center gap-2">
-                      <PointMarker type={t.value} className="size-4" />
-                      <span>{deviceTypeLabel(t.value)}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            ))}
-          </SelectContent>
-        </Select>
+        <Selector
+          label="设备类型"
+          isLabelHidden
+          size="sm"
+          width="100%"
+          value={deviceType}
+          options={DEVICE_TYPE_SECTIONS}
+          isDisabled={readOnly}
+          onChange={onChangeType}
+          controlClassName="h-8 border-border bg-background text-xs"
+          renderOption={(option) => (
+            <SelectorOption icon={option.icon} label={option.label} layout="inline" />
+          )}
+        />
       </div>
     </div>
   )
