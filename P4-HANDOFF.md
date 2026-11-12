@@ -4,10 +4,10 @@
 > **新会话读这一份就能接手，不用翻聊天记录。**
 > 配套：`ASTRYX-P4-NOTES.md`（API 对照 + 硬约束）、`proposals/2026-11-10-Astryx全量原生化.md`（总提案）
 
-## 一、当前状态（截至 2026-11-12 14:35）
+## 一、当前状态（截至 2026-11-12 15:47）
 
 ```
-main 分支   干净（2eed1f4 = PR #117 的 squash 合并提交）
+main 分支   干净（89d3b7d = PR #120 的 squash 合并提交）
 线上        fmkj.top/login 返回 200；端口 13028 来自记忆未复核
 PR #107     已合并（P4 第 4 批）
 PR #108     已合并（P4 第 5 批）
@@ -19,10 +19,13 @@ PR #113     已合并（fix：Popover 适配层「真实鼠标点不开」双重
 PR #114     已合并（P4 第 8 批：quote-editor）
 PR #115     已合并（P4 第 9 批：editor-panels）
 PR #116     已合并（纯文档）
-PR #117     已合并（P4 第 10 批：point-map-editor —— **P4 最后一个文件**）
+PR #117     已合并（P4 第 10 批：point-map-editor）
+PR #118     已合并（纯文档收官）
+PR #119     已合并（P4 最后一块：contract-preview 签约 Popover）
+PR #120     已合并（tabs 档收官：登录页 TabList/Tab + 冒烟脚本契约修正）
 ```
 
-**P4 进度：26 / 34 文件 —— P4 浮层档位已全部迁完**
+**P4 进度：26 / 34 文件 —— 浮层档位（dialog/popover/tabs）业务代码已全部清零**
 
 | PR   | 文件                                                                                   |
 | ---- | -------------------------------------------------------------------------------------- |
@@ -483,3 +486,55 @@ P5 适配层清理   删 src/components/ui/*.tsx（先 grep 确认零引用）
 3. **分时采样 600 / 1500 / 3000ms**，不要单点断言。
 4. **Tab 选中态只信 `data-selected`** —— 实测本仓 `aria-current` 全为 `null`，`aria-selected` 也不可靠。
 5. **旧文档的组件计数不可信**，每批开工先 grep 定界。
+
+---
+
+## 十二、浮层档位真正收官（2026-11-12 15:47）
+
+### 最终状态
+
+| 适配层组件 | 业务代码引用 | 说明                                                                       |
+| ---------- | ------------ | -------------------------------------------------------------------------- |
+| `popover`  | **✅ 0**     | #119 收掉最后一处（contract-preview 签约浮层）                             |
+| `tabs`     | **✅ 0**     | #120 收掉最后一处（登录页）                                                |
+| `dialog`   | 1 个         | 只剩 `src/components/ui/command.tsx` —— **适配层文件本体**，属 P5 删除清单 |
+| `sheet`    | 1 个         | 只剩 `src/components/ui/sidebar.tsx` —— 上游 shadcn 内部，属 P5            |
+
+### 🔴 #120 暴露的一类新坑：改 DOM 契约会让 e2e 选择器失效
+
+登录页 `Tabs` → 官方 `TabList`/`Tab` 后，CI 的 smoke **失败**：`❌ 登录页无法完成登录：停在 /login`。
+本地手测却是好的 —— 因为**冒烟脚本用了 `getByRole('tab', { name: /邮箱/ })`**，
+而官方 `Tab` 渲染成 `button.astryx-tab`、**没有 `role="tab"`** → 点不中 → `#email` 不出现 → 超时。
+
+**教训（比 tsc 更隐蔽的一层）**：
+
+> 组件替换不只是「让页面能渲染」，还会**改变 DOM 契约**。
+> 任何依赖旧契约的**测试、e2e、埋点、CSS 选择器**都会静默失效 —— `tsc` 完全查不出。
+> **替换带交互语义的组件后，必须 grep 一遍 `e2e/` 和相关选择器**，并本地跑一遍冒烟。
+
+已修：`e2e/smoke.mjs` 改用 `page.locator('button.astryx-tab').filter({ hasText: /邮箱/ })`，
+本地冒烟 **16/16 全过**。
+
+### 官方 Tab 的实测 DOM 契约（后续批次的验证基准）
+
+```
+渲染：<button class="astryx-tab ...">
+无 role="tab"、无 aria-selected
+选中态：data-selected="selected"
+API：<TabList value={x} onChange={(v) => …} layout="fill">
+     <Tab value="a" label="文本" icon={<Icon/>} />
+```
+
+**不要用 `getByRole('tab')` 找官方 Tab —— 会得 0 个元素。**
+（我这次就先误判成「tab 没渲染」，实际是选择器错了。）
+
+### 下一步（P3 / 其他档位）
+
+```
+P3 表单     Label 53 处 / 18 个文件（最大单文件 11 处）
+            官方有 Field / FieldLabel —— 不是"无 Label"，旧文档判断有误
+            本仓已有范式可抄：after-sales-board.tsx 的 <Field label htmlFor><Input/></Field>
+Select 14 / Textarea 8 / Input 20 / Card 40
+其他档位    dropdown-menu 11 文件 / tooltip 4 / command 1
+P5          删适配层 30 个文件（先 grep 确认零引用）
+```
