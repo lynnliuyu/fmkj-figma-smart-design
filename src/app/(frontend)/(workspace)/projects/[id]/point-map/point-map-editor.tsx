@@ -41,16 +41,10 @@ import { toast } from 'sonner'
 import { BetaDocLink } from '@/components/beta-doc-link'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
 import { IconButton } from '@astryxdesign/core/IconButton'
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 import type { StyleTransferHandoff } from '@/lib/style-templates'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,18 +55,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { ScrollableArea } from '@astryxdesign/core/ScrollableArea'
+import { Selector } from '@astryxdesign/core/Selector'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Switch } from '@astryxdesign/core/Switch'
 import { Kbd } from '@/components/ui/kbd'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { BoardCanvas, type CanvasContext } from '@/board/canvas/board-canvas'
 import { download, exportSheetPng } from '@/board/canvas/export'
@@ -1270,6 +1258,11 @@ export function PointMapEditor({
   const selectedArea =
     selectedIds.length === 1 ? snap.areas.find((a) => a.id === selectedIds[0]) : undefined
   const variant = selectedSymbol ? lightingVariant(selectedSymbol.symbolId) : undefined
+  /** 灯具尺寸下拉的选项：提到 useMemo，避免每次渲染重建数组导致 Selector 重算选项。 */
+  const variantOptions = useMemo(
+    () => variant?.family.variants.map((v) => ({ value: v.id, label: v.label })) ?? [],
+    [variant],
+  )
   const missingSheets = snap.sheets.filter((s) => s.missing).length
   const armedDevice =
     armed && armed.symbolId === armed.data.deviceType ? String(armed.data.deviceType) : null
@@ -1983,27 +1976,24 @@ export function PointMapEditor({
                         {variant.family.name} · 尺寸
                       </div>
                       <div className="flex gap-2">
-                        <Select
-                          value={selectedSymbol.symbolId}
-                          onValueChange={(id) => {
-                            const v = variant.family.variants.find((x) => x.id === id)
-                            if (v)
-                              commit((d) =>
-                                setPointVariant(d, selectedSymbol.id, v, selectedSymbol.real),
-                              )
-                          }}
-                        >
-                          <SelectTrigger className="h-8 flex-1 border-border bg-background text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {variant.family.variants.map((v) => (
-                              <SelectItem key={v.id} value={v.id}>
-                                {v.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="min-w-0 flex-1">
+                          <Selector
+                            label="尺寸"
+                            isLabelHidden
+                            size="sm"
+                            width="100%"
+                            value={selectedSymbol.symbolId}
+                            options={variantOptions}
+                            onChange={(id) => {
+                              const v = variant.family.variants.find((x) => x.id === id)
+                              if (v)
+                                commit((d) =>
+                                  setPointVariant(d, selectedSymbol.id, v, selectedSymbol.real),
+                                )
+                            }}
+                            controlClassName="h-8 border-border bg-background text-xs"
+                          />
+                        </div>
                         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           按比例
                           <Switch
@@ -2098,335 +2088,405 @@ export function PointMapEditor({
           ) : null}
 
           {/* 右栏主体：一层分段（设备 / 灯光 / 区域 / 统计）；同步报价只在顶栏 */}
-          <Tabs
-            value={tab}
-            onValueChange={(v) => setTab(v as PanelTab)}
-            className="min-h-0 flex-1 gap-0"
-          >
+          <div className="flex min-h-0 flex-1 flex-col">
             <div className="border-b border-border px-3 py-2.5">
-              <TabsList
-                className={cn('grid w-full', readOnly ? 'grid-cols-2' : 'grid-cols-4')}
+              {/*
+                官方 TabList：`layout="fill"` 让每个 tab 均分容器宽度，等价于原来的
+                `grid w-full grid-cols-4`（readOnly 时只剩 2 个 tab，均分即 grid-cols-2）。
+                `Tab.label` 只收字符串，所以「区域」后的点位数与「统计」的告警点走 `endContent`。
+              */}
+              <TabList
+                value={tab}
+                onChange={(v) => setTab(v as PanelTab)}
+                size="sm"
+                layout="fill"
                 aria-label="设备与属性"
+                role="tablist"
               >
                 {readOnly ? null : (
                   <>
-                    <TabsTrigger value="devices" className="text-xs">
-                      设备
-                    </TabsTrigger>
-                    <TabsTrigger value="lighting" className="text-xs">
-                      灯光
-                    </TabsTrigger>
+                    <Tab value="devices" label="设备" panelId="point-map-panel" />
+                    <Tab value="lighting" label="灯光" panelId="point-map-panel" />
                   </>
                 )}
-                <TabsTrigger value="areas" className="gap-1 text-xs">
-                  区域
-                  <span className="text-[11px] font-normal text-muted-foreground tabular-nums">
-                    {snap.areas.length}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="summary" className="gap-1 text-xs">
-                  统计
-                  {issues.some((i) => i.level !== 'info') ? (
-                    <span
-                      aria-label="有需要处理的检查项"
-                      className="size-1.5 rounded-full bg-warning"
-                    />
-                  ) : null}
-                </TabsTrigger>
-              </TabsList>
+                <Tab
+                  value="areas"
+                  label="区域"
+                  panelId="point-map-panel"
+                  endContent={
+                    <span className="text-[11px] font-normal text-muted-foreground tabular-nums">
+                      {snap.areas.length}
+                    </span>
+                  }
+                />
+                <Tab
+                  value="summary"
+                  label="统计"
+                  panelId="point-map-panel"
+                  endContent={
+                    issues.some((i) => i.level !== 'info') ? (
+                      <span
+                        aria-label="有需要处理的检查项"
+                        className="size-1.5 rounded-full bg-warning"
+                      />
+                    ) : null
+                  }
+                />
+              </TabList>
             </div>
 
             {readOnly ? null : (
               <>
-                <TabsContent
-                  value="devices"
-                  className="flex min-h-0 flex-1 flex-col overflow-hidden"
-                >
-                  <PlacePanel
-                    groups={filteredGroups}
-                    query={query}
-                    onQuery={setQuery}
-                    counts={summary.byType}
-                    armed={armedDevice}
-                    onArm={(t) => {
-                      setTool('select')
-                      setArmed(t ? deviceTpl(t) : null)
-                      setMobilePlaceOpen(false)
-                    }}
-                    disabled={!snap.sheets.length}
-                  />
-                </TabsContent>
-                <TabsContent
-                  value="lighting"
-                  className="flex min-h-0 flex-1 flex-col overflow-hidden"
-                >
-                  <LightingPanel
-                    armedId={armed && !armedDevice ? armed.symbolId : null}
-                    onArm={(tpl) => {
-                      setTool('select')
-                      setArmed(tpl)
-                      setMobilePlaceOpen(false)
-                    }}
-                    disabled={!snap.sheets.length}
-                    calibrated={!!activeSheet?.mmPerUnit}
-                  />
-                </TabsContent>
+                {tab === 'devices' ? (
+                  <div
+                    id="point-map-panel"
+                    role="tabpanel"
+                    className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                  >
+                    <PlacePanel
+                      groups={filteredGroups}
+                      query={query}
+                      onQuery={setQuery}
+                      counts={summary.byType}
+                      armed={armedDevice}
+                      onArm={(t) => {
+                        setTool('select')
+                        setArmed(t ? deviceTpl(t) : null)
+                        setMobilePlaceOpen(false)
+                      }}
+                      disabled={!snap.sheets.length}
+                    />
+                  </div>
+                ) : null}
+                {tab === 'lighting' ? (
+                  <div
+                    id="point-map-panel"
+                    role="tabpanel"
+                    className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                  >
+                    <LightingPanel
+                      armedId={armed && !armedDevice ? armed.symbolId : null}
+                      onArm={(tpl) => {
+                        setTool('select')
+                        setArmed(tpl)
+                        setMobilePlaceOpen(false)
+                      }}
+                      disabled={!snap.sheets.length}
+                      calibrated={!!activeSheet?.mmPerUnit}
+                    />
+                  </div>
+                ) : null}
               </>
             )}
 
-            <TabsContent value="areas" className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              <AreasPanel
-                sheets={snap.sheets}
-                areas={snap.areas}
-                analysis={analysis}
-                unassigned={unassigned}
-                selectedAreaId={selectedArea?.id ?? null}
-                onAdd={addArea}
-                onFocus={focusArea}
-                readOnly={readOnly}
-              />
-            </TabsContent>
-
-            <TabsContent value="summary" className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              <ScrollArea className="min-h-0 flex-1">
-                <div className="space-y-2 p-3.5">
-                  {issues.length ? (
-                    <section className="mb-3 space-y-1">
-                      <h2 className="text-xs font-semibold text-fg-secondary">图纸检查</h2>
-                      {issues.map((i) => (
-                        <button
-                          key={i.id}
-                          type="button"
-                          onClick={() => focusTargets(i.targets)}
-                          className="flex w-full items-start gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-xs transition-colors hover:bg-subtle"
-                        >
-                          {i.level === 'info' ? (
-                            <Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-                          ) : (
-                            <CircleAlert
-                              className={cn(
-                                'mt-0.5 size-3.5 shrink-0',
-                                i.level === 'error' ? 'text-destructive' : 'text-warning',
-                              )}
-                            />
-                          )}
-                          <span className="min-w-0">
-                            <span className="block font-medium">{i.title}</span>
-                            {i.detail ? (
-                              <span className="block text-muted-foreground">{i.detail}</span>
-                            ) : null}
-                          </span>
-                        </button>
-                      ))}
-                    </section>
-                  ) : null}
-                  <div className="flex items-baseline justify-between">
-                    <h2 className="text-xs font-semibold text-fg-secondary">
-                      设备统计{scope !== 'all' ? ` · ${pointScopeLabel(scope)}` : ''}
-                    </h2>
-                    <span className="text-[11px] text-muted-foreground tabular-nums">
-                      共 {scopedPoints.length} 个点位
-                    </span>
-                  </div>
-                  {typesInUse.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">还没有放置设备</p>
-                  ) : null}
-                  {typesInUse.map((t) => (
-                    <TypeDefaultRow
-                      key={t}
-                      type={t}
-                      count={summary.byType.get(t) ?? 0}
-                      readOnly={readOnly}
-                      onArm={(dt) => {
-                        setArmed(deviceTpl(dt))
-                        setTab('devices')
-                      }}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </aside>
-      </div>
-
-      <Dialog open={!!renaming} onOpenChange={(o) => !o && setRenaming(null)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>重命名图纸</DialogTitle>
-            <DialogDescription>名称显示在楼层菜单、导出图纸和报价的区域分组里。</DialogDescription>
-          </DialogHeader>
-          <form
-            id="rename-sheet"
-            onSubmit={(e) => {
-              e.preventDefault()
-              if (renaming) renameSheet(renaming.id, renaming.name)
-            }}
-          >
-            <TextInput
-              label={'图纸名称'}
-              isLabelHidden
-              hasAutoFocus
-              value={renaming?.name ?? ''}
-              aria-label="图纸名称"
-              onChange={(v) => setRenaming((r) => (r ? { ...r, name: v } : r))}
-            />
-          </form>
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setRenaming(null)} label="取消" />
-            <Button
-              type="submit"
-              form="rename-sheet"
-              isDisabled={!renaming?.name.trim()}
-              label="保存"
-            />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>
-              删除图纸「{snap.sheets.find((x) => x.id === confirmDelete)?.name ?? ''}」？
-            </DialogTitle>
-            <DialogDescription>
-              图纸上的 {snap.points.filter((p) => p.sheetId === confirmDelete).length}{' '}
-              个点位会一起删除。删除后可以按 Ctrl/⌘ + Z 撤销。
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setConfirmDelete(null)} label="取消" />
-            <Button
-              variant="destructive"
-              onClick={() => confirmDelete && deleteSheet(confirmDelete)}
-              icon={<Trash2 />}
-              label="删除图纸"
-            />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!calib} onOpenChange={(o) => !o && setCalib(null)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>标定图纸比例</DialogTitle>
-            <DialogDescription>
-              刚才画的线在图纸上长 {calib ? Math.round(calib.units) : 0}{' '}
-              个单位，它实际有多长？标定后网格按 25cm 显示，灯具可按真实尺寸落图。
-            </DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              applyCalibration()
-            }}
-            className="flex items-center gap-2"
-          >
-            <TextInput
-              label={'实际长度（米）'}
-              isLabelHidden
-              hasAutoFocus
-              inputMode="decimal"
-              placeholder="例如 3.6"
-              value={calib?.value ?? ''}
-              onChange={(v) => setCalib((c) => (c ? { ...c, value: v } : c))}
-              aria-label="实际长度（米）"
-            />
-            <span className="text-sm text-muted-foreground">米</span>
-          </form>
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setCalib(null)} label="取消" />
-            <Button onClick={applyCalibration} label="确定" />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={autoGenOpen} onOpenChange={setAutoGenOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="size-4 text-primary" />
-              智能生成点位
-            </DialogTitle>
-            <DialogDescription>
-              系统将根据图纸上的房间区域自动配置全屋智能设备与灯光点位。
-              <strong className="mt-1 block font-medium text-foreground">
-                注意：此操作会覆盖目标图纸上的当前点位（生成后可随时点击「撤销」或按 Ctrl/⌘ + Z
-                恢复）。
-              </strong>
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3 py-1 text-xs">
-            {snap.sheets.length > 1 ? (
-              <div className="space-y-1.5">
-                <span className="font-medium text-muted-foreground">生成目标图纸</span>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant={autoGenScope === 'current' ? 'primary' : 'secondary'}
-                    onClick={() => setAutoGenScope('current')}
-                    label={`当前图纸（${activeSheet?.name ?? '当前层'}）`}
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant={autoGenScope === 'all' ? 'primary' : 'secondary'}
-                    onClick={() => setAutoGenScope('all')}
-                    label="全部图纸（ 张）"
-                  />
-                </div>
+            {tab === 'areas' ? (
+              <div
+                id="point-map-panel"
+                role="tabpanel"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+              >
+                <AreasPanel
+                  sheets={snap.sheets}
+                  areas={snap.areas}
+                  analysis={analysis}
+                  unassigned={unassigned}
+                  selectedAreaId={selectedArea?.id ?? null}
+                  onAdd={addArea}
+                  onFocus={focusArea}
+                  readOnly={readOnly}
+                />
               </div>
             ) : null}
 
-            <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5">
-              <div className="space-y-0.5 pr-3">
-                <div className="font-medium text-foreground">同时生成照明灯具点位</div>
-                <div className="text-[11px] text-muted-foreground">
-                  开启后一并生成吸顶灯、筒射灯与灯带；关闭则仅生成智能开关、网关、AP、窗帘与传感器
+            {tab === 'summary' ? (
+              <div
+                id="point-map-panel"
+                role="tabpanel"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+              >
+                <ScrollableArea label="图纸检查与设备统计" axis="block" className="min-h-0 flex-1">
+                  <div className="space-y-2 p-3.5">
+                    {issues.length ? (
+                      <section className="mb-3 space-y-1">
+                        <h2 className="text-xs font-semibold text-fg-secondary">图纸检查</h2>
+                        {issues.map((i) => (
+                          <button
+                            key={i.id}
+                            type="button"
+                            onClick={() => focusTargets(i.targets)}
+                            className="flex w-full items-start gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-xs transition-colors hover:bg-subtle"
+                          >
+                            {i.level === 'info' ? (
+                              <Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                            ) : (
+                              <CircleAlert
+                                className={cn(
+                                  'mt-0.5 size-3.5 shrink-0',
+                                  i.level === 'error' ? 'text-destructive' : 'text-warning',
+                                )}
+                              />
+                            )}
+                            <span className="min-w-0">
+                              <span className="block font-medium">{i.title}</span>
+                              {i.detail ? (
+                                <span className="block text-muted-foreground">{i.detail}</span>
+                              ) : null}
+                            </span>
+                          </button>
+                        ))}
+                      </section>
+                    ) : null}
+                    <div className="flex items-baseline justify-between">
+                      <h2 className="text-xs font-semibold text-fg-secondary">
+                        设备统计{scope !== 'all' ? ` · ${pointScopeLabel(scope)}` : ''}
+                      </h2>
+                      <span className="text-[11px] text-muted-foreground tabular-nums">
+                        共 {scopedPoints.length} 个点位
+                      </span>
+                    </div>
+                    {typesInUse.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">还没有放置设备</p>
+                    ) : null}
+                    {typesInUse.map((t) => (
+                      <TypeDefaultRow
+                        key={t}
+                        type={t}
+                        count={summary.byType.get(t) ?? 0}
+                        readOnly={readOnly}
+                        onArm={(dt) => {
+                          setArmed(deviceTpl(dt))
+                          setTab('devices')
+                        }}
+                      />
+                    ))}
+                  </div>
+                </ScrollableArea>
+              </div>
+            ) : null}
+          </div>
+        </aside>
+      </div>
+
+      <Dialog isOpen={!!renaming} onOpenChange={(o) => !o && setRenaming(null)} width={384}>
+        <Layout
+          header={
+            <DialogHeader
+              title="重命名图纸"
+              subtitle="名称显示在楼层菜单、导出图纸和报价的区域分组里。"
+              onOpenChange={(o) => !o && setRenaming(null)}
+            />
+          }
+          content={
+            <LayoutContent padding={5}>
+              <form
+                id="rename-sheet"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  if (renaming) renameSheet(renaming.id, renaming.name)
+                }}
+              >
+                <TextInput
+                  label={'图纸名称'}
+                  isLabelHidden
+                  hasAutoFocus
+                  value={renaming?.name ?? ''}
+                  aria-label="图纸名称"
+                  onChange={(v) => setRenaming((r) => (r ? { ...r, name: v } : r))}
+                />
+              </form>
+            </LayoutContent>
+          }
+          footer={
+            <LayoutFooter hasDivider>
+              <div className="flex w-full justify-end gap-2">
+                <Button variant="secondary" onClick={() => setRenaming(null)} label="取消" />
+                <Button
+                  type="submit"
+                  form="rename-sheet"
+                  isDisabled={!renaming?.name.trim()}
+                  label="保存"
+                />
+              </div>
+            </LayoutFooter>
+          }
+        />
+      </Dialog>
+
+      <Dialog
+        isOpen={!!confirmDelete}
+        onOpenChange={(o) => !o && setConfirmDelete(null)}
+        width={384}
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={`删除图纸「${snap.sheets.find((x) => x.id === confirmDelete)?.name ?? ''}」？`}
+              subtitle={`图纸上的 ${
+                snap.points.filter((p) => p.sheetId === confirmDelete).length
+              } 个点位会一起删除。删除后可以按 Ctrl/⌘ + Z 撤销。`}
+              onOpenChange={(o) => !o && setConfirmDelete(null)}
+            />
+          }
+          content={<LayoutContent padding={5} />}
+          footer={
+            <LayoutFooter hasDivider>
+              <div className="flex w-full justify-end gap-2">
+                <Button variant="secondary" onClick={() => setConfirmDelete(null)} label="取消" />
+                <Button
+                  variant="destructive"
+                  onClick={() => confirmDelete && deleteSheet(confirmDelete)}
+                  icon={<Trash2 />}
+                  label="删除图纸"
+                />
+              </div>
+            </LayoutFooter>
+          }
+        />
+      </Dialog>
+
+      <Dialog isOpen={!!calib} onOpenChange={(o) => !o && setCalib(null)} width={384}>
+        <Layout
+          header={
+            <DialogHeader
+              title="标定图纸比例"
+              subtitle={`刚才画的线在图纸上长 ${
+                calib ? Math.round(calib.units) : 0
+              } 个单位，它实际有多长？标定后网格按 25cm 显示，灯具可按真实尺寸落图。`}
+              onOpenChange={(o) => !o && setCalib(null)}
+            />
+          }
+          content={
+            <LayoutContent padding={5}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  applyCalibration()
+                }}
+                className="flex items-center gap-2"
+              >
+                <TextInput
+                  label={'实际长度（米）'}
+                  isLabelHidden
+                  hasAutoFocus
+                  inputMode="decimal"
+                  placeholder="例如 3.6"
+                  value={calib?.value ?? ''}
+                  onChange={(v) => setCalib((c) => (c ? { ...c, value: v } : c))}
+                  aria-label="实际长度（米）"
+                />
+                <span className="text-sm text-muted-foreground">米</span>
+              </form>
+            </LayoutContent>
+          }
+          footer={
+            <LayoutFooter hasDivider>
+              <div className="flex w-full justify-end gap-2">
+                <Button variant="secondary" onClick={() => setCalib(null)} label="取消" />
+                <Button onClick={applyCalibration} label="确定" />
+              </div>
+            </LayoutFooter>
+          }
+        />
+      </Dialog>
+
+      <Dialog isOpen={autoGenOpen} onOpenChange={setAutoGenOpen} width={448}>
+        <Layout
+          header={
+            <DialogHeader
+              title={
+                <span className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-primary" />
+                  智能生成点位
+                </span>
+              }
+              subtitle={
+                <>
+                  系统将根据图纸上的房间区域自动配置全屋智能设备与灯光点位。
+                  <strong className="font-medium text-foreground">
+                    注意：此操作会覆盖目标图纸上的当前点位（生成后可随时点击「撤销」或 Ctrl/⌘ + Z
+                    恢复）。
+                  </strong>
+                </>
+              }
+              onOpenChange={setAutoGenOpen}
+            />
+          }
+          content={
+            <LayoutContent padding={5}>
+              <div className="space-y-3 text-xs">
+                {snap.sheets.length > 1 ? (
+                  <div className="space-y-1.5">
+                    <span className="font-medium text-muted-foreground">生成目标图纸</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={autoGenScope === 'current' ? 'primary' : 'secondary'}
+                        onClick={() => setAutoGenScope('current')}
+                        label={`当前图纸（${activeSheet?.name ?? '当前层'}）`}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={autoGenScope === 'all' ? 'primary' : 'secondary'}
+                        onClick={() => setAutoGenScope('all')}
+                        label="全部图纸（ 张）"
+                      />
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5">
+                  <div className="space-y-0.5 pr-3">
+                    <div className="font-medium text-foreground">同时生成照明灯具点位</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      开启后一并生成吸顶灯、筒射灯与灯带；关闭则仅生成智能开关、网关、AP、窗帘与传感器
+                    </div>
+                  </div>
+                  <Switch
+                    label={'开关'}
+                    isLabelHidden
+                    value={autoGenIncludeLighting}
+                    onChange={setAutoGenIncludeLighting}
+                  />
+                </div>
+
+                <div className="rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-muted-foreground">
+                  {(() => {
+                    const targetPts =
+                      autoGenScope === 'current' && activeSheetId
+                        ? snap.points.filter((p) => p.sheetId === activeSheetId).length
+                        : snap.points.length
+                    const targetAreas =
+                      autoGenScope === 'current' && activeSheetId
+                        ? snap.areas.filter((a) => a.sheetId === activeSheetId).length
+                        : snap.areas.length
+                    return (
+                      <span>
+                        {targetAreas > 0
+                          ? `将按已划分的 ${targetAreas} 个房间区域重新排布点位`
+                          : '当前图纸尚未划分房间区域，将自动生成标准户型房间区域并排布点位'}
+                        {targetPts > 0 ? `，并覆盖现有的 ${targetPts} 个点位（可撤销）。` : '。'}
+                      </span>
+                    )
+                  })()}
                 </div>
               </div>
-              <Switch
-                label={'开关'}
-                isLabelHidden
-                value={autoGenIncludeLighting}
-                onChange={setAutoGenIncludeLighting}
-              />
-            </div>
-
-            <div className="rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-muted-foreground">
-              {(() => {
-                const targetPts =
-                  autoGenScope === 'current' && activeSheetId
-                    ? snap.points.filter((p) => p.sheetId === activeSheetId).length
-                    : snap.points.length
-                const targetAreas =
-                  autoGenScope === 'current' && activeSheetId
-                    ? snap.areas.filter((a) => a.sheetId === activeSheetId).length
-                    : snap.areas.length
-                return (
-                  <span>
-                    {targetAreas > 0
-                      ? `将按已划分的 ${targetAreas} 个房间区域重新排布点位`
-                      : '当前图纸尚未划分房间区域，将自动生成标准户型房间区域并排布点位'}
-                    {targetPts > 0 ? `，并覆盖现有的 ${targetPts} 个点位（可撤销）。` : '。'}
-                  </span>
-                )
-              })()}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setAutoGenOpen(false)} label="取消" />
-            <Button
-              onClick={runAutoGeneratePoints}
-              icon={<Sparkles />}
-              label="确认覆盖并生成（可撤销）"
-            />
-          </DialogFooter>
-        </DialogContent>
+            </LayoutContent>
+          }
+          footer={
+            <LayoutFooter hasDivider>
+              <div className="flex w-full justify-end gap-2">
+                <Button variant="secondary" onClick={() => setAutoGenOpen(false)} label="取消" />
+                <Button
+                  onClick={runAutoGeneratePoints}
+                  icon={<Sparkles />}
+                  label="确认覆盖并生成（可撤销）"
+                />
+              </div>
+            </LayoutFooter>
+          }
+        />
       </Dialog>
 
       {aiStyleOpen ? (
