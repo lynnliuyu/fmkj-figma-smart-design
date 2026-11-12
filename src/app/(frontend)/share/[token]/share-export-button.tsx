@@ -5,13 +5,8 @@ import { Check, Copy, ExternalLink, FileDown, FolderDown, Loader2 } from 'lucide
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
 import { downloadBlob, exportPagesAsPdfBundle } from '@/lib/export-pdf'
 
 type ExportState = {
@@ -147,73 +142,89 @@ export function ShareExportButton({ projectName }: { projectName: string }) {
         label={busy ? '生成 PDF 中…' : '下载方案与报价 PDF'}
       />
 
-      <Dialog open={result !== null} onOpenChange={(open) => !open && setResult(null)}>
-        <DialogContent className="max-h-[88vh] max-w-lg gap-4 overflow-y-auto p-5 sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">方案与报价 PDF 已生成</DialogTitle>
-            <DialogDescription className="text-xs leading-relaxed">
-              {result?.fileName}（共 {result?.pageCount} 页 · 约 {result?.sizeKb} KB）
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-2 rounded-xl border bg-muted/35 p-3.5 text-xs leading-relaxed text-muted-foreground">
-            <p>
-              <strong className="text-foreground">电脑浏览器</strong>：已自动保存到浏览器的「下载
-              (Downloads)」文件夹，也可点击下方「选择位置另存为」。
-            </p>
-            <p>
-              <strong className="text-foreground">手机 / 微信端</strong>：可点击「复制 PDF
-              下载链接」到手机系统浏览器打开保存，或直接
-              <strong className="text-foreground">长按下方高清图片</strong>保存到手机相册。
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => void saveWithPicker()}
-              icon={<FolderDown />}
-              label="下载 / 选择位置另存为"
+      <Dialog
+        isOpen={result !== null}
+        onOpenChange={(open) => !open && setResult(null)}
+        width={512}
+        maxHeight="88vh"
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title="方案与报价 PDF 已生成"
+              subtitle={`${result?.fileName}（共 ${result?.pageCount} 页 · 约 ${result?.sizeKb} KB）`}
+              onOpenChange={(open) => !open && setResult(null)}
             />
-            {result?.downloadUrl ? (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => void copyLink()}
-                icon={<Check />}
-                endContent={<Copy />}
-                label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
-              />
-            ) : null}
-            {result?.previewUrl ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                href={result.previewUrl}
-                icon={<ExternalLink />}
-                label="新窗口打开 PDF"
-              />
-            ) : null}
-          </div>
-
-          {result?.previewImages.length ? (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">
-                页面高清图预览（手机端可长按图片直接保存到相册）：
-              </p>
-              <div className="max-h-64 space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5">
-                {result.previewImages.map((src, idx) => (
-                  <div key={idx} className="overflow-hidden rounded-lg border bg-white shadow-2xs">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt={`第 ${idx + 1} 页预览`} className="block h-auto w-full" />
-                  </div>
-                ))}
+          }
+          content={
+            <LayoutContent padding={5}>
+              <div className="space-y-2 rounded-xl border bg-muted/35 p-3.5 text-xs leading-relaxed text-muted-foreground">
+                <p>
+                  <strong className="text-foreground">电脑浏览器</strong>
+                  ：已自动保存到浏览器的「下载 (Downloads)」文件夹，也可点击下方「选择位置另存为」。
+                </p>
+                <p>
+                  <strong className="text-foreground">手机 / 微信端</strong>：可点击「复制 PDF
+                  下载链接」到手机系统浏览器打开保存，或直接
+                  <strong className="text-foreground">长按下方高清图片</strong>保存到手机相册。
+                </p>
               </div>
-            </div>
-          ) : null}
-        </DialogContent>
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => void saveWithPicker()}
+                  icon={<FolderDown />}
+                  label="下载 / 选择位置另存为"
+                />
+                {result?.downloadUrl ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => void copyLink()}
+                    icon={<Check />}
+                    endContent={<Copy />}
+                    label={copied ? '已复制下载链接' : '复制 PDF 下载链接'}
+                  />
+                ) : null}
+                {result?.previewUrl ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    href={result.previewUrl}
+                    icon={<ExternalLink />}
+                    label="新窗口打开 PDF"
+                  />
+                ) : null}
+              </div>
+
+              {result?.previewImages.length ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    页面高清图预览（手机端可长按图片直接保存到相册）：
+                  </p>
+                  <div className="max-h-64 space-y-2.5 overflow-y-auto rounded-xl border bg-muted/20 p-2.5">
+                    {result.previewImages.map((src, idx) => (
+                      <div
+                        key={idx}
+                        className="overflow-hidden rounded-lg border bg-white shadow-2xs"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={src}
+                          alt={`第 ${idx + 1} 页预览`}
+                          className="block h-auto w-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </LayoutContent>
+          }
+        />
       </Dialog>
     </>
   )
