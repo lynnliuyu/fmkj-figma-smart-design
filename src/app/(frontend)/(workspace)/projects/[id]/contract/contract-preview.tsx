@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner'
 
 import { Button } from '@astryxdesign/core/Button'
+import { TextArea } from '@astryxdesign/core/TextArea'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
@@ -396,13 +397,15 @@ export function ContractSectionEdit({
                 />
               )}
             </div>
-            <Textarea
+            <TextArea
+              label="约定内容"
+              isLabelHidden
               id="contract-terms"
               rows={10}
               maxLength={5000}
               value={draft.terms}
-              onChange={(e) => set({ terms: e.target.value })}
-              className="leading-relaxed"
+              onChange={(v) => set({ terms: v })}
+              controlClassName="leading-relaxed"
             />
           </div>
         )

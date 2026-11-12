@@ -5,6 +5,7 @@ import { CheckCircle2, Loader2, PenLine, Send } from 'lucide-react'
 
 import { money, SectionHeader } from '@/components/landing/section'
 import { Badge } from '@astryxdesign/core/Badge'
+import { TextArea } from '@astryxdesign/core/TextArea'
 import { Button } from '@astryxdesign/core/Button'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { Field } from '@astryxdesign/core/Field'
@@ -470,13 +471,14 @@ export function ClientDecisionPanel({
                     label={decision === 'revise' ? '希望调整的地方' : '给设计师的留言（可选）'}
                     inputID="fb-message"
                   >
-                    <Textarea
+                    <TextArea
+                      label={decision === 'revise' ? '希望调整的地方' : '给设计师的留言（可选）'}
+                      isLabelHidden
                       id="fb-message"
                       rows={3}
                       maxLength={1000}
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      aria-invalid={Boolean(errors.message)}
+                      onChange={(v) => setMessage(v)}
                       placeholder={
                         decision === 'revise'
                           ? '例如：客厅想换成无主灯方案，主卧窗帘改双轨'
