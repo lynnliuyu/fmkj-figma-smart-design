@@ -18,14 +18,8 @@ import { toast } from 'sonner'
 import { Button } from '@astryxdesign/core/Button'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,6 +98,9 @@ export function ContractSectionEdit({
   const meta = SECTION[section]
   const receiptOnly = signed && section === 'payments'
   const title = receiptOnly ? '登记收款' : `编辑${meta.title}`
+  // 表单由内容槽里的 <form> 承载，「保存」按钮挪到 LayoutFooter 后用 form 属性关联，
+  // 这样回车提交与点按钮提交走同一条路径。
+  const formId = `contract-edit-${section}`
 
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }))
   const setPayment = (key: string, patch: Partial<Draft['payments'][number]>) =>
@@ -429,36 +426,56 @@ export function ContractSectionEdit({
         icon={<Pencil />}
         label={'恢复默认条款'}
       />
-      <Dialog open={open} onOpenChange={(o) => !pending && setOpen(o)}>
-        <DialogContent
-          className={section === 'payments' || section === 'terms' ? 'sm:max-w-xl' : 'sm:max-w-md'}
-        >
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>
-              {receiptOnly ? '合同已签订，内容已锁定，只能登记各期是否已收款。' : meta.description}
-            </DialogDescription>
-          </DialogHeader>
-          <form
-            className="grid gap-4"
-            onSubmit={(e) => {
-              e.preventDefault()
-              save()
-            }}
-          >
-            {fields()}
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="secondary"
-                isDisabled={pending}
-                onClick={() => setOpen(false)}
-                label="取消"
-              />
-              <Button type="submit" isDisabled={pending} icon={<Loader2 />} label="保存" />
-            </DialogFooter>
-          </form>
-        </DialogContent>
+      <Dialog
+        isOpen={open}
+        onOpenChange={(o) => !pending && setOpen(o)}
+        width={section === 'payments' || section === 'terms' ? 576 : 448}
+      >
+        <Layout
+          header={
+            <DialogHeader
+              title={title}
+              subtitle={
+                receiptOnly ? '合同已签订，内容已锁定，只能登记各期是否已收款。' : meta.description
+              }
+              onOpenChange={(o) => !pending && setOpen(o)}
+            />
+          }
+          content={
+            <LayoutContent padding={5}>
+              <form
+                id={formId}
+                className="grid gap-4"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  save()
+                }}
+              >
+                {fields()}
+              </form>
+            </LayoutContent>
+          }
+          footer={
+            <LayoutFooter hasDivider>
+              <div className="flex w-full justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  isDisabled={pending}
+                  onClick={() => setOpen(false)}
+                  label="取消"
+                />
+                <Button
+                  type="submit"
+                  form={formId}
+                  isDisabled={pending}
+                  icon={<Loader2 />}
+                  label="保存"
+                />
+              </div>
+            </LayoutFooter>
+          }
+        />
       </Dialog>
     </>
   )
@@ -594,32 +611,39 @@ export function ContractActions({
             </DropdownMenuContent>
           </DropdownMenu>
           <Dialog
-            open={confirmDelete}
+            isOpen={confirmDelete}
             onOpenChange={(o) => busy !== 'delete' && setConfirmDelete(o)}
+            width={384}
+            purpose="form"
           >
-            <DialogContent className="sm:max-w-sm">
-              <DialogHeader>
-                <DialogTitle>删除这份合同？</DialogTitle>
-                <DialogDescription>
-                  合同内容和收款记录会一起删除，之后可以重新从报价生成。
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="secondary"
-                  isDisabled={busy === 'delete'}
-                  onClick={() => setConfirmDelete(false)}
-                  label="取消"
+            <Layout
+              header={
+                <DialogHeader
+                  title="删除这份合同？"
+                  subtitle="合同内容和收款记录会一起删除，之后可以重新从报价生成。"
+                  onOpenChange={(o) => busy !== 'delete' && setConfirmDelete(o)}
                 />
-                <Button
-                  variant="destructive"
-                  isDisabled={busy === 'delete'}
-                  onClick={() => void remove()}
-                  icon={<Loader2 />}
-                  label="删除合同"
-                />
-              </DialogFooter>
-            </DialogContent>
+              }
+              content={
+                <LayoutContent padding={5}>
+                  <div className="flex w-full justify-end gap-2">
+                    <Button
+                      variant="secondary"
+                      isDisabled={busy === 'delete'}
+                      onClick={() => setConfirmDelete(false)}
+                      label="取消"
+                    />
+                    <Button
+                      variant="destructive"
+                      isDisabled={busy === 'delete'}
+                      onClick={() => void remove()}
+                      icon={<Loader2 />}
+                      label="删除合同"
+                    />
+                  </div>
+                </LayoutContent>
+              }
+            />
           </Dialog>
         </>
       )}
