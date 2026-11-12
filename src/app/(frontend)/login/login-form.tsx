@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@astryxdesign/core/Button'
+import { Field } from '@astryxdesign/core/Field'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -324,25 +325,26 @@ export function LoginForm({
     <form className="space-y-4" onSubmit={submit} noValidate>
       {errorAlert}
       <div className="grid gap-2">
-        <Label htmlFor="email">邮箱</Label>
-        <div className="relative">
-          <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <TextInput
-            id="email"
-            label="邮箱"
-            isLabelHidden
-            type="email"
-            controlClassName="h-10 rounded-lg pl-9"
-            placeholder="name@example.com"
-            autoComplete="email"
-            hasAutoFocus={!qrAvailable}
-            value={email}
-            onChange={(v) => {
-              setEmail(v)
-              setError('')
-            }}
-          />
-        </div>
+        <Field label="邮箱" inputID="email">
+          <div className="relative">
+            <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <TextInput
+              id="email"
+              label="邮箱"
+              isLabelHidden
+              type="email"
+              controlClassName="h-10 rounded-lg pl-9"
+              placeholder="name@example.com"
+              autoComplete="email"
+              hasAutoFocus={!qrAvailable}
+              value={email}
+              onChange={(v) => {
+                setEmail(v)
+                setError('')
+              }}
+            />
+          </div>
+        </Field>
       </div>
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
@@ -431,45 +433,47 @@ export function LoginForm({
     <form className="space-y-4" onSubmit={submitRegister} noValidate>
       {errorAlert}
       <div className="grid gap-2">
-        <Label htmlFor="reg-name">姓名 / 团队名称</Label>
-        <div className="relative">
-          <UserRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <TextInput
-            id="reg-name"
-            label={'例如：张工 / 栖序智能设计'}
-            isLabelHidden
-            type="text"
-            controlClassName="h-10 rounded-lg pl-9"
-            placeholder="例如：张工 / 栖序智能设计"
-            autoComplete="name"
-            hasAutoFocus
-            value={name}
-            onChange={(v) => {
-              setName(v)
-              setError('')
-            }}
-          />
-        </div>
+        <Field label="姓名 / 团队名称" inputID="reg-name">
+          <div className="relative">
+            <UserRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <TextInput
+              id="reg-name"
+              label={'例如：张工 / 栖序智能设计'}
+              isLabelHidden
+              type="text"
+              controlClassName="h-10 rounded-lg pl-9"
+              placeholder="例如：张工 / 栖序智能设计"
+              autoComplete="name"
+              hasAutoFocus
+              value={name}
+              onChange={(v) => {
+                setName(v)
+                setError('')
+              }}
+            />
+          </div>
+        </Field>
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="reg-email">邮箱</Label>
-        <div className="relative">
-          <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <TextInput
-            id="reg-email"
-            label={'name@example.com'}
-            isLabelHidden
-            type="email"
-            controlClassName="h-10 rounded-lg pl-9"
-            placeholder="name@example.com"
-            autoComplete="email"
-            value={email}
-            onChange={(v) => {
-              setEmail(v)
-              setError('')
-            }}
-          />
-        </div>
+        <Field label="邮箱" inputID="reg-email">
+          <div className="relative">
+            <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <TextInput
+              id="reg-email"
+              label={'name@example.com'}
+              isLabelHidden
+              type="email"
+              controlClassName="h-10 rounded-lg pl-9"
+              placeholder="name@example.com"
+              autoComplete="email"
+              value={email}
+              onChange={(v) => {
+                setEmail(v)
+                setError('')
+              }}
+            />
+          </div>
+        </Field>
       </div>
       {otpRequired ? (
         <div className="grid gap-2">
@@ -505,58 +509,61 @@ export function LoginForm({
         </div>
       ) : null}
       <div className="grid gap-2">
-        <Label htmlFor="reg-password">设置密码</Label>
-        <div className="relative">
-          <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <TextInput
-            id="reg-password"
-            label={'至少 8 位密码'}
-            isLabelHidden
-            type="password"
-            controlClassName="h-10 rounded-lg pl-9"
-            placeholder="至少 8 位密码"
-            autoComplete="new-password"
-            value={password}
-            onChange={(v) => {
-              setPassword(v)
-              setError('')
-            }}
-          />
-        </div>
+        <Field label="设置密码" inputID="reg-password">
+          <div className="relative">
+            <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <TextInput
+              id="reg-password"
+              label={'至少 8 位密码'}
+              isLabelHidden
+              type="password"
+              controlClassName="h-10 rounded-lg pl-9"
+              placeholder="至少 8 位密码"
+              autoComplete="new-password"
+              value={password}
+              onChange={(v) => {
+                setPassword(v)
+                setError('')
+              }}
+            />
+          </div>
+        </Field>
       </div>
       <div className="grid grid-cols-2 gap-2.5">
         <div className="grid gap-2">
-          <Label htmlFor="reg-phone">手机号（选填）</Label>
-          <div className="relative">
-            <Phone className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <TextInput
-              id="reg-phone"
-              label={'报价单联系人'}
-              isLabelHidden
-              type="tel"
-              controlClassName="h-10 rounded-lg pl-9"
-              placeholder="报价单联系人"
-              autoComplete="tel"
-              value={phone}
-              onChange={(v) => setPhone(v)}
-            />
-          </div>
+          <Field label="手机号（选填）" inputID="reg-phone">
+            <div className="relative">
+              <Phone className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <TextInput
+                id="reg-phone"
+                label={'报价单联系人'}
+                isLabelHidden
+                type="tel"
+                controlClassName="h-10 rounded-lg pl-9"
+                placeholder="报价单联系人"
+                autoComplete="tel"
+                value={phone}
+                onChange={(v) => setPhone(v)}
+              />
+            </div>
+          </Field>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="reg-code">兑换码（选填）</Label>
-          <div className="relative">
-            <Gift className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <TextInput
-              id="reg-code"
-              label={'FMKJ-...'}
-              isLabelHidden
-              type="text"
-              controlClassName="h-10 rounded-lg pl-9 font-mono uppercase"
-              placeholder="FMKJ-..."
-              value={redeemCode}
-              onChange={(v) => setRedeemCode(v.toUpperCase())}
-            />
-          </div>
+          <Field label="兑换码（选填）" inputID="reg-code">
+            <div className="relative">
+              <Gift className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <TextInput
+                id="reg-code"
+                label={'FMKJ-...'}
+                isLabelHidden
+                type="text"
+                controlClassName="h-10 rounded-lg pl-9 font-mono uppercase"
+                placeholder="FMKJ-..."
+                value={redeemCode}
+                onChange={(v) => setRedeemCode(v.toUpperCase())}
+              />
+            </div>
+          </Field>
         </div>
       </div>
       <Button
@@ -586,75 +593,78 @@ export function LoginForm({
         <form className="space-y-4" onSubmit={submitReset} noValidate>
           {errorAlert}
           <div className="grid gap-2">
-            <Label htmlFor="reset-email">注册邮箱</Label>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <TextInput
-                id="reset-email"
-                label={'name@example.com'}
-                isLabelHidden
-                type="email"
-                controlClassName="h-10 rounded-lg pl-9"
-                placeholder="name@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={(v) => {
-                  setEmail(v)
-                  setError('')
-                }}
-              />
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="reset-otp">邮箱验证码</Label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <ShieldCheck className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Field label="注册邮箱" inputID="reset-email">
+              <div className="relative">
+                <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <TextInput
-                  id="reset-otp"
-                  label={'6位数字验证码'}
+                  id="reset-email"
+                  label={'name@example.com'}
                   isLabelHidden
-                  type="text"
-                  controlClassName="h-10 rounded-lg pl-9 font-mono tracking-widest"
-                  inputMode="numeric"
-                  placeholder="6位数字验证码"
-                  value={otpCode}
+                  type="email"
+                  controlClassName="h-10 rounded-lg pl-9"
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  value={email}
                   onChange={(v) => {
-                    setOtpCode(v.replace(/\D/g, '').slice(0, 6))
+                    setEmail(v)
                     setError('')
                   }}
                 />
               </div>
-              <Button
-                type="button"
-                variant="secondary"
-                className="h-10 shrink-0 rounded-lg px-3.5 text-xs"
-                isDisabled={sendingOtp || countdown > 0}
-                onClick={() => void handleSendOtp('reset')}
-                icon={<Loader2 />}
-                label={countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
-              />
-            </div>
+            </Field>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="reset-password">设置新密码</Label>
-            <div className="relative">
-              <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <TextInput
-                id="reset-password"
-                label={'至少 8 位新密码'}
-                isLabelHidden
-                type="password"
-                controlClassName="h-10 rounded-lg pl-9"
-                placeholder="至少 8 位新密码"
-                autoComplete="new-password"
-                value={password}
-                onChange={(v) => {
-                  setPassword(v)
-                  setError('')
-                }}
-              />
-            </div>
+            <Field label="邮箱验证码" inputID="reset-otp">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <ShieldCheck className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <TextInput
+                    id="reset-otp"
+                    label={'6位数字验证码'}
+                    isLabelHidden
+                    type="text"
+                    controlClassName="h-10 rounded-lg pl-9 font-mono tracking-widest"
+                    inputMode="numeric"
+                    placeholder="6位数字验证码"
+                    value={otpCode}
+                    onChange={(v) => {
+                      setOtpCode(v.replace(/\D/g, '').slice(0, 6))
+                      setError('')
+                    }}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="h-10 shrink-0 rounded-lg px-3.5 text-xs"
+                  isDisabled={sendingOtp || countdown > 0}
+                  onClick={() => void handleSendOtp('reset')}
+                  icon={<Loader2 />}
+                  label={countdown > 0 ? `${countdown}s 后重发` : '获取验证码'}
+                />
+              </div>
+            </Field>
+          </div>
+          <div className="grid gap-2">
+            <Field label="设置新密码" inputID="reset-password">
+              <div className="relative">
+                <KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <TextInput
+                  id="reset-password"
+                  label={'至少 8 位新密码'}
+                  isLabelHidden
+                  type="password"
+                  controlClassName="h-10 rounded-lg pl-9"
+                  placeholder="至少 8 位新密码"
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(v) => {
+                    setPassword(v)
+                    setError('')
+                  }}
+                />
+              </div>
+            </Field>
           </div>
           <Button
             type="submit"
