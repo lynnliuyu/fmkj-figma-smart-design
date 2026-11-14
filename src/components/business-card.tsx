@@ -1,3 +1,7 @@
+/* eslint-disable @next/next/no-img-element --
+ * 名片是 1080×648 的印刷画布，每个 logo 的像素宽度（240 / 260 / 300 / 360px）是版式的一部分：
+ * next/image 会改写 src、按容器出多套尺寸，还会包一层定位样式，导出的 PNG 就和预览对不上了。
+ * 另外导出流程要先把这些 <img> 全部转成 data URL 再截图。见下方组件注释。 */
 import {
   CARD_ASSETS,
   CARD_H,
