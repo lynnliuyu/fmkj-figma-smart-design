@@ -402,7 +402,13 @@ async function main() {
   // 2026-11-14 从营销工作台搬过来时踩过两个坑，都是「预览看着像对的、印出来是废的」：
   //   1. 公司资料里的二维码是整张「加我为朋友」名片图（888×1131），塞进 218×218 方框被压扁；
   //   2. 本地 PUBLIC_URL 是 127.0.0.1:13001，直接印到了名片背面。
-  if (!only.length || only.some((o) => '名片'.includes(o) || 'business-card'.includes(o))) {
+  // 未登录时页面会被重定向到 /login，离屏画布当然不存在 ——
+  // 那是登录态的问题，不是名片的问题，跳过而不是报假失败
+  //（生产库没有 demo@fmkj.local，跑生产冒烟时一定会走到这一支）。
+  if (
+    loggedIn &&
+    (!only.length || only.some((o) => '名片'.includes(o) || 'business-card'.includes(o)))
+  ) {
     const problems = []
     await page
       .goto(`${BASE}/capabilities/business-card`, { waitUntil: 'load', timeout: 25000 })
