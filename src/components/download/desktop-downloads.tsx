@@ -182,11 +182,14 @@ export function DesktopHeroActions() {
     return (
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-3">
+          {/* ⚠️ 安装包链接不能传 as={Link}：那是 next/link，App Router 会把
+              /downloads/desktop/<文件> 当站内路由**预取**，进页面就静默拉走整个
+              安装包（实测 /download 一次 360 MB）。Button 不传 as 时渲染原生 <a>，
+              不会预取。2026-11-14 Windows 客户端「切换很卡」就是这个。 */}
           <Button
             size="lg"
             className="h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/85"
             href={asset.url}
-            as={Link}
             icon={<Download />}
             label={target.cta}
           />
@@ -285,7 +288,6 @@ export function DesktopPlatformCards() {
                   variant={isRecommended ? 'primary' : 'secondary'}
                   className="w-full rounded-full"
                   href={asset.url}
-                  as={Link}
                   icon={<Download />}
                   label="下载"
                 />

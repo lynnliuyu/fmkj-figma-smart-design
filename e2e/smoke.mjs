@@ -341,6 +341,56 @@ async function main() {
     results.push({ name: '首页客户端入口', path: '/', problems })
   }
 
+  // ── 安装包不能被预取 ──────────────────────────────────
+  // 2026-11-14 用户报「Windows 客户端切换侧边栏好卡」。本地怎么压都跑满 60fps，
+  // 最后发现不是动画：下载按钮写成了 <Button as={Link} href={安装包地址}>，
+  // next/link 把 /downloads/desktop/<文件> 当站内路由预取 —— 打开 /download 一次
+  // 静默拉走 360 MB（三个安装包各一遍，URL 带 ?_rsc=）。服务器出口只有 ~1 Mbps，
+  // 线路被占满后连点侧边栏切页面都要排队，看起来就是「卡」。
+  //
+  // 所以这里盯的不是页面长得对不对，而是**有没有?_rsc= 的安装包请求**。
+  // 只在已发布时判：本地没有安装包，页面上压根没有下载按钮，测不出东西。
+  if (
+    !only.length ||
+    only.some((o) => '首页'.includes(o) || '安装包预取'.includes(o) || o === '/')
+  ) {
+    const problems = []
+    const manifestRes = await ctx.request
+      .get(`${BASE}/downloads/desktop/manifest`, { timeout: 15000 })
+      .catch(() => null)
+    const manifest = manifestRes?.ok() ? await manifestRes.json().catch(() => null) : null
+    if (manifest?.windows || manifest?.mac) {
+      const prefetched = []
+      const onRequest = (req) => {
+        const url = req.url()
+        if (!url.includes('/downloads/desktop/')) return
+        // 预取请求带 ?_rsc=；用户真的点下载时没有这个参数
+        if (url.includes('_rsc=')) prefetched.push(url.replace(BASE, '').slice(0, 100))
+      }
+      page.on('request', onRequest)
+      // 三个入口都看：首页分区、下载页、以及首页上的推荐按钮
+      for (const path of ['/download', '/']) {
+        await page.goto(`${BASE}${path}`, { waitUntil: 'load', timeout: 30000 }).catch(() => {})
+        await sleep(4000)
+      }
+      page.off('request', onRequest)
+
+      if (prefetched.length) {
+        for (const u of prefetched.slice(0, 3)) {
+          problems.push(`进页面就预取了安装包：${u}`)
+        }
+        if (prefetched.length > 3) problems.push(`…共 ${prefetched.length} 个预取请求`)
+      }
+    }
+    if (problems.length) {
+      console.log(`  ❌ 安装包预取     ${problems.length} 个问题`)
+      for (const p of problems) fail('安装包预取', '断言', p)
+    } else {
+      console.log('  ✅ 安装包预取     没有把安装包当路由预取')
+    }
+    results.push({ name: '安装包预取', path: '/download', problems })
+  }
+
   // ── 公开页 ────────────────────────────────────────────
   for (const p of picked(PUBLIC)) {
     await check(page, p, { gated: false, errs })
