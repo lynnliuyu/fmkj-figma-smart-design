@@ -140,6 +140,19 @@ const RAW_PLUGINS: AppPlugin[] = [
     where: 'AI 对话（助手工具）、能力中心 → AI 能力',
     provides: ['设备总览', '实体搜索', '区域核对', '历史排查', '系统健康', '设备控制'],
   },
+  {
+    id: 'business-card',
+    category: 'tool', // 工具：印刷物料，与具体项目无关
+    stage: 'global',
+    tagline: '改好文字直接导出能送印的名片',
+    entry: { label: '打开名片', href: () => '/capabilities/business-card' },
+    name: '名片',
+    description:
+      '四套版式 × 正反面，90×54mm 标准名片；改姓名、头衔、电话、网站后一键导出 300dpi PNG，也能勾选多版打包 ZIP。',
+    status: 'ready',
+    where: '能力中心 → 全部工具、/capabilities/business-card',
+    provides: ['4 套版式', '正反面', '三维预览', '300dpi PNG 导出', '多版 ZIP 打包'],
+  },
 ]
 
 export const PLUGINS: AppPlugin[] = RAW_PLUGINS.map((p) => ({

@@ -60,4 +60,12 @@ export const PLUGIN_TOOLS: PluginTool[] = [
     description: '查看客户使用与运维诊断报告',
     href: '/settings/reports',
   },
+  {
+    id: 'business-card',
+    pluginId: 'business-card',
+    category: 'tool',
+    name: '名片',
+    description: '改好姓名电话直接导出能送印的名片，四套版式正反面',
+    href: '/capabilities/business-card',
+  },
 ]

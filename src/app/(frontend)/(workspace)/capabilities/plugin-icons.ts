@@ -1,5 +1,6 @@
 import {
   Bot,
+  Contact,
   HousePlug,
   FileUp,
   Palette,
@@ -24,4 +25,5 @@ export const PLUGIN_ICONS: Record<PluginId, LucideIcon> = {
   'dwg-import': FileUp,
   'after-sales': Wrench,
   'ha-mcp': HousePlug,
+  'business-card': Contact,
 }

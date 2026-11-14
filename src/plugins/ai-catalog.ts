@@ -21,6 +21,7 @@ export const PLUGIN_AI_SPECS: Record<PluginId, PluginAiSpec> = {
   'dwg-import': EXTRA_PLUGIN_AI_SPECS['dwg-import']!,
   'after-sales': EXTRA_PLUGIN_AI_SPECS['after-sales']!,
   'ha-mcp': haMcpAiSpec,
+  'business-card': EXTRA_PLUGIN_AI_SPECS['business-card']!,
 }
 
 export type RegisteredToolSpec = AiToolSpec & {

@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Blocks,
+  Contact,
   Image as ImageIcon,
   Palette,
   Sparkles,
@@ -26,6 +27,7 @@ const ICONS = {
   'proposal-templates': Blocks,
   'doc-styles': Blocks,
   'usage-reports': Blocks,
+  'business-card': Contact,
 } as const
 
 export default async function PluginToolsPage() {

@@ -16,12 +16,14 @@
           "point-map:read",
           "point-map:write",
           "catalog:read",
+          "catalog:write",
           "defaults:write",
           "quotes:read",
           "quotes:write",
           "contracts:read",
           "contracts:write",
           "documents:read",
+          "settings:write",
           "images:generate"
         ],
         "guidance": [
@@ -29,7 +31,9 @@
           "当用户上传了真实户型图图片时，严禁调用 setup_rooms_and_points 生成网格默认点位！只有图像真实识别出点位（add_floor_sheet 的 detectedPoints）或用户提供了点位 JSON（import_points_json）时才生成点位图标；若未识别出点位，保持点位图为空（0 点位）。",
           "当用户要求生成图片、画效果图、方案配图、场景图时，必须调用 generate_image 工具；不要声称已生成图片但没有调用。用户上传了参考图时设置 useAttachedImage=true。生成后把视觉质检结论告诉用户，质检分低于 7 时主动提出重新生成。",
           "项目已有户型图纸、用户要求规划或补齐 AP、窗帘、传感器、摄像头、中控屏、音箱、网关、VRF 等智能设备时，调用 plan_points_with_vision（视觉模型看图按规范布点），不要调用 setup_rooms_and_points。",
-          "当用户上传或粘贴别家的报价单 / 设备清单要求比价时：先逐行识别品名、品牌、型号、数量与单价（安装调试、布线辅材等服务项放入 fees），再调用 create_quote_from_competitor 生成对比报价单，最后按行总结匹配型号与差价，不要把外店的服务项当成设备。"
+          "当用户上传或粘贴别家的报价单 / 设备清单要求比价时：先逐行识别品名、品牌、型号、数量与单价（安装调试、布线辅材等服务项放入 fees），再调用 create_quote_from_competitor 生成对比报价单，最后按行总结匹配型号与差价，不要把外店的服务项当成设备。",
+          "用户要求移动、删除、新增单个点位，或修改房间名称/区域范围时：先调用 list_point_map 拿到真实 id，再调用 edit_point_map 直接改；不要回答「请你自己在点位图里拖动」。坐标是点位图场景坐标，用户说厘米等真实尺寸时按场景比例估算并说明依据，不确定就先确认。",
+          "用户要求删除项目/报价/合同、增改产品、登记售后维保、修改交付物或分享设置、修改公司抬头时，直接调用对应工具完成（delete_project / delete_quote / delete_contract / create_product / update_product / save_after_sales_record / update_project_archive_settings / update_company_settings）；工具拒绝时如实转述原因，不要改成让用户自己去操作。"
         ],
         "knowledge": [
           {
@@ -67,7 +71,20 @@
           "create_or_update_contract",
           "get_document_links",
           "plan_points_with_vision",
-          "generate_image"
+          "generate_image",
+          "list_point_map",
+          "edit_point_map",
+          "delete_project",
+          "delete_quote",
+          "delete_contract",
+          "create_product",
+          "update_product",
+          "update_project_archive_settings",
+          "list_after_sales",
+          "save_after_sales_record",
+          "set_after_sales_status",
+          "delete_after_sales_record",
+          "update_company_settings"
         ],
         "skills": ["tpl-competitor-quote"]
       }
@@ -306,6 +323,80 @@
               "标准合同默认提供 12 个月设备质保与上门联调服务；登记「交付验收」后质保从验收日起算，否则从合同签订日起算，到期前 30 天提示安排巡检。",
               "维保记录类型：交付验收、定期巡检、上门检修、设备更换、远程调试、配置备份；收费方式分质保内免费、保外收费（记录金额）与赠送服务。",
               "配置备份会把当时的点位图与定稿报价整理成全屋设备台账（代号、位置、设备类型、型号）留存，后续更换设备时以此为基准核对。"
+            ]
+          }
+        ],
+        "tools": [],
+        "skills": []
+      }
+    },
+    {
+      "id": "ha-mcp",
+      "name": "智能家居现场对接（HA-MCP）",
+      "stage": "global",
+      "status": "ready",
+      "tagline": "助手直接读取并把控客户现场的真实设备",
+      "description": "通过 MCP 协议连接客户现场的 Home Assistant：读取真实设备与状态、搜索实体、按区域核对点位，也能直接开关设备做现场调试。不中转 HA 的运维能力（改 YAML、装 HACS、备份）。",
+      "where": "AI 对话（助手工具）、能力中心 → AI 能力",
+      "provides": ["设备总览", "实体搜索", "区域核对", "历史排查", "系统健康", "设备控制"],
+      "ai": {
+        "permissions": ["smart-home:read", "smart-home:write"],
+        "guidance": [
+          "当用户问「客户家里现在有哪些设备 / 某个房间装了什么 / 这盏灯现在什么状态」时，先调用 ha_get_overview 或 ha_search_entities 拿到真实数据，不要凭印象回答。",
+          "当用户要「把某个设备关掉 / 调亮度 / 执行一个场景」时，调用 ha_call_service；调用前必须确认目标实体 ID 准确（先用 ha_search_entities 查）。",
+          "ha_call_service 会真的改变客户家里的设备状态。涉及照明的调试请在白天确认，避免夜间突然关灯影响住户。",
+          "本插件连接的是客户现场真实的 Home Assistant，不是模拟环境。任何写操作都要先说清楚要做什么，得到确认再执行。"
+        ],
+        "knowledge": [
+          {
+            "id": "ha-mcp-boundary",
+            "title": "HA-MCP 的能力边界",
+            "summary": "本插件通过 MCP 协议操作客户现场的 Home Assistant，只开放读状态、搜实体、读区域、调服务、读历史、读健康六类能力",
+            "rules": [
+              "本插件不提供「改 YAML / 装 HACS / 管理备份」类能力 —— 那些属于运维，交给 HA 官方客户端。",
+              "实体 ID 形如 light.living_room_main；服务调用形如 light.turn_on，参数从 ha_list_services 查。",
+              "连接地址由项目或全局设置里的 HA-MCP endpoint 提供；未配置时所有工具都返回「未配置」提示，不报错。"
+            ]
+          }
+        ],
+        "tools": [
+          "ha_get_overview",
+          "ha_search_entities",
+          "ha_list_areas",
+          "ha_get_history",
+          "ha_get_system_health",
+          "ha_call_service"
+        ],
+        "skills": ["tpl-ha-site-check"]
+      }
+    },
+    {
+      "id": "business-card",
+      "name": "名片",
+      "stage": "global",
+      "status": "ready",
+      "tagline": "改好文字直接导出能送印的名片",
+      "description": "四套版式 × 正反面，90×54mm 标准名片；改姓名、头衔、电话、网站后一键导出 300dpi PNG，也能勾选多版打包 ZIP。",
+      "where": "能力中心 → 全部工具、/capabilities/business-card",
+      "provides": ["4 套版式", "正反面", "三维预览", "300dpi PNG 导出", "多版 ZIP 打包"],
+      "ai": {
+        "permissions": ["settings:write"],
+        "guidance": [
+          "用户要名片、名片设计、印刷名片或更换名片版式时，引导其打开 /capabilities/business-card：可改姓名/头衔/电话/网站后直接导出 PNG。",
+          "名片尺寸固定 90×54mm（渲染 1080×648，3 倍导出 3240×1944 且写入 300dpi），可直接送印；需要多版时勾选后导出 ZIP。",
+          "名片信息来自「设置 → 公司资料」，导出前提醒用户核对电话与微信二维码是否为自己的。"
+        ],
+        "knowledge": [
+          {
+            "id": "business-card-spec",
+            "title": "名片印刷规范",
+            "summary": "90×54mm 标准名片，4 套版式 × 正反面，导出 300dpi PNG",
+            "rules": [
+              "成品尺寸 90×54mm，四边各留 3mm 出血给印厂；内容距裁切线 ≥3mm 安全边。",
+              "渲染基准 1080×648，导出按 3 倍 = 3240×1944 并写入 300dpi，印厂打开即为 90×54mm。",
+              "四套版式：深夜金（深色正面 + 米白背面，最稳妥）、米白纸（两面浅色、留白多）、星夜紫（两面深色带星光，展会场合）、留白（黑白灰极简，最百搭）。",
+              "米家 / Apple Home / KNX 图标只表示「支持接入的平台与协议」，不得表述为官方认证。",
+              "深色大面积实地建议 300g 以上纸并覆哑膜；浅色底建议覆哑膜防指纹。"
             ]
           }
         ],

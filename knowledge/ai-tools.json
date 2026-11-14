@@ -21,9 +21,28 @@
       "get_document_links": 0.2,
       "plan_points_with_vision": 2,
       "generate_image": 0,
+      "list_point_map": 0.2,
+      "edit_point_map": 1,
+      "delete_project": 1,
+      "delete_quote": 0.5,
+      "delete_contract": 0.5,
+      "create_product": 1,
+      "update_product": 0.5,
+      "update_project_archive_settings": 0.5,
+      "list_after_sales": 0.3,
+      "save_after_sales_record": 0.5,
+      "set_after_sales_status": 0.3,
+      "delete_after_sales_record": 0.5,
+      "update_company_settings": 0.5,
       "room_insights": 0.5,
       "smart_select": 2,
-      "recommend_proposal_template": 0.2
+      "recommend_proposal_template": 0.2,
+      "ha_get_overview": 0,
+      "ha_search_entities": 0,
+      "ha_list_areas": 0,
+      "ha_get_history": 0,
+      "ha_get_system_health": 0,
+      "ha_call_service": 0
     }
   },
   "permissions": [
@@ -51,6 +70,11 @@
       "value": "catalog:read",
       "label": "检索 728 款产品库与品牌价格",
       "mutates": false
+    },
+    {
+      "value": "catalog:write",
+      "label": "新增产品、修改产品资料与售价",
+      "mutates": true
     },
     {
       "value": "defaults:write",
@@ -88,8 +112,23 @@
       "mutates": false
     },
     {
+      "value": "settings:write",
+      "label": "修改公司抬头、联系方式与报价/合同条款",
+      "mutates": true
+    },
+    {
       "value": "images:generate",
       "label": "调用 AI 生成图片",
+      "mutates": true
+    },
+    {
+      "value": "smart-home:read",
+      "label": "读取客户现场智能家居设备与状态",
+      "mutates": false
+    },
+    {
+      "value": "smart-home:write",
+      "label": "控制客户现场智能家居设备",
       "mutates": true
     }
   ],
@@ -464,7 +503,7 @@
       "scope": "project",
       "mutates": false,
       "permissions": ["projects:read", "point-map:read", "quotes:read", "contracts:read"],
-      "description": "读取当前关联项目的详细点位清单、已汇总的产品金额、以及项目下所有报价单和合同信息。",
+      "description": "读取当前关联项目的详细点位清单、已汇总的产品金额、以及项目下最近 5 份报价单（含每行产品明细与行 id）和合同信息。修改报价明细前先用本工具拿到每行的 id。",
       "parameters": {
         "type": "object",
         "properties": {}
@@ -478,7 +517,7 @@
       "scope": "project",
       "mutates": true,
       "permissions": ["quotes:write"],
-      "description": "为当前关联项目生成一份新的报价单（根据点位图和默认型号汇总），或修改已有的报价单（传入 quoteId 可修改标题、状态 draft/sent/accepted、优惠金额 discount、附加费用 fees 如安装调试费、备注 notes）。",
+      "description": "为当前关联项目生成一份新的报价单（根据点位图和默认型号汇总），或修改已有的报价单（传入 quoteId）。可修改标题 title、状态 status（draft/sent/accepted）、优惠金额 discount、附加费用 fees（如安装调试费）、备注 notes，以及逐行修改产品明细 items / 删除明细行 removeItemIds。\n\n【改明细 = 局部修改，不是全量覆盖】items 里带 id 的条目只改你给出的字段（例如只传 quantity 就只改数量），未给出的字段原样保留；不带 id 的条目会新增一行（新增行必须给 name、price、quantity）。要删掉某行，把该行 id 放进 removeItemIds。没有提到的行不会被删除。\n【必须先读再改】修改明细前先调用 get_project_details，读取该报价单 items 里每行的 id、productId、name、price、quantity，用 id 定位要改或要删的行；不要凭记忆猜 id。\n【换型号】传 productId（可用 search_products 查询），且必须与原行设备类型一致；同时传新的 name（产品名），否则名称仍会是旧型号。金额与合计由服务端按明细自动重算，不要自己算。",
       "parameters": {
         "type": "object",
         "properties": {
@@ -520,6 +559,50 @@
           "notes": {
             "type": "string",
             "description": "报价单备注说明"
+          },
+          "items": {
+            "type": "array",
+            "description": "产品明细的局部修改：带 id 的条目修改已有行（只覆盖传入字段），不带 id 的条目新增一行。未传入的行保持原样。",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "已有明细行 ID（来自 get_project_details；新增行不要传）"
+                },
+                "productId": {
+                  "type": "string",
+                  "description": "产品 ID（来自 search_products；换型号时传，必须与原行设备类型一致）"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "产品名称（新增行必填；换型号时传新产品名）"
+                },
+                "sku": {
+                  "type": "string",
+                  "description": "型号 / 规格"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "单位（如 个、套）"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "单价（元；新增行必填）"
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "数量（新增行必填）"
+                }
+              }
+            }
+          },
+          "removeItemIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "要删除的明细行 ID 列表（来自 get_project_details）"
           }
         }
       }
@@ -765,6 +848,689 @@
       }
     },
     {
+      "name": "list_point_map",
+      "title": "查看点位图",
+      "pluginId": null,
+      "cost": 0.2,
+      "scope": "project",
+      "mutates": false,
+      "permissions": ["point-map:read"],
+      "description": "读取当前项目点位图的紧凑摘要：图纸（sheetId）、房间/区域（id、名称、范围或多边形）和点位（id、代号、设备类型、场景坐标、所属图纸/房间、型号）。当用户要求移动、删除、新增或修改某个点位/房间，或询问「客厅有哪些点位」「这个点位在哪」时，先调用本工具拿到真实 id，再用 edit_point_map 执行；不要凭空编造 id。坐标是点位图场景坐标（点位中心，与编辑器一致），不是毫米或比例。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则读取当前关联项目）"
+          }
+        }
+      }
+    },
+    {
+      "name": "edit_point_map",
+      "title": "编辑点位图",
+      "pluginId": null,
+      "cost": 1,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["point-map:write"],
+      "description": "按 id 逐条修改当前项目的点位图，一次调用可组合多个 add / move / remove / update。适用场景：用户说「把客厅那个插座往右移 20 厘米」「删掉主卧的人体传感器」「在书房加一个双开」「把主卧改名为次卧并调一下区域范围」等。执行前先用 list_point_map 拿到点位/房间的真实 id（或用 add 新增后返回的 id）；不要编造 id。坐标使用点位图场景坐标（点位中心）：move 可用 x/y 绝对坐标或 dx/dy 相对偏移；add 可只给 sheetId/roomId 让点位落在图纸/房间中心。单次最多 50 条，超出时整批不执行。每条编辑都会返回成功或跳过原因，不会静默失败。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则修改当前关联项目）"
+          },
+          "add": {
+            "type": "array",
+            "description": "新增点位",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "设备类型（字典值或中文名）：switch-1/2/3/4（单/双/三/四开）、socket、socket-double、socket-usb、downlight、spotlight、track-light、ceiling-light、light-strip、curtain-track、motion-sensor、contact-sensor、water-sensor、smoke-sensor、temp-sensor、camera、doorbell、smart-lock、gateway、touch-panel、speaker、ac-router、ap-node、network-panel、vrf-controller 等"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "点位代号（画布上显示的名称/编号，如 K1、Z3）；不传则按设备类型自动生成"
+                },
+                "x": {
+                  "type": "number",
+                  "description": "点位中心 x（场景坐标）；与 y 一起省略时落在 roomId/sheetId 中心"
+                },
+                "y": {
+                  "type": "number",
+                  "description": "点位中心 y（场景坐标）"
+                },
+                "sheetId": {
+                  "type": "string",
+                  "description": "目标图纸 id（list_point_map 的 sheets[].id；可选）"
+                },
+                "roomId": {
+                  "type": "string",
+                  "description": "目标房间 id（list_point_map 的 areas[].id；可选，优先于 sheetId 定位）"
+                },
+                "productId": {
+                  "type": "string",
+                  "description": "指定产品库型号 id（可选；不传则按项目默认型号/自动选型）"
+                }
+              },
+              "required": ["type"]
+            }
+          },
+          "move": {
+            "type": "array",
+            "description": "移动点位（可一次移动多个）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "点位 id（list_point_map 的 points[].id）"
+                },
+                "x": {
+                  "type": "number",
+                  "description": "移动后的点位中心 x（场景坐标）"
+                },
+                "y": {
+                  "type": "number",
+                  "description": "移动后的点位中心 y（场景坐标）"
+                },
+                "dx": {
+                  "type": "number",
+                  "description": "相对当前中心的水平偏移（正数向右）；与 x 二选一"
+                },
+                "dy": {
+                  "type": "number",
+                  "description": "相对当前中心的垂直偏移（正数向下）；与 y 二选一"
+                }
+              },
+              "required": ["id"]
+            }
+          },
+          "remove": {
+            "type": "array",
+            "description": "删除点位或房间（删除房间不会删除房间里的点位）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "点位 id（points[].id）或房间 id（areas[].id）"
+                }
+              },
+              "required": ["id"]
+            }
+          },
+          "update": {
+            "type": "array",
+            "description": "修改点位名称/类型/型号，或修改房间名称/类型/多边形",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "点位 id 或房间 id（决定 update 的对象）"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "点位：新代号（画布显示名称）；房间：新房间名"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "点位代号（name 的别名）"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "点位：新设备类型（字典值或中文名）"
+                },
+                "productId": {
+                  "type": ["string", "null"],
+                  "description": "点位：指定产品型号 id；传 null 清除指定型号"
+                },
+                "areaType": {
+                  "type": "string",
+                  "description": "房间：房间类型（entrance/living/dining/kitchen/bedroom/kids/study/bathroom/balcony/corridor/cloakroom/utility）"
+                },
+                "polygon": {
+                  "type": ["array", "null"],
+                  "description": "房间：场景坐标多边形 [[x,y],…]（至少 3 个顶点）；传 null 或 [] 恢复矩形范围。不传 polygon 时只改名称/类型",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                }
+              },
+              "required": ["id"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_project",
+      "title": "删除项目",
+      "pluginId": null,
+      "cost": 1,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["projects:write"],
+      "description": "永久删除一个项目。当用户明确说「把这个项目删了」「这个项目不要了」「删掉项目 XX」时调用。只有项目负责人（owner）可以删除；项目下已有已签订的合同时会被拒绝，此时应提示用户改用「归档」。删除时会级联删除项目下的报价单和未签合同，AI 对话保留但解除项目关联，操作不可撤销。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_quote",
+      "title": "删除报价单",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["quotes:write"],
+      "description": "永久删除一份报价单。当用户说「这份报价删掉」「第二版报价不要了」「把旧报价清掉」时调用。只能删除自己有权访问的项目里的报价；已用于任何合同（尤其是已签订合同）的报价不能删除，此时应提示用户先删除/撤销合同。操作不可撤销。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "description": "要删除的报价单 ID（可通过 get_project_details 查询）"
+          }
+        },
+        "required": ["quoteId"]
+      }
+    },
+    {
+      "name": "delete_contract",
+      "title": "删除合同",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["contracts:write"],
+      "description": "永久删除一份施工合同。当用户说「合同删了重做」「这份合同不要了」时调用。只能删除自己有权访问的项目里的合同；已签订的合同严禁删除，必须先撤销签订（改回草稿）才能删除。操作不可撤销。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "description": "要删除的合同 ID（可通过 get_project_details 查询）"
+          }
+        },
+        "required": ["contractId"]
+      }
+    },
+    {
+      "name": "create_product",
+      "title": "新增产品",
+      "pluginId": null,
+      "cost": 1,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["catalog:write"],
+      "description": "在产品库新增一款产品。当用户说「产品库里新增一款 Aqara 面板」「把这款新品加进产品库」时调用。成员可以新增/修改产品与售价；删除产品仍只允许后台管理员。必须提供产品名称、型号/SKU、设备类型、品牌（已有品牌名称或 ID）和售价。品牌不会自动新建，找不到时应提示用户先在后台品牌库创建。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "产品名称（如 智能开关三键）"
+          },
+          "sku": {
+            "type": "string",
+            "description": "型号 / SKU（产品库内唯一）"
+          },
+          "deviceType": {
+            "type": "string",
+            "enum": [
+              "switch-1",
+              "switch-2",
+              "switch-3",
+              "switch-4",
+              "socket-usb",
+              "socket-double",
+              "socket",
+              "spotlight",
+              "track-light",
+              "downlight",
+              "ceiling-light",
+              "pendant-light",
+              "wall-light",
+              "panel-light",
+              "light-strip",
+              "other-light",
+              "motion-sensor",
+              "smoke-sensor",
+              "water-sensor",
+              "temp-sensor",
+              "contact-sensor",
+              "smart-lock",
+              "doorbell",
+              "camera",
+              "curtain-track",
+              "speaker",
+              "touch-panel",
+              "gateway",
+              "ac-router",
+              "ceiling-ap",
+              "ap-node",
+              "network-panel",
+              "vrf-controller",
+              "other"
+            ],
+            "description": "设备类型代号（如 switch-3、curtain-track、motion-sensor）"
+          },
+          "brand": {
+            "type": "string",
+            "description": "品牌名称或品牌 ID（如 Aqara）"
+          },
+          "price": {
+            "type": "number",
+            "description": "售价（元）"
+          },
+          "cost": {
+            "type": "number",
+            "description": "成本（元，可选）"
+          },
+          "unit": {
+            "type": "string",
+            "description": "单位（默认「个」）"
+          },
+          "stock": {
+            "type": "number",
+            "description": "库存（可选，非负整数）"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["Apple Home", "米家", "华为", "涂鸦", "Matter", "KNX", "通用"]
+            },
+            "description": "适用平台（可选）"
+          },
+          "description": {
+            "type": "string",
+            "description": "产品说明（可选）"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "标签（可选）"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "状态：active 在售（默认）/ inactive 下架"
+          },
+          "image": {
+            "type": "string",
+            "description": "产品图片的 media ID（可选）"
+          }
+        },
+        "required": ["name", "sku", "deviceType", "brand", "price"]
+      }
+    },
+    {
+      "name": "update_product",
+      "title": "修改产品与改价",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["catalog:write"],
+      "description": "修改产品库中已有产品的资料或售价。当用户说「Aqara 那款面板涨到 399」「把这个产品调到 299」「产品改名为…」时调用。先用 search_products 按品牌/型号/关键词找到 productId，再传入要改的字段；改价必须显式传 price（元），不会根据文字猜测。成员可以新增/修改产品与售价；删除产品仍只允许后台管理员。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "要修改的产品 ID（先用 search_products 获取）"
+          },
+          "price": {
+            "type": "number",
+            "description": "新售价（元，显式传入才会改价）"
+          },
+          "cost": {
+            "type": "number",
+            "description": "新成本（元，可选）"
+          },
+          "name": {
+            "type": "string",
+            "description": "产品名称（可选）"
+          },
+          "sku": {
+            "type": "string",
+            "description": "型号 / SKU（可选）"
+          },
+          "deviceType": {
+            "type": "string",
+            "enum": [
+              "switch-1",
+              "switch-2",
+              "switch-3",
+              "switch-4",
+              "socket-usb",
+              "socket-double",
+              "socket",
+              "spotlight",
+              "track-light",
+              "downlight",
+              "ceiling-light",
+              "pendant-light",
+              "wall-light",
+              "panel-light",
+              "light-strip",
+              "other-light",
+              "motion-sensor",
+              "smoke-sensor",
+              "water-sensor",
+              "temp-sensor",
+              "contact-sensor",
+              "smart-lock",
+              "doorbell",
+              "camera",
+              "curtain-track",
+              "speaker",
+              "touch-panel",
+              "gateway",
+              "ac-router",
+              "ceiling-ap",
+              "ap-node",
+              "network-panel",
+              "vrf-controller",
+              "other"
+            ],
+            "description": "设备类型（可选）"
+          },
+          "brand": {
+            "type": "string",
+            "description": "品牌名称或品牌 ID（可选）"
+          },
+          "unit": {
+            "type": "string",
+            "description": "单位（可选）"
+          },
+          "stock": {
+            "type": "number",
+            "description": "库存（可选）"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["Apple Home", "米家", "华为", "涂鸦", "Matter", "KNX", "通用"]
+            },
+            "description": "适用平台（可选，传空数组表示清空）"
+          },
+          "description": {
+            "type": "string",
+            "description": "产品说明（可选，传空字符串清空）"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "标签（可选）"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "状态：在售 / 下架"
+          },
+          "image": {
+            "type": "string",
+            "description": "产品图片 media ID（可选，传空字符串清空）"
+          }
+        },
+        "required": ["productId"]
+      }
+    },
+    {
+      "name": "update_project_archive_settings",
+      "title": "交付物与分享设置",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["projects:write"],
+      "description": "设置项目的交付资料和业主分享链接。当用户说「交付资料用这份报价」「方案模板换成 XX」「把业主分享链接关掉」「分享链接加个密码/设个有效期」时调用。finalQuoteId 必须是本项目里的报价；proposalTemplate 必须是可用的业主方案模板标识；分享密码传空字符串表示清除，shareExpiresAt 传 null 表示永不过期。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          },
+          "finalQuoteId": {
+            "type": "string",
+            "description": "定稿报价 ID（必须是本项目的报价；传空字符串表示不指定，自动选择）"
+          },
+          "proposalTemplate": {
+            "type": "string",
+            "description": "交付方案模板标识（如 qixu、noir；传空字符串恢复默认）"
+          },
+          "shareEnabled": {
+            "type": "boolean",
+            "description": "是否开启业主分享链接"
+          },
+          "shareRole": {
+            "type": "string",
+            "enum": ["read", "edit"],
+            "description": "分享权限：read 仅查看（默认）/ edit 可编辑"
+          },
+          "shareExpiresAt": {
+            "type": "string",
+            "description": "分享链接过期时间（ISO 时间或 YYYY-MM-DD；传 null 或空字符串表示永不过期）"
+          },
+          "sharePassword": {
+            "type": "string",
+            "description": "访问密码（至少 4 位；传空字符串表示清除密码）"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_after_sales",
+      "title": "查看售后维保记录",
+      "pluginId": null,
+      "cost": 0.3,
+      "scope": "project",
+      "mutates": false,
+      "permissions": ["projects:read", "contracts:read"],
+      "description": "读取项目的售后维保台账：全部维保记录、合同质保期、下次回访日期与统计。当用户问「这个项目质保到什么时候」「售后记录有哪些」「上次检修是什么时候」「下次回访是哪天」时调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          }
+        }
+      }
+    },
+    {
+      "name": "save_after_sales_record",
+      "title": "登记售后维保记录",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["projects:write"],
+      "description": "新增或修改一条售后维保记录。当用户说「售后记录里加一条」「登记一次上门检修」「记录设备更换」「把这次远程调试记下来」时调用。type 可选 acceptance 交付验收 / inspection 定期巡检 / repair 上门检修 / replacement 设备更换 / remote 远程调试 / backup 配置备份（配置备份只能由系统生成，不要手动登记）。serviceDate 用 YYYY-MM-DD；billing=paid 时必须填 fee。传 recordId 表示修改已有记录。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          },
+          "recordId": {
+            "type": "string",
+            "description": "要修改的已有记录 ID（不传则新增）"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["acceptance", "inspection", "repair", "replacement", "remote"],
+            "description": "记录类型（默认 repair 上门检修）"
+          },
+          "title": {
+            "type": "string",
+            "description": "摘要（如 更换主卧窗帘电机）"
+          },
+          "serviceDate": {
+            "type": "string",
+            "description": "服务日期 YYYY-MM-DD（默认今天）"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "scheduled", "done"],
+            "description": "状态：待处理 / 已预约 / 已完成（默认 done）"
+          },
+          "detail": {
+            "type": "string",
+            "description": "处理过程与结果（可选）"
+          },
+          "devices": {
+            "type": "string",
+            "description": "涉及设备 / 更换明细（可选）"
+          },
+          "billing": {
+            "type": "string",
+            "enum": ["warranty", "paid", "free"],
+            "description": "收费方式：质保内免费（默认）/ 保外收费 / 赠送服务"
+          },
+          "fee": {
+            "type": "number",
+            "description": "收费金额（元，billing=paid 时必填）"
+          },
+          "technician": {
+            "type": "string",
+            "description": "服务人员（可选）"
+          },
+          "nextVisitAt": {
+            "type": "string",
+            "description": "下次回访日期 YYYY-MM-DD（可选）"
+          }
+        },
+        "required": ["title"]
+      }
+    },
+    {
+      "name": "set_after_sales_status",
+      "title": "更新售后记录状态",
+      "pluginId": null,
+      "cost": 0.3,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["projects:write"],
+      "description": "修改一条售后维保记录的处理状态。当用户说「那条检修标记完成」「把售后记录改成已预约」「这条先设为待处理」时调用。需要 recordId；可先用 list_after_sales 找到记录 ID。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          },
+          "recordId": {
+            "type": "string",
+            "description": "售后记录 ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "scheduled", "done"],
+            "description": "新状态：待处理 / 已预约 / 已完成"
+          }
+        },
+        "required": ["recordId", "status"]
+      }
+    },
+    {
+      "name": "delete_after_sales_record",
+      "title": "删除售后维保记录",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "project",
+      "mutates": true,
+      "permissions": ["projects:write"],
+      "description": "永久删除一条售后维保记录。当用户明确说「删掉那条售后记录」「这条巡检记录不要了」时调用。需要 recordId；可先用 list_after_sales 找到记录 ID。操作不可撤销。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "description": "项目 ID（可选，不传则使用当前对话关联的项目）"
+          },
+          "recordId": {
+            "type": "string",
+            "description": "要删除的售后记录 ID"
+          }
+        },
+        "required": ["recordId"]
+      }
+    },
+    {
+      "name": "update_company_settings",
+      "title": "修改公司设置",
+      "pluginId": null,
+      "cost": 0.5,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["settings:write"],
+      "description": "修改当前账号的公司抬头与默认展示内容。当用户说「公司名改成…」「口号换成…」「报价单上的电话改成…」「报价备注/合同条款加上…」「打印报价单不要显示产品图」时调用。只允许名称、口号、电话、邮箱、地址、报价备注、合同条款、是否打印产品图；不能通过 AI 修改插件开关、文档模板、Logo/二维码、成本设置或任何密钥。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "公司 / 抬头名称（最多 60 字）"
+          },
+          "slogan": {
+            "type": "string",
+            "description": "副标题 / 口号（最多 80 字）"
+          },
+          "phone": {
+            "type": "string",
+            "description": "联系电话（最多 30 字）"
+          },
+          "email": {
+            "type": "string",
+            "description": "邮箱（最多 80 字）"
+          },
+          "address": {
+            "type": "string",
+            "description": "地址（最多 200 字）"
+          },
+          "quoteNotes": {
+            "type": "string",
+            "description": "新报价的默认备注（最多 2000 字）"
+          },
+          "contractTerms": {
+            "type": "string",
+            "description": "合同默认条款（最多 5000 字）"
+          },
+          "printProductImages": {
+            "type": "boolean",
+            "description": "打印报价单时是否显示产品图片"
+          }
+        }
+      }
+    },
+    {
       "name": "room_insights",
       "title": "房间智能分析",
       "pluginId": "room-insights",
@@ -828,6 +1594,141 @@
             "description": "客户是否对预算非常敏感、只想先看总价（默认 false）"
           }
         }
+      }
+    },
+    {
+      "name": "ha_get_overview",
+      "title": "读取智能家居总览",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": ["smart-home:read"],
+      "description": "读取客户现场 Home Assistant 的总览：楼层与区域清单、各区域的设备数量、当前有多少实体处于「开」状态、最近有问题的实体。用于在报价或验收前快速了解现场规模。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "include_states": {
+            "type": "boolean",
+            "description": "是否附带各区域的活跃实体列表（默认 false，只给统计）"
+          }
+        }
+      }
+    },
+    {
+      "name": "ha_search_entities",
+      "title": "搜索智能家居实体",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": ["smart-home:read"],
+      "description": "按关键词或区域搜索现场设备实体（灯、开关、窗帘、传感器、空调…），返回实体 ID、当前状态与所属区域。用于确认「客户说的那盏灯」到底是哪个实体。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "关键词，例如「客厅吊灯」「主卧窗帘」"
+          },
+          "area": {
+            "type": "string",
+            "description": "限定区域名，可选"
+          },
+          "domain": {
+            "type": "string",
+            "description": "限定设备类型，如 light / switch / cover / sensor，可选"
+          },
+          "limit": {
+            "type": "number",
+            "description": "最多返回多少条，默认 20"
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "ha_list_areas",
+      "title": "读取区域与楼层",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": ["smart-home:read"],
+      "description": "读取 Home Assistant 里的楼层、区域清单及其包含的实体数量。用于把现场区域与本仓项目的「房间区域」对齐。",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "ha_get_history",
+      "title": "读取设备历史",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": ["smart-home:read"],
+      "description": "读取指定实体在过去一段时间内的状态变化。用于排查「这个自动化为什么没生效」「昨晚这盏灯几点被关的」。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "实体 ID，如 light.living_room_main"
+          },
+          "hours": {
+            "type": "number",
+            "description": "往前查多少小时，默认 24"
+          }
+        },
+        "required": ["entity_id"]
+      }
+    },
+    {
+      "name": "ha_get_system_health",
+      "title": "检查 Home Assistant 健康",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": false,
+      "permissions": ["smart-home:read"],
+      "description": "检查现场 Home Assistant 的运行健康度：核心版本、集成报错、离线设备数量。交付验收前用它确认「现场本身没问题」。",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "ha_call_service",
+      "title": "控制智能家居设备",
+      "pluginId": "ha-mcp",
+      "cost": 0,
+      "scope": "workspace",
+      "mutates": true,
+      "permissions": ["smart-home:write"],
+      "description": "调用 Home Assistant 服务控制真实设备（开灯、关灯、调亮度、开合窗帘、执行场景）。⚠️ 会改变客户家里的实际设备状态，调用前必须先确认实体 ID 与动作。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "服务域，如 light / switch / cover / scene"
+          },
+          "service": {
+            "type": "string",
+            "description": "服务名，如 turn_on / turn_off / toggle"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "目标实体 ID"
+          },
+          "data": {
+            "type": "object",
+            "description": "附加参数，例如 {\"brightness_pct\": 60}"
+          }
+        },
+        "required": ["domain", "service", "entity_id"]
       }
     }
   ],
@@ -1016,6 +1917,23 @@
         }
       ],
       "promptTemplate": "请按「AI 识别导入」插件规范，针对【{sheetName}】按【{scope}】生成 fmkj-points JSON 识图提示词与导入校验清单。"
+    },
+    {
+      "id": "tpl-ha-site-check",
+      "name": "现场设备核对",
+      "category": "点位审查",
+      "description": "把客户现场 Home Assistant 里的真实设备，与本仓项目的点位清单做一次对照",
+      "modelHint": "reasoning",
+      "recommendedModelId": "default",
+      "requiredPlugins": ["ha-mcp"],
+      "variables": [
+        {
+          "key": "project",
+          "label": "项目名称",
+          "defaultValue": "当前项目"
+        }
+      ],
+      "promptTemplate": "请帮我核对 {{project}} 的现场设备：\n1) 先调用 ha_get_overview 看现场规模和区域分布；\n2) 用 ha_search_entities 按房间逐个列出实际存在的灯、开关、窗帘；\n3) 和当前项目点位图里的设备清单对比，指出「点位里规划了但现场没有」以及「现场有但点位没规划」的项；\n4) 按房间给结论，不要笼统总结。"
     }
   ]
 }

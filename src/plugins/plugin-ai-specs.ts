@@ -57,4 +57,28 @@ export const EXTRA_PLUGIN_AI_SPECS: Partial<Record<PluginId, PluginAiSpec>> = {
     tools: [],
     skills: [],
   },
+  'business-card': {
+    permissions: ['settings:write'],
+    guidance: [
+      '用户要名片、名片设计、印刷名片或更换名片版式时，引导其打开 /capabilities/business-card：可改姓名/头衔/电话/网站后直接导出 PNG。',
+      '名片尺寸固定 90×54mm（渲染 1080×648，3 倍导出 3240×1944 且写入 300dpi），可直接送印；需要多版时勾选后导出 ZIP。',
+      '名片信息来自「设置 → 公司资料」，导出前提醒用户核对电话与微信二维码是否为自己的。',
+    ],
+    knowledge: [
+      {
+        id: 'business-card-spec',
+        title: '名片印刷规范',
+        summary: '90×54mm 标准名片，4 套版式 × 正反面，导出 300dpi PNG',
+        rules: [
+          '成品尺寸 90×54mm，四边各留 3mm 出血给印厂；内容距裁切线 ≥3mm 安全边。',
+          '渲染基准 1080×648，导出按 3 倍 = 3240×1944 并写入 300dpi，印厂打开即为 90×54mm。',
+          '四套版式：深夜金（深色正面 + 米白背面，最稳妥）、米白纸（两面浅色、留白多）、星夜紫（两面深色带星光，展会场合）、留白（黑白灰极简，最百搭）。',
+          '米家 / Apple Home / KNX 图标只表示「支持接入的平台与协议」，不得表述为官方认证。',
+          '深色大面积实地建议 300g 以上纸并覆哑膜；浅色底建议覆哑膜防指纹。',
+        ],
+      },
+    ],
+    tools: [],
+    skills: [],
+  },
 }

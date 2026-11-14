@@ -42,6 +42,7 @@ const GATED = [
   { name: '能力中心', path: '/capabilities', expect: ['能力中心'] },
   { name: '模板中心', path: '/capabilities/templates', expect: ['模板中心', '文档风格'] },
   { name: '全部工具', path: '/capabilities/tools' },
+  { name: '名片', path: '/capabilities/business-card', expect: ['名片', '三维预览'] },
   { name: 'AI 能力', path: '/ai' },
   { name: 'AI 生图', path: '/ai/image' },
   { name: '设置', path: '/settings', expect: ['设置'] },
@@ -395,6 +396,58 @@ async function main() {
       console.log(`  ✅ 点位图图标     ${info.cards} 张卡片 · ${info.distinct} 种图标 · 无溢出`)
     }
     results.push({ name: '点位图图标', path: `/projects/${PID}/point-map`, problems })
+  }
+
+  // ── 名片：素材必须是纯二维码 + 网址必须是正式域名 ──────
+  // 2026-11-14 从营销工作台搬过来时踩过两个坑，都是「预览看着像对的、印出来是废的」：
+  //   1. 公司资料里的二维码是整张「加我为朋友」名片图（888×1131），塞进 218×218 方框被压扁；
+  //   2. 本地 PUBLIC_URL 是 127.0.0.1:13001，直接印到了名片背面。
+  if (!only.length || only.some((o) => '名片'.includes(o) || 'business-card'.includes(o))) {
+    const problems = []
+    await page
+      .goto(`${BASE}/capabilities/business-card`, { waitUntil: 'load', timeout: 25000 })
+      .catch(() => {})
+    await sleep(6000)
+    const info = await page
+      .evaluate(() => {
+        // 离屏导出画布是唯一「真正会被打印」的那份，检查它
+        const stage = document.querySelector('[aria-hidden].fixed')
+        if (!stage) return { found: false }
+        const faces = [...stage.children]
+        const qrs = [...stage.querySelectorAll('img')].filter((i) => i.alt === '微信二维码')
+        const qr = qrs[0]
+        const text = stage.innerText || ''
+        return {
+          found: true,
+          faces: faces.length,
+          qrs: qrs.length,
+          qrRatio: qr && qr.naturalWidth ? qr.naturalWidth / qr.naturalHeight : 0,
+          qrNatural: qr ? [qr.naturalWidth, qr.naturalHeight] : null,
+          localHost: /(127\.0\.0\.1|localhost|0\.0\.0\.0)/.test(text),
+        }
+      })
+      .catch(() => ({ found: false }))
+
+    if (!info.found) {
+      problems.push('找不到名片离屏导出画布')
+    } else {
+      if (info.faces < 8) problems.push(`导出画布只有 ${info.faces} 张卡面（4 版 × 正反面应为 8）`)
+      if (!info.qrs) problems.push('名片上没有微信二维码')
+      // 二维码必须接近正方形；整张名片图是 0.79，方框里会被压扁
+      if (info.qrs && Math.abs(info.qrRatio - 1) > 0.05) {
+        problems.push(
+          `二维码不是方的（${info.qrNatural?.join('×')}），印出来会变形 —— 应指向裁好的 /brand/wechat-qr.png`,
+        )
+      }
+      if (info.localHost) problems.push('名片上印着本机地址（127.0.0.1 / localhost）')
+    }
+    if (problems.length) {
+      console.log(`  ❌ 名片           ${problems.length} 个问题`)
+      for (const p of problems) fail('名片', '断言', p)
+    } else {
+      console.log(`  ✅ 名片           ${info.faces} 张卡面 · 二维码方正 · 网址是正式域名`)
+    }
+    results.push({ name: '名片', path: '/capabilities/business-card', problems })
   }
 
   await browser.close()
