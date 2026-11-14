@@ -5,6 +5,7 @@ import { ArrowRight, Gift, MessageCircle, Sparkles } from 'lucide-react'
 
 import { AppsSection } from '@/components/landing/apps-section'
 import { DeliverySection } from '@/components/landing/delivery-section'
+import { DesktopSection } from '@/components/landing/desktop-section'
 import { LandingFooter, LandingNav } from '@/components/landing/landing-chrome'
 import { LibrarySection } from '@/components/landing/library-section'
 import { PlanDemo } from '@/components/landing/plan-demo'
@@ -159,6 +160,7 @@ export default async function HomePage() {
         {data ? (
           <LibrarySection products={data.library.products} brands={data.library.brands} />
         ) : null}
+        <DesktopSection />
         <AppsSection />
 
         <section

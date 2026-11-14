@@ -257,6 +257,90 @@ async function main() {
     results.push({ name: 'SEO 元信息', path: '/', problems })
   }
 
+  // ── 首页的桌面客户端入口：按钮必须真的指向一个能下的安装包 ──────
+  // 2026-11-14 上架首页时发现：客户端 1.1.0 早就打好包，但服务器 desktop-releases
+  // 目录是空的，下载页三个平台全显示「即将上线」。页面本身不报错 ——
+  // 只有顺着按钮点进去才知道是死链。
+  //
+  // 两种状态都要判对：有安装包时按钮必须直连安装包；没有安装包时退化成「使用网页版」
+  // 也算对（本地开发没有 desktop-releases 目录，永远走这一支），但不能出现死链。
+  // 注意 /latest/<target> 在没有包时会 302 回 /download，跟着跳也返回 200 ——
+  // 所以只能看它最终落在哪，不能只看状态码。
+  if (!only.length || only.some((o) => '首页'.includes(o) || o === '/')) {
+    const problems = []
+    const manifestRes = await ctx.request
+      .get(`${BASE}/downloads/desktop/manifest`, { timeout: 15000 })
+      .catch(() => null)
+    const manifest = manifestRes?.ok() ? await manifestRes.json().catch(() => null) : null
+    const released = Boolean(manifest?.windows || manifest?.mac)
+
+    await page.goto(`${BASE}/`, { waitUntil: 'load', timeout: 25000 }).catch(() => {})
+    await sleep(3000)
+    const info = await page
+      .evaluate(() => {
+        const section = document.querySelector('#desktop')
+        if (!section) return { found: false }
+        const links = [...section.querySelectorAll('a')].map((a) => ({
+          text: (a.textContent || '').trim(),
+          href: a.getAttribute('href') || '',
+        }))
+        return { found: true, text: section.innerText || '', links }
+      })
+      .catch(() => ({ found: false }))
+
+    if (!info.found) {
+      problems.push('首页没有桌面客户端分区（#desktop）')
+    } else if (released) {
+      const download = info.links.find((l) => l.href.includes('/downloads/desktop/'))
+      if (!download) problems.push('已发布安装包，但首页按钮没指向 /downloads/desktop')
+      if (/即将上线/.test(info.text)) problems.push('首页客户端分区显示「即将上线」')
+    } else {
+      // 没发布：不能留死链，得退化成能用的入口
+      if (!info.links.some((l) => l.href === '/projects'))
+        problems.push('没有安装包时首页也没给出「使用网页版」入口')
+      if (info.links.some((l) => l.href.includes('/downloads/desktop/')))
+        problems.push('没有安装包却给出了安装包直链')
+    }
+
+    if (released) {
+      // 有清单还不够：清单里的地址可能指向已删除的文件。逐个跟到底，必须是二进制而不是回跳的 HTML。
+      // 必须用 HEAD：GET 会把 120MB 的安装包整个下进内存，生产冒烟直接卡死在这里。
+      // HEAD 一样会 302 到安装包，所以「回跳网页」和「文件不存在」都还测得出来。
+      for (const target of ['windows', 'mac-arm64', 'mac-x64']) {
+        const res = await ctx.request
+          .head(`${BASE}/downloads/desktop/latest/${target}`, { timeout: 20000, maxRedirects: 5 })
+          .catch(() => null)
+        if (!res) {
+          problems.push(`/downloads/desktop/latest/${target} 请求失败`)
+          continue
+        }
+        if (res.status() !== 200) {
+          problems.push(`/downloads/desktop/latest/${target} 下载不到（${res.status()}）`)
+          continue
+        }
+        const type = res.headers()['content-type'] || ''
+        if (type.includes('text/html')) {
+          problems.push(`/downloads/desktop/latest/${target} 回跳到了网页，不是安装包`)
+        }
+        if (!Number(res.headers()['content-length'] || 0)) {
+          problems.push(
+            `/downloads/desktop/latest/${target} 没有 content-length，安装包可能是空文件`,
+          )
+        }
+      }
+    }
+
+    if (problems.length) {
+      console.log(`  ❌ 首页客户端入口   ${problems.length} 个问题`)
+      for (const p of problems) fail('首页客户端入口', '断言', p)
+    } else if (released) {
+      console.log('  ✅ 首页客户端入口   三个平台安装包都可下载')
+    } else {
+      console.log('  ✅ 首页客户端入口   未发布安装包，正确退化为网页版入口')
+    }
+    results.push({ name: '首页客户端入口', path: '/', problems })
+  }
+
   // ── 公开页 ────────────────────────────────────────────
   for (const p of picked(PUBLIC)) {
     await check(page, p, { gated: false, errs })
