@@ -131,6 +131,16 @@ const nextConfig: NextConfig = {
       './node_modules/.pnpm/file-type@*/node_modules/file-type/**',
     ],
   },
+  // MLightCAD（issue #178）：MIT 的 DXF 查看/编辑链路按源包转译。
+  transpilePackages: [
+    '@mlightcad/cad-simple-viewer',
+    '@mlightcad/data-model',
+    '@mlightcad/mtext-parser',
+    '@mlightcad/mtext-renderer',
+    '@mlightcad/three-renderer',
+    'three',
+    'lodash-es',
+  ],
   images: {
     loader: 'custom',
     loaderFile: './figma-image-loader.ts',

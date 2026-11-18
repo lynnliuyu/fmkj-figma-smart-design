@@ -51,6 +51,7 @@ export type PluginId =
   | 'after-sales'
   | 'ha-mcp'
   | 'business-card'
+  | 'cad-editor'
 
 /** 项目阶段：能力中心按阶段筛选、项目里的插件入口共用 */
 export const PLUGIN_STAGES = [

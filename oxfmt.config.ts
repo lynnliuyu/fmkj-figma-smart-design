@@ -10,6 +10,9 @@ export default {
   //   desktop/**                           — Electron，同上
   ignorePatterns: [
     '**/payload-types.ts',
+    // 上游自托管资源（CAD worker / 字体清单 / 样例模板）：按上游原样提交，不改写
+    'public/workers/**',
+    'public/cad-data/**',
     'tsconfig.json',
     'src/app/(payload)/**',
     'miniprogram/**',

@@ -20,7 +20,9 @@
     "templates:seed": "NODE_OPTIONS=--no-deprecation payload run --input '{\"scriptPath\":\"scripts/seed-proposal-library.ts\"}'",
     "templates:thumbs": "node scripts/generate-template-thumbnails.mjs",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "cad:assets": "node scripts/cad-assets.mjs",
+    "cad:sample": "node scripts/make-cad-sample.mjs"
   },
   "dependencies": {
     "@astryxdesign/core": "0.7.11",
@@ -30,6 +32,11 @@
     "@astryxdesign/theme-neutral": "0.7.11",
     "@astryxdesign/theme-stone": "0.7.11",
     "@heroicons/react": "2.2.0",
+    "@mlightcad/cad-simple-viewer": "1.7.8",
+    "@mlightcad/data-model": "1.15.21",
+    "@mlightcad/mtext-parser": "1.5.7",
+    "@mlightcad/mtext-renderer": "0.13.7",
+    "@mlightcad/three-renderer": "1.7.8",
     "@payloadcms/db-postgres": "4.0.0-beta.4",
     "@payloadcms/figma": "1.0.0-beta.1",
     "@payloadcms/next": "4.0.0-beta.4",
@@ -48,6 +55,7 @@
     "html-react-parser": "^5.2.10",
     "html-to-image": "1.11.13",
     "input-otp": "1.4.1",
+    "lodash-es": "4.17.21",
     "lucide-react": "^1.63.0",
     "monaco-editor": "0.55.1",
     "next": "16.4.6",

@@ -57,6 +57,16 @@ export const EXTRA_PLUGIN_AI_SPECS: Partial<Record<PluginId, PluginAiSpec>> = {
     tools: [],
     skills: [],
   },
+  'cad-editor': {
+    permissions: [],
+    guidance: [
+      '用户要打开、查看或修改 CAD/DXF 图纸时，引导其打开 /capabilities/cad（预览版）。图纸只在浏览器本地处理，不上传、不外发。',
+      'DWG 暂不支持：上游 DWG 解析器要么是 GPL-3.0（libredwg），要么是商业授权；当前只开放 DXF 的打开、编辑与 DXF 副本保存。',
+    ],
+    knowledge: [],
+    tools: [],
+    skills: [],
+  },
   'business-card': {
     permissions: ['settings:write'],
     guidance: [

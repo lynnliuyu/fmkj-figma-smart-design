@@ -140,6 +140,20 @@ const RAW_PLUGINS: AppPlugin[] = [
     provides: ['设备总览', '实体搜索', '区域核对', '历史排查', '系统健康', '设备控制'],
   },
   {
+    id: 'cad-editor',
+    category: 'tool', // 工具：本地图纸编辑，与具体项目无关
+    stage: 'design',
+    entry: { label: '打开 CAD 编辑器', href: () => '/capabilities/cad' },
+    tagline: '在浏览器里打开 DXF、改几何、存一份可编辑副本',
+    name: 'CAD 编辑（预览）',
+    description:
+      '基于 MLightCAD 的浏览器端 CAD 编辑预览：DXF 本地解析、图层开关、移动/删除几何、' +
+      '保存 DXF 副本并重新打开。图纸不上传、不外发。DWG 因上游解析器许可证（GPL-3.0 / 商业授权）暂未启用。',
+    status: 'ready',
+    where: '能力中心 → 工具、/capabilities/cad',
+    provides: ['DXF 打开/缩放', '图层查看', '移动/删除几何', 'DXF 副本保存', '重开核对'],
+  },
+  {
     id: 'business-card',
     category: 'tool', // 工具：印刷物料，与具体项目无关
     stage: 'global',

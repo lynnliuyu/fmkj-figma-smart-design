@@ -29,6 +29,21 @@ importers:
       '@heroicons/react':
         specifier: 2.2.0
         version: 2.2.0(react@19.3.1)
+      '@mlightcad/cad-simple-viewer':
+        specifier: 1.7.8
+        version: 1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@mlightcad/three-renderer@1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@velipso/polybool@1.1.1)(three@0.187.0))(lodash-es@4.17.21)(three@0.187.0)
+      '@mlightcad/data-model':
+        specifier: 1.15.21
+        version: 1.15.21
+      '@mlightcad/mtext-parser':
+        specifier: 1.5.7
+        version: 1.5.7
+      '@mlightcad/mtext-renderer':
+        specifier: 0.13.7
+        version: 0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0)
+      '@mlightcad/three-renderer':
+        specifier: 1.7.8
+        version: 1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@velipso/polybool@1.1.1)(three@0.187.0)
       '@payloadcms/db-postgres':
         specifier: 4.0.0-beta.4
         version: 4.0.0-beta.4(@cloudflare/workers-types@5.20260716.1)(payload@4.0.0-beta.4(graphql@16.14.2)(typescript@6.0.3))
@@ -83,6 +98,9 @@ importers:
       input-otp:
         specifier: 1.4.1
         version: 1.4.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      lodash-es:
+        specifier: 4.17.21
+        version: 4.17.21
       lucide-react:
         specifier: ^1.63.0
         version: 1.63.0(@types/react@19.3.0)(react@19.3.1)
@@ -1769,6 +1787,61 @@ packages:
       typescript:
         optional: true
 
+  '@lukeed/csprng@1.1.0':
+    resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
+    engines: {node: '>=8'}
+
+  '@mlightcad/cad-simple-viewer@1.7.8':
+    resolution: {integrity: sha512-3lt2yrn9sDNLRC8TRhNrzcARaELfjJUAO7RB3RZRMXR2lZgNf7qgrEptzJsfLdEtgqHzPy6fmH81OxB2PuarzQ==}
+    peerDependencies:
+      '@mlightcad/data-model': 1.15.21
+      '@mlightcad/mtext-parser': 1.5.7
+      '@mlightcad/mtext-renderer': 0.13.7
+      '@mlightcad/three-renderer': 1.7.8
+      lodash-es: 4.17.21
+      three: ^0.186.1
+
+  '@mlightcad/common@1.15.21':
+    resolution: {integrity: sha512-8y2h69o/V5N7FCIUrfgu/NrmHdjyy3Fo0l9XuVWk1bWjJTVCHQ0Oz0I88eSNBaRaPPvyRztYI7BKpYIBEGtE5g==}
+
+  '@mlightcad/data-model@1.15.21':
+    resolution: {integrity: sha512-gYmYPzjTudXcEOWwb+vV0yWUcDyaudpo7nRiaFr5JocFq8yG0FaTzQMVQKeoKxxB0r1d49hzxvyE+j6wD/FGdg==}
+
+  '@mlightcad/emf-converter@1.15.21':
+    resolution: {integrity: sha512-R3XysVGfHAIcKZis6esFOkRwgdAxHPHaSYbDrQX7H3HOV/LdAt9SNK4wFuK1ecoRfbM2zcob6dqy03QkKfmK5A==}
+
+  '@mlightcad/geometry-engine@3.15.21':
+    resolution: {integrity: sha512-B0cCFBnCZ+eCRiWYdVzb3iUR9IaI/Ecum0kv1kz4o9dIsCga+XE/9g4Vk7+lu/NvJdFo2PVgwu6Yippd6l1FWw==}
+    peerDependencies:
+      '@mlightcad/common': 1.15.21
+
+  '@mlightcad/graphic-interface@3.15.21':
+    resolution: {integrity: sha512-jl7nECex0UU5+z441gW2xfOwtxPg0IJd8LeF4zo+d57M0FvAEjcNZReX2LbqtoZzLbA0BadO93XNCbc7x9AKvw==}
+    peerDependencies:
+      '@mlightcad/common': 1.15.21
+      '@mlightcad/geometry-engine': 3.15.21
+
+  '@mlightcad/mtext-parser@1.5.7':
+    resolution: {integrity: sha512-CoXa04hITe1WA8F7bg1na5wSsbTmAbjOt9CQNHbjT48tFyR4hkqcXKX0nln3Szwxm9v7IsTK6vNFvtVd5FHjzg==}
+
+  '@mlightcad/mtext-renderer@0.13.7':
+    resolution: {integrity: sha512-XCGXf5nm3KPFM5BIN+8AMzsOYta4GGCtltgmIhgCUNsm2bZIWUm7S6wtSKchpKyMFcxTHM78QUzJ9VjkT7LWjQ==}
+    peerDependencies:
+      '@mlightcad/mtext-parser': ^1.5.7
+      three: '>=0.185.1'
+
+  '@mlightcad/shx-parser@1.4.5':
+    resolution: {integrity: sha512-wFY0X7vnuq1IYdP6JRggb7LHcKho1P8zmcWGtXa6XYthwyKZCUoZCswTXr7J26pbzyhBB7KsiCcCL48iwIevdQ==}
+
+  '@mlightcad/three-renderer@1.7.8':
+    resolution: {integrity: sha512-lpBop49dCNUdlCc+UIxfEkXz0iDxIxJqrxlSSCh+G2iFkYhMh7NbTk8P37jEzUkHrGrnr65ZBDMpVDrkj6jIxA==}
+    peerDependencies:
+      '@mlightcad/data-model': 1.15.21
+      '@mlightcad/mtext-parser': 1.5.7
+      '@mlightcad/mtext-renderer': 0.13.7
+      '@velipso/polybool': ^1.1.1
+      three: ^0.186.1
+
   '@modelcontextprotocol/core@2.3.1':
     resolution: {integrity: sha512-laVmIhPGpWi7rG9q+0UigblRN0Hws/Yjlb6qLFtVqryXVLkc4h+yN8z731POD2LnAGQlFe7/tXhUm7Bi0YB91g==}
     engines: {node: '>=20'}
@@ -3164,6 +3237,9 @@ packages:
     resolution: {integrity: sha512-SB8xqipSzZHUePCCLNeYxqnxq83X61/qzNhjQGbTfjxGZIeOEP7tBgWYX05Tcd6CgE02WdTJnh5b8kMZJ/+bnQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@velipso/polybool@1.1.1':
+    resolution: {integrity: sha512-HlWrm/wloLkUDHPQ1AgUdXysKL3y+rqV94udU5CVTtEPci5v6WjEfozNJTOOSwCsz50ySIxJK4gABqfbx1sD7A==}
+
   '@vitest/coverage-v8@5.1.0':
     resolution: {integrity: sha512-OY9aShBQG5KOIw2zCo9fDoCHI9RHliNHJ//nM7m6jGg41Hyke9JOGWmeMlK74xYErsxMoK8mIB3gAeEyFVA7LA==}
     peerDependencies:
@@ -4174,6 +4250,13 @@ packages:
   htmlparser2@10.1.0:
     resolution: {integrity: sha512-VTZkM9GWRAtEpveh7MSF6SjjrpNVNNVJfFup7xTY3UpFtm67foy9HDVXneLtFVt4pMz5kZtgNcvCniNFb1hlEQ==}
 
+  iconv-lite@0.7.3:
+    resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
+    engines: {node: '>=0.10.0'}
+
+  idb@8.0.4:
+    resolution: {integrity: sha512-jd0ITCrN+Zah4J7R/Z2jnR3W7A4BXDAjmo62MwWuSjxCiueUAf7X5rbodEdidWzeknwXHmLpdZkoiiCppNi30Q==}
+
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
@@ -4598,6 +4681,9 @@ packages:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
 
+  lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+
   lodash.includes@4.3.0:
     resolution: {integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==}
 
@@ -4621,6 +4707,10 @@ packages:
 
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
+
+  loglevel@1.9.2:
+    resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
+    engines: {node: '>= 0.6.0'}
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
@@ -4902,6 +4992,10 @@ packages:
 
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
+
+  opentype.js@2.0.0:
+    resolution: {integrity: sha512-kCyjv6xdDY1W/jLWZ/L3QhhTlKUqDZMQ5+Jdlw12b3dXkKNpYBqqlMMj0YDQPShWFTMwgZI1hG14kN3XUDSg/A==}
+    hasBin: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -5379,6 +5473,9 @@ packages:
     resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
     engines: {node: '>=10'}
 
+  safer-buffer@2.1.2:
+    resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
   sanitize-filename@1.6.4:
     resolution: {integrity: sha512-9ZyI08PsvdQl2r/bBIGubpVdR3RR9sY6RDiWFPreA21C/EFlQhmgo20UZlNjZMMZNubusLhAQozkA0Od5J21Eg==}
 
@@ -5706,6 +5803,10 @@ packages:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
+
+  uid@2.0.2:
+    resolution: {integrity: sha512-u3xV3X7uzvi5b1MncmZo3i2Aw222Zk1keqLA1YkHldREkAhAqi65wuPfe7lHx8H/Wzy+8CE7S7uS3jekIM5s8g==}
+    engines: {node: '>=8'}
 
   uint8array-extras@1.6.0:
     resolution: {integrity: sha512-8iAasVS4wUx0gPLjH8Xtz2PeDzTSiy8QiLGu2DT3X5GU+egFEQhpnbtkehbAwjvDcxIERmCYcysiODFmE3Ud0Q==}
@@ -7666,6 +7767,61 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
+  '@lukeed/csprng@1.1.0': {}
+
+  '@mlightcad/cad-simple-viewer@1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@mlightcad/three-renderer@1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@velipso/polybool@1.1.1)(three@0.187.0))(lodash-es@4.17.21)(three@0.187.0)':
+    dependencies:
+      '@mlightcad/data-model': 1.15.21
+      '@mlightcad/mtext-parser': 1.5.7
+      '@mlightcad/mtext-renderer': 0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0)
+      '@mlightcad/three-renderer': 1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@velipso/polybool@1.1.1)(three@0.187.0)
+      lodash-es: 4.17.21
+      three: 0.187.0
+
+  '@mlightcad/common@1.15.21':
+    dependencies:
+      loglevel: 1.9.2
+
+  '@mlightcad/data-model@1.15.21':
+    dependencies:
+      '@mlightcad/common': 1.15.21
+      '@mlightcad/emf-converter': 1.15.21
+      '@mlightcad/geometry-engine': 3.15.21(@mlightcad/common@1.15.21)
+      '@mlightcad/graphic-interface': 3.15.21(@mlightcad/common@1.15.21)(@mlightcad/geometry-engine@3.15.21(@mlightcad/common@1.15.21))
+      uid: 2.0.2
+
+  '@mlightcad/emf-converter@1.15.21': {}
+
+  '@mlightcad/geometry-engine@3.15.21(@mlightcad/common@1.15.21)':
+    dependencies:
+      '@mlightcad/common': 1.15.21
+
+  '@mlightcad/graphic-interface@3.15.21(@mlightcad/common@1.15.21)(@mlightcad/geometry-engine@3.15.21(@mlightcad/common@1.15.21))':
+    dependencies:
+      '@mlightcad/common': 1.15.21
+      '@mlightcad/geometry-engine': 3.15.21(@mlightcad/common@1.15.21)
+
+  '@mlightcad/mtext-parser@1.5.7': {}
+
+  '@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0)':
+    dependencies:
+      '@mlightcad/mtext-parser': 1.5.7
+      '@mlightcad/shx-parser': 1.4.5
+      iconv-lite: 0.7.3
+      idb: 8.0.4
+      opentype.js: 2.0.0
+      three: 0.187.0
+
+  '@mlightcad/shx-parser@1.4.5': {}
+
+  '@mlightcad/three-renderer@1.7.8(@mlightcad/data-model@1.15.21)(@mlightcad/mtext-parser@1.5.7)(@mlightcad/mtext-renderer@0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0))(@velipso/polybool@1.1.1)(three@0.187.0)':
+    dependencies:
+      '@mlightcad/data-model': 1.15.21
+      '@mlightcad/mtext-parser': 1.5.7
+      '@mlightcad/mtext-renderer': 0.13.7(@mlightcad/mtext-parser@1.5.7)(three@0.187.0)
+      '@velipso/polybool': 1.1.1
+      three: 0.187.0
+
   '@modelcontextprotocol/core@2.3.1':
     dependencies:
       zod: 4.6.5
@@ -9223,6 +9379,10 @@ snapshots:
       '@typescript-eslint/types': 8.72.1
       eslint-visitor-keys: 5.0.1
 
+  '@velipso/polybool@1.1.1':
+    dependencies:
+      tslib: 2.8.1
+
   '@vitest/coverage-v8@5.1.0(vitest@5.1.0)':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
@@ -10213,6 +10373,12 @@ snapshots:
       domutils: 3.2.2
       entities: 7.0.1
 
+  iconv-lite@0.7.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
+  idb@8.0.4: {}
+
   ieee754@1.2.1: {}
 
   ignore@5.3.2: {}
@@ -10577,6 +10743,8 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
+  lodash-es@4.17.21: {}
+
   lodash.includes@4.3.0: {}
 
   lodash.isboolean@3.0.3: {}
@@ -10592,6 +10760,8 @@ snapshots:
   lodash.once@4.1.1: {}
 
   lodash@4.18.1: {}
+
+  loglevel@1.9.2: {}
 
   longest-streak@3.1.0: {}
 
@@ -10992,6 +11162,8 @@ snapshots:
       openapi-typescript-helpers: 0.0.15
 
   openapi-typescript-helpers@0.0.15: {}
+
+  opentype.js@2.0.0: {}
 
   optionator@0.9.4:
     dependencies:
@@ -11578,6 +11750,8 @@ snapshots:
 
   safe-stable-stringify@2.5.0: {}
 
+  safer-buffer@2.1.2: {}
+
   sanitize-filename@1.6.4:
     dependencies:
       truncate-utf8-bytes: 1.0.2
@@ -11905,6 +12079,10 @@ snapshots:
       - supports-color
 
   typescript@6.0.3: {}
+
+  uid@2.0.2:
+    dependencies:
+      '@lukeed/csprng': 1.1.0
 
   uint8array-extras@1.6.0: {}
 

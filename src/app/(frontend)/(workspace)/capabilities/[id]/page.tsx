@@ -337,51 +337,67 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
             }
             content={
               <LayoutContent padding={5} isScrollable={false}>
-                <div className="divide-y">
-                  {projects.length === 0 ? (
-                    <p className="py-4 text-sm text-muted-foreground">
-                      还没有进行中的项目，请先在「项目」中创建。
+                {plugin.id === 'cad-editor' ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+                    <p className="max-w-xl text-sm text-muted-foreground">
+                      CAD
+                      编辑器是全局工具，不绑定具体项目：图纸只在当前浏览器里解析和编辑，不上传、不外发。
                     </p>
-                  ) : (
-                    projects.map((proj) => {
-                      const targetHref = plugin.entry
-                        ? plugin.entry.href(proj.id)
-                        : `/projects/${proj.id}`
-                      const targetLabel =
-                        plugin.id === 'proposal'
-                          ? '打开方案'
-                          : plugin.id === 'doc-styles'
-                            ? '预览风格'
-                            : plugin.id === 'ai-copilot'
-                              ? '打开 AI 对话'
-                              : '打开点位图'
-                      return (
-                        <div
-                          key={proj.id}
-                          className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <FolderKanban className="size-4 shrink-0 text-muted-foreground" />
-                              <span className="truncate text-sm font-medium">{proj.name}</span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      href="/capabilities/cad"
+                      icon={<ExternalLink />}
+                      label="打开 CAD 编辑器"
+                    />
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {projects.length === 0 ? (
+                      <p className="py-4 text-sm text-muted-foreground">
+                        还没有进行中的项目，请先在「项目」中创建。
+                      </p>
+                    ) : (
+                      projects.map((proj) => {
+                        const targetHref = plugin.entry
+                          ? plugin.entry.href(proj.id)
+                          : `/projects/${proj.id}`
+                        const targetLabel =
+                          plugin.id === 'proposal'
+                            ? '打开方案'
+                            : plugin.id === 'doc-styles'
+                              ? '预览风格'
+                              : plugin.id === 'ai-copilot'
+                                ? '打开 AI 对话'
+                                : '打开点位图'
+                        return (
+                          <div
+                            key={proj.id}
+                            className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                          >
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <FolderKanban className="size-4 shrink-0 text-muted-foreground" />
+                                <span className="truncate text-sm font-medium">{proj.name}</span>
+                              </div>
+                              <p className="mt-0.5 text-xs text-muted-foreground tabular-nums">
+                                {proj.customerName ? `${proj.customerName} · ` : ''}
+                                {proj.platform || '平台待定'} · {proj.points} 个点位
+                              </p>
                             </div>
-                            <p className="mt-0.5 text-xs text-muted-foreground tabular-nums">
-                              {proj.customerName ? `${proj.customerName} · ` : ''}
-                              {proj.platform || '平台待定'} · {proj.points} 个点位
-                            </p>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              href={targetHref}
+                              icon={<ExternalLink />}
+                              label={targetLabel}
+                            />
                           </div>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            href={targetHref}
-                            icon={<ExternalLink />}
-                            label={targetLabel}
-                          />
-                        </div>
-                      )
-                    })
-                  )}
-                </div>
+                        )
+                      })
+                    )}
+                  </div>
+                )}
               </LayoutContent>
             }
           />

@@ -1,5 +1,6 @@
 import {
   Bot,
+  DraftingCompass,
   Contact,
   HousePlug,
   FileUp,
@@ -26,4 +27,5 @@ export const PLUGIN_ICONS: Record<PluginId, LucideIcon> = {
   'after-sales': Wrench,
   'ha-mcp': HousePlug,
   'business-card': Contact,
+  'cad-editor': DraftingCompass,
 }
