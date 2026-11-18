@@ -7,8 +7,6 @@ import { AiPanelToggle } from '@/components/ai/ai-panel'
 import { GuardedLink } from '@/components/guarded-link'
 import { ThemeMenu } from '@/components/site-header'
 import { Badge } from '@astryxdesign/core/Badge'
-import { Divider } from '@astryxdesign/core/Divider'
-import { SidebarTrigger } from '@/components/ui/sidebar'
 import type { ProjectRole } from '@/lib/project-access'
 import { PROJECT_SECTIONS, sectionHref } from '@/lib/projects'
 import { cn } from '@/lib/utils'
@@ -47,12 +45,6 @@ export function ProjectHeader({
     <header className="project-header sticky top-0 z-40 -mx-4 -mt-5 border-b border-border bg-background md:-mx-8 md:-mt-7">
       <div className="flex flex-wrap items-center md:h-12 md:flex-nowrap">
         <div className="flex h-12 min-w-0 flex-1 items-center gap-2 pl-3 md:flex-none md:pl-4">
-          <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-          <Divider
-            orientation="vertical"
-            aria-hidden
-            className="shrink-0 data-vertical:h-5 data-vertical:self-center"
-          />
           <GuardedLink
             href="/projects"
             className="hidden shrink-0 text-[13px] text-muted-foreground transition-colors hover:text-foreground sm:inline"

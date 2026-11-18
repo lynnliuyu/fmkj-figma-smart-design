@@ -43,12 +43,7 @@ import {
   type AiToolCall,
 } from '@/components/ai/ai-elements'
 import { GuardedLink } from '@/components/guarded-link'
-import {
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+import { ListItem } from '@astryxdesign/core/List'
 import {
   aiDraftKey,
   draftOnKeyChange,
@@ -876,12 +871,11 @@ export function AiSidebarDock({
             ) : (
               // 与左侧栏 header 的菜单行同一套尺寸/圆角/hover；renderTrigger 的
               // ARIA 与 ref 原样透传，保证下拉的锚点和键盘行为不变。
-              <SidebarMenuButton
+              <button
                 {...props}
                 type="button"
-                size="lg"
                 aria-label={`AI 对话：${activeTitle}`}
-                className="order-1 min-w-0 flex-1 justify-start gap-2.5 px-2 text-left"
+                className="order-1 flex min-w-0 flex-1 items-center justify-start gap-2.5 rounded-lg px-2 py-1.5 text-left hover:bg-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
                   <MessageSquareText className="size-4" />
@@ -902,7 +896,7 @@ export function AiSidebarDock({
                   </span>
                 </span>
                 <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
-              </SidebarMenuButton>
+              </button>
             )
           }
         >
@@ -1006,35 +1000,28 @@ export function AiSidebarDock({
                 {project ? `关于「${project.name}」，` : ''}
                 选择一个常用任务，或直接描述需求、拖入户型图与清单。
               </p>
-              <div className="px-2">
-                <SidebarGroupLabel>常用任务</SidebarGroupLabel>
-                <SidebarMenu className="gap-1">
-                  {DEFAULT_AI_TEMPLATES.slice(0, 3).map((t, index) => {
-                    const Icon = TASK_ICONS[index] ?? Sparkles
-                    return (
-                      <SidebarMenuItem key={t.id}>
-                        <SidebarMenuButton
-                          type="button"
-                          onClick={() => pickTemplate(t.id)}
-                          className="h-auto min-h-12 items-start gap-2.5 py-2"
-                        >
-                          <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-sidebar-foreground/70">
-                            <Icon />
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-medium">{t.name}</span>
-                            {t.description ? (
-                              <span className="mt-0.5 line-clamp-1 block text-xs font-normal text-muted-foreground">
-                                {t.description}
-                              </span>
-                            ) : null}
-                          </span>
-                          <ArrowRight className="mt-0.5 shrink-0 text-muted-foreground opacity-0 transition-[opacity,transform] duration-150 ease-out-quart group-hover/menu-button:translate-x-0.5 group-hover/menu-button:opacity-100 group-focus-visible/menu-button:opacity-100" />
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  })}
-                </SidebarMenu>
+              <div className="grid gap-1 px-2">
+                <p className="px-1 pb-1 text-xs font-medium text-muted-foreground">常用任务</p>
+                {DEFAULT_AI_TEMPLATES.slice(0, 3).map((t, index) => {
+                  const Icon = TASK_ICONS[index] ?? Sparkles
+                  return (
+                    <ListItem
+                      key={t.id}
+                      label={t.name}
+                      description={t.description || undefined}
+                      startContent={
+                        <span className="flex size-5 shrink-0 items-center justify-center text-sidebar-foreground/70">
+                          <Icon />
+                        </span>
+                      }
+                      endContent={
+                        <ArrowRight className="size-3.5 shrink-0 text-muted-foreground" />
+                      }
+                      align="start"
+                      onClick={() => pickTemplate(t.id)}
+                    />
+                  )
+                })}
               </div>
             </div>
           ) : (

@@ -12,7 +12,6 @@ import { ASTRYX_THEME_INIT_SCRIPT } from '@/lib/astryx-theme'
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE, COMPANY_NAME } from '@/lib/brand'
 import { siteSans } from '@/lib/fonts'
 import { siteUrl } from '@/lib/site-url'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { BodyCustomCode, renderHeadCustomCode } from '@/lib/make-custom-code'
 import { makeSiteSettings, sanitizeHtmlAttribute } from '@/lib/make-site-settings'
 import './styles.css'
@@ -94,9 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               next-themes 的 resolvedTheme，包在外面 useTheme() 拿不到值，
               组件 token 会永远停在浅色（暗色下深底深字）。 */}
           <ThemeProvider>
-            <AstryxThemeProvider>
-              <TooltipProvider>{children}</TooltipProvider>
-            </AstryxThemeProvider>
+            <AstryxThemeProvider>{children}</AstryxThemeProvider>
           </ThemeProvider>
         </div>
         {googleAnalyticsId && (

@@ -1,7 +1,5 @@
 import { AiPanel, AiPanelProvider } from '@/components/ai/ai-panel'
-import { AppSidebar } from '@/components/app-sidebar'
-import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { WorkspaceShell } from '@/components/workspace-shell'
 import { appAuth } from '@/lib/app-auth'
 import { getCompanyInfo } from '@/lib/cached-data'
 import { getPayloadClient } from '@/lib/payload'
@@ -58,35 +56,27 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
   )
 
   return (
-    <SidebarProvider>
-      {/* AI 对话右栏：宽屏常驻一列，窄屏收成抽屉（断点理由见 lib/ai-panel.ts） */}
-      <AiPanelProvider enabled={aiCopilotEnabled}>
-        <AppSidebar
-          user={{ name: user.name, email: user.email }}
-          brand={{ name: company.name, logo: company.logo?.url ?? null }}
-          plugins={plugins}
-          ai={{ credits: user.aiCredits ?? 0 }}
-          showOperatorReports={operator}
-        />
-        <SidebarInset>
-          <SiteHeader />
-          {/* SidebarInset 本身就是 <main>，这里用 div，避免页面出现两个 main 区域 */}
-          <div
-            data-slot="workspace-page"
-            className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 md:px-8 md:py-7"
-          >
-            {children}
-          </div>
-        </SidebarInset>
-        <AiPanel
-          plugins={plugins}
-          projects={projects}
-          credits={user.aiCredits ?? 0}
-          configured={aiConfigured(activeAiModels)}
-          models={activeAiModels}
-          userId={user.id}
-        />
-      </AiPanelProvider>
-    </SidebarProvider>
+    /* AI 对话右栏：宽屏常驻一列，窄屏收成抽屉（断点理由见 lib/ai-panel.ts） */
+    <AiPanelProvider enabled={aiCopilotEnabled}>
+      <WorkspaceShell
+        user={{ name: user.name, email: user.email }}
+        brand={{ name: company.name, logo: company.logo?.url ?? null }}
+        plugins={plugins}
+        ai={{ credits: user.aiCredits ?? 0 }}
+        showOperatorReports={operator}
+        rightPanel={
+          <AiPanel
+            plugins={plugins}
+            projects={projects}
+            credits={user.aiCredits ?? 0}
+            configured={aiConfigured(activeAiModels)}
+            models={activeAiModels}
+            userId={user.id}
+          />
+        }
+      >
+        {children}
+      </WorkspaceShell>
+    </AiPanelProvider>
   )
 }

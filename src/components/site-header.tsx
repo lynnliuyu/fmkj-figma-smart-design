@@ -1,13 +1,6 @@
 'use client'
 
-import { ChevronRight } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-
-import { Divider } from '@astryxdesign/core/Divider'
-import { AiPanelToggle } from '@/components/ai/ai-panel'
-import { AppearanceMenu } from '@/components/appearance-menu'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import { APP_NAME } from '@/lib/brand'
 
 /** 项目详情（/projects/[id]/…）有自己的顶栏（板块切换），这里不再重复显示。 */
 export const isProjectDetailPath = (pathname: string) =>
@@ -32,34 +25,26 @@ const TITLES: [RegExp, string][] = [
   [/^\/settings/, '设置'],
 ]
 
+/**
+ * 页面级位置标（TopNav 的 startContent）：只显示当前板块标题。
+ *
+ * 产品标识与全局操作（AI 对话、外观切换）在 AppShell 的 TopNav；
+ * 页面正文自己负责 h1。这里放在顶栏作为位置提示，避免与正文标题重复。
+ */
 export function SiteHeader() {
   const pathname = usePathname()
   if (isProjectDetailPath(pathname)) return null
   const title = TITLES.find(([re]) => re.test(pathname))?.[1] ?? '工作台'
   return (
-    // 顶栏只承载侧边栏开关、当前位置和外观设置，压到 48px，把首屏高度还给内容。
-    <header className="sticky top-0 z-50 flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-3 md:px-5">
-      <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-      <Divider
-        orientation="vertical"
-        aria-hidden
-        className="shrink-0 mx-1 data-vertical:h-4 data-vertical:self-center"
-      />
-      <nav aria-label="当前位置" className="flex min-w-0 items-center gap-1.5 text-sm">
-        <span className="hidden text-[13px] text-muted-foreground sm:inline">{APP_NAME}</span>
-        <ChevronRight
-          aria-hidden
-          className="hidden size-3.5 shrink-0 text-muted-foreground/60 sm:block"
-        />
-        <span className="truncate text-sm font-semibold text-foreground">{title}</span>
-      </nav>
-      <div className="ml-auto flex items-center gap-1">
-        <AiPanelToggle />
-        <AppearanceMenu />
-      </div>
-    </header>
+    <span
+      data-slot="page-title"
+      className="truncate text-sm font-medium text-muted-foreground"
+      aria-current="page"
+    >
+      {title}
+    </span>
   )
 }
 
 /** 兼容旧引用：项目顶栏使用同一个外观菜单 */
-export { AppearanceMenu as ThemeMenu }
+export { AppearanceMenu as ThemeMenu } from '@/components/appearance-menu'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Activity,
   BookOpen,
@@ -18,37 +18,23 @@ import {
   Wrench,
 } from 'lucide-react'
 
-import { BetaBadge } from '@/components/beta-badge'
-import { ClientAvailableBadge } from '@/components/client-available-badge'
-import { BrandMark } from '@/components/brand/brand-mark'
-import { GuardedLink } from '@/components/guarded-link'
-import { LinkPending } from '@/components/link-pending'
-import { activeNavUrl } from '@/lib/nav-active'
-import { MembershipDialog } from '@/components/workspace-dialogs'
 import { Avatar } from '@astryxdesign/core/Avatar'
+import { Button } from '@astryxdesign/core/Button'
+import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   DropdownMenu,
-  DropdownMenuContent,
+  DropdownMenuDivider,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-  useSidebar,
-} from '@/components/ui/sidebar'
-import { Tooltip } from '@astryxdesign/core/Tooltip'
-import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
+} from '@astryxdesign/core/DropdownMenu'
+import { SideNav, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav'
+import { BetaBadge } from '@/components/beta-badge'
+import { ClientAvailableBadge } from '@/components/client-available-badge'
+import { GuardedLink } from '@/components/guarded-link'
+import { LinkPending } from '@/components/link-pending'
+import { MembershipDialog } from '@/components/workspace-dialogs'
+import { useWorkspaceChrome } from '@/components/workspace-chrome'
+import { hasLeaveGuard, runLeaveGuard } from '@/lib/leave-guard'
+import { activeNavUrl } from '@/lib/nav-active'
 import { cn } from '@/lib/utils'
 import type { PluginId } from '@/plugins/types'
 
@@ -94,7 +80,6 @@ const settingsNav = [
  * AI 对话挪到了右侧常驻一列（components/ai/ai-panel.tsx），
  * 能力中心总览页 /capabilities 保留、可直接 URL 访问（帮助手册里已说明），
  * 但不再占侧栏：只把这两个高频能力功能作为独立组挂在侧栏主体。
- * 普通用户不安装、不启停：点条目直接进对应页面按积分使用。
  */
 const toolNav = [
   { icon: LayoutTemplate, label: '模板中心', url: '/capabilities/templates' },
@@ -111,10 +96,13 @@ const ALL_NAV_URLS = [
   ...toolNav.map((i) => i.url),
 ] as const
 
-/** 左下角两个按钮共用的样式：图标模式下都收成 32px 的方块 */
-const footerButton =
-  'flex items-center rounded-lg outline-hidden transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-
+/**
+ * 官方 SideNavItem 的导航项。
+ *
+ * 用 `as={GuardedLink}` 保留「页面有未保存修改时先确认再跳转」的行为；
+ * Beta / 客户端可用标记分别走 `endContent`（纯展示）与 `actions`
+ * （可交互的独立下载链接），与官方对这两个插槽的约定一致。
+ */
 function NavItem({
   icon: Icon,
   label,
@@ -123,38 +111,44 @@ function NavItem({
   beta = false,
   desktopOnly = false,
 }: {
-  icon: React.ComponentType
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   label: string
   url: string
   active: boolean
-  /** 开发中的模块：在 label 后显示 Beta 标签（折叠成图标栏时隐藏） */
   beta?: boolean
-  /** 客户端可用：在行右侧放一个真正的下载链接标签（折叠成图标栏时隐藏） */
   desktopOnly?: boolean
 }) {
   return (
-    <SidebarMenuItem className={desktopOnly ? 'flex items-center' : undefined}>
-      <SidebarMenuButton
-        asChild
-        isActive={active}
-        tooltip={label}
-        className={cn(desktopOnly && 'min-w-0 flex-1')}
-      >
-        <GuardedLink href={url}>
-          <Icon />
-          <span>{label}</span>
-          {beta ? <BetaBadge className="group-data-[collapsible=icon]:hidden" /> : null}
-          <LinkPending className="ml-auto size-3.5" />
-        </GuardedLink>
-      </SidebarMenuButton>
-      {/* 客户端可用标签是独立的下载链接：放在 <GuardedLink>（<a>）之外，
-          与行链接作为 li 的 flex 兄弟，避免 a 套 a 的非法 HTML；
-          点它只进 /download，行的其它区域仍进 /smart-home。 */}
-      {desktopOnly ? (
-        <ClientAvailableBadge className="pr-1 group-data-[collapsible=icon]:hidden" />
-      ) : null}
-    </SidebarMenuItem>
+    <SideNavItem
+      label={label}
+      href={url}
+      as={GuardedLink}
+      icon={Icon}
+      isSelected={active}
+      endContent={
+        beta ? (
+          <BetaBadge />
+        ) : desktopOnly ? (
+          <LinkPending className="size-3.5 opacity-60" />
+        ) : undefined
+      }
+      actions={desktopOnly ? <ClientAvailableBadge /> : undefined}
+    />
   )
+}
+
+/** 跳转到设置项：有未保存修改时先走保存守卫再跳（与 GuardedLink 行为一致）。 */
+function useGuardedNavigate() {
+  const router = useRouter()
+  return (href: string) => {
+    if (!hasLeaveGuard()) {
+      router.push(href)
+      return
+    }
+    void runLeaveGuard().then((ok) => {
+      if (ok) router.push(href)
+    })
+  }
 }
 
 export function AppSidebar({
@@ -173,7 +167,8 @@ export function AppSidebar({
   showOperatorReports?: boolean
 }) {
   const pathname = usePathname()
-  const { state, isMobile } = useSidebar()
+  const navigate = useGuardedNavigate()
+  const { sidebarCollapsed, setSidebarCollapsed } = useWorkspaceChrome()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [membershipOpen, setMembershipOpen] = useState(false)
 
@@ -183,7 +178,6 @@ export function AppSidebar({
   // 判定逻辑在 lib/nav-active.ts，有单测盯住。
   const activeUrl = useMemo(() => activeNavUrl(pathname, ALL_NAV_URLS), [pathname])
   const isActive = (url: string) => activeUrl === url
-  const collapsed = state === 'collapsed' && !isMobile
   const visibleSettingsNav = settingsNav.filter(
     (item) => showOperatorReports || item.url !== '/settings/reports',
   )
@@ -200,198 +194,162 @@ export function AppSidebar({
   }
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="gap-3">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild tooltip={APP_NAME}>
-              <GuardedLink href="/projects">
-                {/* 平台标志；副标题是当前工作区（公司）名称，公司 Logo 仍用于报价单与合同抬头 */}
-                <BrandMark decorative className="size-8" />
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold tracking-wide">{APP_NAME}</span>
-                  {/* 公司名与平台名相同（自营团队）时显示平台副标，避免上下两行重复 */}
-                  <span className="truncate text-xs text-muted-foreground">
-                    {brand.name && brand.name !== APP_NAME ? brand.name : APP_TAGLINE}
-                  </span>
-                </div>
-              </GuardedLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-
-      {/*
-        AI 对话已从左侧栏挪到页面右侧独立一列（components/ai/ai-panel.tsx），
-        左侧始终是导航。原来的「导航 / AI 对话」标签切换和折叠态的
-        「展开 AI 对话侧栏」按钮随之删除：AI 栏在窄屏有自己的顶栏开关，
-        宽屏则常驻，不再需要从左侧栏展开。
-      */}
-      <SidebarContent id="sidebar-panel">
-        {/* 最常用的动作放在最显眼的位置 */}
-        <SidebarGroup className="pb-0">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="新建项目"
-                className="justify-center bg-sidebar-primary font-medium text-sidebar-primary-foreground shadow-xs inset-shadow-btn hover:bg-[color-mix(in_oklch,var(--sidebar-primary),black_10%)] hover:text-sidebar-primary-foreground active:bg-sidebar-primary active:text-sidebar-primary-foreground group-data-[collapsible=icon]:justify-start dark:hover:bg-[color-mix(in_oklch,var(--sidebar-primary),white_12%)]"
+    <SideNav
+      collapsible={{ isCollapsed: sidebarCollapsed, onCollapsedChange: setSidebarCollapsed }}
+      topContent={
+        sidebarCollapsed ? (
+          <IconButton
+            label="新建项目"
+            icon={<Plus />}
+            href="/projects/new"
+            as={GuardedLink}
+            variant="primary"
+            size="sm"
+          />
+        ) : (
+          <Button
+            label="新建项目"
+            icon={<Plus />}
+            href="/projects/new"
+            as={GuardedLink}
+            variant="primary"
+            size="sm"
+            className="w-full"
+          />
+        )
+      }
+      footer={
+        <div className={cn('flex items-center gap-1.5 px-1 pb-1', sidebarCollapsed && 'flex-col')}>
+          {/* 账户菜单 */}
+          <DropdownMenu
+            placement="above"
+            alignment="start"
+            menuWidth={256}
+            renderTrigger={(props) => (
+              <button
+                {...props}
+                type="button"
+                aria-label={`账户：${user.name}`}
+                className={cn(
+                  'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 py-1 text-left',
+                  'hover:bg-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden',
+                  sidebarCollapsed && 'justify-center px-1',
+                )}
               >
-                <GuardedLink href="/projects/new">
-                  <Plus />
-                  <span>新建项目</span>
-                </GuardedLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>空间设计工作台</SidebarGroupLabel>
-          <SidebarMenu>
-            {workNav.map((item) => (
-              <NavItem
-                key={item.url}
-                {...item}
-                active={isActive(item.url) && pathname !== '/projects/new'}
-              />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* HA 助手：只读查看已连接现场 Home Assistant（第一期只读模组） */}
-        <SidebarGroup>
-          <SidebarGroupLabel>HA 助手</SidebarGroupLabel>
-          <SidebarMenu className="gap-0.5">
-            {homeNav.map((item) => (
-              <NavItem key={item.url} {...item} active={isActive(item.url)} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* KNX / ETS：第一期只留模块位，点进去是「建设中」空态页 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>KNX / ETS</SidebarGroupLabel>
-          <SidebarMenu className="gap-0.5">
-            {knxNav.map((item) => (
-              <NavItem key={item.url} {...item} active={isActive(item.url)} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* 营销工具：第一期只放名片，页面与 URL 不动 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>营销工具</SidebarGroupLabel>
-          <SidebarMenu className="gap-0.5">
-            {marketingNav.map((item) => (
-              <NavItem key={item.url} {...item} active={isActive(item.url)} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* 模板与工具：独立成组挂在侧栏主体。原「能力中心」分组标题入口
-            与「AI 能力」组都已移除；/capabilities 总览页保留、可直接 URL 访问。 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>模板与工具</SidebarGroupLabel>
-          <SidebarMenu className="gap-0.5">
-            {toolNav.map((item) => (
-              <NavItem key={item.url} {...item} active={isActive(item.url)} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-
-      {/* 左下角：头像（账户菜单）+ 齿轮（设置菜单）；外观切换在顶栏右侧，这里不重复 */}
-      <SidebarFooter className="h-13 border-t border-sidebar-border">
-        <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
-          <DropdownMenu>
-            <Tooltip content={user.name} placement="end" isEnabled={collapsed}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label={`账户：${user.name}`}
-                  className={cn(
-                    footerButton,
-                    'h-9 min-w-0 flex-1 gap-2 px-1.5 text-left group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
-                  )}
-                >
-                  <Avatar name={user.name} size={32} className="text-xs font-semibold" />
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
-                    {user.name}
-                  </span>
-                </button>
-              </DropdownMenuTrigger>
-            </Tooltip>
-            <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-64">
-              <DropdownMenuLabel className="flex items-center gap-2.5 p-2 font-normal">
-                <Avatar name={user.name} size={36} className="text-sm font-semibold" />
-                <span className="grid min-w-0 flex-1 gap-0.5 leading-tight">
-                  <span className="flex min-w-0 items-center gap-1.5">
-                    <span className="truncate text-sm font-semibold">{user.name}</span>
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                </span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => setMembershipOpen(true)}>
-                <Crown />
-                会员与积分
-                <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+                <Avatar name={user.name} size={32} className="text-xs font-semibold" />
+                {sidebarCollapsed ? null : (
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{user.name}</span>
+                )}
+              </button>
+            )}
+          >
+            <div className="flex items-center gap-2.5 p-2">
+              <Avatar name={user.name} size={36} className="text-sm font-semibold" />
+              <span className="grid min-w-0 flex-1 gap-0.5 leading-tight">
+                <span className="truncate text-sm font-semibold">{user.name}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              </span>
+            </div>
+            <DropdownMenuDivider />
+            <DropdownMenuItem
+              label="会员与积分"
+              icon={Crown}
+              endContent={
+                <span className="text-xs tabular-nums text-muted-foreground">
                   {ai.credits.toLocaleString('zh-CN')}
                 </span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled={isLoggingOut} onSelect={() => void handleLogout()}>
-                <LogOut />
-                {isLoggingOut ? '退出中' : '退出登录'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+              }
+              onClick={() => setMembershipOpen(true)}
+            />
+            <DropdownMenuDivider />
+            <DropdownMenuItem
+              label={isLoggingOut ? '退出中' : '退出登录'}
+              icon={LogOut}
+              isDisabled={isLoggingOut}
+              onClick={() => void handleLogout()}
+            />
           </DropdownMenu>
 
-          <DropdownMenu>
-            <Tooltip content="设置" placement={collapsed ? 'end' : 'above'}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="设置"
-                  data-active={inSettings || undefined}
-                  className={cn(
-                    footerButton,
-                    'size-8 shrink-0 justify-center text-sidebar-foreground/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground',
-                  )}
-                >
-                  <Settings className="size-4" />
-                </button>
-              </DropdownMenuTrigger>
-            </Tooltip>
-            <DropdownMenuContent
-              side="top"
-              align={collapsed ? 'start' : 'end'}
-              sideOffset={8}
-              className="w-52"
-            >
-              {visibleSettingsNav.map(({ icon: Icon, label, url }) => (
-                <DropdownMenuItem
-                  key={url}
-                  asChild
-                  className={cn(isActive(url) && 'bg-accent/60 font-medium')}
-                >
-                  <GuardedLink href={url} aria-current={isActive(url) ? 'page' : undefined}>
-                    <Icon />
-                    {label}
-                  </GuardedLink>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
+          {/* 设置菜单 */}
+          <DropdownMenu
+            placement="above"
+            alignment="end"
+            menuWidth={208}
+            renderTrigger={(props) => (
+              <button
+                {...props}
+                type="button"
+                aria-label="设置"
+                data-active={inSettings || undefined}
+                className={cn(
+                  'flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground',
+                  'hover:bg-subtle hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden',
+                  'data-active:bg-subtle data-active:text-foreground',
+                )}
+              >
+                <Settings className="size-4" />
+              </button>
+            )}
+          >
+            {visibleSettingsNav.map(({ icon: Icon, label, url }) => (
+              <DropdownMenuItem
+                key={url}
+                label={label}
+                icon={Icon}
+                onClick={() => navigate(url)}
+                endContent={
+                  isActive(url) ? <span className="text-xs text-muted-foreground">当前</span> : null
+                }
+              />
+            ))}
           </DropdownMenu>
         </div>
-      </SidebarFooter>
-      <SidebarRail />
+      }
+    >
+      <SideNavSection title="空间设计工作台">
+        {workNav.map((item) => (
+          <NavItem
+            key={item.url}
+            {...item}
+            active={isActive(item.url) && pathname !== '/projects/new'}
+          />
+        ))}
+      </SideNavSection>
+
+      {/* HA 助手：只读查看已连接现场 Home Assistant（第一期只读模组） */}
+      <SideNavSection title="HA 助手">
+        {homeNav.map((item) => (
+          <NavItem key={item.url} {...item} active={isActive(item.url)} />
+        ))}
+      </SideNavSection>
+
+      {/* KNX / ETS：第一期只留模块位，点进去是「建设中」空态页 */}
+      <SideNavSection title="KNX / ETS">
+        {knxNav.map((item) => (
+          <NavItem key={item.url} {...item} active={isActive(item.url)} />
+        ))}
+      </SideNavSection>
+
+      {/* 营销工具：第一期只放名片，页面与 URL 不动 */}
+      <SideNavSection title="营销工具">
+        {marketingNav.map((item) => (
+          <NavItem key={item.url} {...item} active={isActive(item.url)} />
+        ))}
+      </SideNavSection>
+
+      {/* 模板与工具：独立成组挂在侧栏主体。原「能力中心」分组标题入口
+          与「AI 能力」组都已移除；/capabilities 总览页保留、可直接 URL 访问。 */}
+      <SideNavSection title="模板与工具">
+        {toolNav.map((item) => (
+          <NavItem key={item.url} {...item} active={isActive(item.url)} />
+        ))}
+      </SideNavSection>
+
       <MembershipDialog
         open={membershipOpen}
         onOpenChange={setMembershipOpen}
         credits={ai.credits}
       />
-    </Sidebar>
+    </SideNav>
   )
 }

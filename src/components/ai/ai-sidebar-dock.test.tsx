@@ -14,7 +14,6 @@ vi.mock('next/navigation', () => ({
 }))
 
 import { AiSidebarDock } from './ai-sidebar-dock'
-import { SidebarProvider } from '@/components/ui/sidebar'
 import { DEFAULT_AI_TEMPLATES } from '@/plugins/ai-copilot/templates'
 
 const baseProps = {
@@ -29,13 +28,11 @@ const baseProps = {
 function DockHarness({ initialCollapsed = false }: { initialCollapsed?: boolean }) {
   const [collapsed, setCollapsed] = React.useState(initialCollapsed)
   return (
-    <SidebarProvider>
-      <AiSidebarDock
-        {...baseProps}
-        collapsed={collapsed}
-        onToggleCollapsed={() => setCollapsed((value) => !value)}
-      />
-    </SidebarProvider>
+    <AiSidebarDock
+      {...baseProps}
+      collapsed={collapsed}
+      onToggleCollapsed={() => setCollapsed((value) => !value)}
+    />
   )
 }
 
@@ -186,11 +183,7 @@ describe('AiSidebarDock 收起态（右栏图标栏）', () => {
 describe('AiSidebarDock 抽屉模式', () => {
   it('只渲染一条 header：右侧是关闭按钮，点击触发 onClose', async () => {
     const onClose = vi.fn()
-    await mount(
-      <SidebarProvider>
-        <AiSidebarDock {...baseProps} onClose={onClose} />
-      </SidebarProvider>,
-    )
+    await mount(<AiSidebarDock {...baseProps} onClose={onClose} />)
 
     const header = container.querySelector('[data-slot="ai-panel-header"]')
     expect(header).toBeTruthy()

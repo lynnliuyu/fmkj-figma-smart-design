@@ -1,14 +1,18 @@
 /* 层序声明见 ./layers.css（在根布局里最先 import，必须早于本文件）。 */
 
+@import '@astryxdesign/core/reset.css';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'tw-animate-css';
 @import './shadcn.css';
 
-/* Astryx 设计系统（试点）：组件样式与主题。
-   刻意不引入 core/reset.css（避免它重置既有页面）与 core/tailwind-theme.css
-   （后者会把 --color-primary 重定向到 Astryx token，改掉品牌色）。
+/* Astryx 设计系统：组件样式与主题。
+   已按官方迁移文档引入 core/reset.css（issue #180 隔离验证：它落在最低的 reset 层，
+   层序由 layers.css 最先声明；与 Tailwind preflight 同层职责，实测 /projects、/settings、
+   首页的标题边距、列表样式、box-sizing 与按钮内边距均无变化）。
+   仍不引入 core/tailwind-theme.css —— 它会把 --color-primary 重定向到 Astryx token，
+   改掉品牌色。
 
    两个主题样式表（neutral / stone）都从这里导入，不再由 astryx-themes.ts 导入：
    那个模块会被 layout.tsx 在 styles.css 之前引用，导致主题样式被排到本文件前面，

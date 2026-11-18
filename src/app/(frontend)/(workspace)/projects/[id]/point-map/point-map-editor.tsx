@@ -51,7 +51,7 @@ import type { StyleTransferHandoff } from '@/lib/style-templates'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { ScrollableArea } from '@astryxdesign/core/ScrollableArea'
 import { Selector } from '@astryxdesign/core/Selector'
-import { useSidebar } from '@/components/ui/sidebar'
+import { useWorkspaceChrome } from '@/components/workspace-chrome'
 import { Switch } from '@astryxdesign/core/Switch'
 import { Tab, TabList } from '@astryxdesign/core/TabList'
 import { useToast } from '@astryxdesign/core/Toast'
@@ -286,7 +286,7 @@ export function PointMapEditor({
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
-  const sidebar = useSidebar()
+  const { sidebarCollapsed, setSidebarCollapsed } = useWorkspaceChrome()
   const showToast = useToast()
   const board = useBoardHistory(() => decodeScene(initialScene))
   const { doc, commit } = board
@@ -572,13 +572,13 @@ export function PointMapEditor({
   }, [savedVersion, board.version])
 
   // 画布页默认收起左侧导航；离开时恢复
-  const sidebarRef = useRef(sidebar)
-  sidebarRef.current = sidebar
+  const chromeRef = useRef({ sidebarCollapsed, setSidebarCollapsed })
+  chromeRef.current = { sidebarCollapsed, setSidebarCollapsed }
   useEffect(() => {
-    const was = sidebarRef.current.open
-    if (was) sidebarRef.current.setOpen(false)
+    const wasExpanded = !chromeRef.current.sidebarCollapsed
+    if (wasExpanded) chromeRef.current.setSidebarCollapsed(true)
     return () => {
-      if (was) sidebarRef.current.setOpen(true)
+      if (wasExpanded) chromeRef.current.setSidebarCollapsed(false)
     }
   }, [])
 
