@@ -401,7 +401,9 @@ describe('saveQuoteInput：保存报价 → 重新打开（字段保留）', () 
         findByID: vi.fn(async () => ({ ...storedQuote(), ...data })),
       }),
     )
-    const reopened = await (await mocks.getPayloadClient()).findByID({
+    const reopened = await (
+      await mocks.getPayloadClient()
+    ).findByID({
       collection: 'quotes',
       id: 'q-1',
     })
@@ -497,9 +499,7 @@ describe('换型号的风险边界：设备类型不一致必须拒绝', () => {
       status: 'draft',
       discount: 0,
       notes: '',
-      items: [
-        { id: 'row-1', product: 'prod-9', name: '筒灯', price: 399, quantity: 1 },
-      ],
+      items: [{ id: 'row-1', product: 'prod-9', name: '筒灯', price: 399, quantity: 1 }],
       fees: [],
     })
     expect(r.ok).toBe(false)
@@ -510,7 +510,13 @@ describe('换型号的风险边界：设备类型不一致必须拒绝', () => {
   it('换成同设备类型的产品则放行（价格/短名跟随新产品）', async () => {
     mocks.getCatalog.mockResolvedValue([
       product({ id: 'prod-1', deviceType: 'switch-2', price: 199 }),
-      product({ id: 'prod-2', name: '智能开关（三键）', shortName: '三键', deviceType: 'switch-2', price: 259 }),
+      product({
+        id: 'prod-2',
+        name: '智能开关（三键）',
+        shortName: '三键',
+        deviceType: 'switch-2',
+        price: 259,
+      }),
     ])
     const payload = fakePayload({
       findByID: vi.fn(async () => ({
@@ -552,32 +558,31 @@ describe('换型号的风险边界：设备类型不一致必须拒绝', () => {
 describe('syncQuoteWithPointMap：点位更新同步到已有报价', () => {
   it('同步后保留换过的型号与价格，只更新数量', async () => {
     const payload = fakePayload({
-      findByID: vi.fn(
-        async (args: { collection: string }) =>
-          args.collection === 'quotes'
-            ? {
-                id: 'q-1',
-                title: '湖山赋别墅 智能家居报价',
-                project: 'p-1',
-                items: [
-                  {
-                    id: 'row-1',
-                    product: 'prod-1',
-                    deviceType: 'switch-2',
-                    image: 'm-1',
-                    name: '双键开关',
-                    shortName: '双键',
-                    sku: 'SW-2',
-                    unit: '只',
-                    price: 199,
-                    quantity: 1,
-                  },
-                ],
-              }
-            : projectWithPointMap([
-                pointElement({ code: 'K1', deviceType: 'switch-2' }) as never,
-                pointElement({ code: 'K2', deviceType: 'switch-2' }) as never,
-              ]),
+      findByID: vi.fn(async (args: { collection: string }) =>
+        args.collection === 'quotes'
+          ? {
+              id: 'q-1',
+              title: '湖山赋别墅 智能家居报价',
+              project: 'p-1',
+              items: [
+                {
+                  id: 'row-1',
+                  product: 'prod-1',
+                  deviceType: 'switch-2',
+                  image: 'm-1',
+                  name: '双键开关',
+                  shortName: '双键',
+                  sku: 'SW-2',
+                  unit: '只',
+                  price: 199,
+                  quantity: 1,
+                },
+              ],
+            }
+          : projectWithPointMap([
+              pointElement({ code: 'K1', deviceType: 'switch-2' }) as never,
+              pointElement({ code: 'K2', deviceType: 'switch-2' }) as never,
+            ]),
       ),
       update: write({ total: 398, id: 'q-1' }),
     })

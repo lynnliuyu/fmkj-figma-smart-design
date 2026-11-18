@@ -30,7 +30,10 @@ const req = (body: unknown) =>
   })
 
 const fakedUpdate = (result: Record<string, unknown> = {}) =>
-  vi.fn(async (_args: { data: Record<string, unknown> }) => ({ updatedAt: '2026-01-01', ...result }))
+  vi.fn(async (_args: { data: Record<string, unknown> }) => ({
+    updatedAt: '2026-01-01',
+    ...result,
+  }))
 
 beforeEach(() => {
   mocks.getCurrentUser.mockReset()
@@ -67,17 +70,17 @@ describe('点位图保存（PUT /point-map/data）', () => {
         customData: { code: 'L1', deviceType: 'downlight', rx: 0.5, ry: 0.5 },
       },
     ]
-    const res = await PUT(
-      req({ elements, appState: {}, files: {} }),
-      { params: Promise.resolve({ id: 'p-1' }) },
-    )
+    const res = await PUT(req({ elements, appState: {}, files: {} }), {
+      params: Promise.resolve({ id: 'p-1' }),
+    })
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.ok).toBe(true)
     expect(json.bytes).toBeGreaterThan(0)
 
-    const saved = update.mock.calls[0]![0].data
-      .pointMap as unknown as { elements: Record<string, unknown>[] }
+    const saved = update.mock.calls[0]![0].data.pointMap as unknown as {
+      elements: Record<string, unknown>[]
+    }
     const savedEls = saved.elements
     expect(savedEls).toHaveLength(2)
     // 保存的是 compact 形态：customData 保留 deviceType / rx / ry（点位）
@@ -149,12 +152,17 @@ describe('点位图保存（PUT /point-map/data）', () => {
       },
     ]
     const res = await PUT(
-      req({ elements, appState: {}, files: { 'new-file-1': { dataURL: 'data:image/png;base64,AAA', mimeType: 'image/png' } } }),
+      req({
+        elements,
+        appState: {},
+        files: { 'new-file-1': { dataURL: 'data:image/png;base64,AAA', mimeType: 'image/png' } },
+      }),
       { params: Promise.resolve({ id: 'p-1' }) },
     )
     expect(res.status).toBe(200)
-    const saved = update.mock.calls[0]![0].data
-      .pointMap as unknown as { files: Record<string, unknown> }
+    const saved = update.mock.calls[0]![0].data.pointMap as unknown as {
+      files: Record<string, unknown>
+    }
     expect(saved.files['new-file-1']).toBeTruthy()
     expect(saved.files['old-file-1']).toBeNull() // 旧图被显式清掉
   })

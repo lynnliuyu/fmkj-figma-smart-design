@@ -58,7 +58,10 @@ async function main() {
   // 登录
   await page.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 20000 })
   await sleep(2000)
-  const tab = page.locator('button.astryx-tab').filter({ hasText: /邮箱/ }).first()
+  const tab = page
+    .locator('button.astryx-tab')
+    .filter({ hasText: /邮箱/ })
+    .first()
   if (await tab.count()) {
     await tab.click()
     await sleep(600)
@@ -83,7 +86,10 @@ async function main() {
     // 关掉「兑换码」引导弹层（新账号可能弹出；找到后点关闭/回车）
     const redeemModal = page.locator('[role=dialog]').filter({ hasText: '兑换' }).first()
     if (await redeemModal.count()) {
-      const close = redeemModal.locator('button').filter({ hasText: /关闭|跳过|取消/ }).first()
+      const close = redeemModal
+        .locator('button')
+        .filter({ hasText: /关闭|跳过|取消/ })
+        .first()
       if (await close.count()) await close.click()
       else await page.keyboard.press('Escape')
       await sleep(800)
@@ -130,7 +136,10 @@ async function main() {
     const page2 = await ctx2.newPage()
     // 重开是登录态之外的会话：重新登录一次
     await page2.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 20000 })
-    const t2 = page2.locator('button.astryx-tab').filter({ hasText: /邮箱/ }).first()
+    const t2 = page2
+      .locator('button.astryx-tab')
+      .filter({ hasText: /邮箱/ })
+      .first()
     if (await t2.count()) await t2.click()
     await page2.waitForSelector('#email', { timeout: 15000 })
     await page2.fill('#email', EMAIL)
@@ -148,8 +157,7 @@ async function main() {
       full: document.body.innerText || '',
     }))
     console.log(`    [诊断] 重开 url=${diag.url} body=${JSON.stringify(diag.body.slice(0, 150))}`)
-    if (!diag.url.startsWith('/projects/'))
-      throw new Error(`重开未到详情页，落在 ${diag.url}`)
+    if (!diag.url.startsWith('/projects/')) throw new Error(`重开未到详情页，落在 ${diag.url}`)
     for (const want of ['自动化客户', '自动化小区', '3-1201', '客户与房屋']) {
       if (!diag.full.includes(want)) throw new Error(`重开后找不回字段「${want}」`)
     }
@@ -191,7 +199,10 @@ async function main() {
       })
       await sleep(2000)
       await page.screenshot({ path: join(OUT, '5-报价单.png') })
-      const saveBtn = page.locator('button').filter({ hasText: /保存报价/ }).first()
+      const saveBtn = page
+        .locator('button')
+        .filter({ hasText: /保存报价/ })
+        .first()
       if (!(await saveBtn.count())) throw new Error('找不到「保存报价」按钮')
       await saveBtn.scrollIntoViewIfNeeded()
       await saveBtn.click()
@@ -221,7 +232,11 @@ async function main() {
   console.log(`控制台错误: ${consoleErrors.length ? consoleErrors.join(' | ') : '无'}`)
   writeFileSync(
     join(OUT, 'results.json'),
-    JSON.stringify({ projectName, projectId, quoteId, stamp, steps: results, consoleErrors }, null, 2),
+    JSON.stringify(
+      { projectName, projectId, quoteId, stamp, steps: results, consoleErrors },
+      null,
+      2,
+    ),
   )
   await browser.close()
   process.exit(consoleErrors.length ? 2 : 0)
