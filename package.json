@@ -22,7 +22,9 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "cad:assets": "node scripts/cad-assets.mjs",
-    "cad:sample": "node scripts/make-cad-sample.mjs"
+    "cad:sample": "node scripts/make-cad-sample.mjs",
+    "assets:library": "node scripts/asset-library/build.mjs",
+    "assets:verify": "node scripts/asset-library/verify.mjs"
   },
   "dependencies": {
     "@astryxdesign/core": "0.7.11",
