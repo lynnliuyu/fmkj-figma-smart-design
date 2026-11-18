@@ -26,6 +26,7 @@ import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { Popover } from '@astryxdesign/core/Popover'
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl'
+import { Slider } from '@astryxdesign/core/Slider'
 import { Tooltip } from '@astryxdesign/core/Tooltip'
 import type { SystemPack } from '@/board/core/pack'
 import { SYMBOL_SIZES } from '@/board/core/symbols'
@@ -100,13 +101,13 @@ export function BoardLayersPanel({
             画布图层
           </span>
           {hiddenCount ? (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={showAll}
-              className="text-[11px] font-medium text-primary hover:underline"
-            >
-              全部显示
-            </button>
+              label="全部显示"
+              className="h-6 px-1.5 text-[11px] text-primary hover:underline"
+            />
           ) : null}
         </div>
         <ul className="space-y-0.5">
@@ -189,27 +190,17 @@ export function BoardLayersPanel({
       ) : null}
 
       {/* 底图浓度 */}
-      <section className="space-y-2 border-t border-border pt-3">
-        <label className="block px-1">
-          <span className="mb-2 flex items-center justify-between">
-            <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-              底图浓度
-            </span>
-            <span className="text-[11px] text-muted-foreground tabular-nums">
-              {Math.round(view.sheetOpacity * 100)}%
-            </span>
-          </span>
-          <input
-            type="range"
-            min={15}
-            max={100}
-            step={5}
-            value={Math.round(view.sheetOpacity * 100)}
-            onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })}
-            className="h-1.5 w-full cursor-pointer accent-primary"
-            aria-label="底图浓度"
-          />
-        </label>
+      <section className="space-y-2 border-t border-border px-1 pt-3">
+        <Slider
+          label="底图浓度"
+          min={15}
+          max={100}
+          step={5}
+          value={Math.round(view.sheetOpacity * 100)}
+          onChange={(v: number) => onView({ sheetOpacity: v / 100 })}
+          valueDisplay="text"
+          formatValue={(v: number) => `${v}%`}
+        />
       </section>
 
       {/* 符号外观与辅助线 */}
@@ -559,22 +550,16 @@ export function BoardToolbar(props: {
               </div>
             ) : null}
             <div className="space-y-3 border-t px-3 py-3 text-xs">
-              <label className="block">
-                <span className="mb-1.5 flex justify-between text-muted-foreground">
-                  <span>底图浓度</span>
-                  <span className="tabular-nums">{Math.round(view.sheetOpacity * 100)}%</span>
-                </span>
-                <input
-                  type="range"
-                  min={15}
-                  max={100}
-                  step={5}
-                  value={Math.round(view.sheetOpacity * 100)}
-                  onChange={(e) => onView({ sheetOpacity: Number(e.target.value) / 100 })}
-                  className="w-full accent-primary"
-                  aria-label="底图浓度"
-                />
-              </label>
+              <Slider
+                label="底图浓度"
+                min={15}
+                max={100}
+                step={5}
+                value={Math.round(view.sheetOpacity * 100)}
+                onChange={(v: number) => onView({ sheetOpacity: v / 100 })}
+                valueDisplay="text"
+                formatValue={(v: number) => `${v}%`}
+              />
               <Segmented
                 label="符号样式"
                 value={view.symbolStyle}
