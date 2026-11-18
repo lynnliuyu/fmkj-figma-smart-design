@@ -88,9 +88,7 @@ async function entityCount(page) {
     const m = window.__cad?.manager
     const ms = m?.curDocument?.database?.tables?.blockTable?.modelSpace
     if (!ms?.newIterator) return -1
-    let n = 0
-    for (const _ of ms.newIterator()) n++
-    return n
+    return Array.from(ms.newIterator()).length
   })
 }
 
