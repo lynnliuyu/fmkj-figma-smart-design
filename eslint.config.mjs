@@ -25,6 +25,8 @@ export default tseslint.config(
       'src/payload-types.ts', // Payload 生成
       'src/themes/**', // Astryx theme build 产物
       'scripts/**', // 一次性脚本，不进产品代码质量门禁
+      'public/workers/**', // 上游 MLightCAD worker（vendored，未改写）
+      'public/cad-data/**', // 上游字体/模板/合成样例（vendored/生成）
       '**/*.test.ts',
     ],
   },
