@@ -478,7 +478,7 @@ async function main() {
       id,
       title,
       category: 'motion',
-      orientation: `${width}:${height}`,
+      orientation: '16:9',
       format: 'mp4',
       file: relative(OUT, mp4),
       width: meta.width ?? width,
