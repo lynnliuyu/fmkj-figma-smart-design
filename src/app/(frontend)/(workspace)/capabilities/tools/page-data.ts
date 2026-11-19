@@ -33,7 +33,7 @@ export const TOOL_CARD_META: Record<(typeof FEATURED_TOOL_IDS)[number], ToolCard
   'business-card': {
     cover: '/tool-covers/business-card.webp',
     coverAlt: '繁梦空间名片正面成品示例，米白纸版上的工具名与版式排版',
-    chip: '4 套版式 · 正反面',
+    chip: '8 套版式 · 正反面',
     footer: 'PNG · 300dpi 导出',
   },
   'floor-plan-style': {

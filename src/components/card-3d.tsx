@@ -14,7 +14,7 @@
  * three 依赖 window/WebGL，服务端渲染会直接崩。它自己带 'use client'
  * 只是为了让事件处理合法，不代表能进 SSR 图。
  */
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
@@ -38,15 +38,30 @@ export type Card3DProps = {
   /** 侧边颜色：跟着当前面走，深色卡配深侧边 */
   edgeColor?: string
   className?: string
+  /** WebGL 初始化失败时通知宿主（宿主应回落到平面预览，不能挡住导出） */
+  onError?: (message: string) => void
 }
 
-export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: Card3DProps) {
+export type Card3DHandle = {
+  /** 转到指定面（0 / π），带 260ms 缓动；同时暂停自转 */
+  flipTo: (side: 'front' | 'back') => void
+  /** 回到初始斜角 */
+  reset: () => void
+  /** 暂停 / 继续自转 */
+  setSpinning: (v: boolean) => void
+}
+
+export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
+  { frontSrc, backSrc, edgeColor = '#1B1E38', className, onError },
+  ref,
+) {
   const hostRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [spinning, setSpinning] = useState(true)
   // 用 ref 让按钮改状态时不必重建场景
   const spinRef = useRef(true)
   const resetRef = useRef<() => void>(() => {})
+  const flipRef = useRef<(side: 'front' | 'back') => void>(() => {})
 
   useEffect(() => {
     spinRef.current = spinning
@@ -60,7 +75,9 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'WebGL 初始化失败')
+      const msg = e instanceof Error ? e.message : 'WebGL 初始化失败'
+      setError(msg)
+      onError?.(msg)
       return
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -84,8 +101,9 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
     scene.add(rim)
 
     const card = new THREE.Group()
-    // 微微前倾，正好露出一点厚度，不是一张死平的纸
+    // 初始斜角：正面看得到右侧厚度，不是一张死平的纸
     card.rotation.x = -0.055
+    card.rotation.y = 0.46
     scene.add(card)
 
     const geometry = new THREE.BoxGeometry(CARD_W3, CARD_H3, CARD_D)
@@ -151,13 +169,26 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
     controls.rotateSpeed = 0.85
     controls.target.set(0, 0, 0)
 
+    /** 目标 Y 角（正面 0 / 背面 π），用于 flipTo 的缓动 */
+    let targetY: number | null = null
     const reset = () => {
       camera.position.set(0, 0.12, 3.35)
       controls.target.set(0, 0, 0)
-      card.rotation.y = 0
+      card.rotation.y = 0.46
+      controls.autoRotate = false
+      spinRef.current = false
+      setSpinning(false)
+      targetY = null
       controls.update()
     }
     resetRef.current = reset
+    flipRef.current = (side) => {
+      targetY = side === 'front' ? 0 : Math.PI
+      card.rotation.x = -0.055
+      controls.autoRotate = false
+      spinRef.current = false
+      setSpinning(false)
+    }
 
     // 拖拽期间暂停自转，松手 1.6s 后恢复，避免「刚拖住就被转走」
     let resumeTimer: number | undefined
@@ -235,6 +266,16 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
         shadow.scale.setScalar(1)
         settled = true
       }
+      if (targetY !== null) {
+        // 260ms 缓动到目标面（余弦缓出）
+        const diff = targetY - card.rotation.y
+        if (Math.abs(diff) < 0.004) {
+          card.rotation.y = targetY
+          targetY = null
+        } else {
+          card.rotation.y += diff * 0.22
+        }
+      }
       controls.autoRotate = isSpinning
       controls.update(dt)
       renderer.render(scene, camera)
@@ -261,7 +302,17 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
       renderer.domElement.remove()
     }
     // 贴图变了要重建材质；场景很小，重建代价可忽略
-  }, [frontSrc, backSrc, edgeColor])
+  }, [frontSrc, backSrc, edgeColor, onError])
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      flipTo: (side) => flipRef.current(side),
+      reset: () => resetRef.current(),
+      setSpinning: (v) => setSpinning(v),
+    }),
+    [],
+  )
 
   return (
     <div className={cn('relative', className)}>
@@ -316,4 +367,4 @@ export function Card3D({ frontSrc, backSrc, edgeColor = '#1B1E38', className }: 
       </div>
     </div>
   )
-}
+})

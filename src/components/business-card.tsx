@@ -29,6 +29,38 @@ import {
  */
 
 function Decor({ style }: { style: CardStyle }) {
+  if (style.frame) {
+    // 建筑制图：四周细线框 + 角标十字，像图纸外框
+    return (
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div
+          className="absolute"
+          style={{
+            inset: 34,
+            border: `1px solid ${style.frame}`,
+            opacity: 0.85,
+          }}
+        />
+        {[
+          ['left', 'top'],
+          ['right', 'bottom'],
+        ].map(([x, y]) => (
+          <span
+            key={x + y}
+            className="absolute block"
+            style={{
+              [x]: x === 'left' ? 20 : 30,
+              [y]: y === 'top' ? 20 : 30,
+              width: x === 'left' ? 30 : 14,
+              height: y === 'top' ? 14 : 30,
+              borderTop: y === 'top' ? `2px solid ${style.frame}` : undefined,
+              borderLeft: x === 'left' ? `2px solid ${style.frame}` : undefined,
+            }}
+          />
+        ))}
+      </div>
+    )
+  }
   if (style.decor === 'none') return null
   if (style.decor === 'grid') {
     return (
@@ -239,6 +271,23 @@ function Front({ style, info, assets }: { style: CardStyle; info: CardInfo; asse
           <p className="mt-4 text-[17px] tracking-[0.18em]" style={{ color: style.sub }}>
             全屋智能 · 空间设计 · 交付
           </p>
+          {style.data ? (
+            /* 科技面板：一段数据刻度条，细线 + 端点刻度 */
+            <div className="mt-6 flex items-center gap-2" style={{ opacity: 0.95 }} aria-hidden>
+              <span
+                className="block h-[3px] w-10 rounded-full"
+                style={{ background: style.data }}
+              />
+              <span className="block h-2 w-px" style={{ background: style.data }} />
+              <span
+                className="block h-[3px] w-24 rounded-full"
+                style={{ background: style.line }}
+              />
+              <span className="ml-2 text-[12px] tracking-[0.2em]" style={{ color: style.data }}>
+                01 · MOTION
+              </span>
+            </div>
+          ) : null}
         </div>
         <div className="relative flex items-end justify-between">
           <EcosystemLogos style={style} size={22} assets={assets} />

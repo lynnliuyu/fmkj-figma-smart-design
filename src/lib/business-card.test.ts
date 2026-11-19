@@ -50,8 +50,9 @@ describe('名片尺寸', () => {
     expect(CARD_H).toBeGreaterThanOrEqual(Math.ceil((CARD_MM.h / 25.4) * 300))
   })
 
-  it('四套版式都有正反面，文件名带版式和面', () => {
-    expect(CARD_VARIANTS).toHaveLength(4)
+  it('全部版式都有正反面，文件名带版式和面（当前 8 套）', () => {
+    expect(CARD_VARIANTS.length).toBeGreaterThanOrEqual(4)
+    expect(CARD_VARIANTS.length).toBe(8)
     for (const v of CARD_VARIANTS) {
       expect(v.front.layout).toBeTruthy()
       expect(v.back.layout).toBeTruthy()

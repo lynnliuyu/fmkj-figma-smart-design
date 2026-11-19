@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { ArrowLeft, Box, Check, Download, Info, Phone, QrCode, RotateCcw, User } from 'lucide-react'
 
 import { BusinessCard } from '@/components/business-card'
+import type { Card3DHandle } from '@/components/card-3d'
 import { PageHeader } from '@/components/page-header'
 import { ScaledFrame } from '@/components/scaled-frame'
 import { Button } from '@astryxdesign/core/Button'
@@ -108,14 +109,22 @@ export function CardStudio({
   const [assets, setAssets] = useState<CardAssets | null>(null)
   const [assetsError, setAssetsError] = useState<string | null>(null)
   const showToast = useToast()
+  const onWebglError = useCallback(() => setWebglFailed(true), [])
 
   // 导出用的离屏画布（资产已内联成 data URL），和屏幕上看到的完全一致
   const exportNodes = useRef(new Map<string, HTMLDivElement | null>())
   // 三维贴图取自导出画布，所以要等 assets 就绪
   const [previewKey, setPreviewKey] = useState(CARD_VARIANTS[0]!.key)
-  const [view, setView] = useState<PreviewView>('flat')
+  const [view, setView] = useState<PreviewView>('3d')
   const [textures, setTextures] = useState<Record<string, { front: string; back: string }>>({})
   const [texBusy, setTexBusy] = useState(false)
+  const threeRef = useRef<Card3DHandle | null>(null)
+  const [webglFailed, setWebglFailed] = useState(false)
+  const [spinOn, setSpinOn] = useState(true)
+  const [reduceMotion, setReduceMotion] = useState(false)
+  useEffect(() => {
+    setReduceMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  }, [])
 
   // 挂载即预加载：离屏导出舞台一上来就得是完整可截图的（以前只在开三维时才加载，
   // 结果没开过三维就直接导出时舞台是空的）。三维贴图仍然按需生成。
@@ -136,7 +145,7 @@ export function CardStudio({
   }, [])
 
   const previewVariant = CARD_VARIANTS.find((v) => v.key === previewKey) ?? CARD_VARIANTS[0]!
-  const show3d = view === '3d'
+  const show3d = view === '3d' && !webglFailed
 
   useEffect(() => {
     if (!assets || !show3d || textures[previewKey]) return
@@ -371,19 +380,23 @@ export function CardStudio({
                           : 'border-border hover:border-primary/60',
                       )}
                     >
-                      <span className="relative block overflow-hidden rounded-md">
-                        <ScaledFrame
-                          width={CARD_W}
-                          height={CARD_H}
-                          label={`${variant.name} 缩略图`}
-                        >
-                          <BusinessCard
-                            variant={variant}
-                            side="front"
-                            info={info}
-                            assets={assets ?? undefined}
-                          />
-                        </ScaledFrame>
+                      {/* 缩略图：正面在上、背面在下，一眼看到双面版式与构图差异 */}
+                      <span className="relative grid gap-1 overflow-hidden rounded-md">
+                        {(['front', 'back'] as CardSide[]).map((side) => (
+                          <ScaledFrame
+                            key={side}
+                            width={CARD_W}
+                            height={CARD_H}
+                            label={`${variant.name} ${side === 'front' ? '正面' : '背面'}缩略图`}
+                          >
+                            <BusinessCard
+                              variant={variant}
+                              side={side}
+                              info={info}
+                              assets={assets ?? undefined}
+                            />
+                          </ScaledFrame>
+                        ))}
                         {selected ? (
                           <span className="absolute top-1 right-1 grid size-4 place-items-center rounded-full bg-primary text-primary-foreground">
                             <Check className="size-3" />
@@ -405,7 +418,10 @@ export function CardStudio({
               <SegmentedControl
                 label="预览方式"
                 value={view}
-                onChange={(v) => setView(v as PreviewView)}
+                onChange={(v) => {
+                  setView(v as PreviewView)
+                  if (v === '3d') setWebglFailed(false)
+                }}
                 size="sm"
                 layout="hug"
               >
@@ -432,11 +448,52 @@ export function CardStudio({
           <Card className="gap-3">
             {show3d ? (
               <>
+                {webglFailed ? (
+                  <div className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground">
+                    3D 预览不可用（WebGL
+                    初始化失败）。已自动回落到平面预览，编辑与导出不受影响；可点击「平面预览」查看双面。
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap items-center gap-2">
                   <Box className="size-4 text-muted-foreground" />
-                  <p className="text-sm font-semibold">三维预览</p>
-                  <span className="text-xs text-muted-foreground">悬浮旋转 · 看厚度与双面</span>
+                  <p className="text-sm font-semibold">三维预览（首选）</p>
+                  <span className="text-xs text-muted-foreground">看厚度 · 双面</span>
+                  <span className="ml-auto flex items-center gap-1.5">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      label="正面"
+                      onClick={() => threeRef.current?.flipTo('front')}
+                    />
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      label="背面"
+                      onClick={() => threeRef.current?.flipTo('back')}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      label="复位视角"
+                      onClick={() => threeRef.current?.reset()}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      label={spinOn ? '暂停旋转' : '继续旋转'}
+                      onClick={() => {
+                        const next = !spinOn
+                        setSpinOn(next)
+                        threeRef.current?.setSpinning(next)
+                      }}
+                    />
+                  </span>
                 </div>
+                {reduceMotion ? (
+                  <p className="text-xs text-muted-foreground">
+                    检测到「减少动态效果」偏好：已停止自动旋转，仍可拖动、翻面与导出。
+                  </p>
+                ) : null}
                 <div data-testid="card-3d-wrap" className="pt-1">
                   {texBusy && !textures[previewKey] ? (
                     <div className="grid h-[260px] place-items-center text-xs text-muted-foreground sm:h-[380px]">
@@ -446,6 +503,7 @@ export function CardStudio({
                     // 窄屏给矮一点：卡片是 5:3 横图，容器太高只会左右被裁
                     <div className="mx-auto h-[260px] w-full max-w-3xl sm:h-[380px]">
                       <Card3D
+                        ref={threeRef}
                         className="h-full"
                         frontSrc={textures[previewKey]?.front ?? null}
                         backSrc={textures[previewKey]?.back ?? null}
@@ -454,6 +512,7 @@ export function CardStudio({
                             ? '#151833'
                             : '#E8E2D6'
                         }
+                        onError={onWebglError}
                       />
                     </div>
                   )}
