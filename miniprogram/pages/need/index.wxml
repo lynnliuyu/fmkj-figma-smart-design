@@ -65,7 +65,6 @@
   <block wx:if="{{entry === 'wizard'}}">
     <view class="row between mt-16">
       <view class="small muted">第 {{step + 1}} / {{steps.length}} 步</view>
-      <view class="small muted">{{saving ? '保存中…' : '已自动保存'}}</view>
     </view>
     <view class="row wrap gap-8 mt-8">
       <view wx:for="{{steps}}" wx:key="key"
@@ -197,6 +196,8 @@
     </view>
   </block>
 
-  <view class="btn btn-primary btn-block mt-24" bindtap="openResult">看清单和估算</view>
+  <view class="btn btn-primary btn-block mt-24" bindtap="openResult">{{opening ? '正在确认最新答案…' : '看清单和估算'}}</view>
+  <view class="small muted mt-8" wx:if="{{saving || saveMessage}}">{{saving ? '正在同步到服务器…' : saveMessage}}</view>
+  <view class="btn btn-outline btn-sm mt-8" wx:if="{{saveFailed}}" bindtap="retrySave">{{draftConflict ? '用本机答案重试' : '重试保存'}}</view>
   <view class="small muted mt-8">不确定的都能跳过；看到清单后还能改数量。</view>
 </view>

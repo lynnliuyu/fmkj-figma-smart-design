@@ -19,8 +19,8 @@ export const NeedLeads: CollectionConfig = {
     group: '营销与线索',
   },
   access: {
-    // 业主端凭 token 创建；服务端校验字段白名单与体积上限
-    create: () => true,
+    // 匿名创建只经需求单接口，避免绕过草稿凭证、字段校验与限流。
+    create: ({ req }) => Boolean(req.user),
     // 只有销售（owner）或后台管理员能读/改；公开读走专用接口按 token 精确查
     read: ({ req }) => (req.user ? true : false),
     update: ({ req }) => (req.user ? true : false),

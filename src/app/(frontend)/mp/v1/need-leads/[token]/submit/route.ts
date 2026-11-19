@@ -1,66 +1,63 @@
+import { relId } from '@/lib/access'
 import { getPayloadClient } from '@/lib/payload'
-import { fail, mpPublicRoute, ok, readJson } from '@/lib/mp/http'
+import { fail, mpPublicRoute, ok, readJson, text } from '@/lib/mp/http'
+import { needAnswers, needRevision, withNeedDraft } from '@/lib/services/need-draft'
 import { buildNeedResult, needSummary } from '@/lib/services/need-service'
 
-/**
- * 提交需求单 → 生成项目草稿（issue #194）。
- *
- * - 幂等：已 converted 直接返回原 projectId，不重复建项目
- * - 只写 need-leads.structured/pricing 与 projects 草稿；不改产品售价
- * - 项目名/客户名缺失时用「需求单-日期」占位，销售接管后改
- */
+/** Submit the confirmed answers once, even when requests race or a response is lost. */
 export const POST = mpPublicRoute(async (request) => {
   const payload = await getPayloadClient()
   const url = new URL(request.url)
   const token = decodeURIComponent(url.pathname.split('/').slice(-2)[0] ?? '')
-  const body = await readJson<{ phone?: string }>(request)
+  const body = await readJson<{ phone?: string; revision?: string }>(request)
+  const phone = text(body.phone, 30)
 
-  const found = await payload.find({
-    collection: 'need-leads',
-    where: { token: { equals: token } },
-    limit: 1,
-    depth: 0,
-    overrideAccess: true,
+  return withNeedDraft(payload, token, async (lead, req) => {
+    if (!lead) return fail(404, '需求单不存在或已过期')
+    const existingProject = relId(lead.project)
+    if (lead.status === 'converted') {
+      if (!existingProject) return fail(409, '需求单已提交，请联系顾问', 'DRAFT_SUBMITTED')
+      return ok({ projectId: existingProject })
+    }
+    if (body.revision !== needRevision(lead)) {
+      return fail(409, '答案已更新，请重新生成清单再提交', 'DRAFT_CHANGED')
+    }
+
+    const result = await buildNeedResult(needAnswers(lead))
+    const { pricing } = result
+    const project = await payload.create({
+      collection: 'projects',
+      data: {
+        name: `需求单 ${new Date().toISOString().slice(0, 10)} ${result.structured.house.bedrooms}室`,
+        status: 'active',
+        platform: '米家',
+        budget: pricing.totals.total || null,
+        notes: needSummary(result),
+        customerPhone: phone || lead.phone || null,
+      },
+      overrideAccess: true,
+      depth: 0,
+      req,
+    })
+
+    await payload.update({
+      collection: 'need-leads',
+      id: lead.id,
+      data: {
+        status: 'converted',
+        structured: result.structured,
+        pricing: { ...pricing, at: new Date().toISOString() },
+        project: project.id,
+        ...(phone ? { phone } : {}),
+      },
+      overrideAccess: true,
+      req,
+    })
+
+    return ok({
+      projectId: String(project.id),
+      total: pricing.totals.total,
+      pendingPrice: pricing.pendingPrice.length,
+    })
   })
-  const lead = found.docs[0]
-  if (!lead) return fail(404, '需求单不存在或已过期')
-  if (lead.status === 'converted' && lead.project) {
-    return ok({ projectId: String((lead.project as { id?: unknown })?.id ?? lead.project) })
-  }
-
-  const answers = (lead.answers as Record<string, unknown>) ?? {}
-  const result = await buildNeedResult(answers)
-  const { pricing } = result
-  const summary = needSummary(result)
-
-  const project = await payload.create({
-    collection: 'projects',
-    data: {
-      name: `需求单 ${new Date().toISOString().slice(0, 10)} ${result.structured.house.bedrooms}室`,
-      // Projects 只有 active/archived；草稿用 active，并在 notes 首行标记「待接管」
-      status: 'active',
-      platform: '米家',
-      budget: pricing.totals.total || null,
-      notes: summary,
-      customerPhone: body.phone || lead.phone || null,
-    } as never,
-    overrideAccess: true,
-    depth: 0,
-  })
-  const projectId = String((project as unknown as { id: string | number }).id)
-
-  await payload.update({
-    collection: 'need-leads',
-    id: lead.id,
-    data: {
-      status: 'converted',
-      structured: result.structured,
-      pricing: { ...pricing, at: new Date().toISOString() },
-      project: projectId,
-      ...(body.phone ? { phone: body.phone } : {}),
-    },
-    overrideAccess: true,
-  })
-
-  return ok({ projectId, total: pricing.totals.total, pendingPrice: pricing.pendingPrice.length })
 })

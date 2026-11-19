@@ -1,7 +1,16 @@
-import { getPayloadClient } from '@/lib/payload'
-import { fail, mpPublicRoute, ok, readJson, text } from '@/lib/mp/http'
+import { isDeepStrictEqual } from 'node:util'
 
-/** 允许业主提交的 answers 字段白名单（防注入/防塞垃圾） */
+import { fail, mpPublicRoute, ok, readJson, text } from '@/lib/mp/http'
+import { getPayloadClient } from '@/lib/payload'
+import { consumeRateLimit, type RateLimitResult } from '@/lib/rate-limit'
+import {
+  isIssuedNeedToken,
+  issueNeedToken,
+  needAnswers,
+  needRevision,
+  withNeedDraft,
+} from '@/lib/services/need-draft'
+
 const ANSWER_KEYS = [
   'house',
   'lighting',
@@ -18,84 +27,111 @@ const ANSWER_KEYS = [
 
 const MAX_BYTES = 64 * 1024
 
-/** 简单限流：同 token 每 10 秒最多 1 次写入（进程内，够用） */
-const lastWrite = new Map<string, number>()
-
-function pickAnswers(raw: unknown): Record<string, unknown> {
-  if (!raw || typeof raw !== 'object') return {}
-  const src = raw as Record<string, unknown>
-  const out: Record<string, unknown> = {}
-  for (const k of ANSWER_KEYS) if (k in src) out[k] = src[k]
-  return out
+function rateLimitResponse(limit: RateLimitResult) {
+  if (limit.ok) return null
+  const response = fail(429, '保存请求过多，请稍后重试', 'RATE_LIMITED')
+  response.headers.set('Retry-After', String(limit.retryAfterSeconds))
+  return response
 }
 
-/**
- * 创建/更新需求草稿（免登录，凭 token）。
- * body: { token?: string; source?: 'scene'|'budget'|'wizard'; answers?: object; phone?: string }
- * 返回 { token, id, status }
- */
+// Keep a process-wide ceiling for new credentials/records and a separate budget for each draft.
+// The ceiling limits bursts even when someone requests fresh credentials repeatedly.
+export const GET = mpPublicRoute(async () => {
+  const limited = rateLimitResponse(consumeRateLimit('need:issue', 240, 60_000))
+  if (limited) return limited
+  const payload = await getPayloadClient()
+  return ok({ token: issueNeedToken(payload.secret) }, { headers: { 'Cache-Control': 'no-store' } })
+})
+
+/** The same issued token is reused on a retry, including after an unanswered first save. */
 export const POST = mpPublicRoute(async (request) => {
   const body = await readJson<{
     token?: string
+    revision?: string
     source?: string
-    answers?: Record<string, unknown>
+    answers?: unknown
     phone?: string
   }>(request)
+  if (Buffer.byteLength(JSON.stringify(body)) > MAX_BYTES)
+    return fail(413, '提交内容过大，请精简后重试')
 
-  const raw = JSON.stringify(body)
-  if (raw.length > MAX_BYTES) return fail(413, '提交内容过大，请精简后重试')
+  const token = typeof body.token === 'string' ? body.token : ''
+  if (!/^[\w.-]{22,96}$/.test(token)) return fail(400, '缺少有效的需求单凭证')
+  const revision = body.revision ?? ''
+  if (typeof revision !== 'string' || (revision && !/^[\w-]{43}$/.test(revision))) {
+    return fail(400, '需求单版本无效，请重新保存')
+  }
+  if (body.answers != null && (typeof body.answers !== 'object' || Array.isArray(body.answers))) {
+    return fail(400, '需求答案格式不正确')
+  }
 
-  const token = text(body.token, 64)
-  const now = Date.now()
-  const key = token || 'new'
-  const prev = lastWrite.get(key) ?? 0
-  if (now - prev < 10_000) return fail(429, '提交太快了，请稍后再试')
-  lastWrite.set(key, now)
+  const limited = rateLimitResponse(consumeRateLimit(`need:save:${token}`, 8, 10_000))
+  if (limited) return limited
 
-  const payload = await getPayloadClient()
-  const answers = pickAnswers(body.answers)
+  const rawAnswers = (body.answers ?? {}) as Record<string, unknown>
+  const answers = Object.fromEntries(
+    ANSWER_KEYS.filter((key) => Object.hasOwn(rawAnswers, key)).map((key) => [
+      key,
+      rawAnswers[key],
+    ]),
+  )
   const source =
     body.source === 'scene' || body.source === 'budget' || body.source === 'wizard'
       ? body.source
       : undefined
   const phone = text(body.phone, 30) || undefined
+  const payload = await getPayloadClient()
 
-  if (token) {
-    const found = await payload.find({
-      collection: 'need-leads',
-      where: { token: { equals: token } },
-      limit: 1,
-      depth: 0,
-      overrideAccess: true,
-    })
-    const doc = found.docs[0]
-    if (!doc) return fail(404, '需求单不存在或已过期')
-    // 增量合并：新答案覆盖同名键，其余保留（切换入口不丢已答）
-    const merged = { ...((doc.answers as Record<string, unknown>) ?? {}), ...answers }
+  return withNeedDraft(payload, token, async (lead, req) => {
+    if (!lead) {
+      if (revision || !isIssuedNeedToken(token, payload.secret))
+        return fail(404, '需求单不存在或已过期')
+      const limited = rateLimitResponse(consumeRateLimit('need:create', 120, 60_000))
+      if (limited) return limited
+      const created = await payload.create({
+        collection: 'need-leads',
+        data: {
+          token,
+          answers,
+          status: 'draft',
+          ...(source ? { source } : {}),
+          ...(phone ? { phone } : {}),
+        },
+        overrideAccess: true,
+        depth: 0,
+        req,
+      })
+      return ok({
+        token,
+        id: String(created.id),
+        status: created.status,
+        revision: needRevision(created),
+      })
+    }
+
+    const current = needRevision(lead)
+    const saved = needAnswers(lead)
+    const merged = { ...saved, ...answers }
+    const sameWrite =
+      isDeepStrictEqual(merged, saved) &&
+      (!source || source === lead.source) &&
+      (!phone || phone === lead.phone)
+    if (sameWrite) return ok({ token, id: String(lead.id), status: lead.status, revision: current })
+    if (lead.status !== 'draft') return fail(409, '需求单已提交，无法继续保存', 'DRAFT_SUBMITTED')
+    if (revision !== current) return fail(409, '需求单已更新，请确认后重试', 'DRAFT_CHANGED')
+
     const updated = await payload.update({
       collection: 'need-leads',
-      id: doc.id,
-      data: {
-        answers: merged,
-        ...(source ? { source } : {}),
-        ...(phone ? { phone } : {}),
-      },
+      id: lead.id,
+      data: { answers: merged, ...(source ? { source } : {}), ...(phone ? { phone } : {}) },
       overrideAccess: true,
+      req,
     })
-    return ok({ token, id: String(updated.id), status: updated.status })
-  }
-
-  const created = await payload.create({
-    collection: 'need-leads',
-    data: {
-      answers,
-      status: 'draft',
-      ...(source ? { source } : {}),
-      ...(phone ? { phone } : {}),
-    },
-    overrideAccess: true,
-    depth: 0,
+    return ok({
+      token,
+      id: String(updated.id),
+      status: updated.status,
+      revision: needRevision(updated),
+    })
   })
-  const doc = created as unknown as { id: string | number; token?: string; status?: string }
-  return ok({ token: doc.token, id: String(doc.id), status: doc.status ?? 'draft' })
 })

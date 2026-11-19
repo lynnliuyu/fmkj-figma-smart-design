@@ -7,6 +7,11 @@
   </view>
 
   <view wx:if="{{loading}}" class="card mt-16 small muted">正在生成清单…</view>
+  <view wx:if="{{loadError}}" class="card mt-16">
+    <view class="small muted">{{loadError}}</view>
+    <view wx:if="{{!needsSave}}" class="btn btn-outline btn-sm mt-8" bindtap="retryLoad">重试生成清单</view>
+    <view class="btn btn-outline btn-sm mt-8" bindtap="goBack">返回填写</view>
+  </view>
 
   <block wx:if="{{!loading && result}}">
     <!-- 设备清单 -->

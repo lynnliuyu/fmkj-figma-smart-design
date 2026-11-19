@@ -2,6 +2,7 @@ const { request, toast } = require('../../utils/request')
 
 const TOKEN_KEY = 'fmkj_need_token'
 const DRAFT_KEY = 'fmkj_need_answers'
+const SYNC_KEY = 'fmkj_need_draft_v2'
 
 /** 需求小助手：三条入口（场景/预算/问卷）写同一份 answers（issue #194） */
 Page({
@@ -22,29 +23,52 @@ Page({
     },
     steps: [],
     saving: false,
+    opening: false,
+    saveMessage: '',
+    saveFailed: false,
+    draftConflict: false,
     loading: true,
   },
 
   onLoad() {
-    const saved = wx.getStorageSync(DRAFT_KEY)
-    if (saved && typeof saved === 'object') this.setData({ answers: saved })
-    else this.restoreFromServer()
+    const stored = wx.getStorageSync(SYNC_KEY)
+    const legacy = wx.getStorageSync(DRAFT_KEY)
+    const hasLegacyAnswers = legacy && typeof legacy === 'object'
+    this._draft = stored || {
+      answers: Object.assign({}, this.data.answers, hasLegacyAnswers ? legacy : {}),
+      token: wx.getStorageSync(TOKEN_KEY) || '',
+      revision: '',
+      change: hasLegacyAnswers ? 1 : 0,
+      confirmed: -1,
+      pending: null,
+    }
+    this.setData({ answers: this._draft.answers })
+    this.showSaveStatus()
+    if (this._draft.token && !this._draft.revision && !this._draft.pending) {
+      this._restoring = this.restoreFromServer().catch((error) => this.showSaveError(error))
+    }
     this.loadCatalog()
   },
 
-  /** 换设备/清缓存后凭 token 续填（GET /need-leads/[token]） */
-  async restoreFromServer() {
-    const token = wx.getStorageSync(TOKEN_KEY)
-    if (!token) return
-    try {
-      const data = await request('/need-leads/' + encodeURIComponent(token), { auth: false, silent: true })
-      if (data && data.answers && Object.keys(data.answers).length) {
-        this.setData({ answers: Object.assign({}, this.data.answers, data.answers) })
-        wx.setStorageSync(DRAFT_KEY, this.data.answers)
-      }
-    } catch (e) {
-      // 需求单过期/不存在：静默从空白开始，不打断填写
+  onUnload() {
+    this._closed = true
+    clearTimeout(this._saveTimer)
+  },
+
+  async restoreFromServer(replaceAnswers = this._draft.change === 0) {
+    const draft = this._draft
+    const change = draft.change
+    const data = await request('/need-leads/' + encodeURIComponent(draft.token), { auth: false, silent: true })
+    if (this._closed) return
+    if (!data?.revision) throw new Error('服务器未返回草稿版本，请重试')
+    draft.revision = data.revision
+    if (replaceAnswers && draft.change === change) {
+      draft.answers = Object.assign({}, draft.answers, data.answers)
+      draft.confirmed = draft.change
+      this.setData({ answers: draft.answers })
     }
+    this.persistDraft()
+    this.showSaveStatus()
   },
 
   async loadCatalog() {
@@ -142,41 +166,155 @@ Page({
     this.setAnswer('ecosystem', { primary: e.currentTarget.dataset.value })
   },
 
-  /** 每次改动：本地缓存 + 防抖保存到服务端（免登录，凭 token 续填） */
   setAnswer(key, value) {
-    const answers = Object.assign({}, this.data.answers, { [key]: value })
-    this.setData({ answers })
-    wx.setStorageSync(DRAFT_KEY, answers)
-    this.saveDebounced()
-  },
-
-  saveDebounced() {
-    clearTimeout(this._t)
-    this._t = setTimeout(() => this.save(), 600)
-  },
-
-  async save() {
-    const token = wx.getStorageSync(TOKEN_KEY) || undefined
-    try {
-      this.setData({ saving: true })
-      const res = await request('/need-leads', {
-        method: 'POST',
-        auth: false,
-        silent: true,
-        data: { token, source: this.data.entry, answers: this.data.answers },
-      })
-      if (res && res.token) wx.setStorageSync(TOKEN_KEY, res.token)
-    } catch (e) {
-      // 保存失败不阻断填写：本地缓存仍在，下次自动重试
-    } finally {
-      this.setData({ saving: false })
+    const draft = this._draft
+    draft.answers = Object.assign({}, draft.answers, { [key]: value })
+    draft.change += 1
+    this.setData({ answers: draft.answers })
+    this.persistDraft()
+    if (!this.data.draftConflict) {
+      this.showSaveStatus()
+      this.saveDebounced()
     }
   },
 
+  persistDraft() {
+    wx.setStorageSync(SYNC_KEY, this._draft)
+  },
+
+  isSaved() {
+    const { revision, pending, confirmed, change } = this._draft
+    return Boolean(revision && !pending && confirmed === change)
+  },
+
+  showSaveStatus() {
+    const draft = this._draft
+    const message = this.isSaved() ? '已同步到服务器' : draft.change > 0 ? '已保留在本机，待同步' : ''
+    this.setData({ saveMessage: message, saveFailed: false, draftConflict: false })
+  },
+
+  showSaveError(error) {
+    if (this._closed) return
+    const conflict = error?.code === 'DRAFT_CHANGED'
+    const reason = conflict ? '另一处已更新。用本机答案重试将覆盖服务端草稿。' : error?.message || '保存未完成，请重试'
+    this.setData({ saveMessage: reason, saveFailed: true, draftConflict: conflict })
+  },
+
+  saveDebounced() {
+    clearTimeout(this._saveTimer)
+    this._saveTimer = setTimeout(() => {
+      if (!this.data.opening && !this._retrying) this.save()
+    }, 600)
+  },
+
+  save() {
+    if (this._saving) return this._saving
+    if (this.isSaved()) return Promise.resolve(true)
+    this.setData({ saving: true })
+    this._saving = this.saveDraft().then(
+      () => {
+        if (!this._closed) {
+          this.showSaveStatus()
+          if (!this.isSaved() && !this.data.opening) this.saveDebounced()
+        }
+        return true
+      },
+      (error) => {
+        this.showSaveError(error)
+        return false
+      },
+    ).finally(() => {
+      this._saving = null
+      if (!this._closed) this.setData({ saving: false })
+    })
+    return this._saving
+  },
+
+  async saveDraft() {
+    const draft = this._draft
+    if (this._restoring) {
+      const restoring = this._restoring
+      this._restoring = null
+      await restoring
+    }
+    if (this._closed || this.isSaved()) return
+    if (!draft.token) {
+      const ticket = await request('/need-leads', { auth: false, silent: true })
+      if (this._closed) return
+      draft.token = ticket.token
+    } else if (!draft.revision && !draft.pending) {
+      await this.restoreFromServer()
+      if (this._closed || this.isSaved()) return
+    }
+
+    // Persist the exact payload before sending. After a lost acknowledgement, replay it first.
+    draft.pending ||= { change: draft.change, answers: draft.answers, source: this.data.entry }
+    const pending = draft.pending
+    this.persistDraft()
+    const saved = await request('/need-leads', {
+      method: 'POST',
+      auth: false,
+      silent: true,
+      data: { token: draft.token, revision: draft.revision, source: pending.source, answers: pending.answers },
+    })
+    if (this._closed) return
+    if (!saved?.revision) throw new Error('服务器未确认保存，请重试')
+    draft.revision = saved.revision
+    draft.confirmed = pending.change
+    draft.pending = null
+    this.persistDraft()
+  },
+
+  async retrySave() {
+    if (this._retrying || this._saving || this.data.opening) return
+    this._retrying = true
+    try {
+      if (this.data.draftConflict) {
+        await this.restoreFromServer(false)
+        if (this._closed) return
+        this._draft.pending = null
+        this._draft.confirmed = -1
+        this.persistDraft()
+      }
+      await this.save()
+    } catch (error) {
+      this.showSaveError(error)
+    } finally {
+      this._retrying = false
+    }
+  },
+
+  refreshSavedDraft() {
+    if (!this.isSaved()) return
+    this._draft.revision = ''
+    this._draft.change = 0
+    this._draft.confirmed = -1
+    this.persistDraft()
+    this._restoring = this.restoreFromServer(true).catch((error) => this.showSaveError(error))
+  },
+
   async openResult() {
-    await this.save()
-    const token = wx.getStorageSync(TOKEN_KEY)
-    if (!token) return toast('还没保存成功，请稍后再试')
-    wx.navigateTo({ url: '/pages/need-result/index?token=' + encodeURIComponent(token) })
+    if (this.data.opening || this._retrying || this.data.draftConflict) return
+    clearTimeout(this._saveTimer)
+    this.setData({ opening: true })
+    try {
+      // At most one pending snapshot and one follow-up containing the latest edits.
+      for (let attempt = 0; attempt < 2 && !this.isSaved(); attempt += 1) {
+        if (!(await this.save()) || this._closed) return
+      }
+      if (!this.isSaved()) {
+        this.showSaveError(new Error('答案刚有更新，请再试一次'))
+        return
+      }
+      const { token, revision } = this._draft
+      await new Promise((resolve) => wx.navigateTo({
+        url: '/pages/need-result/index?token=' + encodeURIComponent(token) + '&revision=' + encodeURIComponent(revision),
+        events: { needDraftChanged: () => this.refreshSavedDraft() },
+        fail: () => toast('无法打开清单，请重试'),
+        complete: resolve,
+      }))
+    } finally {
+      if (!this._closed) this.setData({ opening: false })
+    }
   },
 })

@@ -1,5 +1,6 @@
 import { getPayloadClient } from '@/lib/payload'
 import { fail, mpPublicRoute, ok, readJson } from '@/lib/mp/http'
+import { findNeedDraft, needAnswers, needRevision } from '@/lib/services/need-draft'
 import { buildNeedResult } from '@/lib/services/need-service'
 
 /**
@@ -14,19 +15,14 @@ export const POST = mpPublicRoute(async (request) => {
 
   // ⚠️ 无论是否带 answers，都必须先校验 token 存在（否则别人可以拿任意 token 算价）
   if (!token) return fail(400, '缺少需求单凭证')
-  const found = await payload.find({
-    collection: 'need-leads',
-    where: { token: { equals: token } },
-    limit: 1,
-    depth: 0,
-    overrideAccess: true,
-  })
-  const lead = found.docs[0]
+  const lead = await findNeedDraft(payload, token)
   if (!lead) return fail(404, '需求单不存在或已过期')
 
-  const body = await readJson<{ answers?: Record<string, unknown> }>(request)
-  const answers: Record<string, unknown> =
-    body.answers ?? (lead.answers as Record<string, unknown>) ?? {}
-
+  const body = await readJson<{ answers?: Record<string, unknown>; revision?: string }>(request)
+  if (body.revision !== undefined && body.revision !== needRevision(lead)) {
+    return fail(409, '答案已更新，请重新生成清单', 'DRAFT_CHANGED')
+  }
+  const answers =
+    body.revision === undefined ? (body.answers ?? needAnswers(lead)) : needAnswers(lead)
   return ok(await buildNeedResult(answers))
 })
