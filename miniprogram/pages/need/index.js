@@ -1,4 +1,4 @@
-const { request, toast } = require('../../utils/request')
+const { absUrl, request, toast } = require('../../utils/request')
 
 const TOKEN_KEY = 'fmkj_need_token'
 const DRAFT_KEY = 'fmkj_need_answers'
@@ -8,6 +8,7 @@ const SYNC_KEY = 'fmkj_need_draft_v2'
 Page({
   data: {
     catalog: null,
+    failedAssets: {},
     entry: 'scene', // scene | budget | wizard
     step: 0,
     answers: {
@@ -74,7 +75,14 @@ Page({
   async loadCatalog() {
     try {
       const data = await request('/need-leads/catalog', { auth: false, silent: true })
-      this.setData({ catalog: data, steps: data.steps || [], loading: false })
+      const options = data.options || {}
+      for (const key of ['lightingDesigns', 'lightingColors']) {
+        options[key] = (options[key] || []).map((option) => ({
+          ...option,
+          assetUrl: option.alt && /^\/need-assets\/[a-z0-9.-]+$/.test(option.asset) ? absUrl(option.asset) : '',
+        }))
+      }
+      this.setData({ catalog: { ...data, options }, steps: data.steps || [], loading: false })
     } catch (e) {
       this.setData({ loading: false })
       toast('选项目录加载失败，请检查网络')
@@ -93,6 +101,11 @@ Page({
     if (i >= 0) list.splice(i, 1)
     else list.push(v)
     this.setAnswer('sceneCards', list)
+  },
+
+  onLightingAssetError(e) {
+    const assetUrl = e.currentTarget.dataset.url
+    this.setData({ failedAssets: { ...this.data.failedAssets, [assetUrl]: true } })
   },
 
   pickLighting(e) {

@@ -1,3 +1,21 @@
+<template name="lighting-options">
+  <block wx:for="{{options}}" wx:key="value">
+    <view class="list-item" hover-class="list-item-hover"
+          data-field="{{field}}" data-value="{{item.value}}" bindtap="pickLighting">
+      <view class="grow">
+        <view class="title">{{item.label}}</view>
+        <view class="small muted">{{item.explain}}</view>
+      </view>
+      <view wx:if="{{selected === item.value}}" class="small">✓</view>
+    </view>
+    <view wx:if="{{selected === item.value && item.assetUrl && !failedAssets[item.assetUrl]}}" class="lighting-preview">
+      <image class="lighting-preview-image" mode="widthFix" src="{{item.assetUrl}}"
+             aria-role="img" aria-label="{{item.alt}}" data-url="{{item.assetUrl}}" binderror="onLightingAssetError" />
+      <view class="small muted lighting-preview-caption">{{item.caption}}（模拟示意）</view>
+    </view>
+  </block>
+</template>
+
 <view class="page page-pad-bottom">
   <view class="h1">帮我出方案</view>
   <view class="small muted mt-8">说不清需求也没关系，选几个问题就能看到清单和大概预算。</view>
@@ -25,25 +43,9 @@
 
     <view class="card mt-16">
       <view class="section-title">灯光想怎么做？</view>
-      <view wx:for="{{catalog.options.lightingDesigns}}" wx:key="value"
-            class="list-item" hover-class="list-item-hover"
-            data-field="design" data-value="{{item.value}}" bindtap="pickLighting">
-        <view class="grow">
-          <view class="title">{{item.label}}</view>
-          <view class="small muted">{{item.explain}}</view>
-        </view>
-        <view wx:if="{{answers.lighting.design === item.value}}" class="small">✓</view>
-      </view>
+      <template is="lighting-options" data="{{options: catalog.options.lightingDesigns, field: 'design', selected: answers.lighting.design, failedAssets: failedAssets}}" />
       <view class="section-title mt-16">光色</view>
-      <view wx:for="{{catalog.options.lightingColors}}" wx:key="value"
-            class="list-item" hover-class="list-item-hover"
-            data-field="color" data-value="{{item.value}}" bindtap="pickLighting">
-        <view class="grow">
-          <view class="title">{{item.label}}</view>
-          <view class="small muted">{{item.explain}}</view>
-        </view>
-        <view wx:if="{{answers.lighting.color === item.value}}" class="small">✓</view>
-      </view>
+      <template is="lighting-options" data="{{options: catalog.options.lightingColors, field: 'color', selected: answers.lighting.color, failedAssets: failedAssets}}" />
     </view>
   </block>
 
@@ -102,12 +104,9 @@
 
       <!-- 1 灯光 -->
       <block wx:if="{{steps[step].key === 'lighting'}}">
-        <view wx:for="{{catalog.options.lightingDesigns}}" wx:key="value"
-              class="list-item" hover-class="list-item-hover"
-              data-field="design" data-value="{{item.value}}" bindtap="pickLighting">
-          <view class="grow"><view class="title">{{item.label}}</view><view class="small muted">{{item.explain}}</view></view>
-          <view wx:if="{{answers.lighting.design === item.value}}" class="small">✓</view>
-        </view>
+        <template is="lighting-options" data="{{options: catalog.options.lightingDesigns, field: 'design', selected: answers.lighting.design, failedAssets: failedAssets}}" />
+        <view class="section-title mt-16">光色</view>
+        <template is="lighting-options" data="{{options: catalog.options.lightingColors, field: 'color', selected: answers.lighting.color, failedAssets: failedAssets}}" />
       </block>
 
       <!-- 2 智能程度 -->

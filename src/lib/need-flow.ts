@@ -11,6 +11,12 @@
  * 缺失时 UI 只显示 `explain`，不阻塞流程。
  */
 
+import lightingAssets from '../../public/need-assets/manifest.json'
+
+function lightingAsset(file: keyof typeof lightingAssets) {
+  return { asset: `/need-assets/${file}`, ...lightingAssets[file] }
+}
+
 export type NeedHouseType = 'flat' | 'duplex' | 'villa'
 export type NeedStage = 'rough' | 'mep' | 'moved'
 export type NeedLightingDesign = 'main' | 'none' | 'partial'
@@ -26,6 +32,8 @@ export type NeedOption<T extends string = string> = {
   explain: string
   /** 对照演示素材（public/need-assets/…），P2 补齐前可为空 */
   asset?: string
+  alt?: string
+  caption?: string
   /** 该项是否影响默认值计算 */
   affectsDefaults?: boolean
 }
@@ -58,19 +66,19 @@ export const LIGHTING_DESIGNS: NeedOption<NeedLightingDesign>[] = [
     value: 'main',
     label: '传统主灯',
     explain: '一盏大灯照亮整间，便宜、施工简单',
-    asset: '/need-assets/lighting-main-vs-none.png',
+    ...lightingAsset('lighting-main-vs-none.png'),
   },
   {
     value: 'none',
     label: '全屋无主灯',
     explain: '用筒灯/灯带/射灯分层照明，氛围好、造价高',
-    asset: '/need-assets/lighting-main-vs-none.png',
+    ...lightingAsset('lighting-main-vs-none.png'),
   },
   {
     value: 'partial',
     label: '客厅无主灯，其余主灯',
     explain: '客厅做氛围，卧室书房省预算',
-    asset: '/need-assets/lighting-main-vs-none.png',
+    ...lightingAsset('lighting-main-vs-none.png'),
   },
 ]
 
@@ -79,19 +87,19 @@ export const LIGHTING_COLORS: NeedOption<NeedLightingColor>[] = [
     value: 'warm',
     label: '单色暖光',
     explain: '固定 3000K 左右，最便宜',
-    asset: '/need-assets/color-temp-3up.png',
+    ...lightingAsset('color-temp-3up.png'),
   },
   {
     value: 'tunable',
     label: '冷暖可调',
     explain: '2700K–6500K 可调，日常够用',
-    asset: '/need-assets/color-temp-3up.png',
+    ...lightingAsset('color-temp-3up.png'),
   },
   {
     value: 'rgb',
     label: '多彩可调',
     explain: '能变颜色，适合氛围与观影',
-    asset: '/need-assets/color-rgb.gif',
+    ...lightingAsset('color-rgb.gif'),
   },
 ]
 
