@@ -29,8 +29,9 @@ Page({
       })
       this.setData({ result: data.structured, pricing: data.pricing, loading: false })
     } catch (e) {
+      // structure 失败（如网络抖动）→ 回退读回已答内容，提示可重试
       this.setData({ loading: false })
-      toast('清单加载失败，请返回重试')
+      toast('清单生成失败，已保留你的答案，可返回重试')
     }
   },
 

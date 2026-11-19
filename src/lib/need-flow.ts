@@ -196,6 +196,7 @@ export const SCENES: NeedOption[] = [
 export const ECOSYSTEMS = [
   {
     value: 'apple',
+    explain: '苹果生态，稳定省心',
     label: 'Apple Home',
     positioning: '苹果生态，稳定省心',
     pros: '隐私好、稳定、界面统一',
@@ -204,6 +205,7 @@ export const ECOSYSTEMS = [
   },
   {
     value: 'mijia',
+    explain: '设备最多最便宜',
     label: '米家',
     positioning: '设备最多最便宜',
     pros: '品类全、价格低、上手快',
@@ -212,6 +214,7 @@ export const ECOSYSTEMS = [
   },
   {
     value: 'harmony',
+    explain: '稳定优先',
     label: '华为鸿蒙智家',
     positioning: '稳定优先',
     pros: '连接稳定、售后强',
@@ -220,6 +223,7 @@ export const ECOSYSTEMS = [
   },
   {
     value: 'orvibo',
+    explain: '面板颜值派',
     label: '欧瑞博',
     positioning: '面板颜值派',
     pros: '面板好看、整体方案完整',
@@ -228,6 +232,7 @@ export const ECOSYSTEMS = [
   },
   {
     value: 'knx',
+    explain: '有线楼控标准',
     label: 'KNX',
     positioning: '有线楼控标准',
     pros: '最稳定、寿命长、可扩展',
@@ -236,6 +241,7 @@ export const ECOSYSTEMS = [
   },
   {
     value: 'ha',
+    explain: '极客本地化',
     label: 'Home Assistant',
     positioning: '极客本地化',
     pros: '完全本地、可玩性高',

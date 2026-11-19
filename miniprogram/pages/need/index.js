@@ -28,7 +28,23 @@ Page({
   onLoad() {
     const saved = wx.getStorageSync(DRAFT_KEY)
     if (saved && typeof saved === 'object') this.setData({ answers: saved })
+    else this.restoreFromServer()
     this.loadCatalog()
+  },
+
+  /** 换设备/清缓存后凭 token 续填（GET /need-leads/[token]） */
+  async restoreFromServer() {
+    const token = wx.getStorageSync(TOKEN_KEY)
+    if (!token) return
+    try {
+      const data = await request('/need-leads/' + encodeURIComponent(token), { auth: false, silent: true })
+      if (data && data.answers && Object.keys(data.answers).length) {
+        this.setData({ answers: Object.assign({}, this.data.answers, data.answers) })
+        wx.setStorageSync(DRAFT_KEY, this.data.answers)
+      }
+    } catch (e) {
+      // 需求单过期/不存在：静默从空白开始，不打断填写
+    }
   },
 
   async loadCatalog() {
@@ -68,8 +84,8 @@ Page({
 
   // ── 问卷入口 ───────────────────────────────────────────────
   nextStep() {
-    const step = Math.min(this.data.step + 1, this.data.steps.length - 1)
-    this.setData({ step })
+    const last = Math.max(0, (this.data.steps || []).length - 1)
+    this.setData({ step: Math.min(this.data.step + 1, last) })
   },
   prevStep() {
     this.setData({ step: Math.max(this.data.step - 1, 0) })
