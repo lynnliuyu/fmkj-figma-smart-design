@@ -122,7 +122,8 @@ export async function buildNeedResult(answers: Record<string, unknown>): Promise
       security: { camera, sensors },
       sceneCards,
       rooms: defaults.rooms,
-      devices: defaults.devices,
+      // 对外展示的数量 = 用户改过的数量（否则「改了数量但清单不变」）
+      devices: defaults.devices.map((d, i) => ({ ...d, qty: devices[i]!.qty })),
       hints: defaults.hints,
       estimate: {
         min: pricing.totals.total,

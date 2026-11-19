@@ -93,7 +93,14 @@ export type PricingResult = {
   /** 缺京东日常价的设备：单列，不并入小计 */
   pendingPrice: { deviceType: string; name: string; qty: number }[]
   /** 服务费（调试编程费）：已确认 800/套，已并入 install 与 total；此字段保留明细供展示 */
-  commissioning: { sets: number; perSet: number; subtotal: number; confirmed: boolean }
+  commissioning: {
+    sets: number
+    perSet: number
+    subtotal: number
+    confirmed: boolean
+    /** 套数原因（对外可见）：如「面积 260㎡ > 200㎡，按 2 套估算」 */
+    reason: string
+  }
   exclusions: readonly string[]
   gaps: string[]
 }
@@ -206,12 +213,17 @@ export function computePricing(input: PricingInput): PricingResult {
     })
   }
 
-  const sets = (area ?? 0) > 200 ? 2 : 1
+  const bigArea = (area ?? 0) > 200
+  const sets = bigArea ? 2 : 1
   const commissioning = {
     sets,
     perSet: COMMISSIONING_PER_SET,
     subtotal: COMMISSIONING_PER_SET * sets,
     confirmed: COMMISSIONING_CONFIRMED,
+    // 对外说明「为什么是 2 套」：估算规则，不是施工标准
+    reason: bigArea
+      ? `面积 ${Math.round(area ?? 0)}㎡ 超过 200㎡，按 2 套调试估算（可调整）`
+      : '按 1 套调试估算（面积 ≤200㎡）',
   }
   // 服务费 = 调试编程费：作为「安装调试费」里的一项逐项列出（用户已确认 800/套）
   install.push({
@@ -227,7 +239,8 @@ export function computePricing(input: PricingInput): PricingResult {
   const gaps: string[] = []
   if (pendingPrice.length)
     gaps.push(`${pendingPrice.length} 类设备缺京东日常价（待查，未计入合计）`)
-  if (!commissioning.confirmed) gaps.push('调试费尚未确认，未计入合计')
+  // 调试费已确认（800/套）；>200㎡ 记 2 套是估算规则，必须对外说明原因
+  if (bigArea) gaps.push(`调试费按 2 套估算：${commissioning.reason}`)
 
   return {
     equipment,

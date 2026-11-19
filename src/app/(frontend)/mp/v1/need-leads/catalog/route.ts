@@ -18,7 +18,12 @@ import {
   STAGES,
   TIERS,
 } from '@/lib/need-flow'
-import { PRICE_EXCLUSIONS, PRICING_ITEMS_V2 } from '@/lib/need-pricing'
+import {
+  COMMISSIONING_CONFIRMED,
+  COMMISSIONING_PER_SET,
+  PRICE_EXCLUSIONS,
+  PRICING_ITEMS_V2,
+} from '@/lib/need-pricing'
 
 /**
  * 需求小助手：选项目录（免登录）。
@@ -42,8 +47,8 @@ export const GET = mpPublicRoute(async () => {
     version: 0,
     items: PRICING_ITEMS_V2.map((i) => ({ ...i })),
     exclusions: [...PRICE_EXCLUSIONS],
-    commissioningPerSet: 800,
-    commissioningConfirmed: false,
+    commissioningPerSet: COMMISSIONING_PER_SET,
+    commissioningConfirmed: COMMISSIONING_CONFIRMED,
   }
   try {
     const plan = await payload.find({
@@ -83,8 +88,8 @@ export const GET = mpPublicRoute(async () => {
             calc: i.calc,
           })),
           exclusions: (v.exclusions ?? []).filter(Boolean) as string[],
-          commissioningPerSet: Number(v.commissioningPerSet ?? 800),
-          commissioningConfirmed: false,
+          commissioningPerSet: Number(v.commissioningPerSet ?? COMMISSIONING_PER_SET),
+          commissioningConfirmed: COMMISSIONING_CONFIRMED,
         }
       }
     }

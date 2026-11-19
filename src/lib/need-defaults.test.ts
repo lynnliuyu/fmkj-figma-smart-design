@@ -183,13 +183,17 @@ describe('计价 v2（用户口径）', () => {
     expect(r.totals.install).toBe(r.install.reduce((s, i) => s + i.subtotal, 0))
     expect(r.totals.total).toBe(r.totals.equipment + r.totals.install)
     expect(r.totals.total).toBeGreaterThanOrEqual(1600)
-    // 不再出现「调试费待确认」提示
-    expect(r.gaps.some((g) => g.includes('调试费'))).toBe(false)
+    // 不再出现「调试费待确认」提示，但要能看出「为什么 2 套」
+    expect(r.gaps.some((g) => g.includes('待确认'))).toBe(false)
+    expect(r.commissioning.reason).toContain('超过 200')
+    expect(r.commissioning.reason).toContain('2 套')
+    expect(r.gaps.some((g) => g.includes('调试费按 2 套估算'))).toBe(true)
   })
 
-  it('普通面积调试 1 套 800', () => {
+  it('普通面积调试 1 套 800，并说明原因', () => {
     const r = computePricing({ devices, marketPriceByType: market, area: 100 })
     expect(r.commissioning.sets).toBe(1)
+    expect(r.commissioning.reason).toContain('1 套')
     expect(r.install.find((i) => i.key === 'commissioning')!.subtotal).toBe(800)
   })
 
