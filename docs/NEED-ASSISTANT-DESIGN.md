@@ -82,17 +82,36 @@ type NeedStructured = {
 }
 ```
 
-### 2.3 新增集合 `pricing-tables`（可配置单价表，见 §10）
+### 2.3 新增集合：单价表（版本化，见 §9）
 
-| 字段        | 类型          | 说明                                                                |
-| ----------- | ------------- | ------------------------------------------------------------------- |
-| `name`      | text required | 如「长沙 2026 默认」「别墅大宅版」                                  |
-| `region`    | text          | 地区标识（`default` / `changsha` / …），用于按地区套用              |
-| `isDefault` | checkbox      | 同一 region 只能一个默认（hook 保证）                               |
-| `status`    | select        | `active` / `draft`                                                  |
-| `items`     | array         | `{ key, label, unit, unitPrice, appliesTo, calc, note }`（见 §9.2） |
-| `fees`      | group         | `{ managementPct, designFee, travelFee, emergencyNote }`            |
-| `notes`     | textarea      | 给业主看的说明（可写「多退少补」口径）                              |
+拆两张表，才能同时满足「后台可改价」+「改价带版本与生效时间」+「已生成报价不动」：
+
+**`pricing-plans`（一张逻辑单价表 / 一个地区或项目）**
+
+| 字段        | 类型                    | 说明                                           |
+| ----------- | ----------------------- | ---------------------------------------------- |
+| `name`      | text required           | 如「长沙 2026 标准」「XX 项目专用」            |
+| `region`    | text index              | 地区标识（`default` / `changsha` / …）         |
+| `scope`     | select                  | `region` / `project`                           |
+| `project`   | relationship → projects | 仅 scope=project                               |
+| `isDefault` | checkbox                | 同 region 同 scope 只允许一个默认（hook 保证） |
+| `status`    | select                  | `active` / `archived`                          |
+
+**`pricing-versions`（单价表的版本，价格只存在这里）**
+
+| 字段                          | 类型                         | 说明                                                                  |
+| ----------------------------- | ---------------------------- | --------------------------------------------------------------------- |
+| `plan`                        | relationship → pricing-plans | 所属逻辑表                                                            |
+| `version`                     | number                       | 自增（1,2,3…），同 plan 唯一                                          |
+| `status`                      | select                       | `draft` / `scheduled` / `active` / `retired`                          |
+| `effectiveFrom`               | date                         | 生效时间（可未来）；到点自动成为 active                               |
+| `items`                       | array                        | `{ key, label, unit, unitPrice, calc, appliesTo, note }`（见 §9.2）   |
+| `fees`                        | group                        | `{ commissioningPerSet, designFee, travelFee }`（**无管理费百分比**） |
+| `exclusions`                  | text[]                       | 不含项声明（默认 5 条，见 §9.4）                                      |
+| `changeNote`                  | text                         | 改价原因（审计用）                                                    |
+| `publishedBy` / `publishedAt` | rel/user + date              | 发布人与时间                                                          |
+
+**唯一性规则（hook）**：同一 plan 同时最多一个 `active`；发布新版本时把旧的置 `retired`（不删除）。
 
 ### 2.4 新增字段
 
@@ -194,93 +213,134 @@ type NeedStructured = {
 
 ## 8. 分期与可验证判据
 
-| 期     | 内容                                                                                                                                                                                                                                  | 可验证判据                                                                                                                                                                                                                                                                            |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P1** | `need-leads` + `pricing-tables`(seed 默认表) + `Projects.area/needLead/pricingTable` + `need-defaults` + `need-pricing` + `catalog`/`structure`/`submit`/`pricing-tables` 接口 + 小程序 S0/S1（问卷 Tab）+ S2（含三行报价）+ 草稿生成 | ①3 组户型（80/140/260㎡）默认值符合规则表（开关数、网关 2 个提示、必配水暖烟）②**报价单三行齐全**：设备费=京东日常价×数量、安装费逐项、合计+工期；改后台单价后新草稿随之变、旧草稿快照不变 ③生成的草稿工作台可打开且字段正确 ④单测覆盖默认值 + 计价 + 数量推导（含 >200㎡ 调试 2 套） |
-| **P2** | 演示对照素材（§4 全部 8 类，自绘/合成）+ S1 各步内嵌素材                                                                                                                                                                              | ①每个选项都有图/视频且 alt+一句话解释 ②素材在 390px 窄屏可读 ③不引入实景照（无 public:false 依赖）                                                                                                                                                                                    |
-| **P3** | 生态对比知识库 + AI 答疑（知识库约束、禁报价）+ 三入口互通（场景/预算 Tab）                                                                                                                                                           | ①AI 回答生态问题引用知识库原文，不出现自造价格 ②AI 超时/额度不足时问卷仍可独立完成 ③场景/预算 Tab 与问卷 answers 双向合并无丢失                                                                                                                                                       |
-| **P4** | 分享/续填/保存、S3 一页建议打磨、S5 结果页                                                                                                                                                                                            | ①退出再进入（换设备）能续填 ②建议页可生成图片分享 ③超长输入/答非所问有明确提示且不丢已答                                                                                                                                                                                              |
+| 期     | 内容                                                                                                                                                                                                                                  | 可验证判据                                                                                                                                                                                                                                                                                                                                                           |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P1** | `need-leads` + `pricing-tables`(seed 默认表) + `Projects.area/needLead/pricingTable` + `need-defaults` + `need-pricing` + `catalog`/`structure`/`submit`/`pricing-tables` 接口 + 小程序 S0/S1（问卷 Tab）+ S2（含三行报价）+ 草稿生成 | ①3 组户型（80/140/260㎡）默认值符合规则表（开关数、网关 2 个提示、必配水暖烟）②**报价单三段+不含项齐全**：设备费=京东日常价×数量（可展开看来源）、安装费逐项（v2 减半价）、合计+工期、不含项 5 条；**改价发布新版本后：新草稿用新价、旧报价快照完全不变**；版本时间线可查 ③生成的草稿工作台可打开且字段正确 ④单测覆盖默认值 + 计价 + 数量推导（含 >200㎡ 调试 2 套） |
+| **P2** | 演示对照素材（§4 全部 8 类，自绘/合成）+ S1 各步内嵌素材                                                                                                                                                                              | ①每个选项都有图/视频且 alt+一句话解释 ②素材在 390px 窄屏可读 ③不引入实景照（无 public:false 依赖）                                                                                                                                                                                                                                                                   |
+| **P3** | 生态对比知识库 + AI 答疑（知识库约束、禁报价）+ 三入口互通（场景/预算 Tab）                                                                                                                                                           | ①AI 回答生态问题引用知识库原文，不出现自造价格 ②AI 超时/额度不足时问卷仍可独立完成 ③场景/预算 Tab 与问卷 answers 双向合并无丢失                                                                                                                                                                                                                                      |
+| **P4** | 分享/续填/保存、S3 一页建议打磨、S5 结果页                                                                                                                                                                                            | ①退出再进入（换设备）能续填 ②建议页可生成图片分享 ③超长输入/答非所问有明确提示且不丢已答                                                                                                                                                                                                                                                                             |
 
-## 9. 计价模型（不赚设备差价，按京东日常价 + 安装调试费）
+## 9. 计价模型 v2 + 市场价调整
 
-### 9.1 总价公式
+### 9.1 总价公式（v2）
 
 ```
-业主总价 = 设备费（京东日常价 × 数量，原样计入，业主可自查来源链接）
-         + 安装调试费（按件/按米/按点位 的单价表）
+业主总价 = 设备费（京东日常价 × 数量，原样计入）
+         + 安装费（按件/按米 单价表 v2）
          + 型材费（轨道/磁吸导轨/灯槽 按米）
-         + 调试编程费（按套，点位多则加收）
-         + 可选：设计费 / 上门差旅 / 管理费
+         + 调试编程费（= 服务费，按套；不另收管理费百分比）
+         + 可选：设计费 / 上门差旅
 ```
 
-**不赚设备差价**是硬口径：设备行展示「京东日常价（`marketPrice`）+ 来源链接」，
-业主能点开核对；利润只来自安装调试服务费。
+三条 v2 修正：
 
-### 9.2 单价表结构（可配置，不写死代码）
+1. **不含水电范围** —— 删除「弱电点位布线」「回路改造」两项；报价单固定声明不含项
+2. **服务费 = 调试编程费**，不收管理费/服务费百分比
+3. **安装单价全部减半**（下表 v2），调试费 800/套未减半（唯一利润项，待确认）
+
+### 9.2 单价表 v2（默认值，后台可改）
+
+| key                      | 类别                            | 单位 | v1  | **v2 现行**       | calc       |
+| ------------------------ | ------------------------------- | ---- | --- | ----------------- | ---------- |
+| `switch_panel`           | 智能开关面板                    | 个   | 40  | **20**            | per_unit   |
+| `scene_panel`            | 场景/带屏面板                   | 个   | 60  | **30**            | per_unit   |
+| `curtain_motor`          | 窗帘电机                        | 套   | 220 | **110**           | per_unit   |
+| `curtain_track`          | 窗帘轨道型材                    | 米   | 90  | **45**            | per_meter  |
+| `light_strip`            | 灯带                            | 米   | 45  | **22**            | per_meter  |
+| `magnetic_track`         | 磁吸轨道/铝型材                 | 米   | 110 | **55**            | per_meter  |
+| `downlight_install`      | 筒灯/射灯开孔安装               | 个   | 25  | **12**            | per_unit   |
+| `sensor_install`         | 传感器（水浸/烟雾/门磁/人体）   | 个   | 25  | **12**            | per_unit   |
+| `gateway_install`        | 网关/中控屏                     | 台   | 80  | **40**            | per_unit   |
+| `camera_install`         | 摄像头                          | 个   | 120 | **60**            | per_unit   |
+| `lock_install`           | 智能门锁                        | 把   | 200 | **100**           | per_unit   |
+| ~~`weak_current_point`~~ | ~~弱电点位布线~~                | —    | 180 | **已删除**        | —          |
+| ~~`circuit_modify`~~     | ~~回路/开关位改造~~             | —    | 260 | **已删除**        | —          |
+| `commissioning`          | 系统调试 + 场景编程（= 服务费） | 套   | 800 | **800（待确认）** | per_system |
+| `design`                 | 方案设计                        | 套   | 0   | 0（默认免费）     | per_system |
+
+### 9.3 数量推导（纯函数 `need-pricing.ts`，与 §3 默认值同源）
+
+| 项           | 推导                                                            |
+| ------------ | --------------------------------------------------------------- |
+| 开关面板     | 逐房间默认值之和（卧室/书房 3、客厅 3、餐厅玄关 2、卫生间 1–2） |
+| 窗帘电机     | 有窗房间数；轨道米数 = Σ(窗宽 × 1.2)                            |
+| 灯带米数     | 无主灯房间周长 × 0.6                                            |
+| 磁吸轨道米数 | 无主灯区域面积 ÷ 4                                              |
+| 传感器       | 厨卫阳台必配 + 其余每 2 房 1 个                                 |
+| 调试套数     | 1 套；面积 > 200 ㎡ → 2 套                                      |
+
+### 9.4 业主端报价单（三段 + 不含项声明）
+
+```
+① 设备费          ¥ 12,340  [展开明细 ▾]   ← 每条：设备 × 数量 × 京东日常价 [查看来源]
+② 安装调试费       ¥ 3,860  [逐项 ▾]       ← 开关 12 个 × 20；窗帘 3 套 × 110；轨道 14.4 米 × 45 …
+③ 合计 + 工期      ¥ 16,200  约 5–7 个工作日
+④ 不含项          水电改造 / 开槽布线 / 强电施工 / 吊顶墙面修复 / 家电本体
+```
+
+不含项默认 5 条，存 `pricing-versions.exclusions`，可后台改文案；
+**一页建议页与报价单都必须展示**，避免后续扯皮。
+
+### 9.5 市场价调整（版本化 + 快照）
+
+| 需求                   | 设计                                                                                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 后台可编辑，不写死代码 | 单价只存在于 `pricing-versions.items`；代码里只有 key 常量的默认 seed                                                                              |
+| 按地区覆盖             | `pricing-plans.scope=region` + `region` 字段；解析时取同 region 的默认 plan                                                                        |
+| 按项目覆盖             | `pricing-plans.scope=project` + `project` 关系；优先级最高                                                                                         |
+| 改价带版本与生效时间   | 每次改价 = 新建一个 version（draft/scheduled）→ 发布后 `effectiveFrom` 到点生效，旧的自动 `retired`                                                |
+| 已生成报价不动         | 报价/草稿生成时把 `{planId, versionId, version, effectiveFrom, at, items 快照}` 写进 `need-leads.pricing.snapshot`（项目合同/报价单同样存快照）    |
+| 价格历史可追溯         | `pricing-versions` 全量保留（retired 不删）；后台按 plan 列出时间线，可对比两版差异                                                                |
+| 设备价同样刷新         | 设备价来自 `products.marketPrice`（#195，京东日常价）；报价快照存当次取值，之后刷新只影响新报价；如需完整变价历史，P2 再加 `product-price-history` |
+
+**解析优先级**：项目 plan > 草稿 plan > 同 region 默认 plan > 全局默认 plan；
+每个 plan 内取「`effectiveFrom <= now` 的最新 active 版本」。
+
+**后台操作**：`pricing-plans` 列表 → 查看历史版本时间线 → 「复制为新版本并改价」→ 填生效时间与改价原因 → 发布。
+（用 Payload 自定义 action / 版本列表视图实现，不需要另做前端后台。）
+
+### 9.6 报价快照结构
 
 ```ts
-type PricingItem = {
-  key: string // switch_panel / curtain_motor / track_per_meter / …
-  label: string // 智能开关面板
-  unit: '个' | '套' | '米' | '点' | '处' | '台' | '把'
-  unitPrice: number // 元
-  calc: 'per_unit' | 'per_meter' | 'per_point' | 'per_system'
-  appliesTo: string[] // 命中的 deviceType 或 roomToken（如 ['switch-1','switch-2','switch-3','switch-4']）
-  note?: string // 含拆旧/接线/通电测试
+type NeedPricing = {
+  equipment: {
+    deviceType: string
+    productId: string | null
+    name: string
+    qty: number
+    unitMarketPrice: number | null
+    subtotal: number | null
+    priceSource: string | null
+  }[]
+  install: {
+    key: string
+    label: string
+    unit: string
+    qty: number
+    unitPrice: number
+    subtotal: number
+  }[]
+  profile: { key: string; label: string; meters: number; unitPrice: number; subtotal: number }[]
+  commissioning: { sets: number; unitPrice: number; subtotal: number }
+  totals: {
+    equipment: number
+    install: number
+    profile: number
+    commissioning: number
+    total: number
+  }
+  durationDays: { min: number; max: number }
+  exclusions: string[]
+  gaps: string[] // 缺京东日常价的设备
+  snapshot: {
+    planId: string
+    versionId: string
+    version: number
+    effectiveFrom: string
+    at: string
+  }
 }
 ```
-
-默认表（用户已给，落地为 seed 数据，**数字由后台改**）：
-
-| key                  | 单位 | 默认价 | calc                      |
-| -------------------- | ---- | ------ | ------------------------- |
-| `switch_panel`       | 个   | 40     | per_unit                  |
-| `scene_panel`        | 个   | 60     | per_unit（场景/带屏面板） |
-| `curtain_motor`      | 套   | 220    | per_unit                  |
-| `curtain_track`      | 米   | 90     | per_meter                 |
-| `light_strip`        | 米   | 45     | per_meter                 |
-| `magnetic_track`     | 米   | 110    | per_meter                 |
-| `downlight_install`  | 个   | 25     | per_unit                  |
-| `sensor_install`     | 个   | 25     | per_unit                  |
-| `gateway_install`    | 台   | 80     | per_unit                  |
-| `camera_install`     | 个   | 120    | per_unit                  |
-| `lock_install`       | 把   | 200    | per_unit                  |
-| `weak_current_point` | 点   | 180    | per_point                 |
-| `circuit_modify`     | 处   | 260    | per_point                 |
-| `commissioning`      | 套   | 800    | per_system                |
-| `design`             | 套   | 0      | per_system                |
-
-### 9.3 数量推导（与 §3 默认值同一处，纯函数）
-
-| 项           | 推导                                                             |
-| ------------ | ---------------------------------------------------------------- |
-| 开关面板数量 | 逐房间默认值之和（卧室/书房 3、客厅 3、餐厅/玄关 2、卫生间 1–2） |
-| 窗帘电机     | 有窗房间数                                                       |
-| 窗帘轨道米数 | Σ(窗宽 × 1.2)，窗宽未知按房间面积估（可改）                      |
-| 灯带米数     | 无主灯房间周长 × 0.6                                             |
-| 磁吸轨道米数 | 无主灯区域面积 ÷ 4                                               |
-| 传感器       | 厨房/卫生间/阳台必配 + 其余按密度（每 2 房 1）                   |
-| 调试费套数   | 1 套；面积 > 200 ㎡ → 2 套                                       |
-
-系数（1.2 / 0.6 / ÷4）放 `pricing-tables.fees` 或独立常量表，**可调**。
-
-### 9.4 业主端报价单（必须三行，不可只给总数）
-
-```
-① 设备费            ¥ 12,340   [展开明细 ▾]  ← 每行：设备名 × 数量 × 京东日常价 [查看来源]
-② 安装调试费         ¥ 3,860   [逐项 ▾]      ← 开关 40×12、窗帘 220×3、轨道 90×14.4 …
-③ 合计 + 工期        ¥ 16,200   约 5–7 个工作日
-```
-
-- 设备行可展开，业主能自查京东价与来源链接（`priceSource`）
-- 安装费逐项列出（不合并成一坨）
-- 缺参考价的设备：标「待补价」，不计入并提示「该项需现场核价」
-
-### 9.5 地区 / 项目套用
-
-- 优先级：`Projects.pricingTable` > `need-leads.pricingTable` > 同 region 的 `isDefault` 表 > 全局 default 表
-- 后台「单价表」页可复制一张表改价（`action: duplicate`），改价不影响已生成草稿的历史 `pricing` 快照
-- 草稿生成时**把当天单价快照写进 `need-leads.pricing`**，之后改表不回改历史报价（可追溯）
 
 ## 10. 待你确认
 
@@ -293,3 +353,6 @@ type PricingItem = {
 7. **型材/灯带按估算还是实结算**：默认「估算签、多退少补」，需你确认口径
 8. 单价表是否按**地区**维护（默认表 + 地区覆盖），还是每项目手工选表
 9. 调试费封顶规则：>200㎡ 按 2 套是否需要按点位加收（默认只按套）
+10. **调试费 800/套是否也减半到 400**（issue 标注待确认；当前按 800）
+11. 不含项文案是否需要加「弱电点位由业主自装」等更明确表述
+12. 设备价是否需要完整变价历史表（当前用报价快照 + `priceCheckedAt` 即可满足「旧报价不动」）
