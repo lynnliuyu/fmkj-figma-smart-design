@@ -103,6 +103,8 @@ export const migrations = [
     up: migration_20261119_091436_add_product_market_price.up,
     down: migration_20261119_091436_add_product_market_price.down,
     name: '20261119_091436_add_product_market_price',
+  },
+  {
     up: migration_20261119_115643_add_need_leads_pricing.up,
     down: migration_20261119_115643_add_need_leads_pricing.down,
     name: '20261119_115643_add_need_leads_pricing',
