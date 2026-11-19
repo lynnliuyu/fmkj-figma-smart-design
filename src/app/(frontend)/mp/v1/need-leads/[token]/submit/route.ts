@@ -23,7 +23,7 @@ export const POST = mpPublicRoute(async (request) => {
       return fail(409, '答案已更新，请重新生成清单再提交', 'DRAFT_CHANGED')
     }
 
-    const result = await buildNeedResult(needAnswers(lead))
+    const result = await buildNeedResult(needAnswers(lead), req)
     const { pricing } = result
     const project = await payload.create({
       collection: 'projects',

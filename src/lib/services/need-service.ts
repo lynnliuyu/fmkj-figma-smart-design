@@ -1,3 +1,5 @@
+import type { PayloadRequest } from 'payload'
+
 import { getPayloadClient } from '@/lib/payload'
 import { computeDefaults, estimateArea, type NeedHouse } from '@/lib/need-defaults'
 import { computePricing, QUANTITY_FACTORS, type PricingResult } from '@/lib/need-pricing'
@@ -25,7 +27,7 @@ export type NeedBuildResult = {
 }
 
 /** 从在售产品取每类设备的京东日常价中位数（缺失即待查，不猜） */
-export async function marketPriceByDeviceType() {
+export async function marketPriceByDeviceType(req?: Partial<PayloadRequest>) {
   const payload = await getPayloadClient()
   const catalog = await payload.find({
     collection: 'products',
@@ -34,6 +36,7 @@ export async function marketPriceByDeviceType() {
     depth: 0,
     overrideAccess: true,
     select: { name: true, deviceType: true, marketPrice: true, priceSource: true },
+    req,
   })
   const byType = new Map<string, { prices: number[]; name: string; source: string | null }>()
   for (const p of catalog.docs as unknown as Record<string, unknown>[]) {
@@ -88,7 +91,10 @@ export function parseAnswers(answers: Record<string, unknown>) {
   }
 }
 
-export async function buildNeedResult(answers: Record<string, unknown>): Promise<NeedBuildResult> {
+export async function buildNeedResult(
+  answers: Record<string, unknown>,
+  req?: Partial<PayloadRequest>,
+): Promise<NeedBuildResult> {
   const { house, lighting, tier, sensors, camera, sceneCards, edits } = parseAnswers(answers)
   const wantsCurtain = sceneCards.includes('curtain')
 
@@ -101,7 +107,7 @@ export async function buildNeedResult(answers: Record<string, unknown>): Promise
         : d.qty,
   }))
 
-  const marketPriceByType = await marketPriceByDeviceType()
+  const marketPriceByType = await marketPriceByDeviceType(req)
   const area = house.area ?? estimateArea(house)
 
   // 型材（按米）：与默认值同一套系数，避免预览/提交两处漂移
