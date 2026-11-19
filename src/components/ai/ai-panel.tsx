@@ -89,12 +89,27 @@ export function AiPanelProvider({
   // 宽屏常驻列：宽度与收起态。初始值固定为默认（320 / 展开），SSR 与首次
   // 客户端渲染一致，避免 hydration 不匹配；挂载后再从 localStorage 读回并
   // setState（刷新保持）。只在 inline 模式有意义；drawer 抽屉有自己的宽度，不参与。
-  const [collapsed, setCollapsed] = React.useState<boolean>(false)
-  const [panelWidth, setPanelWidth] = React.useState<number>(AI_PANEL_DEFAULT_WIDTH)
+  const [collapsed, setCollapsedState] = React.useState<boolean>(false)
+  const [panelWidth, setPanelWidthState] = React.useState<number>(AI_PANEL_DEFAULT_WIDTH)
 
+  // 挂载后读回上次的收起态与宽度（SSR/首帧固定默认值，避免 hydration 不一致）。
   React.useEffect(() => {
-    setCollapsed(readStoredAiPanelCollapsed())
-    setPanelWidth(readStoredAiPanelWidth())
+    setCollapsedState(readStoredAiPanelCollapsed())
+    setPanelWidthState(readStoredAiPanelWidth())
+  }, [])
+
+  // ⚠️ 只在**用户主动操作**时写存储。
+  // 早期实现在 `useEffect(..., [panelWidth])` 里写，挂载后「读存储」与「写默认值」
+  // 两个 effect 竞争，dev StrictMode 双挂载下必然把 400 覆盖回 320（独立验收实测）。
+  // 与 sidebar.tsx 一致：拖拽/键盘/复位结束才落盘。
+  const setPanelWidth = React.useCallback((next: number) => {
+    setPanelWidthState(next)
+    writeAiPanelWidth(next)
+  }, [])
+
+  const setCollapsed = React.useCallback((next: boolean) => {
+    setCollapsedState(next)
+    writeAiPanelCollapsed(next)
   }, [])
 
   const value = React.useMemo<AiPanelContextValue>(
@@ -108,17 +123,8 @@ export function AiPanelProvider({
       width: panelWidth,
       setWidth: setPanelWidth,
     }),
-    [show, mode, open, collapsed, panelWidth],
+    [show, mode, open, collapsed, panelWidth, setCollapsed, setPanelWidth],
   )
-
-  // 拖宽 / 收起后写回 localStorage，刷新保持（与 sidebar.tsx 的做法一致，忽略写失败）。
-  React.useEffect(() => {
-    writeAiPanelWidth(panelWidth)
-  }, [panelWidth])
-
-  React.useEffect(() => {
-    writeAiPanelCollapsed(collapsed)
-  }, [collapsed])
 
   return <AiPanelContext.Provider value={value}>{children}</AiPanelContext.Provider>
 }
@@ -150,15 +156,20 @@ export function AiPanelToggle() {
  */
 export function AiPageFallback(props: AiPanelProps) {
   return (
-    <div data-slot="ai-page" className="mx-auto flex h-[calc(100svh-8rem)] w-full max-w-5xl">
-      <AiSidebarDock
-        plugins={props.plugins.filter((p) => p.id !== 'ai-copilot')}
-        projects={props.projects}
-        credits={props.credits}
-        configured={props.configured}
-        models={props.models}
-        userId={props.userId}
-      />
+    <div
+      data-slot="ai-page"
+      className="mx-auto flex h-[calc(100svh-8rem)] w-full max-w-5xl min-w-0 overflow-hidden"
+    >
+      <div className="flex h-full w-full min-w-0 flex-1 flex-col">
+        <AiSidebarDock
+          plugins={props.plugins.filter((p) => p.id !== 'ai-copilot')}
+          projects={props.projects}
+          credits={props.credits}
+          configured={props.configured}
+          models={props.models}
+          userId={props.userId}
+        />
+      </div>
     </div>
   )
 }
