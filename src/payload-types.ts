@@ -101,6 +101,9 @@ export interface Config {
     'redemption-codes': RedemptionCode;
     'wechat-accounts': WechatAccount;
     'mp-sessions': MpSession;
+    'need-leads': NeedLead;
+    'pricing-plans': PricingPlan;
+    'pricing-versions': PricingVersion;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -130,6 +133,9 @@ export interface Config {
     'redemption-codes': RedemptionCodesSelect<false> | RedemptionCodesSelect<true>;
     'wechat-accounts': WechatAccountsSelect<false> | WechatAccountsSelect<true>;
     'mp-sessions': MpSessionsSelect<false> | MpSessionsSelect<true>;
+    'need-leads': NeedLeadsSelect<false> | NeedLeadsSelect<true>;
+    'pricing-plans': PricingPlansSelect<false> | PricingPlansSelect<true>;
+    'pricing-versions': PricingVersionsSelect<false> | PricingVersionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1456,6 +1462,195 @@ export interface MpSession {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "need-leads".
+ */
+export interface NeedLead {
+  id: string;
+  /**
+   * 分享凭证，自动生成
+   */
+  token?: string | null;
+  status: 'draft' | 'submitted' | 'converted';
+  /**
+   * 最后完成的一条入口
+   */
+  source?: ('scene' | 'budget' | 'wizard') | null;
+  /**
+   * 三入口共用的原始答案（增量合并，不丢已答）
+   */
+  answers?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * 归一化需求清单：房间×设备×数量 + 估算 + 建议
+   */
+  structured?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * 报价快照：单价表版本 + 明细 + 合计（生成后不随改价变化）
+   */
+  pricing?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * 业主手机（可选）
+   */
+  phone?: string | null;
+  project?: (string | null) | Project;
+  owner?: (string | null) | User;
+  /**
+   * 内部备注（业主不可见）
+   */
+  note?: string | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-plans".
+ */
+export interface PricingPlan {
+  id: string;
+  /**
+   * 如「长沙 2026 标准」
+   */
+  name: string;
+  /**
+   * 地区标识：default / changsha …（不同城市人工不同价）
+   */
+  region?: string | null;
+  scope: 'region' | 'project';
+  project?: (string | null) | Project;
+  /**
+   * 同地区同范围只允许一个默认（保存时校验）
+   */
+  isDefault?: boolean | null;
+  status?: ('active' | 'archived') | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-versions".
+ */
+export interface PricingVersion {
+  id: string;
+  plan: string | PricingPlan;
+  /**
+   * 自动生成：表名 v3
+   */
+  label?: string | null;
+  /**
+   * 同 plan 内自增
+   */
+  version: number;
+  status: 'draft' | 'scheduled' | 'active' | 'retired';
+  /**
+   * 到点生效；可设未来时间
+   */
+  effectiveFrom: string;
+  /**
+   * 安装/调试单价（元）。不含水电布线、回路改造
+   */
+  items: {
+    key: string;
+    label: string;
+    unit: string;
+    unitPrice: number;
+    calc: 'per_unit' | 'per_meter';
+    id?: string | null;
+  }[];
+  /**
+   * 调试编程费（= 服务费，唯一利润项）。用户尚未确认，报价默认不计入合计
+   */
+  commissioningPerSet?: number | null;
+  /**
+   * 不含项声明（报价单与建议页固定展示）
+   */
+  exclusions?: string[] | null;
+  /**
+   * 改价原因（审计用）
+   */
+  changeNote?: string | null;
+  publishedAt?: string | null;
+  createdBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'admins';
+        value: string | Admin;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1561,6 +1756,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'mp-sessions';
         value: string | MpSession;
+      } | null)
+    | ({
+        relationTo: 'need-leads';
+        value: string | NeedLead;
+      } | null)
+    | ({
+        relationTo: 'pricing-plans';
+        value: string | PricingPlan;
+      } | null)
+    | ({
+        relationTo: 'pricing-versions';
+        value: string | PricingVersion;
       } | null);
   globalSlug?: string | null;
   user:
@@ -2162,6 +2369,71 @@ export interface MpSessionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "need-leads_select".
+ */
+export interface NeedLeadsSelect<T extends boolean = true> {
+  token?: T;
+  status?: T;
+  source?: T;
+  answers?: T;
+  structured?: T;
+  pricing?: T;
+  phone?: T;
+  project?: T;
+  owner?: T;
+  note?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-plans_select".
+ */
+export interface PricingPlansSelect<T extends boolean = true> {
+  name?: T;
+  region?: T;
+  scope?: T;
+  project?: T;
+  isDefault?: T;
+  status?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-versions_select".
+ */
+export interface PricingVersionsSelect<T extends boolean = true> {
+  plan?: T;
+  label?: T;
+  version?: T;
+  status?: T;
+  effectiveFrom?: T;
+  items?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        unit?: T;
+        unitPrice?: T;
+        calc?: T;
+        id?: T;
+      };
+  commissioningPerSet?: T;
+  exclusions?: T;
+  changeNote?: T;
+  publishedAt?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -2570,7 +2842,10 @@ export interface CollectionQueryWidget {
       | 'ai-credit-ledger'
       | 'redemption-codes'
       | 'wechat-accounts'
-      | 'mp-sessions';
+      | 'mp-sessions'
+      | 'need-leads'
+      | 'pricing-plans'
+      | 'pricing-versions';
     where?:
       | {
           [k: string]: unknown;
@@ -2615,6 +2890,9 @@ export interface ActivityWidget {
           | 'redemption-codes'
           | 'wechat-accounts'
           | 'mp-sessions'
+          | 'need-leads'
+          | 'pricing-plans'
+          | 'pricing-versions'
         )[]
       | null;
   };

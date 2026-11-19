@@ -15,6 +15,8 @@ import * as migration_20261109_101917_display_profile from './20261109_101917_di
 import * as migration_20261115_094654_ai_member_channels from './20261115_094654_ai_member_channels'
 import * as migration_20261117_154448_product_short_name from './20261117_154448_product_short_name'
 import * as migration_20261119_091436_add_product_market_price from './20261119_091436_add_product_market_price'
+import * as migration_20261119_115643_add_need_leads_pricing from './20261119_115643_add_need_leads_pricing'
+import * as migration_20261119_120615_add_product_market_price_for_need from './20261119_120615_add_product_market_price_for_need'
 
 export const migrations = [
   {
@@ -101,5 +103,13 @@ export const migrations = [
     up: migration_20261119_091436_add_product_market_price.up,
     down: migration_20261119_091436_add_product_market_price.down,
     name: '20261119_091436_add_product_market_price',
+    up: migration_20261119_115643_add_need_leads_pricing.up,
+    down: migration_20261119_115643_add_need_leads_pricing.down,
+    name: '20261119_115643_add_need_leads_pricing',
+  },
+  {
+    up: migration_20261119_120615_add_product_market_price_for_need.up,
+    down: migration_20261119_120615_add_product_market_price_for_need.down,
+    name: '20261119_120615_add_product_market_price_for_need',
   },
 ]
