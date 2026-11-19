@@ -11,21 +11,7 @@
  * 缺失时 UI 只显示 `explain`，不阻塞流程。
  */
 
-// Alt and caption live with the catalog, which is the only consumer of these assets.
-const lightingAssets = {
-  'lighting-main-vs-none.png': {
-    alt: '同一客厅的两种灯光。左图中央有一盏主灯，右图用筒灯和灯带分别照亮墙面。',
-    caption: '有主灯时亮度集中在中央，无主灯时可以分区照亮墙面和活动区域。',
-  },
-  'color-temp-3up.png': {
-    alt: '同一客厅从左到右呈现 2700 K、3000 K、4000 K 三种白光。',
-    caption: '2700 K 偏暖黄，3000 K 是暖白，4000 K 更接近中性白。',
-  },
-  'color-rgb.gif': {
-    alt: '左侧客厅的白光由暖到冷，右侧客厅在紫色、蓝色和绿色等彩光之间切换。',
-    caption: '冷暖白光只改变白光色温，多彩光还可以切换色相。',
-  },
-} as const
+import lightingAssets from '../../public/need-assets/manifest.json'
 
 function lightingAsset(file: keyof typeof lightingAssets) {
   return { asset: `/need-assets/${file}`, ...lightingAssets[file] }
