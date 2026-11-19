@@ -18,7 +18,6 @@ import { DeviceSymbol } from '@/components/device-symbol'
 import { LinkPending } from '@/components/link-pending'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
-import { SearchSubmit } from '@/components/search-submit'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { SearchField } from '@/components/search-field'
@@ -238,7 +237,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 controlClassName="pl-9"
               />
             </div>
-            <SearchSubmit variant="primary" />
           </Form>
         }
       />

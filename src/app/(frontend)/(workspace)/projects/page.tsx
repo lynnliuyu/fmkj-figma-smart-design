@@ -7,7 +7,6 @@ import type { Where } from 'payload'
 import { EmptyState } from '@/components/empty-state'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
-import { SearchSubmit } from '@/components/search-submit'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { Card } from '@astryxdesign/core/Card'
@@ -212,7 +211,7 @@ export default async function ProjectsPage({
         }
         actions={
           <div className="flex items-center gap-2">
-            {claimButton}
+            {/* 「领取示例项目」只在空态出现（下方 EmptyState），这里不重复放 */}
             <Button href="/projects/new" icon={<Plus />} label="新建项目" />
           </div>
         }
@@ -279,7 +278,6 @@ export default async function ProjectsPage({
               controlClassName="h-9 border-border bg-background pl-9 text-xs shadow-2xs"
             />
           </div>
-          <SearchSubmit />
         </Form>
       </div>
 
