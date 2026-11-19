@@ -25,7 +25,13 @@ export const PRICING_ITEMS_V2: PricingItem[] = [
   { key: 'curtain_track', label: '窗帘轨道型材', unit: '米', unitPrice: 45, calc: 'per_meter' },
   { key: 'light_strip', label: '灯带', unit: '米', unitPrice: 22, calc: 'per_meter' },
   { key: 'magnetic_track', label: '磁吸轨道/铝型材', unit: '米', unitPrice: 55, calc: 'per_meter' },
-  { key: 'downlight_install', label: '筒灯/射灯开孔安装', unit: '个', unitPrice: 12, calc: 'per_unit' },
+  {
+    key: 'downlight_install',
+    label: '筒灯/射灯开孔安装',
+    unit: '个',
+    unitPrice: 12,
+    calc: 'per_unit',
+  },
   { key: 'sensor_install', label: '传感器安装', unit: '个', unitPrice: 12, calc: 'per_unit' },
   { key: 'gateway_install', label: '网关/中控屏安装', unit: '台', unitPrice: 40, calc: 'per_unit' },
   { key: 'camera_install', label: '摄像头安装', unit: '个', unitPrice: 60, calc: 'per_unit' },
@@ -210,7 +216,8 @@ export function computePricing(input: PricingInput): PricingResult {
   }
 
   const gaps: string[] = []
-  if (pendingPrice.length) gaps.push(`${pendingPrice.length} 类设备缺京东日常价（待查，未计入合计）`)
+  if (pendingPrice.length)
+    gaps.push(`${pendingPrice.length} 类设备缺京东日常价（待查，未计入合计）`)
   if (!commissioning.confirmed) gaps.push('调试费尚未确认，未计入合计')
 
   return {

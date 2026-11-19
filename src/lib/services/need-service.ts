@@ -68,11 +68,13 @@ export function parseAnswers(answers: Record<string, unknown>) {
   }
   return {
     house,
-    lighting: (((answers.lighting as { design?: string })?.design ??
-      'main') as NeedLightingDesign),
-    tier: (((answers.level as { tier?: string })?.tier ?? 'light') as NeedTier),
-    sensors: (((answers.security as { sensors?: string[] })?.sensors ?? []) as string[]).slice(0, 8),
-    camera: (((answers.security as { camera?: string })?.camera ?? 'none') as NeedCamera),
+    lighting: ((answers.lighting as { design?: string })?.design ?? 'main') as NeedLightingDesign,
+    tier: ((answers.level as { tier?: string })?.tier ?? 'light') as NeedTier,
+    sensors: (((answers.security as { sensors?: string[] })?.sensors ?? []) as string[]).slice(
+      0,
+      8,
+    ),
+    camera: ((answers.security as { camera?: string })?.camera ?? 'none') as NeedCamera,
     sceneCards: ((answers.sceneCards ?? []) as string[]).slice(0, 8),
     edits: (answers.deviceEdits ?? {}) as Record<string, number>,
   }

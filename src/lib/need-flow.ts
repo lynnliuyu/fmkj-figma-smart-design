@@ -111,8 +111,18 @@ export const TIERS: NeedOption<NeedTier>[] = [
 ]
 
 export const HABITS: NeedOption<NeedHabit>[] = [
-  { value: 'button', label: '手按为主', explain: '习惯按开关，智能只做补充', asset: '/need-assets/interaction.gif' },
-  { value: 'voice', label: '语音为主', explain: '一句话搞定，适合老人小孩', asset: '/need-assets/interaction.gif' },
+  {
+    value: 'button',
+    label: '手按为主',
+    explain: '习惯按开关，智能只做补充',
+    asset: '/need-assets/interaction.gif',
+  },
+  {
+    value: 'voice',
+    label: '语音为主',
+    explain: '一句话搞定，适合老人小孩',
+    asset: '/need-assets/interaction.gif',
+  },
   { value: 'mixed', label: '混合', explain: '手按 + 语音 + 自动，最常见' },
 ]
 
@@ -125,7 +135,12 @@ export const CAMERA_CHOICES: NeedOption<NeedCamera>[] = [
 
 /** 传感器：按用户选择（用户明确要求「按用户选择」，不做强制勾选） */
 export const SENSORS: NeedOption[] = [
-  { value: 'water', label: '水浸', explain: '漏水报警，厨房/卫生间/阳台建议装', affectsDefaults: true },
+  {
+    value: 'water',
+    label: '水浸',
+    explain: '漏水报警，厨房/卫生间/阳台建议装',
+    affectsDefaults: true,
+  },
   { value: 'smoke', label: '烟雾', explain: '火灾早期报警', affectsDefaults: true },
   { value: 'gas', label: '燃气', explain: '燃气泄漏报警，厨房建议装', affectsDefaults: true },
   { value: 'contact', label: '门窗磁', explain: '门窗被打开时提醒' },
@@ -144,10 +159,30 @@ export const PANEL_OPTIONS = {
 } as const
 
 export const SCENES: NeedOption[] = [
-  { value: 'home', label: '回家', explain: '开门后玄关灯亮、客厅灯渐亮、窗帘打开', asset: '/need-assets/scene-home.png' },
-  { value: 'away', label: '离家', explain: '一键全关灯、窗帘合、非必要插座断电', asset: '/need-assets/scene-away.png' },
-  { value: 'sleep', label: '睡眠', explain: '主灯灭、灯带 5%、空调睡眠模式', asset: '/need-assets/scene-sleep.png' },
-  { value: 'movie', label: '观影', explain: '灯光调暗、窗帘关闭、影音启动', asset: '/need-assets/scene-movie.png' },
+  {
+    value: 'home',
+    label: '回家',
+    explain: '开门后玄关灯亮、客厅灯渐亮、窗帘打开',
+    asset: '/need-assets/scene-home.png',
+  },
+  {
+    value: 'away',
+    label: '离家',
+    explain: '一键全关灯、窗帘合、非必要插座断电',
+    asset: '/need-assets/scene-away.png',
+  },
+  {
+    value: 'sleep',
+    label: '睡眠',
+    explain: '主灯灭、灯带 5%、空调睡眠模式',
+    asset: '/need-assets/scene-sleep.png',
+  },
+  {
+    value: 'movie',
+    label: '观影',
+    explain: '灯光调暗、窗帘关闭、影音启动',
+    asset: '/need-assets/scene-movie.png',
+  },
   { value: 'wake', label: '起床', explain: '灯光渐亮、窗帘缓开、播报天气' },
   { value: 'dining', label: '用餐', explain: '餐厅暖光、氛围灯点亮' },
   { value: 'eco', label: '节能', explain: '无人房间自动关灯关空调' },
@@ -219,8 +254,7 @@ export const ECOSYSTEM_NOTES = {
     { key: 'wifi', text: 'WiFi：不用网关，但费电、占路由器连接数' },
     { key: 'knx', text: 'KNX：有线，必须装修时预埋，最稳定也最贵' },
   ],
-  hybrid:
-    '多数家庭是「Aqara/米家 做设备主体 + Apple Home 做面板层」：不必二选一，可以混着用。',
+  hybrid: '多数家庭是「Aqara/米家 做设备主体 + Apple Home 做面板层」：不必二选一，可以混着用。',
 } as const
 
 /** 三条入口 */

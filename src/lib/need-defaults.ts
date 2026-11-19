@@ -111,8 +111,7 @@ export function buildRooms(house: NeedHouse): RoomKey[] {
   return rooms
 }
 
-const hasWindow = (room: RoomKey) =>
-  !['corridor', 'entrance'].includes(room)
+const hasWindow = (room: RoomKey) => !['corridor', 'entrance'].includes(room)
 
 export function computeDefaults(input: DefaultInput): DefaultsResult {
   const { house, tier, sensors, camera, wantsCurtain } = input
@@ -190,12 +189,9 @@ export function computeDefaults(input: DefaultInput): DefaultsResult {
   }
 
   const hints: string[] = []
-  if (devices[0]!.qty > 1)
-    hints.push('面积较大或为别墅：建议 2 个网关，信号更稳（可改）')
-  if (house.stage === 'moved')
-    hints.push('已入住：优先无线方案，避免大规模开槽')
-  if (house.area === null)
-    hints.push(`面积未填，按户型估算约 ${estimateArea(house)} ㎡（可改）`)
+  if (devices[0]!.qty > 1) hints.push('面积较大或为别墅：建议 2 个网关，信号更稳（可改）')
+  if (house.stage === 'moved') hints.push('已入住：优先无线方案，避免大规模开槽')
+  if (house.area === null) hints.push(`面积未填，按户型估算约 ${estimateArea(house)} ㎡（可改）`)
 
   return { rooms, devices, hints }
 }

@@ -23,7 +23,13 @@ export const PricingVersions: CollectionConfig = {
     delete: ({ req }) => Boolean(req.user),
   },
   fields: [
-    { name: 'plan', type: 'relationship', relationTo: 'pricing-plans', required: true, index: true },
+    {
+      name: 'plan',
+      type: 'relationship',
+      relationTo: 'pricing-plans',
+      required: true,
+      index: true,
+    },
     {
       name: 'label',
       type: 'text',
@@ -33,7 +39,12 @@ export const PricingVersions: CollectionConfig = {
           async ({ data, req }) => {
             if (!data?.plan) return data?.label
             const plan = await req.payload
-              .findByID({ collection: 'pricing-plans', id: data.plan, depth: 0, overrideAccess: true })
+              .findByID({
+                collection: 'pricing-plans',
+                id: data.plan,
+                depth: 0,
+                overrideAccess: true,
+              })
               .catch(() => null)
             const n = Number(data.version ?? 0)
             return `${plan?.name ?? '单价表'} v${n}`

@@ -106,7 +106,9 @@ describe('默认值规则（用户口径）', () => {
 
   it('房间数按几室几厅推算（可改）', () => {
     expect(buildRooms(house({ bedrooms: 3 }))).toContain('bedroom')
-    expect(buildRooms(house({ bedrooms: 5 })).filter((r) => r === 'bedroom').length).toBeGreaterThan(1)
+    expect(
+      buildRooms(house({ bedrooms: 5 })).filter((r) => r === 'bedroom').length,
+    ).toBeGreaterThan(1)
   })
 })
 
