@@ -14,6 +14,9 @@ import { Contracts } from './collections/Contracts'
 import { Media } from './collections/Media'
 import { Folders } from './collections/Folders'
 import { MpSessions } from './collections/MpSessions'
+import { NeedLeads } from './collections/NeedLeads'
+import { PricingPlans } from './collections/PricingPlans'
+import { PricingVersions } from './collections/PricingVersions'
 import { Products } from './collections/Products'
 import { ProposalTemplates } from './collections/ProposalTemplates'
 import { Scenes } from './collections/Scenes'
@@ -81,6 +84,9 @@ export const sharedConfig = {
     RedemptionCodes,
     WechatAccounts,
     MpSessions,
+    NeedLeads,
+    PricingPlans,
+    PricingVersions,
   ],
   globals: [CompanySettings, AiSettings, MembershipSettings],
   typescript: {

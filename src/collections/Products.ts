@@ -122,6 +122,23 @@ export const Products: CollectionConfig = {
         { name: 'stock', label: '库存', type: 'number', min: 0, defaultValue: 0 },
       ],
     },
+    // ── 价格参考（与 #195 同名字段：京东日常价，绝不自动改写 price）──
+    {
+      type: 'collapsible',
+      label: '价格参考（京东日常价，不自动改售价）',
+      admin: { initCollapsed: true },
+      fields: [
+        {
+          name: 'marketPrice',
+          label: '参考价（京东日常价，元）',
+          type: 'number',
+          min: 0,
+          admin: { description: '需求清单估算用；不写进对外售价。' },
+        },
+        { name: 'priceSource', label: '来源链接', type: 'text' },
+        { name: 'priceCheckedAt', label: '核对时间', type: 'date' },
+      ],
+    },
     { name: 'tags', label: '标签', type: 'text', hasMany: true },
     {
       name: 'status',
