@@ -38,9 +38,9 @@ export const PRICING_ITEMS_V2: PricingItem[] = [
   { key: 'lock_install', label: '智能门锁安装', unit: '把', unitPrice: 100, calc: 'per_unit' },
 ]
 
-/** 调试费：未获确认，仅内部参考，不进入对外合计 */
+/** 调试编程费（= 服务费，唯一利润项）：用户 2026-11-19 确认 800/套，计入对外合计 */
 export const COMMISSIONING_PER_SET = 800
-export const COMMISSIONING_CONFIRMED = false
+export const COMMISSIONING_CONFIRMED = true
 
 /** 报价单必须展示的不含项（用户口径，固定 5 条） */
 export const PRICE_EXCLUSIONS = [
@@ -92,7 +92,7 @@ export type PricingResult = {
   }
   /** 缺京东日常价的设备：单列，不并入小计 */
   pendingPrice: { deviceType: string; name: string; qty: number }[]
-  /** 调试费：未确认，单独给出，不进入 total */
+  /** 服务费（调试编程费）：已确认 800/套，已并入 install 与 total；此字段保留明细供展示 */
   commissioning: { sets: number; perSet: number; subtotal: number; confirmed: boolean }
   exclusions: readonly string[]
   gaps: string[]
@@ -206,7 +206,6 @@ export function computePricing(input: PricingInput): PricingResult {
     })
   }
 
-  const installTotal = install.reduce((s, i) => s + i.subtotal, 0)
   const sets = (area ?? 0) > 200 ? 2 : 1
   const commissioning = {
     sets,
@@ -214,6 +213,16 @@ export function computePricing(input: PricingInput): PricingResult {
     subtotal: COMMISSIONING_PER_SET * sets,
     confirmed: COMMISSIONING_CONFIRMED,
   }
+  // 服务费 = 调试编程费：作为「安装调试费」里的一项逐项列出（用户已确认 800/套）
+  install.push({
+    key: 'commissioning',
+    label: '系统调试 + 场景编程（服务费）',
+    unit: '套',
+    qty: sets,
+    unitPrice: COMMISSIONING_PER_SET,
+    subtotal: commissioning.subtotal,
+  })
+  const installTotal = install.reduce((s, i) => s + i.subtotal, 0)
 
   const gaps: string[] = []
   if (pendingPrice.length)
@@ -226,7 +235,7 @@ export function computePricing(input: PricingInput): PricingResult {
     totals: {
       equipment: Math.round(equipmentTotal),
       install: Math.round(installTotal),
-      // 对外合计 = 已知设备 + 安装；调试费未确认不并入
+      // 对外合计 = 已知设备 + 安装调试（含已确认的服务费/调试费）
       total: Math.round(equipmentTotal + installTotal),
     },
     pendingPrice,

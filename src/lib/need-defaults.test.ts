@@ -149,8 +149,8 @@ describe('计价 v2（用户口径）', () => {
     const r = computePricing({ devices, marketPriceByType: market })
     // 设备：199*12 + 399*1 + 899*3 = 2388 + 399 + 2697 = 5484
     expect(r.totals.equipment).toBe(199 * 12 + 399 + 899 * 3)
-    // 安装：开关 20*12=240，网关 40，窗帘电机 110*3=330
-    expect(r.totals.install).toBe(240 + 40 + 330)
+    // 安装：开关 20*12=240，网关 40，窗帘电机 110*3=330，服务费 800（1 套）
+    expect(r.totals.install).toBe(240 + 40 + 330 + 800)
     expect(r.equipment.every((e) => e.priceSource !== undefined)).toBe(true)
   })
 
@@ -168,15 +168,29 @@ describe('计价 v2（用户口径）', () => {
     expect(r.gaps.some((g) => g.includes('缺京东日常价'))).toBe(true)
   })
 
-  it('调试费未确认：单独给出，不进对外合计', () => {
+  it('调试费已确认 800/套：作为服务费计入安装调试费与合计（>200㎡ 记 2 套）', () => {
     const r = computePricing({ devices, marketPriceByType: market, area: 260 })
-    expect(r.commissioning.confirmed).toBe(false)
+    expect(r.commissioning.confirmed).toBe(true)
     expect(r.commissioning.sets).toBe(2) // >200㎡
+    expect(r.commissioning.perSet).toBe(800)
+    expect(r.commissioning.subtotal).toBe(1600)
+    // 服务费作为安装调试费的一项逐项列出
+    const line = r.install.find((i) => i.key === 'commissioning')!
+    expect(line.qty).toBe(2)
+    expect(line.unitPrice).toBe(800)
+    expect(line.subtotal).toBe(1600)
+    // 合计包含服务费
+    expect(r.totals.install).toBe(r.install.reduce((s, i) => s + i.subtotal, 0))
     expect(r.totals.total).toBe(r.totals.equipment + r.totals.install)
-    // 调试费金额存在，但没有被加进对外合计
-    expect(r.commissioning.subtotal).toBeGreaterThan(0)
-    expect(r.totals.total).toBeLessThan(r.totals.total + r.commissioning.subtotal)
-    expect(r.gaps.some((g) => g.includes('调试费'))).toBe(true)
+    expect(r.totals.total).toBeGreaterThanOrEqual(1600)
+    // 不再出现「调试费待确认」提示
+    expect(r.gaps.some((g) => g.includes('调试费'))).toBe(false)
+  })
+
+  it('普通面积调试 1 套 800', () => {
+    const r = computePricing({ devices, marketPriceByType: market, area: 100 })
+    expect(r.commissioning.sets).toBe(1)
+    expect(r.install.find((i) => i.key === 'commissioning')!.subtotal).toBe(800)
   })
 
   it('报价单固定声明 5 条不含项', () => {
