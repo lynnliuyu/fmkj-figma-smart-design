@@ -19,6 +19,7 @@ import {
   TableRow,
 } from '@astryxdesign/core/Table'
 import { SearchField } from '@/components/search-field'
+import { SearchSubmit } from '@/components/search-submit'
 import { relId } from '@/lib/access'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
@@ -183,6 +184,7 @@ export default async function ProjectsPage({
     user,
   })
   const canClaimDemo = demoCount.totalDocs === 0
+  const showEmptyActions = projects.length === 0 && !keyword && !archived
   const totalPoints = projects.reduce((sum, p) => sum + (p.pointCount ?? 0), 0)
   const totalQuoteAmount = projects.reduce((sum, p) => {
     const a = amountOf(String(p.id))
@@ -210,8 +212,8 @@ export default async function ProjectsPage({
           )
         }
         actions={
-          <div className="flex items-center gap-2">
-            {/* 「领取示例项目」只在空态出现（下方 EmptyState），这里不重复放 */}
+          <div className="flex flex-wrap items-center gap-2">
+            {showEmptyActions ? null : claimButton}
             <Button href="/projects/new" icon={<Plus />} label="新建项目" />
           </div>
         }
@@ -268,7 +270,7 @@ export default async function ProjectsPage({
         />
         <Form action="/projects" className="flex w-full items-center gap-2 sm:w-auto">
           {archived ? <input type="hidden" name="view" value="archived" /> : null}
-          <div className="relative flex-1 sm:w-72 sm:flex-none">
+          <div className="relative min-w-0 flex-1 sm:w-72 sm:flex-none">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <SearchField
               name="q"
@@ -278,6 +280,7 @@ export default async function ProjectsPage({
               controlClassName="h-9 border-border bg-background pl-9 text-xs shadow-2xs"
             />
           </div>
+          <SearchSubmit />
         </Form>
       </div>
 
@@ -299,7 +302,7 @@ export default async function ProjectsPage({
                 : '创建项目后即可上传户型图并布置点位'
           }
           action={
-            !keyword && !archived ? (
+            showEmptyActions ? (
               <>
                 <Button size="sm" href="/projects/new" icon={<Plus />} label="新建项目" />
                 {claimButton}

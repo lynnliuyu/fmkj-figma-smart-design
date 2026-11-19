@@ -21,6 +21,7 @@ import { PageHeader } from '@/components/page-header'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
 import { SearchField } from '@/components/search-field'
+import { SearchSubmit } from '@/components/search-submit'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
 import { getBrands, getCatalog } from '@/lib/cached-data'
@@ -223,11 +224,11 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           </>
         }
         actions={
-          <Form action="/products" className="flex flex-wrap items-center gap-2">
+          <Form action="/products" className="flex w-full items-center gap-2">
             {KEYS.filter((k) => !['q', 'page'].includes(k) && f[k]).map((k) => (
               <input key={k} type="hidden" name={k} value={f[k]} />
             ))}
-            <div className="relative w-full sm:w-72">
+            <div className="relative min-w-0 flex-1 sm:w-72 sm:flex-none">
               <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <SearchField
                 name="q"
@@ -237,6 +238,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 controlClassName="pl-9"
               />
             </div>
+            <SearchSubmit />
           </Form>
         }
       />
