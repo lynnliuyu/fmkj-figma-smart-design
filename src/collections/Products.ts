@@ -122,6 +122,37 @@ export const Products: CollectionConfig = {
         { name: 'stock', label: '库存', type: 'number', min: 0, defaultValue: 0 },
       ],
     },
+    // ── 价格参考（issue #195）────────────────────────────────────────
+    // 京东/天猫到手价只写到这里，**绝不自动改写 price（对外售价）**。
+    // 三者一起构成「参考价 + 来源 + 核对时间」，人工确认后才可能由人改 price。
+    {
+      type: 'collapsible',
+      label: '价格参考（京东/天猫到手价，不自动改售价）',
+      admin: { initCollapsed: true },
+      fields: [
+        {
+          name: 'marketPrice',
+          label: '参考价（到手价，元）',
+          type: 'number',
+          min: 0,
+          admin: {
+            description: '抓取或人工录入的电商到手价；留空表示未核对。不会写进对外售价。',
+          },
+        },
+        {
+          name: 'priceSource',
+          label: '来源链接',
+          type: 'text',
+          admin: { description: '商品页 URL（京东自营 / 天猫官方旗舰店）。' },
+        },
+        {
+          name: 'priceCheckedAt',
+          label: '核对时间',
+          type: 'date',
+          admin: { description: '写入参考价的时间；留空表示未核对。' },
+        },
+      ],
+    },
     { name: 'tags', label: '标签', type: 'text', hasMany: true },
     {
       name: 'status',

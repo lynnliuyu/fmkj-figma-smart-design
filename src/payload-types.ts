@@ -734,6 +734,18 @@ export interface Product {
   cost?: number | null;
   unit: string;
   stock?: number | null;
+  /**
+   * 抓取或人工录入的电商到手价；留空表示未核对。不会写进对外售价。
+   */
+  marketPrice?: number | null;
+  /**
+   * 商品页 URL（京东自营 / 天猫官方旗舰店）。
+   */
+  priceSource?: string | null;
+  /**
+   * 写入参考价的时间；留空表示未核对。
+   */
+  priceCheckedAt?: string | null;
   tags?: string[] | null;
   status: 'active' | 'inactive';
   createdBy?:
@@ -1889,6 +1901,9 @@ export interface ProductsSelect<T extends boolean = true> {
   cost?: T;
   unit?: T;
   stock?: T;
+  marketPrice?: T;
+  priceSource?: T;
+  priceCheckedAt?: T;
   tags?: T;
   status?: T;
   createdBy?: T;
