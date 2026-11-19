@@ -22,3 +22,12 @@ pnpm exec payload run --input '{"scriptPath":"scripts/price-audit.ts","scriptArg
 ```
 
 写入 `marketPrice/priceSource/priceCheckedAt`，**不改 `price`**。
+
+## 覆盖的设备类型（对应用户需求小助手的清单）
+
+开关 `switch-1/2/3/4`、面板 `touch-panel`（含带屏）、传感器 `motion-sensor`/`contact-sensor`/`gas-sensor`、
+网关 `gateway`、窗帘 `curtain-track`、暖通 `ac-router`/`touch-panel`、灯具 `downlight`/`light-strip`/`spotlight`、
+安防 `camera`/`doorbell`/`smart-lock`、网络 `ap-node`。
+
+> 21 行、10 类、4 个缺价位。价格小助手估算时按 `deviceType` 取 `marketPrice` 中位数；
+> 这些样本填完后，P1 的估算链路即可用真实口径跑通。
