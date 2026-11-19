@@ -2,14 +2,13 @@
 
 import * as React from 'react'
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
 import { MessageSquareText } from 'lucide-react'
 import { IconButton } from '@astryxdesign/core/IconButton'
 
 import type { AiModelOption, AiProjectContext } from '@/components/ai/ai-elements'
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
+import { usePathname, useRouter } from 'next/navigation'
 import { useViewportWidth } from '@/hooks/use-viewport-width'
-import { aiPanelMode, shouldShowAiPanel } from '@/lib/ai-panel'
+import { aiPanelMode, clampAiPanelToViewport, shouldShowAiPanel } from '@/lib/ai-panel'
 import {
   AI_PANEL_COLLAPSED_WIDTH,
   AI_PANEL_DEFAULT_WIDTH,
@@ -46,7 +45,7 @@ type AiPanelContextValue = {
    * 'drawer' = 收成抽屉；
    * 'pending' = 首帧还不知道视口宽度，先不渲染，避免顶栏开关/右栏闪一下。
    */
-  mode: 'inline' | 'drawer' | 'pending'
+  mode: 'inline' | 'hidden' | 'pending'
   open: boolean
   setOpen: (open: boolean) => void
   /** 宽屏常驻列：收起后只留一条窄触发条；窄屏抽屉不参与 */
@@ -129,8 +128,10 @@ export function AiPanelProvider({
  * 顶栏有两套（SiteHeader / ProjectHeader），两边都挂同一个组件，按路径只会显示一个。
  */
 export function AiPanelToggle() {
-  const { enabled, mode, open, setOpen } = useAiPanel()
-  if (!enabled || mode !== 'drawer') return null
+  const { enabled, mode } = useAiPanel()
+  const router = useRouter()
+  if (!enabled || mode !== 'hidden') return null
+  // 视口放不下右栏：跳 /ai 整页接续同一个会话（不弹层、不遮挡主页面）。
   return (
     <IconButton
       type="button"
@@ -138,9 +139,27 @@ export function AiPanelToggle() {
       size="sm"
       label="AI 对话"
       icon={<MessageSquareText />}
-      aria-expanded={open}
-      onClick={() => setOpen(!open)}
+      onClick={() => router.push('/ai')}
     />
+  )
+}
+
+/**
+ * /ai 整页回退（#190）：同一个 dock、同一份草稿与流式订阅；不再是覆盖式抽屉。
+ * 由 ai/page.tsx（Server Component）传入与 AiPanel 相同的数据。
+ */
+export function AiPageFallback(props: AiPanelProps) {
+  return (
+    <div data-slot="ai-page" className="mx-auto flex h-[calc(100svh-8rem)] w-full max-w-5xl">
+      <AiSidebarDock
+        plugins={props.plugins.filter((p) => p.id !== 'ai-copilot')}
+        projects={props.projects}
+        credits={props.credits}
+        configured={props.configured}
+        models={props.models}
+        userId={props.userId}
+      />
+    </div>
   )
 }
 
@@ -168,6 +187,8 @@ export type AiPanelProps = {
  */
 export function AiPanel({ plugins, projects, credits, configured, models, userId }: AiPanelProps) {
   const { enabled, mode, setOpen, open, collapsed, setCollapsed, width, setWidth } = useAiPanel()
+  const panelViewport = useViewportWidth()
+  const panelPathname = usePathname()
   // 拖拽调宽期间禁用宽度过渡，否则每帧 setWidth 都会被 200ms 缓动追着跑，像是拖不动。
   const [isDragging, setIsDragging] = React.useState(false)
   // 持久化的收起态/宽度是挂载后从 localStorage 读回来的。首帧先不开过渡，等浏览器
@@ -198,11 +219,12 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
       onToggleCollapsed={mode === 'inline' ? () => setCollapsed(!collapsed) : undefined}
       // 抽屉不再单独渲染一条 Sheet 标题栏：关闭按钮并入 dock header 最右侧，
       // 避免「AI 对话 + ✕」和会话标题叠成两层头。
-      onClose={mode === 'drawer' ? () => setOpen(false) : undefined}
+      onClose={undefined}
       transitionsEnabled={transitionsEnabled}
     />
   )
 
+  const effectiveWidth = clampAiPanelToViewport(width, panelViewport, panelPathname)
   if (mode === 'inline') {
     // 拖左缘调宽（右缘贴视口右，拖左侧即改本列宽度）。抄 sidebar.tsx 的 SidebarRail：
     // pointermove 夹紧到 [MIN,MAX]，拖完把最终宽度交给 setWidth 持久化。这里不需要
@@ -240,6 +262,14 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
       setWidth(AI_PANEL_DEFAULT_WIDTH)
     }
 
+    // 键盘调宽（#190）：resizer 可聚焦，左右方向键每次 ±32px；与左侧栏键盘行为一致。
+    const handleResizeKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+      e.preventDefault()
+      const delta = e.key === 'ArrowLeft' ? 32 : -32
+      setWidth(clampAiPanelWidth(width + delta))
+    }
+
     // 展开/收起共用同一棵 DOM：只改 aside 的内联宽度，dock 始终挂载。dock 内部把
     // header / 图标栏留在非 inert 区域，消息与输入区整体淡出并禁用交互。
     //
@@ -257,6 +287,7 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
           hidden={collapsed}
           onPointerDown={handleResizePointerDown}
           onDoubleClick={handleDoubleClick}
+          onKeyDown={handleResizeKeyDown}
           className="group w-1 shrink-0 cursor-col-resize border-l border-border bg-transparent transition-colors hover:bg-primary/40 focus-visible:bg-primary/40 focus-visible:outline-none"
         />
         <aside
@@ -264,7 +295,7 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
           data-collapsed={collapsed ? 'true' : undefined}
           data-dragging={isDragging ? 'true' : undefined}
           aria-label={collapsed ? 'AI 对话（已收起）' : 'AI 对话'}
-          style={{ width: collapsed ? AI_PANEL_COLLAPSED_WIDTH : width }}
+          style={{ width: collapsed ? AI_PANEL_COLLAPSED_WIDTH : effectiveWidth }}
           className={cn(
             'sticky top-0 flex h-svh shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground data-[dragging=true]:transition-none',
             transitionsEnabled &&
@@ -275,7 +306,7 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
           <div
             data-slot="ai-panel-surface"
             className="absolute inset-y-0 right-0"
-            style={{ width }}
+            style={{ width: collapsed ? width : effectiveWidth }}
           >
             {dock}
           </div>
@@ -284,19 +315,6 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
     )
   }
 
-  return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      {/* 宽度沿用 Sheet 的默认值：桌面 3/4 宽、sm 起封顶 24rem，移动端也一样。
-          不写 w-* 是因为 `data-[side=right]:w-3/4` 的变体前缀优先级高于裸 w-*。 */}
-      <SheetContent
-        side="right"
-        showCloseButton={false}
-        className="gap-0 bg-sidebar p-0 text-sidebar-foreground"
-      >
-        {/* 只剩一个不可见的对话框标题用于无障碍；可见的标题行在 dock header 里。 */}
-        <SheetTitle className="sr-only">AI 对话</SheetTitle>
-        <div className="flex min-h-0 flex-1 flex-col">{dock}</div>
-      </SheetContent>
-    </Sheet>
-  )
+  // #190：窄屏不再用抽屉；由 /ai 整页承接（AiPanelToggle 跳转），此处不渲染。
+  return null
 }

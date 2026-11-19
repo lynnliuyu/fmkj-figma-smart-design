@@ -114,47 +114,29 @@ describe('AiPanel 外壳收起态', () => {
   })
 })
 
-describe('AiPanel 抽屉模式', () => {
-  it('只有一条标题栏，关闭按钮在 dock header 内且能关闭抽屉', async () => {
-    viewport.width = 1280
-
+describe('AiPanel 窄屏模式（#190：不再抽屉，/ai 整页承接）', () => {
+  it('视口 <1024：右栏不渲染，也不出现任何 Sheet/抽屉', async () => {
+    viewport.width = 900
     await mount(
       <AiPanelProvider enabled>
         <AiPanel plugins={[]} projects={[]} credits={10} configured models={[]} userId="user-1" />
-        <AiPanelToggle />
       </AiPanelProvider>,
     )
+    expect(container.querySelector('[data-slot="ai-panel"]')).toBeNull()
+    expect(document.querySelector('[data-slot="sheet-content"]')).toBeNull()
+  })
 
-    const toggle = container.querySelector('[aria-label="AI 对话"]') as HTMLButtonElement
-    expect(toggle).toBeTruthy()
-    await act(async () => {
-      toggle.click()
-      await Promise.resolve()
-      await Promise.resolve()
-    })
-
-    const sheet = document.querySelector('[data-slot="sheet-content"]') as HTMLElement
-    expect(sheet).toBeTruthy()
-
-    // 旧版这里会多一条可见的「AI 对话 + ✕」标题行；现在只剩 sr-only 的
-    // SheetTitle（Radix Dialog 需要可访问名称），可见标题由 dock header 承担。
-    const exactTitleElements = Array.from(sheet.querySelectorAll('*')).filter(
-      (element) => element.children.length === 0 && element.textContent?.trim() === 'AI 对话',
+  it('1280（原抽屉断点）：右栏常驻参与布局，没有 Sheet/backdrop', async () => {
+    viewport.width = 1280
+    await mount(
+      <AiPanelProvider enabled>
+        <AiPanel plugins={[]} projects={[]} credits={10} configured models={[]} userId="user-1" />
+      </AiPanelProvider>,
     )
-    expect(exactTitleElements).toHaveLength(1)
-    expect(exactTitleElements[0].getAttribute('data-slot')).toBe('sheet-title')
-
-    const closeButton = sheet.querySelector(
-      '[data-slot="ai-panel-header"] [aria-label="关闭 AI 对话"]',
-    ) as HTMLButtonElement
-    expect(closeButton).toBeTruthy()
-
-    await act(async () => {
-      closeButton.click()
-      await Promise.resolve()
-      await Promise.resolve()
-    })
-    const closedSheet = document.querySelector('[data-slot="sheet-content"]')
-    expect(closedSheet === null || closedSheet.getAttribute('data-state') === 'closed').toBe(true)
+    const aside = container.querySelector('[data-slot="ai-panel"]') as HTMLElement
+    expect(aside).toBeTruthy()
+    expect(document.querySelector('[data-slot="sheet-content"]')).toBeNull()
+    // 参与布局：sticky 流式列而非 fixed 遮挡
+    expect(aside.className).toContain('sticky')
   })
 })
