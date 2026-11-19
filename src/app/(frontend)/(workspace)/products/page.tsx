@@ -65,22 +65,9 @@ type Params = {
   sort?: string
   page?: string
 }
-const KEYS = [
-  'q',
-  'cat',
-  'type',
-  'brand',
-  'platform',
-  'min',
-  'max',
-  'status',
-  'img',
-  'sort',
-  'page',
-] as const
-
-const toNumber = (v: string) =>
-  v.trim() === '' ? null : Number.isFinite(Number(v)) ? Number(v) : null
+// 只保留**有 UI** 的筛选参数（issue #199）：type/min/max/img 曾只有过滤分支、
+// 侧栏没有任何输入控件，只能靠手改 URL 触发，属死参数，已删除。
+const KEYS = ['q', 'cat', 'brand', 'platform', 'status', 'sort', 'page'] as const
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<Params> }) {
   const user = await appAuth.getCurrentUser()
@@ -90,8 +77,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     KEYS.map((k) => [k, typeof sp[k] === 'string' ? sp[k]!.trim() : '']),
   ) as Record<(typeof KEYS)[number], string>
   const brandSet = new Set(f.brand ? f.brand.split(',').filter(Boolean) : [])
-  const min = toNumber(f.min)
-  const max = toNumber(f.max)
   const [catalog, brands] = await Promise.all([getCatalog(), getBrands()])
 
   // 状态之外的条件先算一遍，用于给各筛选项计数
@@ -103,23 +88,17 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         : p.status === 'active',
   )
   const keyword = f.q.toLowerCase()
-  const match = (p: (typeof catalog)[number], skip?: 'cat' | 'type' | 'brand' | 'platform') =>
+  const match = (p: (typeof catalog)[number], skip?: 'cat' | 'brand' | 'platform') =>
     (!keyword ||
       (
         p.searchText ??
         `${p.name} ${p.sku} ${p.brand?.name ?? ''} ${p.description ?? ''}`.toLowerCase()
       ).includes(keyword)) &&
     (skip === 'cat' ||
-      skip === 'type' ||
       !f.cat ||
       (p.categorySlug ?? deviceTypeOf(p.deviceType)?.category) === f.cat) &&
-    (skip === 'type' || !f.type || p.deviceType === f.type) &&
     (skip === 'brand' || brandSet.size === 0 || (p.brand && brandSet.has(p.brand.slug))) &&
-    (skip === 'platform' || !f.platform || p.platforms.includes(f.platform)) &&
-    (min === null || p.price >= min) &&
-    (max === null || p.price <= max) &&
-    (f.img !== 'yes' || Boolean(p.image)) &&
-    (f.img !== 'no' || !p.image)
+    (skip === 'platform' || !f.platform || p.platforms.includes(f.platform))
 
   const products = byStatus.filter((p) => match(p))
   products.sort((a, b) =>
@@ -186,7 +165,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const seg = (
     items: readonly { value: string; label: string }[],
     current: string,
-    key: 'status' | 'img',
+    key: 'status',
     label: string,
   ) => (
     <FilterTabs
@@ -246,7 +225,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         }
         actions={
           <Form action="/products" className="flex flex-wrap items-center gap-2">
-            {KEYS.filter((k) => !['q', 'min', 'max', 'page'].includes(k) && f[k]).map((k) => (
+            {KEYS.filter((k) => !['q', 'page'].includes(k) && f[k]).map((k) => (
               <input key={k} type="hidden" name={k} value={f[k]} />
             ))}
             <div className="relative w-full sm:w-72">
@@ -290,7 +269,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             {section(
               '类别',
               <>
-                {navItem('全部类别', !f.cat, href({ cat: '', type: '' }))}
+                {navItem('全部类别', !f.cat, href({ cat: '' }))}
                 {DEVICE_GROUPS.map(({ category }) => {
                   const active = f.cat === category.slug
                   return (
@@ -304,7 +283,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                           <span className="truncate">{category.name}</span>
                         </>,
                         active,
-                        href({ cat: active ? '' : category.slug, type: '' }),
+                        href({ cat: active ? '' : category.slug }),
                       )}
                     </div>
                   )
