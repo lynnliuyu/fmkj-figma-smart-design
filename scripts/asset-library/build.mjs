@@ -129,6 +129,16 @@ async function shot(page, url, path, { width = 1920, height = 1080, wait = 2600 
 }
 
 async function main() {
+  // 只重渲染 HTML（用已有 manifest + assets；不重新截图/录屏）。
+  // 用于验证单文件产物，也方便素材已采集后改版式。
+  if (process.env.ASSET_HTML_ONLY === '1') {
+    const manifest = JSON.parse(readFileSync(join(OUT, 'manifest.json'), 'utf8'))
+    writeFileSync(join(OUT, 'index.html'), renderHtml(manifest))
+    writeFileSync(join(OUT, 'README.md'), renderReadme(manifest))
+    console.log(`✓ index.html 已重渲染（单文件内嵌）→ ${relative(process.cwd(), OUT)}`)
+    return
+  }
+
   rmSync(OUT, { recursive: true, force: true })
   for (const d of ['assets/product', 'assets/optimized', 'assets/button', 'assets/motion']) {
     mkdirSync(join(OUT, d), { recursive: true })
@@ -566,6 +576,30 @@ async function main() {
   )
 }
 
+const DATA_MIME = {
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  svg: 'image/svg+xml',
+  mp4: 'video/mp4',
+}
+const dataUrlCache = new Map()
+
+/** 把同目录资产读成 data: URL，保证仅分发 index.html 时也能预览/下载。 */
+function assetDataUrl(relPath) {
+  if (dataUrlCache.has(relPath)) return dataUrlCache.get(relPath)
+  const path = join(OUT, relPath)
+  if (!existsSync(path)) throw new Error(`内嵌失败：缺少资产 ${relPath}`)
+  const ext = relPath.split('.').pop().toLowerCase()
+  const mime = DATA_MIME[ext] || 'application/octet-stream'
+  const url = `data:${mime};base64,${readFileSync(path).toString('base64')}`
+  dataUrlCache.set(relPath, url)
+  return url
+}
+
+const baseName = (relPath) => relPath.split('/').pop()
+
 function renderHtml(manifest) {
   const data = JSON.stringify(manifest).replace(/</g, '\\u003c')
   const cards = manifest.entries
@@ -581,19 +615,20 @@ function renderHtml(manifest) {
       const preview = e.items
         ? `<div class="fileicon">SVG × ${e.items.length}</div>`
         : e.format === 'mp4'
-          ? `<video src="${e.file}" muted loop playsinline preload="metadata"></video>`
+          ? `<video src="${assetDataUrl(e.file)}" muted loop playsinline preload="metadata"></video>`
           : e.format === 'png' || e.format === 'svg'
-            ? `<img src="${e.states ? e.states[0].file : e.file}" alt="${e.title}" loading="lazy" />`
+            ? `<img src="${assetDataUrl(e.states ? e.states[0].file : e.file)}" alt="${e.title}" loading="lazy" />`
             : `<div class="fileicon">${e.format.toUpperCase()}</div>`
       const downloads = e.states
         ? e.states
             .map(
-              (s) => `<a class="mini" href="${s.file}" download title="${s.state}">${s.state}</a>`,
+              (s) =>
+                `<a class="mini" href="${assetDataUrl(s.file)}" download="${baseName(s.file)}" title="${s.state}">${s.state}</a>`,
             )
             .join('')
         : e.items
           ? `<span class="mini muted">${e.items.length} 个 SVG</span>`
-          : `<a class="dl" href="${e.file}" download>下载</a>`
+          : `<a class="dl" href="${assetDataUrl(e.file)}" download="${baseName(e.file)}">下载</a>`
       return `<article class="card" data-cat="${e.category}" data-orient="${e.orientation}" data-tags="${(e.tags || []).join(' ')}" data-text="${(e.title + ' ' + (e.tags || []).join(' ')).toLowerCase()}">
   <div class="thumb">${preview}</div>
   <div class="body">
@@ -652,7 +687,7 @@ code{background:#1f1f24;padding:1px 6px;border-radius:5px}
   <h1>繁梦空间 · 内部素材库 <span>${manifest.entries.length} 项 · 仅内部宣传使用</span></h1>
   <span class="meta">生成于 ${manifest.generatedAt}</span>
 </header>
-<div class="banner">独立产物：位于 <code>.export-artifacts/asset-library/</code>，不进公开站。截图使用演示数据；外部素材本批为 0。</div>
+<div class="banner">单文件产物：图片/视频/下载按钮均已内嵌 data: URL，仅分发本文件也能预览与下载。位于 ignored 目录，不进公开站；截图使用演示数据，外部素材本批为 0。</div>
 <div class="controls">
   <input id="q" type="search" placeholder="搜索标题 / 标签（如 hero、motion、button）" />
   <div class="chips" id="cats"></div>
@@ -661,7 +696,7 @@ code{background:#1f1f24;padding:1px 6px;border-radius:5px}
 </div>
 <main class="grid" id="grid">${cards}</main>
 <footer>
-  Motion：图片/视频直接 Import；按钮/图标是 PNG/SVG（透明元素按需抠底）。<br/>
+  Motion：图片/视频直接 Import（raw 资产在 manifest 记录的相对路径下）；按钮/图标是 PNG/SVG（透明元素按需抠底）。<br/>
   许可：${manifest.licenses.self} ${manifest.licenses.project} ${manifest.licenses.external}<br/>
   复跑：<code>node scripts/asset-library/build.mjs</code> · 清单：<code>manifest.json</code>
 </footer>
@@ -719,7 +754,7 @@ function renderReadme(manifest) {
   return `# 繁梦空间 · 内部素材库（issue #179）
 
 独立产物，**不在公开站**：目录 \`.export-artifacts/asset-library/\`（gitignore）。
-浏览：直接打开 \`index.html\`（manifest 已内联，file:// 也能用；视频预览建议起一个本地静态服务）。
+浏览：直接打开 \`index.html\`。它是**单文件**：图片/视频/下载按钮均已内嵌 data: URL，只分发这一个文件也能预览与下载；\`manifest.json\` 与 \`assets/\` 保留原始相对路径供 Motion 使用。
 
 ## 用途与边界
 - 供团队制作宣传视频（含 Apple Motion 工程直接 Import）。

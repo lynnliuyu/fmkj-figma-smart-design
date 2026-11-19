@@ -6,8 +6,17 @@
  */
 import { chromium } from 'playwright'
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { createServer } from 'node:http'
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs'
 import { extname, join, normalize, relative } from 'node:path'
 import sharp from 'sharp'
 
@@ -39,6 +48,8 @@ function serve() {
     res.end(readFileSync(path))
   })
 }
+
+const sha256 = (p) => createHash('sha256').update(readFileSync(p)).digest('hex')
 
 function ffprobe(path) {
   try {
@@ -136,6 +147,109 @@ async function main() {
     await d2.saveAs(join(VERIFY, 'downloads', d2.suggestedFilename()))
   }
 
+  // ── 单文件隔离验证：只提供 index.html（父目录空，无 assets/）─────────
+  const SINGLE = join(VERIFY, 'single')
+  rmSync(SINGLE, { recursive: true, force: true })
+  mkdirSync(SINGLE, { recursive: true })
+  copyFileSync(join(OUT, 'index.html'), join(SINGLE, 'index.html'))
+  const singleRequests = []
+  const singleServer = createServer((req, res) => {
+    const url = decodeURIComponent((req.url || '/').split('?')[0])
+    singleRequests.push(url)
+    const rel = url === '/' ? '/index.html' : url
+    const path = normalize(join(SINGLE, rel))
+    if (rel !== '/index.html' || !path.startsWith(SINGLE) || !existsSync(path)) {
+      res.writeHead(404)
+      res.end('not found')
+      return
+    }
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+    res.end(readFileSync(path))
+  })
+  await new Promise((r) => singleServer.listen(3212, '127.0.0.1', r))
+
+  const sctx = await browser.newContext({
+    viewport: { width: 1440, height: 3000 },
+    locale: 'zh-CN',
+    acceptDownloads: true,
+  })
+  const sp = await sctx.newPage()
+  const sErrs = []
+  sp.on('pageerror', (e) => sErrs.push(e.message.slice(0, 200)))
+  sp.on('console', (m) => {
+    if (m.type() === 'error') sErrs.push(m.text().slice(0, 200))
+  })
+  await sp.goto('http://127.0.0.1:3212/index.html', { waitUntil: 'load' })
+  await sleep(1600)
+  await sp.screenshot({ path: join(VERIFY, 'single-file.png') })
+
+  const media = await sp.evaluate(() => {
+    const imgs = [...document.querySelectorAll('.thumb img')]
+    const vids = [...document.querySelectorAll('.thumb video')]
+    return {
+      cards: document.querySelectorAll('.card').length,
+      images: imgs.length,
+      imagesOk: imgs.every((i) => i.complete && i.naturalWidth > 0),
+      imagesBad: imgs.filter((i) => !i.complete || !i.naturalWidth).map((i) => i.alt),
+      videos: vids.length,
+      videosOk: vids.every((v) => v.readyState >= 1 && !v.error),
+      videosBad: vids
+        .filter((v) => v.readyState < 1 || v.error)
+        .map((v) => (v.currentSrc || '').slice(0, 48)),
+      allInline: [...imgs, ...vids].every((el) =>
+        (el.currentSrc || el.src || '').startsWith('data:'),
+      ),
+    }
+  })
+
+  // 筛选/搜索在单文件下仍工作
+  await sp.locator('#cats .chip', { hasText: 'motion' }).click()
+  await sleep(300)
+  const singleMotion = await sp.locator('.card:visible').count()
+  await sp.locator('#cats .chip', { hasText: '全部' }).click()
+  await sp.locator('#q').fill('button')
+  await sleep(300)
+  const singleSearch = await sp.locator('.card:visible').count()
+  await sp.locator('#q').fill('')
+
+  // 下载字节与原件一致（主下载 + 按钮多态下载）
+  const downloadChecks = []
+  const pick = async (locator) => {
+    const [dl] = await Promise.all([sp.waitForEvent('download'), locator.click()])
+    const name = dl.suggestedFilename()
+    const saved = join(VERIFY, 'single', `downloaded-${name}`)
+    await dl.saveAs(saved)
+    const entry = manifest.entries.find(
+      (e) =>
+        e.file.split('/').pop() === name ||
+        (e.states || []).some((st) => st.file.split('/').pop() === name),
+    )
+    const original = entry
+      ? (entry.states || []).find((st) => st.file.split('/').pop() === name)?.file || entry.file
+      : null
+    const ok = original ? sha256(saved) === sha256(join(OUT, original)) : false
+    downloadChecks.push({ name, ok, saved: relative(OUT, saved), original })
+  }
+  await pick(sp.locator('.card:visible .dl').first())
+  await sp.locator('#cats .chip', { hasText: 'button' }).click()
+  await sleep(300)
+  await pick(sp.locator('.card:visible .mini').first())
+
+  const unexpectedRequests = singleRequests.filter((u) => u !== '/' && u !== '/index.html')
+  const singleFile = {
+    onlyIndexHtml: existsSync(join(SINGLE, 'index.html')),
+    requests: singleRequests,
+    unexpectedRequests,
+    ...media,
+    singleMotion,
+    singleSearch,
+    downloadChecks,
+    consoleErrors: sErrs,
+  }
+  await sp.close()
+  await sctx.close()
+  await new Promise((r) => singleServer.close(r))
+
   await browser.close()
   server.close()
 
@@ -152,6 +266,7 @@ async function main() {
     checks,
     failures: checks.filter((c) => !c.ok),
     consoleErrors: errs,
+    singleFile,
     motionImport: {
       // Motion 可直接 Import 的格式检查：PNG 位图 + H.264 MP4
       png: checks.filter((c) => c.detail?.width && c.detail?.height).length,
@@ -168,12 +283,27 @@ async function main() {
         searchVisible,
         failures: result.failures.length,
         consoleErrors: errs.length,
+        singleFile: {
+          imagesOk: singleFile.imagesOk,
+          images: singleFile.images,
+          videosOk: singleFile.videosOk,
+          videos: singleFile.videos,
+          unexpectedRequests: singleFile.unexpectedRequests,
+          downloadsOk: singleFile.downloadChecks.every((d) => d.ok),
+        },
       },
       null,
       1,
     ),
   )
-  process.exit(result.failures.length || errs.length ? 1 : 0)
+  const singleFileOk =
+    singleFile.imagesOk &&
+    singleFile.videosOk &&
+    singleFile.allInline &&
+    singleFile.unexpectedRequests.length === 0 &&
+    singleFile.downloadChecks.every((d) => d.ok) &&
+    sErrs.length === 0
+  process.exit(result.failures.length || errs.length || !singleFileOk ? 1 : 0)
 }
 
 main().catch((e) => {

@@ -7,7 +7,7 @@
 
 ```
 .export-artifacts/asset-library/
-  index.html            # 可浏览 / 搜索 / 按类别与画幅筛选 / 下载；manifest 已内联（file:// 可用）
+  index.html            # 单文件：可浏览 / 搜索 / 按类别与画幅筛选 / 下载；图片、视频、下载按钮均内嵌 data: URL
   manifest.json         # 逐项元数据：尺寸、时长、格式、来源、许可、署名、标签
   README.md             # 本清单的机器生成版（含逐项表格）
   assets/product/       # 真实产品页面截图（16:9 ×6、9:16 ×2）
