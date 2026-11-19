@@ -15,6 +15,11 @@
   </view>
 
   <view class="card card-flush mt-24">
+    <view class="list-item" hover-class="list-item-hover" bindtap="openNeed">
+      <image class="icon" src="/assets/icons/sparkles.svg" />
+      <text class="grow">帮我出方案</text>
+      <text class="small muted">选几个问题就有清单</text>
+    </view>
     <view class="list-item" hover-class="list-item-hover" bindtap="openRedeem">
       <image class="icon" src="/assets/icons/sparkles.svg" />
       <text class="grow">兑换码激活 / 充积分</text>

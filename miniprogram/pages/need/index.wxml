@@ -1,0 +1,202 @@
+<view class="page page-pad-bottom">
+  <view class="h1">帮我出方案</view>
+  <view class="small muted mt-8">说不清需求也没关系，选几个问题就能看到清单和大概预算。</view>
+
+  <!-- 三条入口 -->
+  <view class="row gap-8 mt-16">
+    <view class="btn {{entry === 'scene' ? 'btn-primary' : 'btn-outline'}} btn-sm grow" data-key="scene" bindtap="switchEntry">按场景选</view>
+    <view class="btn {{entry === 'budget' ? 'btn-primary' : 'btn-outline'}} btn-sm grow" data-key="budget" bindtap="switchEntry">按预算选</view>
+    <view class="btn {{entry === 'wizard' ? 'btn-primary' : 'btn-outline'}} btn-sm grow" data-key="wizard" bindtap="switchEntry">六步问卷</view>
+  </view>
+
+  <!-- ① 按场景选 -->
+  <block wx:if="{{entry === 'scene'}}">
+    <view class="card mt-16">
+      <view class="section-title">你最想要哪些能力？</view>
+      <view class="small muted mt-8">可多选，选完自动带出设备与数量，后面还能改。</view>
+      <view class="row wrap gap-8 mt-16">
+        <view wx:for="{{catalog.options.sceneCards}}" wx:key="value"
+              class="btn btn-sm {{answers.sceneCards.indexOf(item.value) >= 0 ? 'btn-primary' : 'btn-outline'}}"
+              data-value="{{item.value}}" bindtap="toggleSceneCard">{{item.label}}</view>
+      </view>
+      <view wx:for="{{catalog.options.sceneCards}}" wx:key="value" wx:if="{{answers.sceneCards.indexOf(item.value) >= 0}}"
+            class="small muted mt-8">· {{item.label}}：{{item.explain}}</view>
+    </view>
+
+    <view class="card mt-16">
+      <view class="section-title">灯光想怎么做？</view>
+      <view wx:for="{{catalog.options.lightingDesigns}}" wx:key="value"
+            class="list-item" hover-class="list-item-hover"
+            data-field="design" data-value="{{item.value}}" bindtap="pickLighting">
+        <view class="grow">
+          <view class="title">{{item.label}}</view>
+          <view class="small muted">{{item.explain}}</view>
+        </view>
+        <view wx:if="{{answers.lighting.design === item.value}}" class="small">✓</view>
+      </view>
+      <view class="section-title mt-16">光色</view>
+      <view wx:for="{{catalog.options.lightingColors}}" wx:key="value"
+            class="list-item" hover-class="list-item-hover"
+            data-field="color" data-value="{{item.value}}" bindtap="pickLighting">
+        <view class="grow">
+          <view class="title">{{item.label}}</view>
+          <view class="small muted">{{item.explain}}</view>
+        </view>
+        <view wx:if="{{answers.lighting.color === item.value}}" class="small">✓</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ② 按预算选 -->
+  <block wx:if="{{entry === 'budget'}}">
+    <view class="card mt-16">
+      <view class="section-title">这套房子大概想花多少？</view>
+      <view class="small muted mt-8">只是估算参考，不是报价；选完会反推能做到哪些场景。</view>
+      <view wx:for="{{catalog.options.budgetBands}}" wx:key="value"
+            class="list-item" hover-class="list-item-hover"
+            data-value="{{item.value}}" bindtap="pickBudget">
+        <view class="grow"><view class="title">{{item.label}}</view></view>
+        <view wx:if="{{answers.budgetBand === item.value}}" class="small">✓</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ③ 六步问卷 -->
+  <block wx:if="{{entry === 'wizard'}}">
+    <view class="row between mt-16">
+      <view class="small muted">第 {{step + 1}} / {{steps.length}} 步</view>
+      <view class="small muted">{{saving ? '保存中…' : '已自动保存'}}</view>
+    </view>
+    <view class="row wrap gap-8 mt-8">
+      <view wx:for="{{steps}}" wx:key="key"
+            class="btn btn-sm {{step === index ? 'btn-primary' : 'btn-outline'}}"
+            data-step="{{index}}" bindtap="jumpStep">{{index + 1}}</view>
+    </view>
+
+    <view class="card mt-16">
+      <view class="section-title">{{steps[step].title}}</view>
+      <view class="small muted mt-8">{{steps[step].hint}}</view>
+
+      <!-- 0 房子 -->
+      <block wx:if="{{steps[step].key === 'house'}}">
+        <view class="label mt-16">户型</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.houseTypes}}" wx:key="value"
+                class="btn btn-sm {{answers.house.type === item.value ? 'btn-primary' : 'btn-outline'}}"
+                data-field="type" data-value="{{item.value}}" bindtap="pickHouse">{{item.label}}</view>
+        </view>
+        <view class="label mt-16">几室（可改）</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{[2,3,4,5]}}" wx:key="*this"
+                class="btn btn-sm {{answers.house.bedrooms === item ? 'btn-primary' : 'btn-outline'}}"
+                data-field="bedrooms" data-value="{{item}}" bindtap="pickHouse">{{item}} 室</view>
+        </view>
+        <view class="label mt-16">建筑面积（㎡，可留空按户型估算）</view>
+        <input class="mt-8" type="number" placeholder="例如 120" value="{{answers.house.area}}" bindinput="onAreaInput" />
+        <view class="label mt-16">装修阶段</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.stages}}" wx:key="value"
+                class="btn btn-sm {{answers.house.stage === item.value ? 'btn-primary' : 'btn-outline'}}"
+                data-field="stage" data-value="{{item.value}}" bindtap="pickHouse">{{item.label}}</view>
+        </view>
+      </block>
+
+      <!-- 1 灯光 -->
+      <block wx:if="{{steps[step].key === 'lighting'}}">
+        <view wx:for="{{catalog.options.lightingDesigns}}" wx:key="value"
+              class="list-item" hover-class="list-item-hover"
+              data-field="design" data-value="{{item.value}}" bindtap="pickLighting">
+          <view class="grow"><view class="title">{{item.label}}</view><view class="small muted">{{item.explain}}</view></view>
+          <view wx:if="{{answers.lighting.design === item.value}}" class="small">✓</view>
+        </view>
+      </block>
+
+      <!-- 2 智能程度 -->
+      <block wx:if="{{steps[step].key === 'level'}}">
+        <view wx:for="{{catalog.options.tiers}}" wx:key="value"
+              class="list-item" hover-class="list-item-hover"
+              data-value="{{item.value}}" bindtap="pickTier">
+          <view class="grow"><view class="title">{{item.label}}</view><view class="small muted">{{item.explain}}</view></view>
+          <view wx:if="{{answers.level.tier === item.value}}" class="small">✓</view>
+        </view>
+        <view class="label mt-16">平时怎么用</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.habits}}" wx:key="value"
+                class="btn btn-sm {{answers.level.prefer === item.value ? 'btn-primary' : 'btn-outline'}}"
+                data-value="{{item.value}}" bindtap="pickHabit">{{item.label}}</view>
+        </view>
+      </block>
+
+      <!-- 3 安防 -->
+      <block wx:if="{{steps[step].key === 'security'}}">
+        <view class="label">监控</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.cameras}}" wx:key="value"
+                class="btn btn-sm {{answers.security.camera === item.value ? 'btn-primary' : 'btn-outline'}}"
+                data-value="{{item.value}}" bindtap="pickCamera">{{item.label}}</view>
+        </view>
+        <view class="label mt-16">传感器（按需要选，不选就不配）</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.sensors}}" wx:key="value"
+                class="btn btn-sm {{answers.security.sensors.indexOf(item.value) >= 0 ? 'btn-primary' : 'btn-outline'}}"
+                data-value="{{item.value}}" bindtap="toggleSensor">{{item.label}}</view>
+        </view>
+        <view wx:for="{{catalog.options.sensors}}" wx:key="value"
+              wx:if="{{answers.security.sensors.indexOf(item.value) >= 0}}" class="small muted mt-8">· {{item.label}}：{{item.explain}}</view>
+      </block>
+
+      <!-- 4 面板 -->
+      <block wx:if="{{steps[step].key === 'panels'}}">
+        <view class="list-item" hover-class="list-item-hover" data-value="screenSwitch" bindtap="togglePanel">
+          <view class="grow"><view class="title">开关带屏</view><view class="small muted">能看温湿度/场景，单价更贵</view></view>
+          <view wx:if="{{answers.panels.screenSwitch}}" class="small">✓</view>
+        </view>
+        <view class="list-item" hover-class="list-item-hover" data-value="lock" bindtap="togglePanel">
+          <view class="grow"><view class="title">智能门锁</view><view class="small muted">指纹开门，可触发回家模式</view></view>
+          <view wx:if="{{answers.panels.lock}}" class="small">✓</view>
+        </view>
+        <view class="label mt-16">中控屏</view>
+        <view class="row wrap gap-8">
+          <view wx:for="{{catalog.options.panelOptions.centralScreen}}" wx:key="value"
+                class="btn btn-sm {{answers.panels.centralScreen === item.value ? 'btn-primary' : 'btn-outline'}}"
+                data-value="{{item.value}}" bindtap="pickCentral">{{item.label}}</view>
+        </view>
+      </block>
+
+      <!-- 5 场景 -->
+      <block wx:if="{{steps[step].key === 'scenes'}}">
+        <view wx:for="{{catalog.options.scenes}}" wx:key="value"
+              class="list-item" hover-class="list-item-hover"
+              data-value="{{item.value}}" bindtap="toggleScene">
+          <view class="grow"><view class="title">{{item.label}}</view><view class="small muted">{{item.explain}}</view></view>
+          <view wx:if="{{answers.scenes.indexOf(item.value) >= 0}}" class="small">✓</view>
+        </view>
+      </block>
+
+      <!-- 6 生态 -->
+      <block wx:if="{{steps[step].key === 'ecosystem'}}">
+        <view wx:for="{{catalog.options.ecosystems}}" wx:key="value"
+              class="list-item" hover-class="list-item-hover"
+              data-value="{{item.value}}" bindtap="pickEcosystem">
+          <view class="grow">
+            <view class="title">{{item.label}} · {{item.positioning}}</view>
+            <view class="small muted">优点：{{item.pros}}</view>
+            <view class="small muted">注意：{{item.cons}}</view>
+            <view class="small muted">适合：{{item.who}}</view>
+          </view>
+          <view wx:if="{{answers.ecosystem.primary === item.value}}" class="small">✓</view>
+        </view>
+        <view class="small muted mt-16">{{catalog.options.ecosystemNotes.matter}}</view>
+        <view class="small muted mt-8">{{catalog.options.ecosystemNotes.hybrid}}</view>
+      </block>
+
+      <view class="row gap-8 mt-24">
+        <view class="btn btn-outline btn-sm grow" bindtap="prevStep" wx:if="{{step > 0}}">上一步</view>
+        <view class="btn btn-primary btn-sm grow" bindtap="nextStep" wx:if="{{step < steps.length - 1}}">下一步</view>
+      </view>
+    </view>
+  </block>
+
+  <view class="btn btn-primary btn-block mt-24" bindtap="openResult">看清单和估算</view>
+  <view class="small muted mt-8">不确定的都能跳过；看到清单后还能改数量。</view>
+</view>

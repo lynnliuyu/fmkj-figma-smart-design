@@ -1,0 +1,67 @@
+<view class="page page-pad-bottom">
+  <view class="h1">需求清单</view>
+  <view class="small muted mt-8" wx:if="{{result}}">
+    {{result.house.type === 'villa' ? '别墅' : result.house.type === 'duplex' ? '复式' : '平层'}}
+    · {{result.house.bedrooms}}室{{result.house.livingRooms}}厅
+    · {{result.house.area}}㎡{{result.house.areaEstimated ? '（估算，可改）' : ''}}
+  </view>
+
+  <view wx:if="{{loading}}" class="card mt-16 small muted">正在生成清单…</view>
+
+  <block wx:if="{{!loading && result}}">
+    <!-- 设备清单 -->
+    <view class="card card-flush mt-16">
+      <view class="section-title" style="padding:12px 16px 0">设备（{{result.devices.length}} 类）</view>
+      <view wx:for="{{result.devices}}" wx:key="deviceType" class="list-item">
+        <view class="grow">
+          <view class="title">{{item.deviceType}} × {{item.qty}}</view>
+          <view class="small muted">{{item.reason}}</view>
+        </view>
+        <view wx:if="{{!item.editable}}" class="small muted">必需</view>
+      </view>
+    </view>
+
+    <view wx:if="{{result.hints.length}}" class="card mt-16">
+      <view wx:for="{{result.hints}}" wx:key="*this" class="small muted">· {{item}}</view>
+    </view>
+
+    <!-- 费用：三段 + 不含项 -->
+    <view class="card mt-16">
+      <view class="section-title">费用估算</view>
+      <view class="row between mt-8">
+        <view class="title">① 设备费</view>
+        <view class="num">¥{{pricing.totals.equipment}}</view>
+      </view>
+      <view wx:if="{{pricing.pendingPrice.length}}" class="small muted">
+        待查价（{{pricing.pendingPrice.length}} 类，未计入）：<text wx:for="{{pricing.pendingPrice}}" wx:key="deviceType">{{item.deviceType}} </text>
+      </view>
+      <view class="divider mt-8"></view>
+      <view class="title mt-8">② 安装调试费</view>
+      <view wx:for="{{pricing.install}}" wx:key="key" class="row between small mt-8">
+        <view class="muted">{{item.label}} {{item.qty}}{{item.unit}} × {{item.unitPrice}}</view>
+        <view>¥{{item.subtotal}}</view>
+      </view>
+      <view class="divider mt-8"></view>
+      <view class="row between mt-8">
+        <view class="title">③ 合计</view>
+        <view class="num">¥{{pricing.totals.total}}</view>
+      </view>
+      <view class="small muted mt-8">工期约 {{result.house.areaEstimated ? 5 : 5}}–7 个工作日（估算）</view>
+      <view class="divider mt-8"></view>
+      <view class="small muted mt-8">不含：<text wx:for="{{pricing.exclusions}}" wx:key="*this">{{item}} </text></view>
+    </view>
+
+    <!-- 提交 -->
+    <view wx:if="{{!submitted}}" class="card mt-16">
+      <view class="section-title">留下手机号，顾问联系你（可选）</view>
+      <input class="mt-8" type="number" placeholder="手机号" value="{{phone}}" bindinput="onPhoneInput" />
+      <view class="btn btn-primary btn-block mt-16" bindtap="submit">{{submitting ? '提交中…' : '提交，生成项目草稿'}}</view>
+    </view>
+    <view wx:else class="card mt-16">
+      <view class="title">已提交 ✓</view>
+      <view class="small muted mt-8">顾问会在工作台打开这份需求并联系你。</view>
+    </view>
+
+    <view class="btn btn-outline btn-block mt-16" bindtap="goBack">返回修改</view>
+  </block>
+</view>

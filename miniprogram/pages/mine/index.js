@@ -7,6 +7,10 @@ const config = require('../../config')
 Page({
   data: { me: {}, initial: '', companyName: '', pluginCount: 0, host: '', version: config.VERSION, editing: false, redeeming: false, redeemCode: '', form: { name: '', phone: '' }, saving: false },
 
+  openNeed() {
+    wx.navigateTo({ url: '/pages/need/index' })
+  },
+
   onLoad(options) {
     captureLaunchTicket(options)
   },
