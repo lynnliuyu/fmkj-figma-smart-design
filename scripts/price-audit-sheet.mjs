@@ -55,7 +55,28 @@ function parseCsv(text) {
   })
 }
 
-const rows = parseCsv(readFileSync(src, 'utf8'))
+const raw = parseCsv(readFileSync(src, 'utf8'))
+/**
+ * 表头兼容：`price-audit.ts --list` 输出英文表头（sku/name/deviceType/brand/
+ * 当前售价/参考价/来源链接/jd搜索/tmall搜索），Excel 脚本输出中文表头。
+ * 之前只按中文取列，真实 missing-price.csv 直喂时品牌/产品名/SKU/链接全为空
+ * （独立验收 B 附带观察）。
+ */
+const rows = raw.map((r) => ({
+  ...r,
+  sku: r.sku ?? r['SKU'] ?? '',
+  name: r.name ?? r['产品名称'] ?? '',
+  brand: r.brand ?? r['品牌'] ?? '',
+  category: r.deviceType ?? r['分类'] ?? '',
+  platform: r['平台'] ?? '',
+  unit: r['单位'] ?? '',
+  jd: r.jd搜索 ?? r['JD搜索'] ?? '',
+  tmall: r.tmall搜索 ?? r['天猫搜索'] ?? '',
+  seq: r['序号'] ?? '',
+  price: r['参考价'] ?? '',
+  source: r['来源链接'] ?? '',
+  rule: r['口径'] ?? '',
+}))
 const esc = (s) =>
   String(s ?? '').replace(
     /[&<>"']/g,
@@ -65,11 +86,11 @@ const esc = (s) =>
 const body = rows
   .map(
     (r, i) => `<tr>
-  <td class="n">${i + 1}</td>
-  <td>${esc(r['品牌'])}</td>
-  <td>${esc(r['分类'])}</td>
-  <td class="name">${esc(r['产品名称'])}<div class="sku">${esc(r['SKU'])}${r['型号'] ? ' · ' + esc(r['型号']) : ''}</div></td>
-  <td><a href="${esc(r['JD搜索'])}" target="_blank" rel="noreferrer">京东</a> · <a href="${esc(r['天猫搜索'])}" target="_blank" rel="noreferrer">天猫</a></td>
+  <td class="n">${esc(r.seq || i + 1)}</td>
+  <td>${esc(r.brand)}</td>
+  <td>${esc(r.category)}</td>
+  <td class="name">${esc(r.name)}<div class="sku">${esc(r.sku)}${r['型号'] ? ' · ' + esc(r['型号']) : ''}</div></td>
+  <td><a href="${esc(r.jd)}" target="_blank" rel="noreferrer">京东</a> · <a href="${esc(r.tmall)}" target="_blank" rel="noreferrer">天猫</a></td>
   <td><input class="price" data-i="${i}" inputmode="decimal" placeholder="日常价" /></td>
   <td><input class="src" data-i="${i}" placeholder="商品页 URL" /></td>
   <td><select class="rule" data-i="${i}"><option>日常价</option><option>仅促销价（留空待人工）</option><option>找不到</option></select></td>
@@ -151,11 +172,12 @@ function csvCell(v) {
   return /[",\\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 document.getElementById('export').onclick = () => {
-  const cols = ['序号','品牌','分类','产品名称','SKU','型号','平台','单位','京东日常价','来源链接','口径','JD搜索','天猫搜索'];
+  // ⚠️ 必须含 sku 与 参考价/来源链接：price-audit.ts --apply 按这三列取值
+  const cols = ['sku','产品名称','参考价','来源链接','口径','品牌','分类','平台','单位'];
   const lines = [cols.join(',')];
   ROWS.forEach((r, i) => {
     const s = state[i] || {};
-    lines.push([r['序号'],r['品牌'],r['分类'],r['产品名称'],r['SKU'],r['型号'],r['平台'],r['单位'],s.price || '',s.src || '',s.rule || '日常价',r['JD搜索'],r['天猫搜索']].map(csvCell).join(','));
+    lines.push([r.sku, r.name, s.price || '', s.src || '', s.rule || '日常价', r.brand, r.category, r.platform, r.unit].map(csvCell).join(','));
   });
   const blob = new Blob([lines.join('\\n') + '\\n'], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
