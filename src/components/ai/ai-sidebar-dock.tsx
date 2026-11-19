@@ -1000,26 +1000,30 @@ export function AiSidebarDock({
                 {project ? `关于「${project.name}」，` : ''}
                 选择一个常用任务，或直接描述需求、拖入户型图与清单。
               </p>
-              <div className="grid gap-1 px-2">
+              {/* ⚠️ 官方 ListItem 的根是 grid 项且 min-width:auto：在 320px 面板里
+                  会被内容撑到 681px，把整栏内容裁掉（#182 验收 F1）。
+                  这里给容器与每行都加 min-w-0，让它按面板宽度收缩。 */}
+              <div className="grid min-w-0 gap-1 px-2">
                 <p className="px-1 pb-1 text-xs font-medium text-muted-foreground">常用任务</p>
                 {DEFAULT_AI_TEMPLATES.slice(0, 3).map((t, index) => {
                   const Icon = TASK_ICONS[index] ?? Sparkles
                   return (
-                    <ListItem
-                      key={t.id}
-                      label={t.name}
-                      description={t.description || undefined}
-                      startContent={
-                        <span className="flex size-5 shrink-0 items-center justify-center text-sidebar-foreground/70">
-                          <Icon />
-                        </span>
-                      }
-                      endContent={
-                        <ArrowRight className="size-3.5 shrink-0 text-muted-foreground" />
-                      }
-                      align="start"
-                      onClick={() => pickTemplate(t.id)}
-                    />
+                    <div key={t.id} className="min-w-0">
+                      <ListItem
+                        label={t.name}
+                        description={t.description || undefined}
+                        startContent={
+                          <span className="flex size-5 shrink-0 items-center justify-center text-sidebar-foreground/70">
+                            <Icon />
+                          </span>
+                        }
+                        endContent={
+                          <ArrowRight className="size-3.5 shrink-0 text-muted-foreground" />
+                        }
+                        align="start"
+                        onClick={() => pickTemplate(t.id)}
+                      />
+                    </div>
                   )
                 })}
               </div>
