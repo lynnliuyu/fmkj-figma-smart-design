@@ -51,6 +51,9 @@ describe('默认值规则（用户口径）', () => {
     })
     expect(villa.devices.find((d) => d.deviceType === 'gateway')!.qty).toBe(2)
     expect(villa.hints.some((h) => h.includes('2 个网关'))).toBe(true)
+    // F-3：网关必需且数量不可编辑，hint 不能出现「可改」
+    expect(villa.hints.some((h) => h.includes('可改'))).toBe(false)
+    expect(villa.hints.some((h) => h.includes('网关必需'))).toBe(true)
   })
 
   it('面积未填时给可改估算（不是施工标准）', () => {

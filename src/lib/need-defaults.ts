@@ -189,7 +189,9 @@ export function computeDefaults(input: DefaultInput): DefaultsResult {
   }
 
   const hints: string[] = []
-  if (devices[0]!.qty > 1) hints.push('面积较大或为别墅：建议 2 个网关，信号更稳（可改）')
+  // 网关是必需项且数量不可编辑：提示里不能说「可改」（首轮验收 F-3）
+  if (devices[0]!.qty > 1)
+    hints.push('面积较大或为别墅：建议 2 个网关，信号更稳（网关必需，数量按面积估算）')
   if (house.stage === 'moved') hints.push('已入住：优先无线方案，避免大规模开槽')
   if (house.area === null) hints.push(`面积未填，按户型估算约 ${estimateArea(house)} ㎡（可改）`)
 
