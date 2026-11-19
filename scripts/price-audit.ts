@@ -130,6 +130,28 @@ async function main() {
       } as never,
     })
     const docs = res.docs as unknown as Record<string, unknown>[]
+
+    // depth:0 时 brand 只是 ID 字符串，按对象取名会得到空品牌（验收观察 #1）。
+    // 单独查一次品牌表建 id→name 映射，避免逐条 depth:1 放大响应。
+    const brandNames = new Map<string, string>()
+    try {
+      const brands = await payload.find({
+        collection: 'brands',
+        limit: 1000,
+        depth: 0,
+        overrideAccess: true,
+        select: { name: true },
+      })
+      for (const b of brands.docs as unknown as Record<string, unknown>[])
+        brandNames.set(String(b.id), String(b.name ?? ''))
+    } catch {
+      // 品牌表读不到时退化为 ID，不阻断清单生成
+    }
+    const brandOf = (p: Record<string, unknown>) => {
+      const raw = p.brand
+      if (raw && typeof raw === 'object') return String((raw as { name?: unknown }).name ?? '')
+      return raw ? (brandNames.get(String(raw)) ?? '') : ''
+    }
     const missing = docs.filter((p) => {
       const mp = typeof p.marketPrice === 'number' ? p.marketPrice : 0
       return !(mp > 0)
@@ -139,10 +161,7 @@ async function main() {
 
     // 待补清单（人工核对用）：带品牌与搜索链接
     const rows = missing.map((p) => {
-      const brand =
-        p.brand && typeof p.brand === 'object'
-          ? String((p.brand as { name?: unknown }).name ?? '')
-          : ''
+      const brand = brandOf(p)
       const links = searchLinks(String(p.sku ?? ''), String(p.name ?? ''))
       return {
         sku: p.sku,
@@ -252,6 +271,7 @@ async function main() {
     const done = new Set(progress.doneSkus)
 
     let batchUpdated = 0
+    let batchStartRow = 1
     let processed = 0
     const total = rows.length
     for (const [index, row] of rows.entries()) {
@@ -262,8 +282,9 @@ async function main() {
       const source = (row['来源链接'] ?? row.priceSource ?? '').trim()
       const price = Number(raw)
       if (!sku || !(Number.isFinite(price) && price > 0)) {
-        // 抓不到就留空等人工：不猜、不代填
-        progress.skipped.push(`${sku || '(无 sku)'}: 参考价为空或非法（${raw || '空'}）`)
+        // 抓不到就留空等人工：不猜、不代填（resume 时同一条不重复记，验收观察 #3）
+        const note = `${sku || '(无 sku)'}: 参考价为空或非法（${raw || '空'}）`
+        if (!progress.skipped.includes(note)) progress.skipped.push(note)
         continue
       }
       const found = await payload.find({
@@ -275,7 +296,8 @@ async function main() {
       })
       const doc = found.docs[0]
       if (!doc) {
-        progress.skipped.push(`${sku}: 库里没有这个 SKU`)
+        const note = `${sku}: 库里没有这个 SKU`
+        if (!progress.skipped.includes(note)) progress.skipped.push(note)
         continue
       }
       try {
@@ -297,6 +319,7 @@ async function main() {
           `第 ${index + 1} 条（${sku}）写入失败，已停止并保存进度：${e instanceof Error ? e.message : e}`,
         )
       }
+      if (batchUpdated === 0) batchStartRow = index + 1
       progress.updated++
       progress.doneSkus.push(sku)
       done.add(sku)
@@ -310,7 +333,8 @@ async function main() {
       if (batchUpdated >= args.batchSize) {
         progress.batches.push({
           index: progress.batches.length + 1,
-          from: index + 1 - batchUpdated + 1,
+          // 本批覆盖的 CSV 行号区间（1-based，仅统计实际写入的行）
+          from: batchStartRow,
           to: index + 1,
           updated: batchUpdated,
           at: new Date().toISOString(),
@@ -327,8 +351,8 @@ async function main() {
     if (batchUpdated > 0) {
       progress.batches.push({
         index: progress.batches.length + 1,
-        from: total - batchUpdated + 1,
-        to: total,
+        from: batchStartRow,
+        to: rows.length,
         updated: batchUpdated,
         at: new Date().toISOString(),
       })
@@ -357,7 +381,7 @@ async function main() {
     return
   }
 
-  console.log('用法：--list [--out 目录] | --apply <confirmed.csv>')
+  console.log('用法：--list [--out 目录] | --apply <missing-price.csv（填好参考价）>')
 }
 
 // ⚠️ 必须顶层 await：`payload run` 在脚本模块返回后即结束进程，
