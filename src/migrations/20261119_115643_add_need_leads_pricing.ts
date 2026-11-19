@@ -351,18 +351,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "_pricing_versions_v" CASCADE;
   DROP TABLE "_pricing_versions_v_texts" CASCADE;
   DROP TABLE "_pricing_versions_v_rels" CASCADE;
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_need_leads_fk";
-  
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_pricing_plans_fk";
-  
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_pricing_versions_fk";
-  
-  DROP INDEX "payload_locked_documents_rels_need_leads_id_idx";
-  DROP INDEX "payload_locked_documents_rels_pricing_plans_id_idx";
-  DROP INDEX "payload_locked_documents_rels_pricing_versions_id_idx";
-  ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "need_leads_id";
-  ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "pricing_plans_id";
-  ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "pricing_versions_id";
+  ALTER TABLE "payload_locked_documents_rels"
+    DROP COLUMN "need_leads_id",
+    DROP COLUMN "pricing_plans_id",
+    DROP COLUMN "pricing_versions_id";
   DROP TYPE "public"."enum_need_leads_status";
   DROP TYPE "public"."enum_need_leads_source";
   DROP TYPE "public"."enum__need_leads_v_version_status";
