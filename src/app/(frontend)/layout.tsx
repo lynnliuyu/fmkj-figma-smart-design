@@ -8,6 +8,8 @@ import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AstryxThemeProvider } from '@/components/astryx-theme-provider'
 import { ACCENT_INIT_SCRIPT } from '@/lib/appearance'
+import { BROWSER_WARN_INIT_SCRIPT } from '@/lib/browser-check'
+import { BrowserWarningBanner } from '@/components/browser-warning'
 import { ASTRYX_THEME_INIT_SCRIPT } from '@/lib/astryx-theme'
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE, COMPANY_NAME } from '@/lib/brand'
 import { siteSans } from '@/lib/fonts'
@@ -77,11 +79,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* 恢复主题风格，避免首屏闪烁 */}
         <script dangerouslySetInnerHTML={{ __html: ACCENT_INIT_SCRIPT }} />
+        {/* 旧内核早期提示：head 内联脚本在首次 HTML 解析时执行；等 body 就绪后插入提示，
+            不依赖 App chunk/CSS，Edge 100 也能显示。 */}
+        <script dangerouslySetInnerHTML={{ __html: BROWSER_WARN_INIT_SCRIPT }} />
         {renderHeadCustomCode(customScripts?.headStart, 'head-start')}
         {renderHeadCustomCode(customScripts?.headEnd, 'head-end')}
       </head>
       <body className="min-h-screen antialiased">
         <BodyCustomCode html={customScripts?.bodyStart} />
+        <BrowserWarningBanner />
         {addBypassLinks && (
           <a className="figma-bypass-link" href="#root">
             Skip to content
