@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { runInNewContext } from 'node:vm'
+import { describe, expect, it, vi } from 'vitest'
 
 import { checkBrowserSupport, MIN_CHROMIUM_MAJOR } from './browser-check'
 
@@ -38,7 +39,11 @@ function installEnv({
   })
   Object.defineProperty(win, 'CSS', {
     value: {
-      supports: supportsFn === false ? undefined : () => supportsScope,
+      supports:
+        supportsFn === false
+          ? undefined
+          : (...args: unknown[]) =>
+              args.length === 1 && args[0] === 'at-rule(@scope)' && supportsScope,
     },
     configurable: true,
   })
@@ -101,6 +106,22 @@ describe('BROWSER_WARN_INIT_SCRIPT（SSR 输出的内联脚本）', () => {
     // 模板里是完整 IIFE；直接编译整段脚本体。
     expect(() => new Function(BROWSER_WARN_INIT_SCRIPT)).not.toThrow()
   })
+
+  it.each([undefined, vi.fn((value: string) => value === 'at-rule(@scope)')])(
+    '不因 UA 把支持 @scope 或无法进行能力检测的浏览器判为过旧',
+    (supports) => {
+      const listen = vi.fn()
+      runInNewContext(BROWSER_WARN_INIT_SCRIPT, {
+        CSS: { supports },
+        navigator: { userAgent: OLD_EDGE_UA },
+        document: {
+          documentElement: { getAttribute: () => null, setAttribute: vi.fn() },
+          addEventListener: listen,
+        },
+      })
+      expect(listen).not.toHaveBeenCalled()
+    },
+  )
 
   it('不引用浏览器不存在的 API（只用到 document/CSS/navigator/localStorage）', () => {
     const body = BROWSER_WARN_INIT_SCRIPT

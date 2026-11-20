@@ -13,6 +13,7 @@
  * - 不读取/不上报用户代理。
  */
 export const MIN_CHROMIUM_MAJOR = 118
+const SCOPE_CONDITION = 'at-rule(@scope)'
 
 export type BrowserCheckResult =
   | { decision: 'ok' }
@@ -21,12 +22,11 @@ export type BrowserCheckResult =
 
 export function checkBrowserSupport(): BrowserCheckResult {
   if (typeof window === 'undefined') return { decision: 'unknown' }
-  const doc = document.documentElement
 
   // 关键能力：Astryx 主题依赖 @scope（Edge/Chrome 118+）。
   try {
     if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
-      if (CSS.supports('at-rule', '@scope')) return { decision: 'ok' } // 能力足够，不做品牌/UA 判断（不误报）
+      if (CSS.supports(SCOPE_CONDITION)) return { decision: 'ok' } // 能力足够，不做品牌/UA 判断（不误报）
     } else {
       // 极老环境连 CSS.supports 都没有：不判断，避免误报。
       return { decision: 'unknown' }
@@ -69,14 +69,16 @@ export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
   var root=document.documentElement;
   if(root.getAttribute('data-fmkj-browser-warn-set'))return;
   try{var _u=Number(localStorage.getItem('fmkj:browser-warn-dismissed-until')||'0');if(_u&&Date.now()<_u)return;}catch(e){}
-  var supp=typeof CSS!=='undefined'&&typeof CSS.supports==='function';
   var ok=false,tooOld=false,info='';
-  if(supp){ try{ ok=CSS.supports('at-rule','@scope'); }catch(e){} }
+  try{
+    if(typeof CSS==='undefined'||typeof CSS.supports!=='function')return;
+    ok=CSS.supports('${SCOPE_CONDITION}');
+  }catch(e){return;}
   if(!ok){
     try{
       var m=/(?:Chrome|Chromium)\\/(\\d+)/.exec(navigator.userAgent||'');
       var v=m?parseInt(m[1],10):null;
-      if(v!==null&&isFinite(v)&&v<118){tooOld=true;info='Chromium '+v;}
+      if(v!==null&&isFinite(v)&&v<${MIN_CHROMIUM_MAJOR}){tooOld=true;info='Chromium '+v;}
     }catch(e){}
   }
   if(tooOld){
