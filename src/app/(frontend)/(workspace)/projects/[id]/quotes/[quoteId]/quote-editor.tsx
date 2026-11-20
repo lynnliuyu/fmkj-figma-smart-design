@@ -40,8 +40,11 @@ import { Card as AstryxCard } from '@astryxdesign/core/Card'
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput'
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu'
 import { Field } from '@astryxdesign/core/Field'
+import { Link } from '@astryxdesign/core/Link'
 import { Popover } from '@astryxdesign/core/Popover'
+import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl'
 import { Selector } from '@astryxdesign/core/Selector'
+import { Tab, TabList } from '@astryxdesign/core/TabList'
 import {
   Table,
   TableBody,
@@ -54,6 +57,7 @@ import {
 import { TextArea } from '@astryxdesign/core/TextArea'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { useToast } from '@astryxdesign/core/Toast'
+import { Token } from '@astryxdesign/core/Token'
 import { WORKBENCH_SECTION_HEADING_CLASS } from '@/components/page-header'
 import { Tooltip } from '@astryxdesign/core/Tooltip'
 import { contractStatusLabel } from '@/lib/contracts'
@@ -290,6 +294,10 @@ export function QuoteEditor({
   )
   const [viewMode, setViewMode] = useState<'floors' | 'summary'>('summary')
   const [planMode, setPlanMode] = useState<'symbol' | 'product' | 'hide'>('symbol')
+  const roomCount = useMemo(
+    () => floorGroups.reduce((sum, floor) => sum + floor.rooms.length, 0),
+    [floorGroups],
+  )
   const currentScope = useMemo(() => inferScopeFromTitle(quote.title), [quote.title])
 
   const update = (patch: Partial<QuoteState>) => {
@@ -682,6 +690,8 @@ export function QuoteEditor({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-1.5">
           <Button
+            as={GuardedLink}
+            href={`/projects/${project.id}/quotes`}
             variant="ghost"
             size="sm"
             className="-ml-2 h-8 text-xs font-medium text-muted-foreground hover:text-foreground"
@@ -872,13 +882,9 @@ export function QuoteEditor({
             <AlertTriangle className="size-4 shrink-0 text-warning" />
             <span>点位图中有 {pendingPoints} 个点位尚未匹配型号，未计入本报价</span>
           </span>
-          <button
-            type="button"
-            className="text-xs font-medium underline underline-offset-2"
-            onClick={() => switchToPointMap()}
-          >
+          <Link type="inherit" hasUnderline onClick={() => switchToPointMap()}>
             去点位图查看
-          </button>
+          </Link>
         </div>
       ) : null}
 
@@ -955,70 +961,38 @@ export function QuoteEditor({
             </div>
             {floorGroups.length > 0 ? (
               <div className="flex flex-wrap items-center gap-2">
-                <div
-                  className="flex rounded-lg border border-border bg-muted/90 p-0.5"
+                <TabList
                   role="tablist"
                   aria-label="明细视图"
+                  size="sm"
+                  value={viewMode}
+                  onChange={(v) => setViewMode(v as 'floors' | 'summary')}
                 >
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    role="tab"
-                    aria-selected={viewMode === 'floors'}
-                    className={cn(
-                      'h-7 rounded-md px-2.5 text-xs',
-                      viewMode === 'floors' &&
-                        'bg-background font-semibold text-primary shadow-2xs',
-                    )}
-                    onClick={() => setViewMode('floors')}
+                  <Tab
+                    value="floors"
+                    panelId="quote-lines-panel"
                     icon={<Layers />}
-                    label={`按房间（${floorGroups.reduce((s, f) => s + f.rooms.length, 0)}）`}
+                    label="按房间"
+                    endContent={
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {roomCount}
+                      </span>
+                    }
                   />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    role="tab"
-                    aria-selected={viewMode === 'summary'}
-                    className={cn(
-                      'h-7 rounded-md px-2.5 text-xs',
-                      viewMode === 'summary' &&
-                        'bg-background font-semibold text-primary shadow-2xs',
-                    )}
-                    onClick={() => setViewMode('summary')}
-                    label="整单汇总"
-                  />
-                </div>
+                  <Tab value="summary" panelId="quote-lines-panel" label="整单汇总" />
+                </TabList>
                 {viewMode === 'floors' ? (
-                  <div
-                    className="flex rounded-lg border border-border bg-muted/90 p-0.5"
-                    role="radiogroup"
-                    aria-label="点位图显示"
+                  <SegmentedControl
+                    label="点位图显示"
+                    size="sm"
+                    layout="hug"
+                    value={planMode}
+                    onChange={(v) => setPlanMode(v as 'symbol' | 'product' | 'hide')}
                   >
-                    {(
-                      [
-                        ['symbol', '设备图标'],
-                        ['product', '产品图'],
-                        ['hide', '隐藏图纸'],
-                      ] as const
-                    ).map(([v, label]) => (
-                      <Button
-                        key={v}
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        role="radio"
-                        aria-checked={planMode === v}
-                        className={cn(
-                          'h-7 rounded-md px-2 text-xs',
-                          planMode === v && 'bg-background font-semibold text-primary shadow-2xs',
-                        )}
-                        onClick={() => setPlanMode(v)}
-                        label={label}
-                      />
-                    ))}
-                  </div>
+                    <SegmentedControlItem value="symbol" label="设备图标" />
+                    <SegmentedControlItem value="product" label="产品图" />
+                    <SegmentedControlItem value="hide" label="隐藏图纸" />
+                  </SegmentedControl>
                 ) : null}
               </div>
             ) : null}
@@ -1032,19 +1006,9 @@ export function QuoteEditor({
                   value={lineQuery}
                   onChange={(v) => setLineQuery(v)}
                   placeholder="筛选型号、SKU 或分类…"
-                  aria-label="筛选报价明细"
+                  hasClear
                   controlClassName="h-8 border-border bg-background pl-8 text-xs"
                 />
-                {lineQuery ? (
-                  <button
-                    type="button"
-                    onClick={() => setLineQuery('')}
-                    aria-label="清空筛选"
-                    className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="size-3.5" />
-                  </button>
-                ) : null}
               </div>
             ) : null}
           </div>
@@ -1124,7 +1088,7 @@ export function QuoteEditor({
             </div>
           )}
         </div>
-        <div>
+        <div id="quote-lines-panel">
           {quote.items.length === 0 ? (
             <p className="px-6 py-10 text-center text-sm text-muted-foreground">
               还没有产品。可以在点位图里放置设备后重新生成，或点击「添加产品」。
@@ -1230,14 +1194,14 @@ export function QuoteEditor({
                                           {line.codes.map((code, idx) => (
                                             <span key={code}>
                                               {project ? (
-                                                <button
-                                                  type="button"
-                                                  title={`在点位图中定位并选中 ${code}`}
-                                                  className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+                                                <Link
+                                                  type="inherit"
+                                                  hasUnderline
+                                                  tooltip={`在点位图中定位并选中 ${code}`}
                                                   onClick={() => switchToPointMap({ point: code })}
                                                 >
                                                   {code}
-                                                </button>
+                                                </Link>
                                               ) : (
                                                 code
                                               )}
@@ -1652,9 +1616,10 @@ export function QuoteEditor({
                   { name: '强弱电布线技术交底', amount: 600 },
                   { name: '专属场景定制与一年上门维保', amount: 0 },
                 ].map((preset) => (
-                  <button
+                  <Token
                     key={preset.name}
-                    type="button"
+                    size="sm"
+                    label={`+ ${preset.name}`}
                     onClick={() =>
                       update({
                         fees: [
@@ -1663,10 +1628,7 @@ export function QuoteEditor({
                         ],
                       })
                     }
-                    className="rounded-md border border-border bg-subtle/80 px-2 py-0.5 text-[11px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/6 hover:text-primary"
-                  >
-                    + {preset.name}
-                  </button>
+                  />
                 ))}
               </div>
             ) : null}
