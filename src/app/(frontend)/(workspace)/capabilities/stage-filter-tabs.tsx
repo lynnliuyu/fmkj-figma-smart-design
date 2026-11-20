@@ -26,6 +26,7 @@ export function StageFilterTabs({ label, items }: { label: string; items: StageF
   return (
     <TabList
       size="sm"
+      className="workspace-view-tabs"
       aria-label={label}
       value={activeKey}
       onChange={(v) => {

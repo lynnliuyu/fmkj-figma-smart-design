@@ -168,6 +168,15 @@
   --radius-2xl: 16px;
   --radius-3xl: 20px;
   --radius-4xl: 24px;
+  --color-workspace-ink: #25252a;
+  --color-workspace-ink-dark: #f0f0f9;
+  --color-workspace-paper: #ffffff;
+  --color-workspace-canvas-dark: #101018;
+  --color-workspace-panel-dark: #1b1b21;
+  --color-workspace-outline: #848489;
+  --color-workspace-outline-dark: #74747b;
+  --color-workspace-icon-surface: #f2f2f2;
+  --color-workspace-icon-surface-dark: #2a2b2f;
   --shadow-2xs: 0 1px 1px 0 oklch(0.25 0.02 270 / 0.05);
   --shadow-xs: 0 1px 2px 0 oklch(0.25 0.02 270 / 0.06);
   --shadow-sm: 0 1px 3px 0 oklch(0.25 0.02 270 / 0.08), 0 1px 2px -1px oklch(0.25 0.02 270 / 0.06);
@@ -670,6 +679,21 @@
   --color-doc-head-fg: var(--doc-head-fg);
   --color-doc-stripe: var(--doc-stripe);
   --radius-doc: var(--doc-radius);
+}
+
+/* The two view switches share an opaque selected state across page surfaces. */
+@utility workspace-view-tabs {
+  & .astryx-tab {
+    @apply h-8 rounded-md;
+  }
+
+  & .astryx-tab[data-selected='selected'] {
+    @apply bg-workspace-ink text-workspace-paper dark:bg-workspace-ink-dark dark:text-workspace-canvas-dark;
+  }
+
+  & .astryx-tab-indicator {
+    @apply hidden;
+  }
 }
 
 @utility doc-display {

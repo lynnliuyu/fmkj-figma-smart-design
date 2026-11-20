@@ -57,7 +57,6 @@ import {
 import { TextArea } from '@astryxdesign/core/TextArea'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import { useToast } from '@astryxdesign/core/Toast'
-import { Token } from '@astryxdesign/core/Token'
 import { WORKBENCH_SECTION_HEADING_CLASS } from '@/components/page-header'
 import { Tooltip } from '@astryxdesign/core/Tooltip'
 import { contractStatusLabel } from '@/lib/contracts'
@@ -973,6 +972,7 @@ export function QuoteEditor({
                 <TabList
                   role="tablist"
                   aria-label="明细视图"
+                  className="workspace-view-tabs"
                   size="sm"
                   value={viewMode}
                   onChange={(v) => setViewMode(v as 'floors' | 'summary')}
@@ -982,11 +982,7 @@ export function QuoteEditor({
                     panelId="quote-lines-panel"
                     icon={<Layers />}
                     label="按房间"
-                    endContent={
-                      <span className="text-xs text-muted-foreground tabular-nums">
-                        {roomCount}
-                      </span>
-                    }
+                    endContent={<span className="text-xs tabular-nums">{roomCount}</span>}
                   />
                   <Tab value="summary" panelId="quote-lines-panel" label="整单汇总" />
                 </TabList>
@@ -1608,6 +1604,7 @@ export function QuoteEditor({
                     ],
                   })
                 }
+                className="border-workspace-outline dark:border-workspace-outline-dark"
                 icon={<Plus />}
                 label="添加费用"
               />
@@ -1625,10 +1622,14 @@ export function QuoteEditor({
                   { name: '强弱电布线技术交底', amount: 600 },
                   { name: '专属场景定制与一年上门维保', amount: 0 },
                 ].map((preset) => (
-                  <Token
+                  <Button
                     key={preset.name}
+                    type="button"
+                    variant="secondary"
                     size="sm"
-                    label={`+ ${preset.name}`}
+                    className="border-workspace-outline dark:border-workspace-outline-dark"
+                    icon={<Plus />}
+                    label={preset.name}
                     onClick={() =>
                       update({
                         fees: [
