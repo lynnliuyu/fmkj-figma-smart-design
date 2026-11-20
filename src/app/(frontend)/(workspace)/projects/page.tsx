@@ -1,4 +1,3 @@
-import { StatTile } from '@/components/stat-tile'
 import Form from 'next/form'
 import Link from 'next/link'
 import { FolderKanban, Plus, Search, Sparkles } from 'lucide-react'
@@ -185,12 +184,6 @@ export default async function ProjectsPage({
   })
   const canClaimDemo = demoCount.totalDocs === 0
   const showEmptyActions = projects.length === 0 && !keyword && !archived
-  const totalPoints = projects.reduce((sum, p) => sum + (p.pointCount ?? 0), 0)
-  const totalQuoteAmount = projects.reduce((sum, p) => {
-    const a = amountOf(String(p.id))
-    return sum + (a?.value ?? 0)
-  }, 0)
-  const signedContractsCount = contracts.docs.filter((c) => c.status === 'signed').length
   const claimButton = canClaimDemo ? (
     <form action={claimDemoProject}>
       <Button type="submit" variant="secondary" icon={<Sparkles />} label="领取示例项目" />
@@ -218,35 +211,6 @@ export default async function ProjectsPage({
           </div>
         }
       />
-
-      {/*
-        指标条：一条带发丝分隔线的横条，而不是四张浮起的等权卡片。
-        四张卡片会让首屏视觉中心停在数字上、把真正要操作的「项目列表」压下去，
-        也带来最重的「通用后台」观感（视觉评审指出的首要问题）。
-      */}
-      {projects.length > 0 ? (
-        <div className="grid grid-cols-2 divide-x divide-y divide-border overflow-hidden rounded-[var(--radius-container)] border bg-card sm:grid-cols-4 sm:divide-y-0">
-          <StatTile
-            size="inline"
-            label={archived ? '已归档项目' : '进行中项目'}
-            value={projects.length}
-            unit="个项目"
-          />
-          <StatTile
-            size="inline"
-            label="累计设计点位"
-            value={totalPoints.toLocaleString('zh-CN')}
-            unit="个点位"
-          />
-          <StatTile size="inline" label="方案报价总额" value={yuan(totalQuoteAmount)} />
-          <StatTile
-            size="inline"
-            label="报价 / 签约"
-            value={quotes.docs.length}
-            unit={`份 · 已签 ${signedContractsCount}`}
-          />
-        </div>
-      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <FilterTabs
