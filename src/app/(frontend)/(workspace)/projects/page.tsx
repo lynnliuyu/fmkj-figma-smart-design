@@ -260,6 +260,7 @@ export default async function ProjectsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <FilterTabs
           label="项目状态"
+          trackClassName="max-sm:h-9"
           items={[
             {
               key: 'active',

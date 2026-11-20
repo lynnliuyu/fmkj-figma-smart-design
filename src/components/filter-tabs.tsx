@@ -19,10 +19,12 @@ export function FilterTabs({
   items,
   label,
   className,
+  trackClassName,
 }: {
   items: FilterTab[]
   label: string
   className?: string
+  trackClassName?: string
 }) {
   return (
     <nav
@@ -33,7 +35,12 @@ export function FilterTabs({
         className,
       )}
     >
-      <div className="flex h-8 min-w-max items-center gap-0.5 rounded-lg bg-muted p-0.5">
+      <div
+        className={cn(
+          'flex h-8 min-w-max items-center gap-0.5 rounded-lg bg-muted p-0.5',
+          trackClassName,
+        )}
+      >
         {items.map((it, i) => (
           <Link
             key={it.key ?? i}
