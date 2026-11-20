@@ -412,15 +412,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 icon={<ChevronLeft />}
                 label="上一页"
               />
-            ) : (
-              <Button
-                variant="secondary"
-                size="sm"
-                isDisabled
-                icon={<ChevronLeft />}
-                label="上一页"
-              />
-            )}
+            ) : null}
             <span className="px-2 text-sm text-muted-foreground tabular-nums">
               {page} / {pages}
             </span>
@@ -432,15 +424,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 icon={<ChevronRight />}
                 label="下一页"
               />
-            ) : (
-              <Button
-                variant="secondary"
-                size="sm"
-                isDisabled
-                icon={<ChevronRight />}
-                label="下一页"
-              />
-            )}
+            ) : null}
           </nav>
         ) : null}
       </ProductsResizableLayout>

@@ -151,12 +151,12 @@ export default async function ProjectsPage({
       ])
     : [{ docs: [] }, { docs: [] }]
 
-  const quoteStats = new Map<string, { count: number; latest: number; accepted: number | null }>()
+  // 只留每行「方案报价 / 合同」列真正显示的两种值；条数在表格里另有出处，不再计数。
+  const quoteStats = new Map<string, { latest: number; accepted: number | null }>()
   for (const quote of quotes.docs) {
     const pid = relId(quote.project)
     if (!pid) continue
-    const stat = quoteStats.get(pid) ?? { count: 0, latest: quote.total ?? 0, accepted: null }
-    stat.count++
+    const stat = quoteStats.get(pid) ?? { latest: quote.total ?? 0, accepted: null }
     if (quote.status === 'accepted' && stat.accepted === null) stat.accepted = quote.total ?? 0
     quoteStats.set(pid, stat)
   }
