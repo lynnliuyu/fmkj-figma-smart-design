@@ -22,6 +22,7 @@ import { SearchSubmit } from '@/components/search-submit'
 import { relId } from '@/lib/access'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
+import { clampPage, PAGE_SIZE } from '@/lib/projects-pagination'
 import { getPayloadClient } from '@/lib/payload'
 import { countScenePoints } from '@/lib/point-count'
 import { fmtDate } from '@/lib/projects'
@@ -32,19 +33,6 @@ import { claimDemoProject } from './actions'
 import { redirectToLogin } from '@/lib/login-redirect'
 
 export const metadata = { title: pageTitle('项目') }
-
-/** 每页条数。分页参数走 URL，与筛选/搜索一起可分享、可后退（#210 A）。 */
-const PAGE_SIZE = 50
-
-/** 页码上限：够大以容纳任何真实数据量，又不会让数据库拼出溢出的 offset。 */
-const MAX_PAGE = 1_000_000
-
-/** `?page=` 的取值规则：整数 1..MAX_PAGE；其他一律当第 1 页。 */
-function clampPage(raw: string) {
-  const n = Math.floor(Number(raw))
-  if (!Number.isFinite(n) || n < 1) return 1
-  return Math.min(n, MAX_PAGE)
-}
 
 type Amount = { value: number; caption: string }
 
@@ -83,9 +71,8 @@ export default async function ProjectsPage({
       }
     : statusWhere
 
-  // 页码一律先夹到 1..MAX_PAGE 区间：非数字 / 0 / 负数 / 小数一律回落第 1 页；
-  // 数字上合法但过大的（1e18、Infinity、9999999）夹到 MAX_PAGE，之后再按总数回落末页。
-  // 必须夹，是因为直接把它传给数据库会拼出 offset 溢出的查询、直接 500（独立验收实测 1e18）。
+  // 页码先夹到 1..MAX_PAGE：非数字 / 0 / 负数 / 小数回落第 1 页；过大的（1e18、Infinity）夹到上限，
+  // 再由下面的 totalDocs 回落末页。必须夹，否则数据库会拼出溢出 offset 直接 500（#213 实测 1e18）。
   const requestedPage = clampPage(pageParam)
 
   const [result, activeCount, archivedCount] = await Promise.all([
