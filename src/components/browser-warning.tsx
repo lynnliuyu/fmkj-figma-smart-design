@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { checkBrowserSupport } from '@/lib/browser-check'
+import { BANNER_LINK_STYLE, BANNER_STYLE, CLOSE_BUTTON_STYLE } from '@/lib/browser-warn-style'
 
 /**
  * 旧浏览器提醒（issue #188）。
@@ -44,30 +45,36 @@ export function BrowserWarningBanner() {
         : '',
     [result],
   )
+  const bannerRef = useRef<HTMLDivElement>(null)
+  const visible = Boolean(warn) && !dismissed
+
+  // 横幅固定定位，靠给 body 加等高内边距让内容下移，避免盖住顶栏（#204）。
+  // 用 layout effect 而不是 effect：在首帧前改完，避免内容先闪一下再被顶下去。
+  useLayoutEffect(() => {
+    if (!visible) return
+    const reserve = () => {
+      const h = bannerRef.current?.offsetHeight ?? 0
+      document.body.style.paddingTop = h ? `${h}px` : ''
+    }
+    reserve()
+    window.addEventListener('resize', reserve)
+    return () => {
+      window.removeEventListener('resize', reserve)
+      document.body.style.paddingTop = ''
+    }
+  }, [visible])
+
   if (!warn || dismissed) return null
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      style={{
-        position: 'fixed',
-        insetInline: '0',
-        top: 0,
-        zIndex: 2147483000,
-        background: '#7f1d1d',
-        color: '#fff',
-        font: '14px/1.5 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif',
-        padding: '8px 44px 8px 12px',
-      }}
-    >
+    <div ref={bannerRef} role="status" aria-live="polite" style={BANNER_STYLE}>
       {warn}
       更新方法：
       <a
         href="https://www.microsoft.com/edge"
         target="_blank"
         rel="noreferrer"
-        style={{ color: '#ffd9a8', textDecoration: 'underline', margin: '0 2px' }}
+        style={BANNER_LINK_STYLE}
       >
         Edge 设置 → 关于 Microsoft Edge
       </a>
@@ -75,18 +82,7 @@ export function BrowserWarningBanner() {
       <button
         type="button"
         aria-label="关闭浏览器过旧提示"
-        style={{
-          position: 'absolute',
-          insetInlineEnd: '8px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          background: 'transparent',
-          border: '0',
-          color: '#ffd9a8',
-          cursor: 'pointer',
-          font: '14px sans-serif',
-          padding: '4px 6px',
-        }}
+        style={CLOSE_BUTTON_STYLE}
         onClick={() => {
           setDismissed(true)
           try {

@@ -1,3 +1,5 @@
+import { BANNER_STYLE_CSS, CLOSE_BUTTON_STYLE_CSS } from '@/lib/browser-warn-style'
+
 /**
  * 浏览器能力检查（issue #188）。
  *
@@ -63,7 +65,10 @@ export function browserWarningHtml(result: BrowserCheckResult): string {
 /**
  * 内联早期脚本（服务器渲染，语言兼容旧内核，受现有 CSP 允许：script-src 含 'unsafe-inline'）。
  * 在 App chunk/CSS 可能失效时仍能挂上提示 DOM。
- * 逻辑与 checkBrowserSupport 完全一致；这里不能 import 其它模块。
+ * 逻辑与 checkBrowserSupport 完全一致。
+ *
+ * 样式不在这里手写：横幅与关闭按钮的声明来自 `lib/browser-warn-style.ts`，与 React 版共用同一份常量，
+ * 避免两版漂移（`browser-warn-style.test.ts` 有断言）。运行时只依赖 DOM/CSS/localStorage，不依赖 React 或组件库。
  */
 export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
   var root=document.documentElement;
@@ -94,14 +99,19 @@ export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
     d.id='__fmkj_browser_warn';
     d.setAttribute('role','status');
     d.setAttribute('aria-live','polite');
-    d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:2147483000;background:#7f1d1d;color:#fff;font:14px/1.5 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;padding:8px 44px 8px 12px;';
+    d.style.cssText='${BANNER_STYLE_CSS}';
     d.textContent='⚠️ 您的浏览器版本过旧（'+info+'），界面可能显示异常。更新方法：Edge → 设置 → 关于 Microsoft Edge，或 Chrome 设置 → 关于 Chrome，更新后刷新页面。';
     var x=document.createElement('button');
     x.type='button';x.setAttribute('aria-label','关闭浏览器过旧提示');
-    x.style.cssText='position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#ffd9a8;cursor:pointer;font:14px sans-serif;padding:4px 6px;';
+    x.style.cssText='${CLOSE_BUTTON_STYLE_CSS}';
     x.textContent='✕';
-    x.onclick=function(){ d.parentNode.removeChild(d); try{localStorage.setItem('fmkj:browser-warn-dismissed-until',String(Date.now()+30*864e5));}catch(e){} };
+    x.onclick=function(){
+      d.parentNode.removeChild(d);
+      try{document.body.style.paddingTop='';}catch(e){}
+      try{localStorage.setItem('fmkj:browser-warn-dismissed-until',String(Date.now()+30*864e5));}catch(e){}
+    };
     d.appendChild(x);
     document.body.appendChild(d);
+    try{ var h=d.offsetHeight||0; if(h) document.body.style.paddingTop=h+'px'; }catch(e){}
   }
 }catch(e){}}())`
