@@ -944,7 +944,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                 <TableCell className="w-24 max-w-none font-medium">
                                   {c.userName}
                                 </TableCell>
-                                <TableCell className="min-w-[200px] max-w-none">
+                                <TableCell className="w-64 min-w-64 max-w-0">
                                   <div className="truncate font-medium">{c.title}</div>
                                   {c.projectName ? (
                                     <div className="truncate text-[11px] text-muted-foreground">
@@ -960,10 +960,10 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                 <TableCell className="w-32 max-w-none text-right whitespace-nowrap tabular-nums">
                                   {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
                                 </TableCell>
-                                <TableCell className="w-56 max-w-none pr-4 text-muted-foreground sm:pr-6">
-                                  <div className="w-full min-w-0 truncate">
-                                    {c.lastAssistantPreview || '—'}
-                                  </div>
+                                <TableCell className="w-56 max-w-0 pr-4 text-muted-foreground sm:pr-6">
+                                  {/* 摘要上游给的是 100 字：单元格必须留 Astryx 的 max-width:0，
+                                      再在内部 truncate，否则整张表会被撑宽（实测 792 → 1782px）。 */}
+                                  <div className="truncate">{c.lastAssistantPreview || '—'}</div>
                                 </TableCell>
                               </TableRow>
                             ))
