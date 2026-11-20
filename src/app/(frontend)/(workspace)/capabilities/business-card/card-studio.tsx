@@ -446,14 +446,16 @@ export function CardStudio({
           </Card>
 
           <Card className="gap-3">
+            {view === '3d' && webglFailed ? (
+              <div
+                role="status"
+                className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground"
+              >
+                3D 预览不可用（WebGL 初始化失败）。已切换到平面预览，仍可编辑与导出。
+              </div>
+            ) : null}
             {show3d ? (
               <>
-                {webglFailed ? (
-                  <div className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground">
-                    3D 预览不可用（WebGL
-                    初始化失败）。已自动回落到平面预览，编辑与导出不受影响；可点击「平面预览」查看双面。
-                  </div>
-                ) : null}
                 <div className="flex flex-wrap items-center gap-2">
                   <Box className="size-4 text-muted-foreground" />
                   <p className="text-sm font-semibold">三维预览（首选）</p>
@@ -480,12 +482,9 @@ export function CardStudio({
                     <Button
                       variant="ghost"
                       size="sm"
-                      label={spinOn ? '暂停旋转' : '继续旋转'}
-                      onClick={() => {
-                        const next = !spinOn
-                        setSpinOn(next)
-                        threeRef.current?.setSpinning(next)
-                      }}
+                      label={spinOn && !reduceMotion ? '暂停旋转' : '继续旋转'}
+                      isDisabled={reduceMotion}
+                      onClick={() => setSpinOn((current) => !current)}
                     />
                   </span>
                 </div>
@@ -505,6 +504,9 @@ export function CardStudio({
                       <Card3D
                         ref={threeRef}
                         className="h-full"
+                        spinning={spinOn && !reduceMotion}
+                        onSpinningChange={setSpinOn}
+                        reduceMotion={reduceMotion}
                         frontSrc={textures[previewKey]?.front ?? null}
                         backSrc={textures[previewKey]?.back ?? null}
                         edgeColor={

@@ -38,6 +38,9 @@ export type Card3DProps = {
   /** 侧边颜色：跟着当前面走，深色卡配深侧边 */
   edgeColor?: string
   className?: string
+  spinning: boolean
+  onSpinningChange: (spinning: boolean) => void
+  reduceMotion: boolean
   /** WebGL 初始化失败时通知宿主（宿主应回落到平面预览，不能挡住导出） */
   onError?: (message: string) => void
 }
@@ -47,19 +50,25 @@ export type Card3DHandle = {
   flipTo: (side: 'front' | 'back') => void
   /** 回到初始斜角 */
   reset: () => void
-  /** 暂停 / 继续自转 */
-  setSpinning: (v: boolean) => void
 }
 
 export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
-  { frontSrc, backSrc, edgeColor = '#1B1E38', className, onError },
+  {
+    frontSrc,
+    backSrc,
+    edgeColor = '#1B1E38',
+    className,
+    spinning,
+    onSpinningChange,
+    reduceMotion,
+    onError,
+  },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
-  const [spinning, setSpinning] = useState(true)
-  // 用 ref 让按钮改状态时不必重建场景
-  const spinRef = useRef(true)
+  // 用 ref 同步工作台与画布的自转状态，不必重建场景。
+  const spinRef = useRef(spinning)
   const resetRef = useRef<() => void>(() => {})
   const flipRef = useRef<(side: 'front' | 'back') => void>(() => {})
 
@@ -177,7 +186,7 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
       card.rotation.y = 0.46
       controls.autoRotate = false
       spinRef.current = false
-      setSpinning(false)
+      onSpinningChange(false)
       targetY = null
       controls.update()
     }
@@ -187,7 +196,7 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
       card.rotation.x = -0.055
       controls.autoRotate = false
       spinRef.current = false
-      setSpinning(false)
+      onSpinningChange(false)
     }
 
     // 拖拽期间暂停自转，松手 1.6s 后恢复，避免「刚拖住就被转走」
@@ -207,12 +216,6 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
 
     controls.autoRotate = spinRef.current
     controls.autoRotateSpeed = AUTO_ROTATE_SPEED
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduceMotion) {
-      controls.autoRotate = false
-      setSpinning(false)
-    }
 
     const resize = () => {
       const w = host.clientWidth || 1
@@ -252,7 +255,7 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
     renderer.setAnimationLoop(() => {
       const dt = Math.min(clock.getDelta(), 0.05)
       if (!visible) return
-      const isSpinning = spinRef.current && !reduceMotion
+      const isSpinning = spinRef.current
       if (isSpinning) {
         bobPhase += dt
         card.position.y = Math.sin(bobPhase * 0.9) * BOB
@@ -302,14 +305,13 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
       renderer.domElement.remove()
     }
     // 贴图变了要重建材质；场景很小，重建代价可忽略
-  }, [frontSrc, backSrc, edgeColor, onError])
+  }, [frontSrc, backSrc, edgeColor, onError, onSpinningChange])
 
   useImperativeHandle(
     ref,
     () => ({
       flipTo: (side) => flipRef.current(side),
       reset: () => resetRef.current(),
-      setSpinning: (v) => setSpinning(v),
     }),
     [],
   )
@@ -331,7 +333,8 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
         <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden justify-center gap-1.5 pb-2.5 sm:flex">
           <button
             type="button"
-            onClick={() => setSpinning((v) => !v)}
+            onClick={() => onSpinningChange(!spinning)}
+            disabled={reduceMotion}
             className="pointer-events-auto cursor-pointer rounded-full border border-border bg-background/90 px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground backdrop-blur hover:bg-background"
           >
             {spinning ? '暂停旋转' : '继续旋转'}
@@ -352,7 +355,8 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
       <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 sm:hidden">
         <button
           type="button"
-          onClick={() => setSpinning((v) => !v)}
+          onClick={() => onSpinningChange(!spinning)}
+          disabled={reduceMotion}
           className="cursor-pointer rounded-full border border-border bg-background px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground hover:bg-muted"
         >
           {spinning ? '暂停旋转' : '继续旋转'}
