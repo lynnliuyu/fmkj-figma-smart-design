@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { FolderKanban, Plus, Search, Sparkles } from 'lucide-react'
 import type { Where } from 'payload'
 
+import { Banner } from '@astryxdesign/core/Banner'
 import { EmptyState } from '@/components/empty-state'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
@@ -32,6 +33,9 @@ import { claimDemoProject } from './actions'
 import { redirectToLogin } from '@/lib/login-redirect'
 
 export const metadata = { title: pageTitle('项目') }
+
+/** 列表一次最多取多少条。超过时必须如实说明，不能让用户以为项目丢了（#210）。 */
+const LIST_LIMIT = 500
 
 type Amount = { value: number; caption: string }
 
@@ -75,7 +79,7 @@ export default async function ProjectsPage({
       collection: 'projects',
       where,
       depth: 0,
-      limit: 500,
+      limit: LIST_LIMIT,
       sort: '-updatedAt',
       user,
       overrideAccess: false,
@@ -198,7 +202,8 @@ export default async function ProjectsPage({
           keyword ? (
             <>
               匹配「{keyword}」共{' '}
-              <span className="font-medium text-foreground tabular-nums">{projects.length}</span> 个
+              <span className="font-medium text-foreground tabular-nums">{result.totalDocs}</span>{' '}
+              个
             </>
           ) : (
             '管理全屋智能设计项目、户型彩平点位图、多版本报价与交付归档'
@@ -247,6 +252,16 @@ export default async function ProjectsPage({
           <SearchSubmit />
         </Form>
       </div>
+
+      {/* 列表有上限：超过时如实说明，而不是让用户以为项目丢了（#210） */}
+      {result.totalDocs > projects.length ? (
+        <Banner
+          status="warning"
+          container="card"
+          title={`仅显示最近 ${LIST_LIMIT} 条（共 ${result.totalDocs} 条）`}
+          description="用搜索或顶部筛选缩小范围，就能找到更早的项目。"
+        />
+      ) : null}
 
       {projects.length === 0 ? (
         <EmptyState
