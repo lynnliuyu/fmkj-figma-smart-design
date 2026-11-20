@@ -1,7 +1,7 @@
 'use client'
 
 import { EmptyState } from '@/components/empty-state'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -92,7 +92,7 @@ function methodLabel(m?: string) {
 export function UsageReportsClient({ report }: { report: CustomerUsageReport }) {
   const router = useRouter()
   const showToast = useToast()
-  const [refreshing, setRefreshing] = useState(false)
+  const [refreshing, startRefresh] = useTransition()
   const [copiedSummary, setCopiedSummary] = useState(false)
   const [activeTab, setActiveTab] = useState('customers')
   const [customerQuery, setCustomerQuery] = useState('')
@@ -111,12 +111,6 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
     if (!onlyZeroSheet) return report.sheetInspections
     return report.sheetInspections.filter((s) => s.pointCount === 0)
   }, [report.sheetInspections, onlyZeroSheet])
-
-  function handleRefresh() {
-    setRefreshing(true)
-    router.refresh()
-    setTimeout(() => setRefreshing(false), 600)
-  }
 
   function exportCsv() {
     const headers = [
@@ -228,8 +222,8 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
           <Button
             variant="secondary"
             size="sm"
-            onClick={handleRefresh}
-            isDisabled={refreshing}
+            onClick={() => startRefresh(() => router.refresh())}
+            isLoading={refreshing}
             icon={<RefreshCw />}
             label="刷新数据"
           />
@@ -487,27 +481,29 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                 }
                 content={
                   <LayoutContent padding={0} isScrollable={false}>
-                    <div className="overflow-x-auto">
-                      <Table hasHover>
+                    <div className="min-w-0 [&_table]:min-w-3xl">
+                      <Table aria-label="客户使用明细" density="compact" hasHover>
                         <TableHeader>
                           <TableRow isHeaderRow>
-                            <TableHeaderCell className="pl-4 sm:pl-6">客户 / 账号</TableHeaderCell>
+                            <TableHeaderCell className="w-44 min-w-44 max-w-none pl-4 sm:pl-6">
+                              客户 / 账号
+                            </TableHeaderCell>
                             <TableHeaderCell className="w-32 max-w-none text-right">
                               剩余 / 已用积分
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-20 max-w-none text-right sm:table-cell">
+                            <TableHeaderCell className="w-20 max-w-none text-right">
                               项目数
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-28 max-w-none text-right md:table-cell">
+                            <TableHeaderCell className="w-28 max-w-none text-right">
                               户型图 / 点位
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-24 max-w-none text-right md:table-cell">
+                            <TableHeaderCell className="w-24 max-w-none text-right">
                               报价 / 合同
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-28 max-w-none text-right lg:table-cell">
+                            <TableHeaderCell className="w-28 max-w-none text-right">
                               AI 对话 / 消息
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden pr-4 text-right sm:pr-6 md:table-cell">
+                            <TableHeaderCell className="pr-4 text-right sm:pr-6">
                               最近活跃
                             </TableHeaderCell>
                           </TableRow>
@@ -525,7 +521,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                           ) : (
                             filteredCustomers.map((c) => (
                               <TableRow key={c.userId}>
-                                <TableCell className="max-w-0 pl-4 sm:pl-6">
+                                <TableCell className="w-44 min-w-44 max-w-none pl-4 sm:pl-6">
                                   <div className="min-w-0">
                                     <div className="truncate font-medium text-foreground">
                                       {c.name}
@@ -550,24 +546,24 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                     / {c.creditsConsumed}
                                   </span>
                                 </TableCell>
-                                <TableCell className="hidden w-20 max-w-none text-right font-medium tabular-nums sm:table-cell">
+                                <TableCell className="w-20 max-w-none text-right font-medium tabular-nums">
                                   {c.projectCount}
                                 </TableCell>
-                                <TableCell className="hidden w-28 max-w-none text-right tabular-nums md:table-cell">
+                                <TableCell className="w-28 max-w-none text-right tabular-nums">
                                   {c.sheetCount} 张{' '}
                                   <span className="text-muted-foreground">({c.pointCount} 点)</span>
                                 </TableCell>
-                                <TableCell className="hidden w-24 max-w-none text-right tabular-nums md:table-cell">
+                                <TableCell className="w-24 max-w-none text-right tabular-nums">
                                   {c.quoteCount}{' '}
                                   <span className="text-muted-foreground">/ {c.contractCount}</span>
                                 </TableCell>
-                                <TableCell className="hidden w-28 max-w-none text-right tabular-nums lg:table-cell">
+                                <TableCell className="w-28 max-w-none text-right tabular-nums">
                                   {c.conversationCount}{' '}
                                   <span className="text-muted-foreground">
                                     ({c.messageCount} 条)
                                   </span>
                                 </TableCell>
-                                <TableCell className="hidden pr-4 text-right text-muted-foreground tabular-nums sm:pr-6 md:table-cell">
+                                <TableCell className="pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
                                   {formatDateTime(c.lastActiveAt)}
                                 </TableCell>
                               </TableRow>
@@ -632,16 +628,17 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               className="flex flex-col justify-between rounded-[var(--radius-container)] border bg-card p-3 shadow-2xs"
                             >
                               <div className="flex gap-3">
-                                <button
+                                <Button
                                   type="button"
+                                  variant="ghost"
+                                  label={`放大查看图纸：${sh.sheetName}`}
                                   onClick={() =>
                                     setPreviewImg({
                                       url: sh.url,
                                       title: `${sh.projectName} · ${sh.sheetName}`,
                                     })
                                   }
-                                  className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border bg-muted"
-                                  title="点击放大查看客户上传的原图"
+                                  className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border bg-muted p-0 [&_img]:block"
                                 >
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img
@@ -649,7 +646,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                     alt={sh.sheetName}
                                     className="size-full object-cover transition-transform group-hover:scale-105"
                                   />
-                                </button>
+                                </Button>
                                 <div className="min-w-0 flex-1 space-y-1">
                                   <div className="flex items-center justify-between gap-1">
                                     <span className="truncate text-xs font-semibold text-foreground">
@@ -723,8 +720,8 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                   }
                   content={
                     <LayoutContent padding={0} isScrollable={false}>
-                      <div className="overflow-x-auto">
-                        <Table hasHover>
+                      <div className="min-w-0 [&_table]:min-w-3xl">
+                        <Table aria-label="上传识别日志" density="compact" hasHover>
                           <TableHeader>
                             <TableRow isHeaderRow>
                               <TableHeaderCell className="w-32 max-w-none pl-4 sm:pl-6">
@@ -733,10 +730,10 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               <TableHeaderCell className="w-48 max-w-none">
                                 上传文件名
                               </TableHeaderCell>
-                              <TableHeaderCell className="hidden w-32 max-w-none md:table-cell">
+                              <TableHeaderCell className="w-32 max-w-none">
                                 识别通道
                               </TableHeaderCell>
-                              <TableHeaderCell className="hidden w-36 max-w-none text-right md:table-cell">
+                              <TableHeaderCell className="w-36 max-w-none text-right">
                                 开关 / 灯具 / 区域
                               </TableHeaderCell>
                               <TableHeaderCell className="pr-4 text-right sm:pr-6">
@@ -755,7 +752,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                   <TableCell className="w-48 max-w-none font-medium">
                                     {u.fileName}
                                   </TableCell>
-                                  <TableCell className="hidden w-32 max-w-none md:table-cell">
+                                  <TableCell className="w-32 max-w-none">
                                     <span
                                       className={cn(
                                         'rounded border px-1.5 py-0.2 text-[10px]',
@@ -765,7 +762,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                       {mb.text}
                                     </span>
                                   </TableCell>
-                                  <TableCell className="hidden w-36 max-w-none text-right tabular-nums md:table-cell">
+                                  <TableCell className="w-36 max-w-none text-right tabular-nums">
                                     开关 {u.switches} · 灯具 {u.lights} · 区域 {u.areas}
                                   </TableCell>
                                   <TableCell className="pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
@@ -906,26 +903,24 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                 }
                 content={
                   <LayoutContent padding={0} isScrollable={false}>
-                    <div className="overflow-x-auto">
-                      <Table hasHover>
+                    <div className="min-w-0 [&_table]:min-w-3xl">
+                      <Table aria-label="AI 对话会话" density="compact" hasHover>
                         <TableHeader>
                           <TableRow isHeaderRow>
                             <TableHeaderCell className="w-32 max-w-none pl-4 sm:pl-6">
                               时间
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-24 max-w-none md:table-cell">
-                              客户
-                            </TableHeaderCell>
+                            <TableHeaderCell className="w-24 max-w-none">客户</TableHeaderCell>
                             <TableHeaderCell className="min-w-[200px] max-w-none">
                               对话标题 / 关联项目
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-24 max-w-none text-center lg:table-cell">
+                            <TableHeaderCell className="w-24 max-w-none text-center">
                               调度模型
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden w-32 max-w-none text-right md:table-cell">
+                            <TableHeaderCell className="w-32 max-w-none text-right">
                               消息 / 工具 / 积分
                             </TableHeaderCell>
-                            <TableHeaderCell className="hidden pr-4 sm:pr-6 md:table-cell">
+                            <TableHeaderCell className="pr-4 sm:pr-6">
                               AI 最后回复摘要
                             </TableHeaderCell>
                           </TableRow>
@@ -946,7 +941,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                 <TableCell className="w-32 max-w-none whitespace-nowrap text-muted-foreground tabular-nums pl-4 sm:pl-6">
                                   {formatDateTime(c.updatedAt)}
                                 </TableCell>
-                                <TableCell className="hidden w-24 max-w-none font-medium md:table-cell">
+                                <TableCell className="w-24 max-w-none font-medium">
                                   {c.userName}
                                 </TableCell>
                                 <TableCell className="min-w-[200px] max-w-none">
@@ -957,15 +952,15 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                     </div>
                                   ) : null}
                                 </TableCell>
-                                <TableCell className="hidden w-24 max-w-none text-center lg:table-cell">
+                                <TableCell className="w-24 max-w-none text-center">
                                   <span className="rounded bg-muted px-1.5 py-0.5 text-[11px]">
                                     {c.model}
                                   </span>
                                 </TableCell>
-                                <TableCell className="hidden w-32 max-w-none text-right whitespace-nowrap tabular-nums md:table-cell">
+                                <TableCell className="w-32 max-w-none text-right whitespace-nowrap tabular-nums">
                                   {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
                                 </TableCell>
-                                <TableCell className="hidden truncate pr-4 text-muted-foreground sm:pr-6 md:table-cell">
+                                <TableCell className="truncate pr-4 text-muted-foreground sm:pr-6">
                                   {c.lastAssistantPreview || '—'}
                                 </TableCell>
                               </TableRow>
