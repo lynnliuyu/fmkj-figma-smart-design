@@ -21,6 +21,8 @@ export default tseslint.config(
       'build/**',
       'miniprogram/**', // 小程序独立运行时，不在 CI 覆盖范围
       'desktop/**', // Electron 独立运行时，同上
+      '.cursor/**', // LoopForge Local 宿主包（loopforge-cli 安装，勿手改）
+      '.devflow/**', // LoopForge 安装状态
       'src/app/(payload)/**', // Payload 生成文件，不要改
       'src/payload-types.ts', // Payload 生成
       'src/themes/**', // Astryx theme build 产物
