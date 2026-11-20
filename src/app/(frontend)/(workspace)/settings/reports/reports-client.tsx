@@ -503,7 +503,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                             <TableHeaderCell className="w-28 max-w-none text-right">
                               AI 对话 / 消息
                             </TableHeaderCell>
-                            <TableHeaderCell className="pr-4 text-right sm:pr-6">
+                            <TableHeaderCell className="w-28 max-w-none whitespace-nowrap pr-4 text-right sm:pr-6">
                               最近活跃
                             </TableHeaderCell>
                           </TableRow>
@@ -563,7 +563,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                     ({c.messageCount} 条)
                                   </span>
                                 </TableCell>
-                                <TableCell className="pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
+                                <TableCell className="w-28 max-w-none whitespace-nowrap pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
                                   {formatDateTime(c.lastActiveAt)}
                                 </TableCell>
                               </TableRow>
@@ -736,7 +736,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                               <TableHeaderCell className="w-36 max-w-none text-right">
                                 开关 / 灯具 / 区域
                               </TableHeaderCell>
-                              <TableHeaderCell className="pr-4 text-right sm:pr-6">
+                              <TableHeaderCell className="w-24 max-w-none whitespace-nowrap pr-4 text-right sm:pr-6">
                                 识别耗时
                               </TableHeaderCell>
                             </TableRow>
@@ -765,7 +765,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                   <TableCell className="w-36 max-w-none text-right tabular-nums">
                                     开关 {u.switches} · 灯具 {u.lights} · 区域 {u.areas}
                                   </TableCell>
-                                  <TableCell className="pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
+                                  <TableCell className="w-24 max-w-none whitespace-nowrap pr-4 text-right text-muted-foreground tabular-nums sm:pr-6">
                                     {u.durationMs} ms
                                   </TableCell>
                                 </TableRow>
@@ -920,7 +920,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                             <TableHeaderCell className="w-32 max-w-none text-right">
                               消息 / 工具 / 积分
                             </TableHeaderCell>
-                            <TableHeaderCell className="pr-4 sm:pr-6">
+                            <TableHeaderCell className="w-56 max-w-none pr-4 sm:pr-6">
                               AI 最后回复摘要
                             </TableHeaderCell>
                           </TableRow>
@@ -960,7 +960,7 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                 <TableCell className="w-32 max-w-none text-right whitespace-nowrap tabular-nums">
                                   {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
                                 </TableCell>
-                                <TableCell className="truncate pr-4 text-muted-foreground sm:pr-6">
+                                <TableCell className="w-56 max-w-none truncate pr-4 text-muted-foreground sm:pr-6">
                                   {c.lastAssistantPreview || '—'}
                                 </TableCell>
                               </TableRow>
