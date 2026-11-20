@@ -36,6 +36,16 @@ export const metadata = { title: pageTitle('项目') }
 /** 每页条数。分页参数走 URL，与筛选/搜索一起可分享、可后退（#210 A）。 */
 const PAGE_SIZE = 50
 
+/** 页码上限：够大以容纳任何真实数据量，又不会让数据库拼出溢出的 offset。 */
+const MAX_PAGE = 1_000_000
+
+/** `?page=` 的取值规则：整数 1..MAX_PAGE；其他一律当第 1 页。 */
+function clampPage(raw: string) {
+  const n = Math.floor(Number(raw))
+  if (!Number.isFinite(n) || n < 1) return 1
+  return Math.min(n, MAX_PAGE)
+}
+
 type Amount = { value: number; caption: string }
 
 /** 系统为新成员发放的示例项目，名称带「【示例】」前缀 */
@@ -73,8 +83,10 @@ export default async function ProjectsPage({
       }
     : statusWhere
 
-  // 非法页码（非数字 / 0 / 负数）一律回落到第 1 页，不报错；超出末页在拿到总数后再回落。
-  const requestedPage = Math.max(1, Math.floor(Number(pageParam)) || 1)
+  // 页码一律先夹到 1..MAX_PAGE 区间：非数字 / 0 / 负数 / 小数一律回落第 1 页；
+  // 数字上合法但过大的（1e18、Infinity、9999999）夹到 MAX_PAGE，之后再按总数回落末页。
+  // 必须夹，是因为直接把它传给数据库会拼出 offset 溢出的查询、直接 500（独立验收实测 1e18）。
+  const requestedPage = clampPage(pageParam)
 
   const [result, activeCount, archivedCount] = await Promise.all([
     payload.find({
