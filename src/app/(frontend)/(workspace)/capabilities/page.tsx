@@ -1,4 +1,3 @@
-import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
@@ -11,6 +10,7 @@ import {
 } from '@/plugins'
 
 import { PluginList, type PluginViewItem, type PluginViewSection } from './plugin-list'
+import { StageFilterTabs } from './stage-filter-tabs'
 import { redirectToLogin } from '@/lib/login-redirect'
 
 export const metadata = { title: pageTitle('能力中心') }
@@ -59,14 +59,14 @@ export default async function PluginsPage({
         title="能力中心"
         description="点开即用，按 AI 积分计费。"
         actions={
-          <FilterTabs
+          <StageFilterTabs
             label="阶段"
             items={[
               { key: 'all', label: '全部阶段', href: '/capabilities', active: !stage },
               ...PLUGIN_STAGES.map((s) => ({
                 key: s.key,
                 label: s.label,
-                href: `/plugins?stage=${s.key}`,
+                href: `/capabilities?stage=${s.key}`,
                 active: stage === s.key,
               })),
             ]}

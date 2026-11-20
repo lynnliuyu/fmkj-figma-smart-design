@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { EmptyState } from '@/components/empty-state'
+import { EmptyState } from '@astryxdesign/core/EmptyState'
 import { PageHeader } from '@/components/page-header'
 import { TemplateCard } from '@/components/proposal-template-card'
 import { pageTitle } from '@/lib/brand'

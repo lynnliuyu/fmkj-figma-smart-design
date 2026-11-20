@@ -31,9 +31,11 @@ import { AppearanceMenuItems } from '@/components/appearance-menu'
 import { BrandLogo } from '@/components/landing/landing-chrome'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
+import { ClickableCard } from '@astryxdesign/core/ClickableCard'
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu'
+import { List, ListItem } from '@astryxdesign/core/List'
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout'
 import { TextInput } from '@astryxdesign/core/TextInput'
 import type { getManualSnapshot } from '@/lib/user-manual'
@@ -351,14 +353,14 @@ export function DocsClient({ manual }: { manual: ManualData }) {
             <span aria-hidden className="text-muted-foreground/60">
               /
             </span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 gap-1.5 text-sm font-semibold tracking-tight hover:text-primary"
               onClick={() => selectSection('overview')}
-              className="flex items-center gap-1.5 text-sm font-semibold tracking-tight hover:text-primary"
-            >
-              <BookOpen className="size-4 text-primary" />
-              <span>Docs</span>
-            </button>
+              icon={<BookOpen className="size-4 text-primary" />}
+              label="Docs"
+            />
             <Badge
               variant="neutral"
               className="hidden font-mono text-[10px] lg:inline-flex"
@@ -368,24 +370,27 @@ export function DocsClient({ manual }: { manual: ManualData }) {
 
           {/* 全局文档搜索框（⌘K） */}
           <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 lg:max-w-xs">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
+              label="搜索文档（⌘K）"
               onClick={() => setSearchOpen(true)}
-              aria-label="搜索文档（⌘K）"
-              className="flex h-8 w-full min-w-0 items-center justify-between rounded-lg border bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+              className="h-8 w-full min-w-0 justify-between rounded-lg border bg-muted/40 px-3 font-normal text-xs text-muted-foreground hover:bg-muted/70 hover:text-foreground"
             >
-              <span className="flex min-w-0 items-center gap-2">
-                <Search className="size-3.5 shrink-0" />
-                {/* 文字提示在 md~lg 区间收起为图标（与右端导航共用 768 宽度），
-                    窄屏(<md)与宽屏(≥lg)都显示完整文案 */}
-                <span className="max-lg:hidden truncate lg:inline">
-                  搜索功能、用法、计费或快捷键…
+              <span className="flex w-full min-w-0 items-center justify-between gap-2">
+                <span className="flex min-w-0 items-center gap-2">
+                  <Search className="size-3.5 shrink-0" />
+                  {/* 文字提示在 md~lg 区间收起为图标（与右端导航共用 768 宽度），
+                      窄屏(<md)与宽屏(≥lg)都显示完整文案 */}
+                  <span className="max-lg:hidden truncate lg:inline">
+                    搜索功能、用法、计费或快捷键…
+                  </span>
                 </span>
+                <kbd className="ml-2 hidden shrink-0 rounded border bg-background px-1.5 py-0.5 font-mono text-[10px] sm:inline-block">
+                  ⌘K
+                </kbd>
               </span>
-              <kbd className="ml-2 hidden shrink-0 rounded border bg-background px-1.5 py-0.5 font-mono text-[10px] sm:inline-block">
-                ⌘K
-              </kbd>
-            </button>
+            </Button>
           </div>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -438,39 +443,33 @@ export function DocsClient({ manual }: { manual: ManualData }) {
           >
             <nav aria-label="文档目录" className="space-y-6">
               {DOC_GROUPS.map((group) => (
-                <div key={group.group} className="space-y-1.5">
-                  <p className="px-2.5 text-xs font-semibold tracking-wider text-foreground uppercase">
-                    {group.group}
-                  </p>
-                  <ul className="space-y-0.5 border-l pl-2">
-                    {group.items.map((item) => {
-                      const active = item.id === activeId
-                      return (
-                        <li key={item.id}>
-                          <button
-                            type="button"
-                            onClick={() => selectSection(item.id)}
-                            className={cn(
-                              '-ml-[9px] flex w-full items-center justify-between border-l-2 py-1.5 pr-2 pl-3 text-left text-xs transition-colors',
-                              active
-                                ? 'border-primary bg-primary/[0.06] font-semibold text-primary rounded-r-md'
-                                : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground',
-                            )}
-                          >
-                            <span className="truncate">{item.title}</span>
-                            {item.badge ? (
-                              <Badge
-                                variant={active ? 'neutral' : 'neutral'}
-                                className="ml-1.5 h-4 shrink-0 px-1 text-[10px]"
-                                label={item.badge}
-                              />
-                            ) : null}
-                          </button>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </div>
+                <List
+                  key={group.group}
+                  density="compact"
+                  header={
+                    <p className="px-2.5 text-xs font-semibold tracking-wider text-foreground uppercase">
+                      {group.group}
+                    </p>
+                  }
+                >
+                  {group.items.map((item) => (
+                    <ListItem
+                      key={item.id}
+                      label={item.title}
+                      isSelected={item.id === activeId}
+                      onClick={() => selectSection(item.id)}
+                      endContent={
+                        item.badge ? (
+                          <Badge
+                            variant="neutral"
+                            className="h-4 shrink-0 px-1 text-[10px]"
+                            label={item.badge}
+                          />
+                        ) : undefined
+                      }
+                    />
+                  ))}
+                </List>
               ))}
             </nav>
           </aside>
@@ -510,10 +509,11 @@ export function DocsClient({ manual }: { manual: ManualData }) {
               {/* 底部上一篇 / 下一篇翻页导航 */}
               <div className="mt-12 grid gap-3 border-t pt-6 sm:grid-cols-2">
                 {prevItem ? (
-                  <button
-                    type="button"
+                  <ClickableCard
+                    label={`上一章 · ${prevItem.group} ${prevItem.title}`}
                     onClick={() => selectSection(prevItem.id)}
-                    className="group flex flex-col items-start rounded-xl border p-4 text-left transition-colors hover:border-primary/40 hover:bg-muted/30"
+                    padding={4}
+                    className="group flex flex-col items-start rounded-xl text-left"
                   >
                     <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
                       <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
@@ -522,15 +522,16 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                     <span className="mt-1 text-sm font-semibold text-foreground group-hover:text-primary">
                       {prevItem.title}
                     </span>
-                  </button>
+                  </ClickableCard>
                 ) : (
                   <div />
                 )}
                 {nextItem ? (
-                  <button
-                    type="button"
+                  <ClickableCard
+                    label={`下一章 · ${nextItem.group} ${nextItem.title}`}
                     onClick={() => selectSection(nextItem.id)}
-                    className="group flex flex-col items-end rounded-xl border p-4 text-right transition-colors hover:border-primary/40 hover:bg-muted/30"
+                    padding={4}
+                    className="group flex flex-col items-end rounded-xl text-right"
                   >
                     <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
                       下一章 · {nextItem.group}
@@ -539,7 +540,7 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                     <span className="mt-1 text-sm font-semibold text-foreground group-hover:text-primary">
                       {nextItem.title}
                     </span>
-                  </button>
+                  </ClickableCard>
                 ) : (
                   <div />
                 )}
@@ -613,22 +614,25 @@ export function DocsClient({ manual }: { manual: ManualData }) {
                       没有找到匹配的文档章节
                     </p>
                   ) : (
-                    searchResults.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => selectSection(item.id)}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-muted"
-                      >
-                        <div>
-                          <span className="font-semibold text-foreground">{item.title}</span>
-                          <span className="ml-2 text-[11px] text-muted-foreground">
-                            {item.group}
-                          </span>
-                        </div>
-                        <ArrowRight className="size-3.5 text-muted-foreground" />
-                      </button>
-                    ))
+                    <List density="compact" edge="flush">
+                      {searchResults.map((item) => (
+                        <ListItem
+                          key={item.id}
+                          label={
+                            <>
+                              <span className="font-semibold text-foreground">{item.title}</span>
+                              <span className="ml-2 text-[11px] text-muted-foreground">
+                                {item.group}
+                              </span>
+                            </>
+                          }
+                          onClick={() => selectSection(item.id)}
+                          endContent={
+                            <ArrowRight className="size-3.5 shrink-0 text-muted-foreground" />
+                          }
+                        />
+                      ))}
+                    </List>
                   )}
                 </div>
               </div>
@@ -711,11 +715,12 @@ function SectionOverview({
               desc: '侧边栏 AI 对话、户型图视觉识图、多步工具调用与透明积分计费',
             },
           ].map((card) => (
-            <button
+            <ClickableCard
               key={card.step}
-              type="button"
+              label={`${card.step} ${card.title} ${card.desc}`}
               onClick={() => onNavigate(card.id)}
-              className="group flex flex-col justify-between rounded-xl border p-4 text-left transition-all hover:border-primary/50 hover:bg-muted/20"
+              padding={4}
+              className="group flex flex-col justify-between rounded-xl text-left"
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -727,7 +732,7 @@ function SectionOverview({
                 <p className="text-sm font-semibold">{card.title}</p>
                 <p className="text-xs leading-relaxed text-muted-foreground">{card.desc}</p>
               </div>
-            </button>
+            </ClickableCard>
           ))}
         </div>
       </section>
@@ -829,13 +834,13 @@ function SectionQuickstart({ onNavigate }: { onNavigate: (id: DocSectionId) => v
 
       <Callout type="tip" title="想了解智能生成点位的具体规则？">
         点击查看{' '}
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-2 px-2 font-semibold text-primary underline underline-offset-2"
           onClick={() => onNavigate('auto-points')}
-          className="font-semibold text-primary underline underline-offset-2"
-        >
-          03. 智能生成点位与一键撤销
-        </button>{' '}
+          label="03. 智能生成点位与一键撤销"
+        />{' '}
         章节，了解各房间自动配置的设备清单。
       </Callout>
     </article>
@@ -1008,13 +1013,13 @@ function SectionPointMap({ onNavigate }: { onNavigate: (id: DocSectionId) => voi
 
       <Callout type="tip" title="想一键排布整张图纸的点位？">
         查看下一章{' '}
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-2 px-2 font-semibold text-primary underline underline-offset-2"
           onClick={() => onNavigate('auto-points')}
-          className="font-semibold text-primary underline underline-offset-2"
-        >
-          03. 智能生成点位与一键撤销
-        </button>
+          label="03. 智能生成点位与一键撤销"
+        />
         。
       </Callout>
     </article>

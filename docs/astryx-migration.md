@@ -53,16 +53,16 @@
 
 ## 3. 路由优先级清单（按价值排序）
 
-| 优先级 | 范围                                                       | 当前状态 / 本批动作                                                                   | 下一步                                                     |
-| ------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| P0     | 工作区外壳（25 个 workspace 页面共用）                     | ✅ 本批：AppShell / TopNav / SideNav / DropdownMenu / Drawer                          | 观察一轮真实使用后再清 `design-pilot`                      |
-| P1     | 设置（`/settings`、外观、公司抬头、成本）                  | 页面 1 个 raw button / 4 个 input / 3 个 table（reports 运营页；含合法 hidden input） | 把设置分组换成 `TabList`/`Section`，reports 表格换 `Table` |
-| P2     | 报价（`/quotes`、报价编辑器、打印预览）                    | 页面自身已基本 Astryx（0 raw button/input）；编辑器逻辑复杂                           | 迁移报价列表/编辑器的工具栏与表格壳；保留打印文档渲染      |
-| P3     | 项目（`/projects`、点位图、合同、归档）                    | 23 raw button / 14 input，集中在点位图工具条与编辑器                                  | 工具条换 `IconButton`/`Toolbar`；画布本体保留              |
-| P4     | 能力中心 / 插件入口                                        | 2 raw button / 1 input；多为卡片与文档                                                | 迁移入口卡片与空态；插件内 canvas 保留                     |
-| P5     | 公开站（首页、模板、目录、文档、下载）                     | 已大量 Astryx；含营销版式与动效                                                       | 按区块替换，保留营销视觉                                   |
-| P6     | 打印 / 文档（`src/app/(frontend)/print`、`src/documents`） | 19 + 4 个 raw table，版式即产品                                                       | 只统一外围工具栏/按钮，正文保持专用渲染                    |
-| P7     | 画布 / 图纸（`src/board`）                                 | 7 raw svg、自有几何与历史栈                                                           | **保留专用实现**，仅统一外围可见交互                       |
+| 优先级 | 范围                                                       | 当前状态 / 本批动作                                                                                    | 下一步                                                                     |
+| ------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| P0     | 工作区外壳（25 个 workspace 页面共用）                     | ✅ 本批：AppShell / TopNav / SideNav / DropdownMenu / Drawer                                           | 观察一轮真实使用后再清 `design-pilot`                                      |
+| P1     | 设置（`/settings`、外观、公司抬头、成本）                  | 页面 1 个 raw button / 4 个 input / 3 个 table（reports 运营页；含合法 hidden input）                  | 把设置分组换成 `TabList`/`Section`，reports 表格换 `Table`                 |
+| P2     | 报价（`/quotes`、报价编辑器、打印预览）                    | 页面自身已基本 Astryx（0 raw button/input）；编辑器逻辑复杂                                            | 迁移报价列表/编辑器的工具栏与表格壳；保留打印文档渲染                      |
+| P3     | 项目（`/projects`、点位图、合同、归档）                    | 23 raw button / 14 input，集中在点位图工具条与编辑器                                                   | 工具条换 `IconButton`/`Toolbar`；画布本体保留                              |
+| P4     | 能力中心 / 插件入口                                        | 阶段筛选是自绘链接条；空态用本地包装；入口卡已是 AstryxCard；插件内 canvas 仍有 2 raw button / 1 input | ✅ 本批：阶段筛选 → `TabList`/`Tab`；空态 → 官方 `EmptyState`；canvas 保留 |
+| P5     | 公开站（首页、模板、目录、文档、下载）                     | docs 外壳 9 个裸 button（面包屑/搜索/目录/翻页/闭环卡/内联）；下载页与 catalog/templates 已是 Astryx   | ✅ 本批：docs 外壳全部原生化；营销版式/动效保留                            |
+| P6     | 打印 / 文档（`src/app/(frontend)/print`、`src/documents`） | 19 + 4 个 raw table，版式即产品                                                                        | 只统一外围工具栏/按钮，正文保持专用渲染                                    |
+| P7     | 画布 / 图纸（`src/board`）                                 | 7 raw svg、自有几何与历史栈                                                                            | **保留专用实现**，仅统一外围可见交互                                       |
 
 ## 3.5 第二批（设置 / 项目工具栏）
 
@@ -76,15 +76,49 @@
 - **阻塞**：`/settings/reports` 是 operator 专属页；演示账号非 operator，且本机 PostgreSQL 曾出现长查询（调度台已终止），不再用数据库权限变更去复现。该页的 3 个原生 table 与缩略图按钮未迁移，保留功能基线。
 - **design-pilot 论证**：`src/app/(frontend)/design-pilot/page.tsx` 是**旧组件 vs Astryx 的对照页**（历史定案，见 `docs/archive/2026-11-13-night-p5.md`），唯一引用 `src/components/ui/card.tsx`。它不是生产功能页，删页/迁卡都会让对照失去意义；本批**保留页面与 `ui/card`**，不删用户资产。旧适配层其余 5 个已在 PR #182 移除。
 
+## 3.6 第三批（能力中心 / 公开站外壳控件）
+
+> 基线 `main @ 13795cc`（含 #205 报价编辑器外壳）。只动可见外壳交互，不动营销版式/动效/画布/打印。
+
+### 能力中心
+
+| 位置                                                                     | 旧控件                                                          | 官方组件                                                                                                             | 功能保持                                                                                                             |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `capabilities/page.tsx` 阶段筛选                                         | 自绘 `FilterTabs`（`role=tablist` 链接条）                      | `TabList`/`Tab`（新增客户端包装 `stage-filter-tabs.tsx`，`router.push(href, { scroll: false })` 保持软跳转与不滚顶） | 6 项阶段、URL `?stage=`、选中态不变；`/plugins?stage=` 旧地址直连改为 `/capabilities?stage=`（同一目标，少一跳 308） |
+| `capabilities/tools`、`capabilities/templates`、`capabilities/[id]` 空态 | 本地 `@/components/empty-state`                                 | `@astryxdesign/core/EmptyState`（`action`→`actions`）                                                                | 文案/图标/操作按钮不变                                                                                               |
+| `capabilities/plugin-list.tsx` 入口卡                                    | —（已是 `AstryxCard`/`Badge`/`Button`，第二批 #138 零漂移迁移） | 不动                                                                                                                 | 点击「详情」/标题进详情页不变                                                                                        |
+| `capabilities/[id]` 详情外壳                                             | —（已是 `Card`/`Layout`/`Button`/`Badge`）                      | 不动                                                                                                                 | 返回能力中心、项目入口不变                                                                                           |
+| `capabilities/business-card/card-studio.tsx`                             | 2 raw button + 1 input（头衔快捷、版式缩略图、信息输入）        | **保留**                                                                                                             | 名片画布与导出一致性优先；见 §4                                                                                      |
+| `capabilities/tools` 入口卡（封面动效）                                  | `HoverPrefetchLink` 手绘卡                                      | **保留**                                                                                                             | 悬停位移/封面缩放是设计动效；`ClickableCard` 不支持 `className`/`group`，替换会丢动效                                |
+
+### 公开站（docs 外壳）
+
+`docs/docs-client.tsx` 裸 button 9 → 0：
+
+| 位置                                | 旧控件                                | 官方组件                                                        | 可访问名称                                             |
+| ----------------------------------- | ------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------ |
+| 面包屑「Docs」                      | 裸 button                             | `Button variant=ghost`                                          | `Docs`（不变）                                         |
+| 搜索触发器                          | 裸 button（假输入框）                 | `Button variant=ghost` + `children` 覆盖可见内容                | `搜索文档（⌘K）`（不变，label 走 aria-label）          |
+| 左侧目录 4 组 × N 项                | `<ul>` + 裸 button（border-l 指示条） | `List`/`ListItem`（`isSelected`、`endContent` 徽标、`onClick`） | 章节标题（不变）；选中态 `aria-current`                |
+| 上一章 / 下一章                     | 裸 button 卡片                        | `ClickableCard`（`label` = 原拼合文本）                         | 与原计算名一致（如「上一章 · 开始使用 使用手册总览」） |
+| 搜索弹窗结果项                      | 裸 button                             | `ListItem`（`onClick`）                                         | 标题 + 分组（不变）                                    |
+| 总览「五步闭环」6 张卡              | 裸 button 卡                          | `ClickableCard`（`label` = step+title+desc）                    | 与原计算名一致                                         |
+| Callout 内联「03. 智能生成点位…」×2 | 裸 button（下划线文字）               | `Button variant=ghost`                                          | 文本（不变）                                           |
+
+### 公开站（下载 / catalog / templates）
+
+- **下载页**：已是 `Button`/`Badge`/`Kbd`/`Skeleton`；安装包直链刻意保留原生 `<a>`（`Button` 不传 `as`，避免 next/link 预取整包）。本批只核对未发布空态（`即将上线` 禁用按钮 + 「使用网页版」回退）。
+- **catalog / templates**：两页无客户端筛选控件（服务端全量渲染）；catalog 无产品时走「图例与施工规范」空态文案分支，templates 用内置模板恒非空。本批核对两页分支与对比表，不改营销版式。
+
 ## 4. 保留的专用渲染（不迁）
 
-| 区域                                     | 依据                                                                             |
-| ---------------------------------------- | -------------------------------------------------------------------------------- |
-| `src/board/` 点位图 canvas、几何、符号包 | 自绘画布 + 拖拽/缩放/历史栈，无 Astryx 等价物。                                  |
-| `src/app/(frontend)/print/` 打印文档     | 版式即交付物，用 DOM/CSS 精确控制分页。                                          |
-| `src/documents/` 文档模板                | 同上，且被打印/PDF 复用。                                                        |
-| `scaled-frame` / 报价单导出 / 名片画布   | 像素级渲染与导出，不适用交互组件。                                               |
-| `design-pilot` 对照页                    | 最后 1 个 `ui/card` 引用；历史定案为「旧 vs Astryx 对照页」，去留需 owner 决定。 |
+| 区域                                     | 依据                                                                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `src/board/` 点位图 canvas、几何、符号包 | 自绘画布 + 拖拽/缩放/历史栈，无 Astryx 等价物。                                                        |
+| `src/app/(frontend)/print/` 打印文档     | 版式即交付物，用 DOM/CSS 精确控制分页。                                                                |
+| `src/documents/` 文档模板                | 同上，且被打印/PDF 复用。                                                                              |
+| `scaled-frame` / 报价单导出 / 名片画布   | 像素级渲染与导出，不适用交互组件；名片工坊的 2 按钮 + 1 输入（头衔快捷/版式切换/信息输入）随画布保留。 |
+| `design-pilot` 对照页                    | 最后 1 个 `ui/card` 引用；历史定案为「旧 vs Astryx 对照页」，去留需 owner 决定。                       |
 
 ## 5. 验证矩阵（本批）
 
@@ -103,7 +137,7 @@
 1. **P1 设置收尾**：`/settings/reports` 的 3 个 table → `Table`（需 operator 验收环境）；company-form 的文件选择保留原生（表单需要 `name=logo` 提交，FileInput 是受控组件，替换会破坏 FormData）。
 2. **P3 项目收尾**：合同/归档的确认与操作按钮统一 `Button`/`AlertDialog`；画布工具组维持专用实现。
 3. **P2 报价**：编辑器工具栏与列表壳，保留打印渲染。
-4. **P4/P5**：能力中心入口卡、公开站区块（保留营销视觉）。
+4. **P4/P5 收尾**：`capabilities/tools` 入口卡（封面动效需 `ClickableCard` 支持 `className`/`group` 后再迁）、`FilterTabs` 仍被 `/products`、`/projects` 使用（随各自批次迁 `TabList`）、`business-card` 工坊随画布保留。
 5. `design-pilot` / `ui/card`：保留（见 §3.5 论证），除非 owner 决定删除对照页。
 6. 依赖升级（若做）按官方 `astryx upgrade --from 0.7.11 --apply` 成套验证，单开 PR。
 
@@ -119,5 +153,25 @@
 
 > 证据：`.export-artifacts/issue180-batch2/shots/`（settings-{light,dark,narrow,focus,sticky-scrolled}.png、point-map-{light,dark,narrow,popover,interacted}.png）。
 > 复跑：`node .export-artifacts/issue180-batch2/probe.mjs`（本机 :3001 + demo 账号）。
+
+## 8. 第三批验证（能力中心 / 公开站，叠加在 13795cc）
+
+隔离环境：新建合成库 `fmkj_astryx_p4p5`（`payload migrate` + `seed-smoke`，验后 drop）；
+改前 = `origin/main` 代码 :3184，改后 = 本分支 :3185。脚本：`e2e/issue180-p4p5-evidence.mjs <before|after>`。
+
+| 项             | 命令                                                                                                           | 结果                                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 单测           | `pnpm test`                                                                                                    | **875 passed / 75 files**                                                                                 |
+| 类型/格式/Lint | `pnpm exec tsc --noEmit`、`oxfmt --check`、`eslint . --ignore-pattern '.export-artifacts/**' --max-warnings 0` | 通过                                                                                                      |
+| 知识库         | `pnpm run knowledge:check`                                                                                     | 16/16 通过                                                                                                |
+| 生产构建       | 占位 env + `payload generate:importmap` + `pnpm build`                                                         | 通过；`/capabilities`、`/docs`、`/catalog`、`/templates` 的 static/dynamic 与基线一致（本批未改缓存配置） |
+| 真浏览器       | `BASE=:3184 node e2e/issue180-p4p5-evidence.mjs before`                                                        | 37/37；18 张整页截图（6 页 × 浅色/深色/390）                                                              |
+| 真浏览器       | `BASE=:3185 node e2e/issue180-p4p5-evidence.mjs after`                                                         | **38/38**；18 张整页截图；console 0 错误；390 无横向溢出                                                  |
+
+交互实测（after 全通过）：能力中心入口卡「详情」→ 详情页 → 返回；阶段筛选（报价与方案 / 全部阶段）；
+docs 目录跳转 + `#hash`、⌘K 搜索（键盘 Enter 打开、结果跳章）、上一章/下一章（键盘 + 指针）、总览闭环卡点击；
+下载页安装包直链（拦截 manifest 造发布清单）+ 未发布空态回退；catalog 图例/在售分支；templates 对比表 20 行。
+
+> 证据：`.export-artifacts/astryx-p4p5/shots-{before,after}/01–18-*.png`（整页截图，非元素裁剪）。
 
 > 迁移未全部落地前 issue #180 保持打开。

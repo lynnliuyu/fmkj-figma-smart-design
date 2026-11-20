@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { ArrowLeft, ArrowUpRight, Blocks } from 'lucide-react'
 
-import { EmptyState } from '@/components/empty-state'
+import { EmptyState } from '@astryxdesign/core/EmptyState'
 import { HoverPrefetchLink } from '@/components/hover-prefetch-link'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@astryxdesign/core/Button'

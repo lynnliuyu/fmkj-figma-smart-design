@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, ExternalLink, FolderKanban, Settings } from 'lucide-r
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@astryxdesign/core/Badge'
 import { Button } from '@astryxdesign/core/Button'
-import { EmptyState } from '@/components/empty-state'
+import { EmptyState } from '@astryxdesign/core/EmptyState'
 import { Card } from '@astryxdesign/core/Card'
 import { Layout, LayoutContent, LayoutHeader } from '@astryxdesign/core/Layout'
 
@@ -312,7 +312,7 @@ export default async function PluginDetailPage({ params }: { params: Promise<{ i
           icon={<Clock className="size-5" />}
           title={`「${plugin.name}」尚在待开发阶段`}
           description={`规划能力：${plugin.provides.join('、')}`}
-          action={
+          actions={
             <Button variant="secondary" size="sm" href="/capabilities" label="返回能力中心" />
           }
         />
