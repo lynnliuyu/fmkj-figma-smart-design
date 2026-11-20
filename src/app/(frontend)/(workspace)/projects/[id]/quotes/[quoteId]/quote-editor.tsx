@@ -560,7 +560,7 @@ export function QuoteEditor({
         quantity: l.quantity,
       })),
       fees: quote.fees.map(({ key: _k, ...f }) => f),
-    })
+    }).catch(() => ({ ok: false as const, error: '暂时无法保存报价，请检查网络后重试。' }))
     if (!result.ok) {
       showToast({ body: result.error, type: 'error' })
       return false
@@ -782,6 +782,15 @@ export function QuoteEditor({
           <Lock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <span>{lockReason}</span>
         </div>
+      ) : null}
+
+      {margin ? (
+        <MarginCapsule
+          margin={margin}
+          settings={costSettings}
+          hidden={hideInternal}
+          onToggle={toggleInternal}
+        />
       ) : null}
 
       {/* Untitled UI + IBM Carbon 顶部报价概览与 4 格 KPI 指标条 */}
@@ -1748,15 +1757,6 @@ export function QuoteEditor({
           </Field>
         </div>
       </AstryxCard>
-
-      {margin ? (
-        <MarginCapsule
-          margin={margin}
-          settings={costSettings}
-          hidden={hideInternal}
-          onToggle={toggleInternal}
-        />
-      ) : null}
     </section>
   )
 }
@@ -1870,7 +1870,7 @@ function MarginBreakdown({
   )
 }
 
-/** 右下角浮动的内部毛利胶囊：滚动到哪里都能看到毛利率；点开看明细；一键隐藏防止业主看到 */
+/** 窄屏放在顶栏下方，避免覆盖编辑控件；桌面继续浮动显示。 */
 function MarginCapsule({
   margin,
   settings,
@@ -1890,7 +1890,7 @@ function MarginCapsule({
         variant="secondary"
 
         onClick={onToggle}
-        className="fixed right-4 bottom-4 z-30 size-10 rounded-full bg-background shadow-lg md:right-6 md:bottom-6 print:hidden"
+        className="size-10 self-start rounded-full bg-background shadow-lg md:fixed md:right-6 md:bottom-6 md:z-30 print:hidden"
         aria-label="显示内部成本与毛利"
         tooltip="显示内部成本与毛利"
         label="显示内部成本与毛利"
@@ -1900,7 +1900,7 @@ function MarginCapsule({
     )
   }
   return (
-    <div className="fixed right-4 bottom-4 z-30 flex items-center rounded-full bg-foreground text-background shadow-xl md:right-6 md:bottom-6 print:hidden">
+    <div className="flex w-fit max-w-full items-center rounded-full bg-foreground text-background shadow-xl md:fixed md:right-6 md:bottom-6 md:z-30 print:hidden">
       <Popover
         label="内部毛利核算"
         // 原 `side="top" align="end"` → 官方 `placement` / `alignment`。
