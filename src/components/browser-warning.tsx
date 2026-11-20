@@ -3,7 +3,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { checkBrowserSupport } from '@/lib/browser-check'
-import { BANNER_LINK_STYLE, BANNER_STYLE, CLOSE_BUTTON_STYLE } from '@/lib/browser-warn-style'
+import {
+  BANNER_ELEMENT_ID,
+  BANNER_LINK_STYLE,
+  BANNER_OFFSET_PROPERTY,
+  BANNER_STYLE,
+  CLOSE_BUTTON_STYLE,
+} from '@/lib/browser-warn-style'
 
 /**
  * 旧浏览器提醒（issue #188）。
@@ -25,7 +31,7 @@ export function BrowserWarningBanner() {
 
   useEffect(() => {
     // 早期内联脚本（BROWSER_WARN_INIT_SCRIPT）已注入同一个提示时，不再重复渲染。
-    if (document.getElementById('__fmkj_browser_warn')) {
+    if (document.getElementById(BANNER_ELEMENT_ID)) {
       setDismissed(true)
       return
     }
@@ -48,19 +54,18 @@ export function BrowserWarningBanner() {
   const bannerRef = useRef<HTMLDivElement>(null)
   const visible = Boolean(warn) && !dismissed
 
-  // 横幅固定定位，靠给 body 加等高内边距让内容下移，避免盖住顶栏（#204）。
-  // 用 layout effect 而不是 effect：在首帧前改完，避免内容先闪一下再被顶下去。
   useLayoutEffect(() => {
-    if (!visible) return
+    const banner = bannerRef.current
+    if (!visible || !banner) return
+    const rootStyle = document.documentElement.style
     const reserve = () => {
-      const h = bannerRef.current?.offsetHeight ?? 0
-      document.body.style.paddingTop = h ? `${h}px` : ''
+      rootStyle.setProperty(BANNER_OFFSET_PROPERTY, `${banner.offsetHeight}px`)
     }
     reserve()
     window.addEventListener('resize', reserve)
     return () => {
       window.removeEventListener('resize', reserve)
-      document.body.style.paddingTop = ''
+      rootStyle.removeProperty(BANNER_OFFSET_PROPERTY)
     }
   }, [visible])
 

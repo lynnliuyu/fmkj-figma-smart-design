@@ -1,4 +1,9 @@
-import { BANNER_STYLE_CSS, CLOSE_BUTTON_STYLE_CSS } from '@/lib/browser-warn-style'
+import {
+  BANNER_ELEMENT_ID,
+  BANNER_OFFSET_PROPERTY,
+  BANNER_STYLE_CSS,
+  CLOSE_BUTTON_STYLE_CSS,
+} from '@/lib/browser-warn-style'
 
 /**
  * 浏览器能力检查（issue #188）。
@@ -87,8 +92,8 @@ export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
     }catch(e){}
   }
   if(tooOld){
-    if(!document.body){ document.addEventListener('DOMContentLoaded',function(){ var d=makeWarn(info); if(d) document.body.appendChild(d); }); }
-    else { var d0=makeWarn(info); if(d0) document.body.appendChild(d0); }
+    if(!document.body){ document.addEventListener('DOMContentLoaded',function(){ makeWarn(info); }); }
+    else { makeWarn(info); }
     root.setAttribute('data-fmkj-browser-warn-set','1');
     function makeWarn(info){ try{ return buildWarn(info) }catch(e){ return null } }
   } else {
@@ -96,7 +101,7 @@ export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
   }
   function buildWarn(info){
     var d=document.createElement('div');
-    d.id='__fmkj_browser_warn';
+    d.id='${BANNER_ELEMENT_ID}';
     d.setAttribute('role','status');
     d.setAttribute('aria-live','polite');
     d.style.cssText='${BANNER_STYLE_CSS}';
@@ -105,13 +110,16 @@ export const BROWSER_WARN_INIT_SCRIPT = `(function(){try{
     x.type='button';x.setAttribute('aria-label','关闭浏览器过旧提示');
     x.style.cssText='${CLOSE_BUTTON_STYLE_CSS}';
     x.textContent='✕';
+    function reserve(){ root.style.setProperty('${BANNER_OFFSET_PROPERTY}',d.offsetHeight+'px'); }
     x.onclick=function(){
       d.parentNode.removeChild(d);
-      try{document.body.style.paddingTop='';}catch(e){}
+      window.removeEventListener('resize',reserve);
+      root.style.removeProperty('${BANNER_OFFSET_PROPERTY}');
       try{localStorage.setItem('fmkj:browser-warn-dismissed-until',String(Date.now()+30*864e5));}catch(e){}
     };
     d.appendChild(x);
     document.body.appendChild(d);
-    try{ var h=d.offsetHeight||0; if(h) document.body.style.paddingTop=h+'px'; }catch(e){}
+    reserve();
+    window.addEventListener('resize',reserve);
   }
 }catch(e){}}())`

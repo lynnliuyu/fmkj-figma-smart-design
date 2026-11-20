@@ -17,6 +17,10 @@ import type { CSSProperties } from 'react'
  * 内联版用 `toCssText()` 现场生成同样的声明。`browser-warn-style.test.ts` 会断言两者一致。
  */
 
+export const BANNER_ELEMENT_ID = '__fmkj_browser_warn'
+export const BANNER_OFFSET_PROPERTY = '--fmkj-browser-warning-offset'
+export const BANNER_OFFSET_CSS = `body{padding-top:var(${BANNER_OFFSET_PROPERTY},0px)}`
+
 /**
  * 横幅固定在视口顶部，但**不遮住内容**：显示时给 `<body>` 加等高的 `padding-top`，
  * 关闭时还原。这样顶栏与正文都被顶下来，不再被盖住（#204）。

@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest'
 
 import { BROWSER_WARN_INIT_SCRIPT } from './browser-check'
 import {
+  BANNER_ELEMENT_ID,
+  BANNER_OFFSET_CSS,
+  BANNER_OFFSET_PROPERTY,
   BANNER_STYLE,
   BANNER_STYLE_CSS,
   CLOSE_BUTTON_STYLE,
@@ -49,11 +52,19 @@ describe('browser warning style', () => {
       new URL('../components/browser-warning.tsx', import.meta.url),
       'utf8',
     )
-    expect(banner).toContain('document.body.style.paddingTop')
-    expect(BROWSER_WARN_INIT_SCRIPT).toContain('document.body.style.paddingTop')
-    // 关闭时也必须还原，否则内容会永久多出一段空白
-    expect(BROWSER_WARN_INIT_SCRIPT).toContain("document.body.style.paddingTop=''")
-    expect(banner).toContain("document.body.style.paddingTop = ''")
+    expect(banner).toContain('document.getElementById(BANNER_ELEMENT_ID)')
+    expect(banner).toContain('document.documentElement.style')
+    expect(banner).toContain('rootStyle.setProperty(BANNER_OFFSET_PROPERTY,')
+    expect(banner).toContain('rootStyle.removeProperty(BANNER_OFFSET_PROPERTY)')
+    expect(BROWSER_WARN_INIT_SCRIPT).toContain(`d.id='${BANNER_ELEMENT_ID}'`)
+    expect(BROWSER_WARN_INIT_SCRIPT).toContain(
+      `root.style.setProperty('${BANNER_OFFSET_PROPERTY}',`,
+    )
+    expect(BROWSER_WARN_INIT_SCRIPT).toContain(
+      `root.style.removeProperty('${BANNER_OFFSET_PROPERTY}')`,
+    )
+    expect(BROWSER_WARN_INIT_SCRIPT).not.toContain('document.body.style')
+    expect(BANNER_OFFSET_CSS).toBe(`body{padding-top:var(${BANNER_OFFSET_PROPERTY},0px)}`)
   })
 
   it('横幅右侧为关闭按钮留出足够内边距', () => {
