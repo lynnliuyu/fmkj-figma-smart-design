@@ -27,3 +27,35 @@ export function clampPage(raw: string): number {
   if (!Number.isFinite(n)) return MAX_PAGE
   return Math.min(n, MAX_PAGE)
 }
+
+/**
+ * 拿到「请求页 + 首页查询结果」后，决定实际要显示哪一页，以及是否需要再查一次。
+ *
+ * 为什么要单独成函数：越界页（`?page=999`）的 `find` 会返回空 docs，而且它带回的
+ * `totalPages` 不可信，必须用同一 `where` 补一次 `count` 重算末页再回查。这段编排
+ * 之前只由真实请求覆盖，改 `clampPage` 或 `totalPages` 计算就会静默退化，所以独立锁住。
+ *
+ * @param requestedPage 已经过 `clampPage()` 的页码
+ * @param firstPass      用 `requestedPage` 查出来的第一页结果
+ * @param totalDocs      补算的总数（仅在 `firstPass` 判定越界时才用）
+ */
+export function resolvePageView<T>(
+  requestedPage: number,
+  firstPass: { docs: T[]; totalPages?: number | null },
+  totalDocs?: number,
+) {
+  const totalPages = Math.max(
+    1,
+    totalDocs === undefined ? (firstPass.totalPages ?? 1) : Math.ceil(totalDocs / PAGE_SIZE),
+  )
+  const page = Math.min(requestedPage, totalPages)
+  const outOfRange = requestedPage > 1 && firstPass.docs.length === 0
+  return {
+    /** 需要显示第几页 */
+    page,
+    /** 总页数（用于「X / Y」） */
+    totalPages,
+    /** 越界且第一页查询为空——调用方要按 `page` 再查一次 */
+    needsRefetch: outOfRange && page !== requestedPage,
+  }
+}
