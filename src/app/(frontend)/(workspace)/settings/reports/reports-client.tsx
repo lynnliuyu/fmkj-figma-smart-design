@@ -960,8 +960,10 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
                                 <TableCell className="w-32 max-w-none text-right whitespace-nowrap tabular-nums">
                                   {c.messageCount} 条 · {c.toolCount} 工具 · {c.totalCost} 分
                                 </TableCell>
-                                <TableCell className="w-56 max-w-none truncate pr-4 text-muted-foreground sm:pr-6">
-                                  {c.lastAssistantPreview || '—'}
+                                <TableCell className="w-56 max-w-none pr-4 text-muted-foreground sm:pr-6">
+                                  <div className="w-full min-w-0 truncate">
+                                    {c.lastAssistantPreview || '—'}
+                                  </div>
                                 </TableCell>
                               </TableRow>
                             ))
