@@ -170,17 +170,21 @@
    * 语义别名：不再写死十六进制。
    *
    * `outline` 是**可交互控件的边界**（空态虚线框、费用按钮边框），属于 WCAG 2.1
-   * 「非文本对比度」范畴，必须 ≥3:1。不能借用 `--border-strong`（1.5:1）或
-   * `--input`（1.4:1）—— 那两个是装饰性分隔线，标准不同。这里取与旧值
-   * `#848489` / `#74747b`（实测 3.7:1）同量级的亮度，实测浅色对卡片 3.40:1、深色对卡片 3.50:1（验收按各自的 `--card` 表面复算）。
+   * 「非文本对比度」范畴，必须 ≥3:1。不能借用 `--border-strong`（对卡片约 1.5:1）
+   * 或 `--input`（约 1.4:1）—— 那两个是装饰性分隔线，标准不同。
+   *
+   * 取值与实测（相对亮度按线性 sRGB 加权，逐面复算）：
+   *   浅色 `#838589`：对 background/card 3.70:1，对 muted/subtle 3.35–3.49:1
+   *   深色 `#787a7e`：对 background 4.46:1，对 card 4.24:1，对最亮的 accent 3.52:1
+   * 浅色与旧值 `#848489`（3.72:1）基本同观感；深色比旧值略亮，以覆盖 `accent` 填充面。
    */
   --color-workspace-ink: var(--foreground);
   --color-workspace-ink-dark: var(--foreground);
   --color-workspace-paper: var(--card);
   --color-workspace-canvas-dark: var(--background);
   --color-workspace-panel-dark: var(--card);
-  --color-workspace-outline: oklch(0.379 0.006 260);
-  --color-workspace-outline-dark: oklch(0.528 0.006 260);
+  --color-workspace-outline: oklch(0.616 0.006 260);
+  --color-workspace-outline-dark: oklch(0.58 0.006 260);
   --color-workspace-icon-surface: var(--muted);
   --color-workspace-icon-surface-dark: var(--muted);
   --shadow-2xs: 0 1px 1px 0 oklch(0.25 0.02 270 / 0.05);

@@ -1604,7 +1604,6 @@ export function QuoteEditor({
                     ],
                   })
                 }
-                className="border-workspace-outline dark:border-workspace-outline-dark"
                 icon={<Plus />}
                 label="添加费用"
               />
@@ -1627,7 +1626,6 @@ export function QuoteEditor({
                     type="button"
                     variant="secondary"
                     size="sm"
-                    className="border-workspace-outline dark:border-workspace-outline-dark"
                     icon={<Plus />}
                     label={preset.name}
                     onClick={() =>
