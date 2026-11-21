@@ -157,6 +157,7 @@ export function AppSidebar({
   plugins,
   ai,
   showOperatorReports = false,
+  className,
 }: {
   user: SidebarUser
   brand: SidebarBrand
@@ -165,6 +166,7 @@ export function AppSidebar({
   ai: { credits: number }
   /** 跨客户的使用报告只对平台运营人员显示入口 */
   showOperatorReports?: boolean
+  className?: string
 }) {
   const pathname = usePathname()
   const navigate = useGuardedNavigate()
@@ -195,6 +197,7 @@ export function AppSidebar({
 
   return (
     <SideNav
+      className={className}
       collapsible={{ isCollapsed: sidebarCollapsed, onCollapsedChange: setSidebarCollapsed }}
       topContent={
         sidebarCollapsed ? (

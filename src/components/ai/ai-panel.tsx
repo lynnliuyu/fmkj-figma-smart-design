@@ -299,7 +299,8 @@ export function AiPanel({ plugins, projects, credits, configured, models, userId
           onPointerDown={handleResizePointerDown}
           onDoubleClick={handleDoubleClick}
           onKeyDown={handleResizeKeyDown}
-          className="group w-1 shrink-0 cursor-col-resize border-l border-border bg-transparent transition-colors hover:bg-primary/40 focus-visible:bg-primary/40 focus-visible:outline-none"
+          // h-svh + self-start: parent is items-start, so without an explicit height this 4px handle collapses to 0 and cannot be grabbed.
+          className="group sticky top-0 h-svh w-2 shrink-0 cursor-col-resize self-start border-l border-border bg-transparent transition-colors hover:bg-primary/40 focus-visible:bg-primary/40 focus-visible:outline-none"
         />
         <aside
           data-slot="ai-panel"

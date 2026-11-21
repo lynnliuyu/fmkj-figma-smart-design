@@ -45,6 +45,7 @@ export function WorkspaceShell({
         topNav={
           <TopNav
             label="工作台导航"
+            className="border-b border-sidebar-border bg-sidebar"
             heading={
               <TopNavHeading
                 logo={<BrandMark decorative className="size-6" />}
@@ -64,6 +65,7 @@ export function WorkspaceShell({
         }
         sideNav={
           <AppSidebar
+            className="bg-sidebar md:border-r md:border-sidebar-border"
             user={user}
             brand={brand}
             plugins={plugins}

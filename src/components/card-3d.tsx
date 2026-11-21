@@ -329,46 +329,8 @@ export const Card3D = forwardRef<Card3DHandle, Card3DProps>(function Card3D(
             3D 预览不可用：{error}
           </p>
         ) : null}
-        {/* 控制条放画布外：窄屏时画布本身很矮，叠在上面会盖住卡片 */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden justify-center gap-1.5 pb-2.5 sm:flex">
-          <button
-            type="button"
-            onClick={() => onSpinningChange(!spinning)}
-            disabled={reduceMotion}
-            className="pointer-events-auto cursor-pointer rounded-full border border-border bg-background/90 px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground backdrop-blur hover:bg-background"
-          >
-            {spinning ? '暂停旋转' : '继续旋转'}
-          </button>
-          <button
-            type="button"
-            onClick={() => resetRef.current()}
-            className="pointer-events-auto cursor-pointer rounded-full border border-border bg-background/90 px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground backdrop-blur hover:bg-background"
-          >
-            重置视角
-          </button>
-          <span className="rounded-full bg-background/70 px-2 py-0.5 text-[11px] whitespace-nowrap text-muted-foreground backdrop-blur">
-            拖动旋转 · 滚轮缩放
-          </span>
-        </div>
       </div>
-      {/* 窄屏：控制条移到画布下方，不遮挡卡片 */}
-      <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 sm:hidden">
-        <button
-          type="button"
-          onClick={() => onSpinningChange(!spinning)}
-          disabled={reduceMotion}
-          className="cursor-pointer rounded-full border border-border bg-background px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground hover:bg-muted"
-        >
-          {spinning ? '暂停旋转' : '继续旋转'}
-        </button>
-        <button
-          type="button"
-          onClick={() => resetRef.current()}
-          className="cursor-pointer rounded-full border border-border bg-background px-2.5 py-0.5 text-[11px] whitespace-nowrap text-foreground hover:bg-muted"
-        >
-          重置视角
-        </button>
-      </div>
+      {/* Controls live in the studio toolbar so the canvas never has a second, clipped copy. */}
     </div>
   )
 })
