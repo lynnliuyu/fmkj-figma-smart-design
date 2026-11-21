@@ -225,7 +225,8 @@ export function UsageReportsClient({ report }: { report: CustomerUsageReport }) 
         </div>
       </div>
 
-      {/* 4 张核心运维指标卡 */}
+      {/* 4 项核心运维指标：同一行内并排的度量块（官方 dashboard 的 headline band），
+          用 Section 承载而不是四张独立卡片 —— 它们不是可独立操作的对象。 */}
       <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
         <AstryxCard
           padding={0}

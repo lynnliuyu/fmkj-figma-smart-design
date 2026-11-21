@@ -3,6 +3,7 @@ import { Activity, ArrowRight } from 'lucide-react'
 
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@astryxdesign/core/Button'
+import { Section } from '@astryxdesign/core/Section'
 import { allStyles, availableStyles, DOC_KIND_LIST, DOC_KINDS } from '@/documents/registry'
 import { appAuth } from '@/lib/app-auth'
 import { pageTitle } from '@/lib/brand'
@@ -103,10 +104,11 @@ export default async function SettingsPage() {
           <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
         </Link>
       ) : null}
-      <div id="settings-appearance" className="scroll-mt-24">
+      {/* 三个设置分组用官方 Section（页面区域），不再自己拼 div + Card。 */}
+      <Section id="settings-appearance" variant="transparent" padding={0} className="scroll-mt-24">
         <AppearanceSettings />
-      </div>
-      <div id="settings-brand" className="scroll-mt-24">
+      </Section>
+      <Section id="settings-brand" variant="transparent" padding={0} className="scroll-mt-24">
         <CompanyForm
           initial={{
             name: company.name ?? '',
@@ -145,10 +147,10 @@ export default async function SettingsPage() {
             defaults: company.documentDefaults,
           }}
         />
-      </div>
-      <div id="settings-cost" className="scroll-mt-24">
+      </Section>
+      <Section id="settings-cost" variant="transparent" padding={0} className="scroll-mt-24">
         <CostSettingsCard initial={costSettings} brands={costBrands} />
-      </div>
+      </Section>
     </section>
   )
 }
