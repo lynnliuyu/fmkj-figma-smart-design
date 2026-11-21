@@ -19,6 +19,15 @@ import { LinkPending } from '@/components/link-pending'
 import { FilterTabs } from '@/components/filter-tabs'
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@astryxdesign/core/Badge'
+import { Card } from '@astryxdesign/core/Card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from '@astryxdesign/core/Table'
 import { Button } from '@astryxdesign/core/Button'
 import { SearchField } from '@/components/search-field'
 import { SearchSubmit } from '@/components/search-submit'
@@ -343,63 +352,94 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             action={<Button variant="secondary" size="sm" href="/products" label="清除筛选" />}
           />
         ) : (
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {shown.map((p) => {
-              const t = deviceTypeOf(p.deviceType)
-              const color = categoryOf(t?.category)?.color ?? '#525252'
-              return (
-                <li
-                  key={p.id}
-                  className="group flex flex-col overflow-hidden rounded-[var(--radius-container)] border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="relative flex aspect-square w-full items-center justify-center bg-white p-5">
-                    {p.image?.url ? (
-                      <span className="relative block size-full">
-                        <Image
-                          src={p.image.url}
-                          alt={p.image.alt ?? p.name}
-                          fill
-                          sizes="(min-width: 1536px) 18vw, (min-width: 1280px) 22vw, (min-width: 768px) 30vw, 45vw"
-                          className="object-contain transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </span>
-                    ) : (
-                      <ImageIcon className="size-8 text-muted-foreground/40" aria-hidden="true" />
-                    )}
-                    <span
-                      className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium shadow-sm ring-1 ring-black/5"
-                      style={{ color: `color-mix(in oklch, ${color} 70%, black)` }}
-                    >
-                      <span className="size-3.5" style={{ color }}>
-                        <DeviceSymbol type={p.deviceType} />
-                      </span>
-                      {t?.name ?? '设备'}
-                    </span>
-                    {p.status === 'inactive' ? (
-                      <Badge
-                        variant="neutral"
-                        className="absolute top-2 right-2"
-                        label={'已下架'}
-                      />
-                    ) : null}
-                  </div>
-                  <div className="flex flex-1 flex-col justify-between gap-2 border-t p-3">
-                    <h2 className="truncate text-sm font-medium" title={p.name}>
-                      {p.name}
-                    </h2>
-                    <div className="flex items-baseline justify-between gap-2">
-                      <span className="truncate text-xs text-muted-foreground">
-                        {p.brand?.name ?? p.sku}
-                      </span>
-                      <span className="shrink-0 text-sm font-semibold tabular-nums">
+          <Card
+            padding={0}
+            className="overflow-hidden border-0 bg-card text-sm text-card-foreground shadow-2xs ring-1 ring-border"
+          >
+            {/* Dense catalogue data: edge-to-edge rows with dividers, per the Astryx rule that
+                Card is for discrete items and dense data renders as rows. The product image stays
+                as the row's leading visual so the catalogue still reads visually. */}
+            <Table hasHover>
+              <TableHeader>
+                <TableRow isHeaderRow>
+                  <TableHeaderCell className="min-w-64 max-w-none pl-4 sm:pl-6">
+                    产品
+                  </TableHeaderCell>
+                  <TableHeaderCell className="hidden w-40 max-w-none whitespace-nowrap md:table-cell">
+                    设备类型
+                  </TableHeaderCell>
+                  <TableHeaderCell className="hidden w-32 max-w-none lg:table-cell">
+                    品牌
+                  </TableHeaderCell>
+                  <TableHeaderCell className="w-24 max-w-none whitespace-nowrap">
+                    状态
+                  </TableHeaderCell>
+                  <TableHeaderCell className="w-32 max-w-none whitespace-nowrap pr-4 text-right sm:pr-6">
+                    售价
+                  </TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {shown.map((p) => {
+                  const t = deviceTypeOf(p.deviceType)
+                  const color = categoryOf(t?.category)?.color ?? '#525252'
+                  return (
+                    <TableRow key={p.id}>
+                      <TableCell className="min-w-64 max-w-none py-2.5 pl-4 sm:pl-6">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <span className="relative block size-10 shrink-0 overflow-hidden rounded-md bg-white ring-1 ring-border">
+                            {p.image?.url ? (
+                              <Image
+                                src={p.image.url}
+                                alt={p.image.alt ?? p.name}
+                                fill
+                                sizes="40px"
+                                className="object-contain p-1"
+                              />
+                            ) : (
+                              <ImageIcon
+                                className="absolute inset-0 m-auto size-4 text-muted-foreground/50"
+                                aria-hidden="true"
+                              />
+                            )}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="truncate font-medium" title={p.name}>
+                              {p.name}
+                            </div>
+                            <div className="truncate text-xs text-muted-foreground">{p.sku}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden max-w-none whitespace-nowrap md:table-cell">
+                        <span className="inline-flex items-center gap-1.5 text-xs">
+                          <span className="size-3.5" style={{ color }}>
+                            <DeviceSymbol type={p.deviceType} />
+                          </span>
+                          {t?.name ?? '设备'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden max-w-none whitespace-nowrap lg:table-cell">
+                        <span className="text-xs text-muted-foreground">
+                          {p.brand?.name ?? '—'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="w-24 max-w-none whitespace-nowrap">
+                        {p.status === 'inactive' ? (
+                          <Badge variant="neutral" label="已下架" />
+                        ) : (
+                          <Badge variant="neutral" label="在售" />
+                        )}
+                      </TableCell>
+                      <TableCell className="w-32 max-w-none whitespace-nowrap pr-4 text-right font-medium tabular-nums sm:pr-6">
                         {p.price > 0 ? yuan(p.price) : '—'}
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </Card>
         )}
 
         {pages > 1 ? (

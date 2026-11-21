@@ -24,9 +24,7 @@
 @import '@astryxdesign/theme-butter/theme.css';
 @import '@astryxdesign/theme-matcha/theme.css';
 @import '@astryxdesign/theme-chocolate/theme.css';
-/* 本地品牌主题（繁梦紫）：源码 src/themes/fanmeng/，由 `astryx theme build` 生成，
-   随其余主题一起按上面的层序声明之后加载。 */
-@import '../../themes/fanmeng/fanmeng.css';
+/* 本地品牌主题（繁梦紫）源码保留在 src/themes/fanmeng/，但不再作为默认主题，也不全局导入。 */
 
 /* Astryx 的 neutral 主题用 Figtree（其 fonts.css 会拉 Google Fonts 外链，本仓不走第三方 CDN）。
    这里把 Astryx 的字体 token 指到本仓自托管字体，保证中文也有正确回退。 */
@@ -168,15 +166,23 @@
   --radius-2xl: 16px;
   --radius-3xl: 20px;
   --radius-4xl: 24px;
-  --color-workspace-ink: #25252a;
-  --color-workspace-ink-dark: #f0f0f9;
-  --color-workspace-paper: #ffffff;
-  --color-workspace-canvas-dark: #101018;
-  --color-workspace-panel-dark: #1b1b21;
-  --color-workspace-outline: #848489;
-  --color-workspace-outline-dark: #74747b;
-  --color-workspace-icon-surface: #f2f2f2;
-  --color-workspace-icon-surface-dark: #2a2b2f;
+  /*
+   * 语义别名：不再写死十六进制。
+   *
+   * `outline` 是**可交互控件的边界**（空态虚线框、费用按钮边框），属于 WCAG 2.1
+   * 「非文本对比度」范畴，必须 ≥3:1。不能借用 `--border-strong`（1.5:1）或
+   * `--input`（1.4:1）—— 那两个是装饰性分隔线，标准不同。这里取与旧值
+   * `#848489` / `#74747b`（实测 3.7:1）同量级的亮度，实测浅色对卡片 3.40:1、深色对卡片 3.50:1（验收按各自的 `--card` 表面复算）。
+   */
+  --color-workspace-ink: var(--foreground);
+  --color-workspace-ink-dark: var(--foreground);
+  --color-workspace-paper: var(--card);
+  --color-workspace-canvas-dark: var(--background);
+  --color-workspace-panel-dark: var(--card);
+  --color-workspace-outline: oklch(0.379 0.006 260);
+  --color-workspace-outline-dark: oklch(0.528 0.006 260);
+  --color-workspace-icon-surface: var(--muted);
+  --color-workspace-icon-surface-dark: var(--muted);
   --shadow-2xs: 0 1px 1px 0 oklch(0.25 0.02 270 / 0.05);
   --shadow-xs: 0 1px 2px 0 oklch(0.25 0.02 270 / 0.06);
   --shadow-sm: 0 1px 3px 0 oklch(0.25 0.02 270 / 0.08), 0 1px 2px -1px oklch(0.25 0.02 270 / 0.06);

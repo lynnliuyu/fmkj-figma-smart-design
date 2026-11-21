@@ -1,5 +1,5 @@
 /**
- * Astryx 组件主题（6 套官方主题 + 繁梦紫定制主题）。
+ * Astryx 组件主题（5 套官方主题；繁梦紫定制主题已从默认位置摘除）。
  *
  * 与「主题风格」（`lib/appearance.ts` 的 accent）是**两套独立的东西**，别混：
  *
@@ -21,12 +21,11 @@ export type AstryxThemeId = ThemeSlug
 
 /** 展示用的元数据。顺序 = 设置页里的排列顺序。 */
 export const ASTRYX_THEMES = [
-  { id: 'stone', label: '石灰', description: '默认：近黑强调，圆角克制' },
-  { id: 'neutral', label: '中性', description: '纯灰阶，最安静' },
+  { id: 'neutral', label: '中性', description: '默认：官方标准后台配色，纯灰阶' },
+  { id: 'stone', label: '石灰', description: '近黑强调，圆角克制' },
   { id: 'butter', label: '黄油', description: '亮蓝强调，明快' },
   { id: 'matcha', label: '抹茶', description: '橄榄绿，沉稳' },
   { id: 'chocolate', label: '可可', description: '暖棕，厚重' },
-  { id: 'fanmeng', label: '繁梦紫', description: '品牌紫，有梦想感' },
 ] as const satisfies ReadonlyArray<{ id: AstryxThemeId; label: string; description: string }>
 
 /** 每套主题的浅色强调色（从各主题编译产物 theme.css 的 `--color-accent` 读出），用于缩略图色块。 */
@@ -36,7 +35,6 @@ export const ASTRYX_SWATCH: Record<AstryxThemeId, string> = {
   butter: '#225bff',
   matcha: '#3e481d',
   chocolate: '#8c5927',
-  fanmeng: '#5447df',
 }
 
 export const DEFAULT_ASTRYX_THEME: AstryxThemeId = defaultThemeSlug
@@ -53,4 +51,4 @@ export const isAstryxTheme = (v: unknown): v is AstryxThemeId =>
  * 之所以敢写 `<html>`（虽然内层 `<div>` 会遮蔽它），是因为hydration 后
  * `<Theme theme={…}>` 会立刻把两处都改成同一个值，两者不冲突。
  */
-export const ASTRYX_THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('${ASTRYX_THEME_STORAGE_KEY}');var v=['neutral','stone','butter','matcha','chocolate','fanmeng'];document.documentElement.setAttribute('data-astryx-theme',v.indexOf(t)>-1?t:'${defaultThemeSlug}');var m=localStorage.getItem('theme');var d=m==='dark'||(m!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}catch(e){}})()`
+export const ASTRYX_THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('${ASTRYX_THEME_STORAGE_KEY}');var v=['neutral','stone','butter','matcha','chocolate'];document.documentElement.setAttribute('data-astryx-theme',v.indexOf(t)>-1?t:'${defaultThemeSlug}');var m=localStorage.getItem('theme');var d=m==='dark'||(m!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}catch(e){}})()`
