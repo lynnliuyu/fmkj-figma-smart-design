@@ -24,7 +24,7 @@
 # 1. **不能用 `actions/setup-node`** —— 它在自托管上会去改系统 node，
 #    本机已装 v24（≥ 项目要求的 24.22.1 之前也够用），直接用即可。
 # 2. **不能用 `services:`** —— 那是 Docker 容器，macOS runner 不支持。
-#    冒烟测试改用**本机已有的 PostgreSQL**（`scripts/dev-up.sh` 起的 :55432）。
+#    冒烟测试使用本机 PostgreSQL (:55432)，由 `scripts/dev-db-ensure.sh` 确保可用。
 # 3. **不能用 `pnpm/action-setup`** —— 本机 pnpm 已经是仓库 pin 的 10.34.3。
 # 4. 工作区默认不清理，所以要在开头显式 `git clean`，否则上一轮的残留会污染这一轮。
 # ─────────────────────────────────────────────────────────────────────────────
@@ -125,14 +125,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 检查本机数据库可用
-        run: |
-          if ! nc -z 127.0.0.1 "${FMKJ_PG_PORT}"; then
-            echo "本机 PostgreSQL (:${FMKJ_PG_PORT}) 没有运行。"
-            echo "先跑 scripts/dev-up.sh，或直接把冒烟测试交给 ci.yml（GitHub 托管）。"
-            exit 1
-          fi
-          echo "本机库可用"
+      - name: 确保本机 PostgreSQL 可用
+        run: bash scripts/dev-db-ensure.sh
 
       # ⚠️ 用的是 **CI 专用库 fmkj_ci**，不是开发用的 fmkj。
       #

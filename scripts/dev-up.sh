@@ -71,12 +71,7 @@ else
     "$PGBIN/initdb" -D "$DATA_DIR" -U fmkj --auth=trust -E UTF8 >/dev/null
   fi
   echo "▸ 启动库（端口 ${PG_PORT}）…"
-  "$PGBIN/pg_ctl" -D "$DATA_DIR" -o "-p $PG_PORT -k /tmp" -l /tmp/pg-fmkj.log start >/dev/null
-  # pg_ctl start 是异步的，等端口真的能连上
-  for _ in $(seq 1 30); do
-    nc -z 127.0.0.1 "$PG_PORT" 2>/dev/null && break
-    sleep 0.5
-  done
+  "$PGBIN/pg_ctl" -D "$DATA_DIR" -o "-p $PG_PORT -k /tmp" -l /tmp/pg-fmkj.log -w -t 30 start
   if ! nc -z 127.0.0.1 "$PG_PORT" 2>/dev/null; then
     echo "❌ 库没起来，看日志：/tmp/pg-fmkj.log"; tail -20 /tmp/pg-fmkj.log; exit 1
   fi
@@ -97,7 +92,10 @@ fi
 #    非交互执行就卡死在这儿。而本地**本来就不需要迁移**（push 已建表）。
 #
 # 所以：只提示，不动手。库真为空时让用户按 LOCAL-DEV.md 手动处理。
-if [ "$DB_ONLY" = true ]; then :; fi
+if [ "$DB_ONLY" = true ]; then
+  echo "▸ 只起库，退出。（停库：$PGBIN/pg_ctl -D $DATA_DIR stop）"
+  exit 0
+fi
 
 if ! PGBIN_QUERY=$(node -e '
   const path = require("path")
@@ -128,11 +126,6 @@ if [ "$PGBIN_QUERY" -lt 10 ]; then
 EOF
 else
   echo "▸ 库里有 $PGBIN_QUERY 张表，直接可用"
-fi
-
-if [ "$DB_ONLY" = true ]; then
-  echo "▸ 只起库，退出。（停库：$PGBIN/pg_ctl -D $DATA_DIR stop）"
-  exit 0
 fi
 
 # ── 3. 起 dev 服务（交给 dev-local.sh，它负责改 payload.config 与还原）────
