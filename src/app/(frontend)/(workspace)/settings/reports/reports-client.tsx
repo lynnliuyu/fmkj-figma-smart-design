@@ -38,20 +38,7 @@ import {
 import type { CustomerUsageReport } from '@/lib/usage-diagnostics'
 import { cn } from '@/lib/utils'
 
-function formatDateTime(iso: string) {
-  if (!iso || iso.startsWith('1970-')) return '暂无记录'
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('zh-CN', {
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
-}
+import { formatDateTime } from './format-date-time'
 
 function methodLabel(m?: string) {
   switch (m) {
