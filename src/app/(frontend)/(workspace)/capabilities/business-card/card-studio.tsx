@@ -380,23 +380,21 @@ export function CardStudio({
                           : 'border-border hover:border-primary/60',
                       )}
                     >
-                      {/* 缩略图：正面在上、背面在下，一眼看到双面版式与构图差异 */}
-                      <span className="relative grid gap-1 overflow-hidden rounded-md">
-                        {(['front', 'back'] as CardSide[]).map((side) => (
-                          <ScaledFrame
-                            key={side}
-                            width={CARD_W}
-                            height={CARD_H}
-                            label={`${variant.name} ${side === 'front' ? '正面' : '背面'}缩略图`}
-                          >
-                            <BusinessCard
-                              variant={variant}
-                              side={side}
-                              info={info}
-                              assets={assets ?? undefined}
-                            />
-                          </ScaledFrame>
-                        ))}
+                      {/* 缩略图只放正面：八张小图挤在一起谁也看不清；
+                          背面在下方预览区按当前版式单独看。 */}
+                      <span className="relative overflow-hidden rounded-md">
+                        <ScaledFrame
+                          width={CARD_W}
+                          height={CARD_H}
+                          label={`${variant.name}正面缩略图`}
+                        >
+                          <BusinessCard
+                            variant={variant}
+                            side="front"
+                            info={info}
+                            assets={assets ?? undefined}
+                          />
+                        </ScaledFrame>
                         {selected ? (
                           <span className="absolute top-1 right-1 grid size-4 place-items-center rounded-full bg-primary text-primary-foreground">
                             <Check className="size-3" />
