@@ -192,6 +192,33 @@ docker exec fmkj-db-1 dropdb -U fmkj restore_drill
 备份目前落在**同一台服务器**上：能防误删、防写坏，防不了整机故障。异地副本
 （对象存储 / 另一台机器）还需要单独配。
 
+## 8.5 磁盘维护（2026-11-22 起）
+
+发布脚本自带三道与磁盘相关的措施，**不需要手动记**：
+
+1. **水位闸（不可绕过）**：构建前要求 `/opt/fmkj` 所在分区可用 **≥ 8 GB**，不足直接中止并列出该清什么。
+   `MIN_FREE_GB` 只能往上调；设成 0/2 会被钳到 8（防止「先跳过一次」变成习惯）。
+2. **构建缓存上限**：预检执行 `docker builder prune -f --keep-storage 2GB`，缓存不再无限增长。
+3. **发布后轮转**：切流成功后执行 `deploy/disk-rotate.sh`，只保留最近 2 个 `releases/` 与最近 2 个
+   `src-*` 暂存目录；被容器引用的、当前在服务的、`src-current`、`backups/` 一律不动。
+
+另有每周一次的 `/tmp` 与系统日志维护：
+
+```bash
+sudo install -m 755 deploy/disk-maintenance.sh /opt/fmkj/bin/fmkj-disk-maintenance.sh
+echo '30 4 * * 0 root /opt/fmkj/bin/fmkj-disk-maintenance.sh >> /var/log/fmkj-disk.log 2>&1' \
+  | sudo tee /etc/cron.d/fmkj-disk
+sudo mkdir -p /etc/systemd/journald.conf.d
+sudo cp deploy/journald-disk.conf /etc/systemd/journald.conf.d/fmkj-disk.conf
+sudo systemctl restart systemd-journald
+```
+
+`disk-maintenance.sh` 清的是 `/tmp` 里 3 天前的构建/测试残留（跳过 `eevee-release-*`、`systemd-private-*`、
+socket 等），并把 journal 收到 200 MB。它**不碰**备份、发布目录、数据库卷。
+
+为什么要这几条：2026-11-22 实测服务器只剩 1.4 GB 可用，根因是 19 个从没人清的手工发布 `src-*`
+暂存目录（2.5 GB）、攒了一个月的 `/tmp` 残留（4.28 GB）与 3.8 GB 构建缓存。清理后回到 12 GB。
+
 ## 9. 桌面客户端（Windows / macOS）
 
 客户端源码在 `desktop/`，打包方法见 `desktop/README.md`。客户端加载的是服务器上的网页工作台，服务器只需要托管安装包和自动更新清单：

@@ -94,6 +94,49 @@ fi
 # --cut 只切流量：跳过备份 / 构建 / 迁移 / 起容器，直接走到第 5 步
 if [[ "$CUT_ONLY" != "1" ]]; then
 
+# ── 预检 0：磁盘水位 ──────────────────────────────────
+# 2026-11-22 实测：可用只剩 1.1 GB 时脚本照常构建，镜像解包把分区压到 98%，
+# 离「数据库写失败 / 备份写不进去」只差一步。构建缓存与旧 release 才是主因，
+# 所以先清缓存再判水位，不合格就中止 —— 这道闸不允许绕过。
+# （不提供 SKIP_DISK_CHECK：磁盘见底时构建出来的版本也没法安全发布。）
+# 阈值只能往上调，不能调低：把它设成 0 就等于绕过了这道闸。
+MIN_FREE_GB=${MIN_FREE_GB:-8}
+if (( MIN_FREE_GB < 8 )); then
+  echo "  ⚠️  MIN_FREE_GB=${MIN_FREE_GB} 低于安全下限，已按 8 GB 执行（这道检查不允许放宽）" >&2
+  MIN_FREE_GB=8
+fi
+FREE_KB=$(df -Pk "$RELEASES" 2>/dev/null | awk 'NR==2{print $4}')
+FREE_GB=$(( ${FREE_KB:-0} / 1024 / 1024 ))
+log "预检：磁盘水位（可用 ${FREE_GB} GB / 要求 ≥${MIN_FREE_GB} GB）"
+
+# 构建缓存单独设上限：它曾是最大的一次性浪费（2026-11-22 实测 3.8 GB）。
+sudo docker builder prune -f --keep-storage 2GB >/dev/null 2>&1 || true
+# 旧 release 与暂存目录先轮转一轮，能就地腾出空间。
+bash "$(dirname "$0")/disk-rotate.sh" 2>/dev/null || true
+
+FREE_KB=$(df -Pk "$RELEASES" | awk 'NR==2{print $4}')
+FREE_GB=$(( FREE_KB / 1024 / 1024 ))
+if (( FREE_GB < MIN_FREE_GB )); then
+  cat >&2 <<EOF
+
+✗ 磁盘可用空间不足，已中止（生产未受影响，流量未动）。
+
+  当前：${FREE_GB} GB 可用（$(( FREE_KB / 1024 )) MB）
+  要求：≥ ${MIN_FREE_GB} GB
+
+  该清什么，按回收量从大到小：
+    1. 构建缓存      sudo docker builder prune -f
+    2. 旧发布目录    bash deploy/disk-rotate.sh
+    3. /tmp 残留     sudo bash deploy/disk-maintenance.sh
+    4. 无标签镜像    sudo docker image prune -f
+    5. 系统日志      sudo journalctl --vacuum-size=200M
+
+  清理后重新执行本脚本即可。不要用环境变量跳过这道检查。
+EOF
+  exit 1
+fi
+echo "  ✅ 空间充足（${FREE_GB} GB）"
+
 # ── 预检：清掉没有容器挂着的影子网络 ──────────────────
 # 每个 release 会建一个 compose 网络（<project>_default），5.5 步只删容器，
 # 网络不会跟着消失。攒够 ~28 个就把 Docker 默认地址池吃光，第 3 步直接报：
@@ -335,4 +378,13 @@ if [[ "$CUT_ONLY" == "1" ]]; then
 else
   echo "  本次容器：$APP_CONTAINER（compose project: $PROJECT）"
 fi
+# ── 7. 轮转旧发布目录（保留当前与上一版，其余按时间清）──────────
+# 2026-11-22 实测：releases/ 攒了 12 个目录、另有 19 个手工发布时代的 src-*
+# 暂存目录共 2.5 GB，从来没人清过。放在切流成功之后做，失败也不影响线上。
+if [[ "$CUT_ONLY" != "1" ]]; then
+  log "7/7 轮转旧发布目录"
+  KEEP_RELEASES=2 KEEP_CURRENT_DIR="$REL/src" bash "$(dirname "$0")/disk-rotate.sh" || \
+    echo "  ⚠️  轮转失败（不影响线上）"
+fi
+
 log "完成。回滚命令：bash deploy/shadow-release.sh --rollback $CUR_PORT"
