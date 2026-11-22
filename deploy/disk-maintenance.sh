@@ -20,7 +20,13 @@ DRY_RUN=${DRY_RUN:-0}
 RELEASES=${RELEASES:-/opt/fmkj/releases}
 
 log() { printf '[%s] %s\n' "$(date '+%F %T')" "$*"; }
-run() { if [[ "$DRY_RUN" == "1" ]]; then log "[dry-run] $*"; else eval "sudo $*"; fi }
+run() {
+  if [[ "$DRY_RUN" == "1" ]]; then
+    log "[dry-run] $*"
+  else
+    sudo -- "$@"
+  fi
+}
 
 before=$(df -Pk / | awk 'NR==2{print $4}')
 log "开始：可用 $((before/1024/1024)) GB"
@@ -33,7 +39,7 @@ log "开始：可用 $((before/1024/1024)) GB"
 #   tmux-* / .s.PGSQL.*   活动 socket
 freed_mb=0
 for path in /tmp/*; do
-  [[ -e "$path" ]] || continue
+  [[ ! -L "$path" && ( -f "$path" || -d "$path" ) ]] || continue
   base=$(basename "$path")
   case "$base" in
     eevee-release-*|systemd-private-*|snap-private-tmp|tmux-*|.font-unix|.ICE-unix|.X11-unix|.XIM-unix|.s.PGSQL.*) continue ;;
@@ -42,13 +48,13 @@ for path in /tmp/*; do
   (( days < TMP_KEEP_DAYS )) && continue
   mb=$(sudo du -sm "$path" 2>/dev/null | cut -f1 || echo 0)
   log "删除 ${mb} MB（${days} 天） $path"
-  run rm -rf "$path"
+  run rm -rf -- "$path"
   freed_mb=$((freed_mb+mb))
 done
 log "/tmp 清理：${freed_mb} MB"
 
 # ── 构建缓存：留有上限，不独占磁盘 ────────────────────────
-run "docker builder prune -f --keep-storage 2GB >/dev/null 2>&1 || true"
+run docker builder prune -f --keep-storage 2GB || log "构建缓存清理失败"
 
 # ── 旧发布目录：走同一套轮转逻辑 ──────────────────────────
 # 本脚本装到 /opt/fmkj/bin/ 后，同目录还要有 disk-rotate.sh（安装步骤会一起装）。
@@ -61,7 +67,7 @@ else
 fi
 
 # ── 系统日志 ──────────────────────────────────────────
-run "journalctl --vacuum-size=$JOURNAL_MAX >/dev/null 2>&1 || true"
+run journalctl --vacuum-size="$JOURNAL_MAX" || log "归档日志清理失败"
 
 after=$(df -Pk / | awk 'NR==2{print $4}')
 log "完成：可用 $((after/1024/1024)) GB（本次释放 $(( (after-before)/1024 )) MB）"

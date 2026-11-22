@@ -206,35 +206,25 @@ docker exec fmkj-db-1 dropdb -U fmkj restore_drill
 （即包含 `deploy/` 的那一层，如 `/opt/fmkj/releases/<时间戳>/src`），整段可直接复制粘贴：
 
 ```bash
-set -e
-# 1. 两个脚本一起装到固定路径（维护脚本会调用同目录的 disk-rotate.sh，
-#    只装一个会静默跳过轮转）
-sudo install -m 755 deploy/disk-maintenance.sh /opt/fmkj/bin/fmkj-disk-maintenance.sh
-sudo install -m 755 deploy/disk-rotate.sh /opt/fmkj/bin/disk-rotate.sh
-# 2. 每周日 04:30 跑一次
-echo '30 4 * * 0 root /opt/fmkj/bin/fmkj-disk-maintenance.sh >> /var/log/fmkj-disk.log 2>&1' \
-  | sudo tee /etc/cron.d/fmkj-disk
-sudo chmod 644 /etc/cron.d/fmkj-disk
-# 3. 系统日志总量上限（journald drop-in）
-sudo mkdir -p /etc/systemd/journald.conf.d
-sudo cp deploy/journald-disk.conf /etc/systemd/journald.conf.d/fmkj-disk.conf
-sudo systemctl restart systemd-journald
-# 4. 确认两处都生效
-crontab -l >/dev/null 2>&1 || true
-ls -l /etc/cron.d/fmkj-disk /etc/systemd/journald.conf.d/fmkj-disk.conf \
-       /opt/fmkj/bin/fmkj-disk-maintenance.sh /opt/fmkj/bin/disk-rotate.sh
-journalctl --disk-usage
+(
+  set -euo pipefail
+  sudo install -d -m 755 /opt/fmkj/bin /etc/systemd/journald.conf.d
+  sudo install -m 755 deploy/disk-maintenance.sh /opt/fmkj/bin/fmkj-disk-maintenance.sh
+  sudo install -m 755 deploy/disk-rotate.sh /opt/fmkj/bin/disk-rotate.sh
+  sudo install -m 644 deploy/journald-disk.conf /etc/systemd/journald.conf.d/fmkj-disk.conf
+  sudo systemctl restart systemd-journald
+
+  printf '%s\n' '30 4 * * 0 root /opt/fmkj/bin/fmkj-disk-maintenance.sh >> /var/log/fmkj-disk.log 2>&1' \
+    | sudo tee /etc/cron.d/fmkj-disk
+  sudo chmod 644 /etc/cron.d/fmkj-disk
+  sudo systemctl is-active cron systemd-journald
+  sudo systemd-analyze cat-config systemd/journald.conf | grep -Fx 'SystemMaxUse=200M'
+  sudo journalctl --disk-usage
+  sudo env DRY_RUN=1 bash /opt/fmkj/bin/fmkj-disk-maintenance.sh
+)
 ```
 
-**验证方式**：`journalctl --disk-usage` 应显示 `Archived and active journals take up <200M`
-（本次安装前实测 169.2 MB，说明系统原本就低于上限，不会突然砍掉现有日志）；
-`/etc/cron.d/fmkj-disk` 是 10 字段的一行（5 个时间字段 + `root` + 命令）。
-
-跑一次看看它做什么（不清任何东西）：
-
-```bash
-DRY_RUN=1 sudo -E bash /opt/fmkj/bin/fmkj-disk-maintenance.sh
-```
+确认 cron 和 journald 都显示 `active`，配置中有 `SystemMaxUse=200M`，并检查 dry-run 列出的保留和待删目录。每周日 04:30 执行清理。
 
 `disk-maintenance.sh` 清的是 `/tmp` 里 3 天前的构建/测试残留（跳过 `eevee-release-*`、`systemd-private-*`、
 socket 等），并把 journal 收到 200 MB。它**不碰**备份、发布目录、数据库卷。
