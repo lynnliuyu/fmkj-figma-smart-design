@@ -225,174 +225,19 @@
 }
 
 /*
- * 颜色变量。每套主题风格（data-accent）在浅色 / 深色下都定义完整的一组，互不依赖：
- * - 中性色全部带一点主题色相（不用纯灰），文字分三级：foreground / fg-secondary / muted-foreground；
- * - 面分四层：canvas（工作区底）< background（顶栏、侧栏）≈ card（卡片）< popover（浮层）；深色主题里越靠上越亮；
- * - 深色选择器同时匹配 <html class="dark" data-accent> 与页面内嵌套的 [data-accent]（品牌页、下载页固定繁梦紫）。
- * 「经典」就是 :root / .dark 的中性色。
+ * 颜色变量。浅色 / 深色各定义完整的一组，互不依赖：
+ * - 中性色全部带一点色相（不用纯灰），文字分三级：foreground / fg-secondary / muted-foreground；
+ * - 面分四层：canvas（工作区底）< background（顶栏、侧栏）≈ card（卡片）< popover（浮层）；深色里越靠上越亮。
+ *
+ * 2026-11-21：用户拍板「全站统一官方灰调，不要自写品牌色」。原先还有
+ * 「主题风格」这一层（data-accent：官网 / 繁梦紫 / 青碧 / 经典，共 6 段变体、
+ * 约 120 个自写色值），现已整套删除，本组就是唯一的页面配色来源。
+ * 组件层的配色由 Astryx 官方主题（默认 neutral）提供。
  */
 :root {
   --font-sans:
     var(--font-inter), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
     ui-sans-serif, sans-serif;
-  --background: oklch(1 0 0);
-  --canvas: oklch(0.982 0.002 260);
-  --foreground: oklch(0.2 0.008 260);
-  --fg-secondary: oklch(0.37 0.01 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.008 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.008 260);
-  --primary: oklch(0.22 0.008 260);
-  --primary-foreground: oklch(0.985 0.002 260);
-  --secondary: oklch(0.966 0.003 260);
-  --secondary-foreground: oklch(0.24 0.008 260);
-  --muted: oklch(0.966 0.003 260);
-  --muted-foreground: oklch(0.51 0.012 260);
-  --subtle: oklch(0.98 0.002 260);
-  --accent: oklch(0.958 0.004 260);
-  --accent-foreground: oklch(0.2 0.008 260);
-  --border: oklch(0.92 0.004 260);
-  --border-strong: oklch(0.87 0.006 260);
-  --input: oklch(0.885 0.006 260);
-  --ring: oklch(0.55 0.015 260);
-  --sidebar: oklch(0.995 0.001 260);
-  --sidebar-foreground: oklch(0.2 0.008 260);
-  --sidebar-primary: oklch(0.22 0.008 260);
-  --sidebar-primary-foreground: oklch(0.985 0.002 260);
-  --sidebar-accent: oklch(0.955 0.004 260);
-  --sidebar-accent-foreground: oklch(0.2 0.008 260);
-  --sidebar-border: oklch(0.92 0.004 260);
-  --sidebar-ring: oklch(0.55 0.015 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  /* 浅色警示底（--destructive/10）上的文字。直接用 --destructive 只有 4.0:1。 */
-  --destructive-strong: oklch(0.47 0.2 27.325);
-  --success: oklch(0.49 0.12 155);
-  --warning: oklch(0.52 0.11 75);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-}
-
-.dark {
-  --background: oklch(0.17 0.006 260);
-  --canvas: oklch(0.145 0.005 260);
-  --foreground: oklch(0.965 0.003 260);
-  --fg-secondary: oklch(0.85 0.006 260);
-  --card: oklch(0.198 0.007 260);
-  --card-foreground: oklch(0.965 0.003 260);
-  --popover: oklch(0.215 0.008 260);
-  --popover-foreground: oklch(0.965 0.003 260);
-  --primary: oklch(0.94 0.003 260);
-  --primary-foreground: oklch(0.2 0.008 260);
-  --secondary: oklch(0.25 0.008 260);
-  --secondary-foreground: oklch(0.965 0.003 260);
-  --muted: oklch(0.25 0.008 260);
-  --muted-foreground: oklch(0.71 0.01 260);
-  --subtle: oklch(0.215 0.007 260);
-  --accent: oklch(0.27 0.009 260);
-  --accent-foreground: oklch(0.965 0.003 260);
-  --border: oklch(1 0 0 / 9%);
-  --border-strong: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.62 0.01 260);
-  --sidebar: oklch(0.17 0.006 260);
-  --sidebar-foreground: oklch(0.965 0.003 260);
-  --sidebar-primary: oklch(0.94 0.003 260);
-  --sidebar-primary-foreground: oklch(0.2 0.008 260);
-  --sidebar-accent: oklch(0.255 0.008 260);
-  --sidebar-accent-foreground: oklch(0.965 0.003 260);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.62 0.01 260);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-strong: oklch(0.78 0.15 22.216);
-  --success: oklch(0.74 0.12 155);
-  --warning: oklch(0.8 0.11 75);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-}
-
-/* 主题风格（强调色）：<html data-accent="fanmeng | jade | classic">。 */
-[data-accent='fanmeng'] {
-  --background: oklch(1 0 0);
-  --canvas: oklch(0.982 0.004 286);
-  --foreground: oklch(0.2 0.02 282);
-  --fg-secondary: oklch(0.37 0.025 283);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 282);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 282);
-  --primary: oklch(0.51 0.22 279);
-  --primary-foreground: oklch(0.985 0.005 285);
-  --secondary: oklch(0.966 0.006 285);
-  --secondary-foreground: oklch(0.3 0.06 280);
-  --muted: oklch(0.966 0.006 285);
-  --muted-foreground: oklch(0.5 0.025 283);
-  --subtle: oklch(0.981 0.004 286);
-  --accent: oklch(0.955 0.018 285);
-  --accent-foreground: oklch(0.32 0.12 280);
-  --border: oklch(0.918 0.009 285);
-  --border-strong: oklch(0.868 0.012 285);
-  --input: oklch(0.885 0.012 285);
-  --ring: oklch(0.62 0.17 281);
-  --sidebar: oklch(0.995 0.002 286);
-  --sidebar-foreground: oklch(0.2 0.02 282);
-  --sidebar-primary: oklch(0.51 0.22 279);
-  --sidebar-primary-foreground: oklch(0.985 0.005 285);
-  --sidebar-accent: oklch(0.955 0.016 285);
-  --sidebar-accent-foreground: oklch(0.28 0.1 280);
-  --sidebar-active-bg: oklch(0.925 0.028 285);
-  --sidebar-border: oklch(0.918 0.009 285);
-  --sidebar-ring: oklch(0.62 0.17 281);
-}
-.dark[data-accent='fanmeng'],
-.dark [data-accent='fanmeng'] {
-  --background: oklch(0.17 0.016 283);
-  --canvas: oklch(0.145 0.014 283);
-  --foreground: oklch(0.97 0.006 285);
-  --fg-secondary: oklch(0.86 0.014 285);
-  --card: oklch(0.198 0.019 283);
-  --card-foreground: oklch(0.97 0.006 285);
-  --popover: oklch(0.215 0.021 283);
-  --popover-foreground: oklch(0.97 0.006 285);
-  --primary: oklch(0.7 0.16 282);
-  --primary-foreground: oklch(0.16 0.04 283);
-  --secondary: oklch(0.25 0.022 283);
-  --secondary-foreground: oklch(0.97 0.006 285);
-  --muted: oklch(0.25 0.022 283);
-  --muted-foreground: oklch(0.72 0.024 285);
-  --subtle: oklch(0.215 0.02 283);
-  --accent: oklch(0.275 0.04 283);
-  --accent-foreground: oklch(0.97 0.006 285);
-  --border: oklch(1 0 0 / 9%);
-  --border-strong: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.6 0.15 282);
-  --sidebar: oklch(0.17 0.016 283);
-  --sidebar-foreground: oklch(0.97 0.006 285);
-  --sidebar-primary: oklch(0.7 0.16 282);
-  --sidebar-primary-foreground: oklch(0.16 0.04 283);
-  --sidebar-accent: oklch(0.255 0.03 283);
-  --sidebar-accent-foreground: oklch(0.97 0.006 285);
-  --sidebar-active-bg: oklch(0.3 0.042 283);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.6 0.15 282);
-}
-/*
- * 主题风格「官网」（<html data-accent="official">）。
- *
- * 取自公开站（Linear / OpenAI 式产品官网）实测的语言：墨色主色、全圆胶囊按钮、
- * 16px 圆角卡片、极浅画布。配色与「经典」同族（中性近黑），差别在**形态**——
- * 按钮与输入框走 --radius-full 胶囊，卡片圆角放大到 16px，也就是官网那种更松弛的观感。
- * 形态类 token（--radius-*）在这里覆盖即可全站生效：Button/Input/Card 都引用它们。
- */
-[data-accent='official'] {
   --background: oklch(1 0 0);
   --canvas: oklch(0.9788 0.001 260);
   --foreground: oklch(0.205 0.012 265);
@@ -418,15 +263,24 @@
   --sidebar-foreground: oklch(0.205 0.012 265);
   --sidebar-primary: oklch(0.205 0.012 265);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  /* 选中态要比未选中明显——实测 0.958 太浅，肉眼几乎看不出当前在哪一页。 */
   --sidebar-accent: oklch(0.915 0.005 265);
   --sidebar-accent-foreground: oklch(0.18 0.012 265);
-  --sidebar-active-bg: oklch(0.895 0.006 265);
   --sidebar-border: oklch(0.912 0.004 265);
   --sidebar-ring: oklch(0.35 0.01 265);
+  --destructive: oklch(0.577 0.245 27.325);
+  /* 浅色警示底（--destructive/10）上的文字。直接用 --destructive 只有 4.0:1。 */
+  --destructive-strong: oklch(0.47 0.2 27.325);
+  --success: oklch(0.49 0.12 155);
+  --warning: oklch(0.52 0.11 75);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
 }
-.dark[data-accent='official'],
-.dark [data-accent='official'] {
+
+.dark {
   --background: oklch(0.165 0.006 265);
   --canvas: oklch(0.14 0.005 265);
   --foreground: oklch(0.97 0.002 265);
@@ -454,82 +308,24 @@
   --sidebar-primary-foreground: oklch(0.17 0.008 265);
   --sidebar-accent: oklch(0.255 0.009 265);
   --sidebar-accent-foreground: oklch(0.97 0.002 265);
-  --sidebar-active-bg: oklch(0.305 0.011 265);
   --sidebar-border: oklch(1 0 0 / 9%);
   --sidebar-ring: oklch(0.78 0.006 265);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-strong: oklch(0.78 0.15 22.216);
+  --success: oklch(0.74 0.12 155);
+  --warning: oklch(0.8 0.11 75);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
 }
 
-[data-accent='jade'] {
-  --background: oklch(1 0 0);
-  --canvas: oklch(0.982 0.004 185);
-  --foreground: oklch(0.2 0.014 200);
-  --fg-secondary: oklch(0.37 0.018 195);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.014 200);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.014 200);
-  --primary: oklch(0.5 0.095 182);
-  --primary-foreground: oklch(0.985 0.005 180);
-  --secondary: oklch(0.966 0.005 180);
-  --secondary-foreground: oklch(0.3 0.05 185);
-  --muted: oklch(0.966 0.005 180);
-  --muted-foreground: oklch(0.5 0.02 190);
-  --subtle: oklch(0.981 0.004 182);
-  --accent: oklch(0.955 0.016 178);
-  --accent-foreground: oklch(0.32 0.07 182);
-  --border: oklch(0.918 0.008 182);
-  --border-strong: oklch(0.868 0.01 182);
-  --input: oklch(0.885 0.01 182);
-  --ring: oklch(0.63 0.1 180);
-  --sidebar: oklch(0.995 0.002 182);
-  --sidebar-foreground: oklch(0.2 0.014 200);
-  --sidebar-primary: oklch(0.5 0.095 182);
-  --sidebar-primary-foreground: oklch(0.985 0.005 180);
-  --sidebar-accent: oklch(0.955 0.016 178);
-  --sidebar-accent-foreground: oklch(0.3 0.07 182);
-  --sidebar-border: oklch(0.918 0.008 182);
-  --sidebar-ring: oklch(0.63 0.1 180);
-}
-.dark[data-accent='jade'],
-.dark [data-accent='jade'] {
-  --background: oklch(0.17 0.012 205);
-  --canvas: oklch(0.145 0.011 205);
-  --foreground: oklch(0.97 0.005 180);
-  --fg-secondary: oklch(0.86 0.012 185);
-  --card: oklch(0.198 0.015 205);
-  --card-foreground: oklch(0.97 0.005 180);
-  --popover: oklch(0.215 0.016 205);
-  --popover-foreground: oklch(0.97 0.005 180);
-  --primary: oklch(0.76 0.11 178);
-  --primary-foreground: oklch(0.18 0.03 195);
-  --secondary: oklch(0.25 0.017 202);
-  --secondary-foreground: oklch(0.97 0.005 180);
-  --muted: oklch(0.25 0.017 202);
-  --muted-foreground: oklch(0.73 0.02 190);
-  --subtle: oklch(0.215 0.015 203);
-  --accent: oklch(0.275 0.028 195);
-  --accent-foreground: oklch(0.97 0.005 180);
-  --border: oklch(1 0 0 / 9%);
-  --border-strong: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.62 0.1 180);
-  --sidebar: oklch(0.17 0.012 205);
-  --sidebar-foreground: oklch(0.97 0.005 180);
-  --sidebar-primary: oklch(0.76 0.11 178);
-  --sidebar-primary-foreground: oklch(0.18 0.03 195);
-  --sidebar-accent: oklch(0.26 0.024 200);
-  --sidebar-accent-foreground: oklch(0.97 0.005 180);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.62 0.1 180);
-}
-
-/* 主题风格色块与经典品牌点缀色（不随主题变化；不与下方「繁梦空间品牌色」重复定义）。
-   品牌主紫/蓝/夜/墨/晨雾等统一收敛到下方 Block B（品牌规范页色卡为准），此处不再重复。 */
+/*
+ * 品牌色板：只用于**品牌规范页**展示官方品牌定义（色卡、渐变、应用图标底色），
+ * 不参与界面配色。原先的「主题风格色块」已随 data-accent 一并删除。
+ */
 @theme {
-  --color-swatch-fanmeng: oklch(0.55 0.22 280);
-  --color-swatch-jade: oklch(0.56 0.11 180);
-  --color-swatch-classic: oklch(0.205 0 0);
-  --color-swatch-official: oklch(0.205 0.012 265);
   --color-brand-gold: #ffc24b;
   --color-brand-gold-light: #ffdb7e;
   --color-brand-gold-deep: #ffb536;
@@ -889,7 +685,7 @@ html:has([data-landing]) {
 }
 
 /*
- * `data-accent` 的圆角覆盖 —— 已移除（2026-11-10）。
+ * `data-accent` 的圆角覆盖 —— 已随 data-accent 整套移除（2026-11-21）。
  *
  * 这段原本是给**旧的 shadcn 按钮**写的：那时按钮是 `<button data-slot="button">`
  * 加 Tailwind 类，圆角来自类，所以需要 `!important` 盖过 utilities 层。

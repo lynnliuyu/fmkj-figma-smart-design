@@ -1,33 +1,13 @@
 /**
- * 外观：颜色模式（浅色 / 深色 / 跟随系统，由 next-themes 管理）+ 主题风格（强调色）。
- * 主题风格写在 <html data-accent="…">，CSS 变量见 styles.css；页面绘制前由内联脚本恢复，避免闪烁。
+ * 外观：颜色模式（浅色 / 深色 / 跟随系统，由 next-themes 管理）。
+ *
+ * 2026-11-21：用户拍板「全站统一官方灰调，不要自写品牌色」，原「主题风格」
+ * （`data-accent`：官网 / 繁梦紫 / 青碧 / 经典）整套删除。页面配色只由
+ * `:root` / `.dark` 的语义 token 与 Astryx 官方主题决定，不再有第二套 accent。
  */
-export const ACCENTS = [
-  { id: 'official', label: '官网', description: '默认：墨色胶囊、克制留白' },
-  { id: 'fanmeng', label: '繁梦紫', description: '品牌紫，灵动有梦想感' },
-  { id: 'jade', label: '青碧', description: '清爽青绿，适合长时间工作' },
-  { id: 'classic', label: '经典', description: '黑白灰为主，专注内容本身' },
-] as const
-
-export type AccentId = (typeof ACCENTS)[number]['id']
 
 /**
- * 新用户默认主题。用「官网」：墨色主操作 + 克制留白，和公开站的视觉语言一致，
- * 也更适合「设计 / 报价 / 签约」这种偏严肃的交付工具。
- * 「繁梦紫」作为品牌主题保留为可选项，老用户 localStorage 里已有的选择不受影响。
+ * 旧版本写下的 accent 值。留着只是为了把历史 localStorage 里的脏值清掉——
+ * 读取时如果命中这里，就当作「没有选择」。
  */
-export const DEFAULT_ACCENT: AccentId = 'official'
-export const ACCENT_STORAGE_KEY = 'fmkj-accent'
-
-export const isAccent = (v: unknown): v is AccentId => ACCENTS.some((a) => a.id === v)
-
-/** 主题风格色块（对应 styles.css 中的 --color-swatch-*） */
-export const ACCENT_SWATCH: Record<AccentId, string> = {
-  fanmeng: 'bg-swatch-fanmeng',
-  jade: 'bg-swatch-jade',
-  classic: 'bg-swatch-classic',
-  official: 'bg-swatch-official',
-}
-
-/** 在 <head> 里尽早执行：恢复上次选择的主题风格 */
-export const ACCENT_INIT_SCRIPT = `(function(){var d=document.documentElement;try{var a=localStorage.getItem('${ACCENT_STORAGE_KEY}');d.setAttribute('data-accent',a==='jade'||a==='classic'||a==='fanmeng'||a==='official'?a:'${DEFAULT_ACCENT}')}catch(e){d.setAttribute('data-accent','${DEFAULT_ACCENT}')}})()`
+export const RETIRED_ACCENTS = ['official', 'fanmeng', 'jade', 'classic'] as const

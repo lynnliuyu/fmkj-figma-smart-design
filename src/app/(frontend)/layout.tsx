@@ -7,7 +7,6 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AstryxThemeProvider } from '@/components/astryx-theme-provider'
-import { ACCENT_INIT_SCRIPT } from '@/lib/appearance'
 import { BROWSER_WARN_INIT_SCRIPT } from '@/lib/browser-check'
 import { BANNER_OFFSET_CSS } from '@/lib/browser-warn-style'
 import { BrowserWarningBanner } from '@/components/browser-warning'
@@ -78,8 +77,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang={language} suppressHydrationWarning className={`${siteSans.variable} bg-background`}>
       <head>
-        {/* 恢复主题风格，避免首屏闪烁 */}
-        <script dangerouslySetInnerHTML={{ __html: ACCENT_INIT_SCRIPT }} />
         {/* 旧内核早期提示：head 内联脚本在首次 HTML 解析时执行；等 body 就绪后插入提示，
             不依赖 App chunk/CSS，Edge 100 也能显示。 */}
         {/* 高度由两版写入 html，和主题标记放在同一水合边界，body 只读取 CSS 变量。 */}

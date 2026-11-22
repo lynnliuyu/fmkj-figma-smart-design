@@ -5,12 +5,10 @@ import { Monitor, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import { useAstryxTheme } from '@/components/astryx-theme-provider'
-import { useAccent } from '@/components/theme-provider'
 import { Card } from '@astryxdesign/core/Card'
 import { Grid } from '@astryxdesign/core/Grid'
 import { Layout, LayoutContent, LayoutHeader } from '@astryxdesign/core/Layout'
 import { SelectableCard } from '@astryxdesign/core/SelectableCard'
-import { ACCENT_SWATCH, ACCENTS, DEFAULT_ACCENT } from '@/lib/appearance'
 import { ASTRYX_SWATCH, ASTRYX_THEMES, DEFAULT_ASTRYX_THEME } from '@/lib/astryx-theme'
 import { cn } from '@/lib/utils'
 
@@ -21,32 +19,8 @@ const MODES = [
 ] as const
 
 /**
- * 主题风格的示意小窗：侧栏 + 内容 + 主按钮。
- *
- * `pill` 用来反映该主题真实的按钮形态——「官网」主题的按钮是全圆胶囊，
- * 如果预览里仍画成小圆角方块，几套主题的缩略图会长得几乎一样，
- * 用户看图看不出差别（视觉评审指出过这一点）。
- */
-function AccentPreview({ swatch, pill = false }: { swatch: string; pill?: boolean }) {
-  return (
-    <span aria-hidden className="flex h-16 overflow-hidden rounded-lg border bg-background">
-      <span className="flex w-1/3 flex-col gap-1.5 border-r bg-muted/60 p-2">
-        <span className={cn('h-1.5 w-full rounded-full', swatch)} />
-        <span className="h-1.5 w-3/4 rounded-full bg-muted-foreground/25" />
-        <span className="h-1.5 w-2/3 rounded-full bg-muted-foreground/25" />
-      </span>
-      <span className="flex flex-1 flex-col gap-1.5 p-2">
-        <span className="h-1.5 w-1/2 rounded-full bg-foreground/50" />
-        <span className="h-1.5 w-5/6 rounded-full bg-muted-foreground/25" />
-        <span className={cn('mt-auto h-3 w-10', pill ? 'rounded-full' : 'rounded-sm', swatch)} />
-      </span>
-    </span>
-  )
-}
-
-/**
  * 组件主题的示意小窗：用主题自身的强调色画「主按钮 + 输入框 + 卡片边」，
- * 让 6 套主题的差别（强调色深浅、按钮形态）一眼可辨。
+ * 让各套主题的差别（强调色深浅、按钮形态）一眼可辨。
  * 色值来自各主题 `theme.css` 的 `--color-accent`，不是随手挑的。
  */
 function AstryxThemePreview({ swatch }: { swatch: string }) {
@@ -65,7 +39,6 @@ function AstryxThemePreview({ swatch }: { swatch: string }) {
 /** 外观：颜色模式 + 主题风格。只保存在当前浏览器。 */
 export function AppearanceSettings() {
   const { theme, setTheme } = useTheme()
-  const { accent, setAccent } = useAccent()
   const { themeId, setThemeId } = useAstryxTheme()
   // next-themes 在服务端不知道用户选择，挂载后再显示选中项，避免水合不一致
   const [mounted, setMounted] = useState(false)
@@ -110,47 +83,15 @@ export function AppearanceSettings() {
                 </Grid>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <p id="appearance-accent" className="text-sm font-medium">
-                  主题风格
-                </p>
-                <Grid
-                  columns={{ minWidth: 180, max: 3 }}
-                  gap={2}
-                  role="group"
-                  aria-labelledby="appearance-accent"
-                >
-                  {ACCENTS.map((a) => (
-                    <SelectableCard
-                      key={a.id}
-                      label={a.label}
-                      isSelected={accent === a.id}
-                      onChange={() => setAccent(a.id)}
-                      padding={3}
-                      className="flex flex-col items-stretch gap-2.5"
-                    >
-                      <AccentPreview swatch={ACCENT_SWATCH[a.id]} pill={a.id === 'official'} />
-                      <span className="text-sm font-medium">
-                        {a.label}
-                        {a.id === DEFAULT_ACCENT ? (
-                          <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                            默认
-                          </span>
-                        ) : null}
-                      </span>
-                    </SelectableCard>
-                  ))}
-                </Grid>
-              </div>
-
-              {/* 组件主题（Astryx 官方 6 套）—— 与上面的「主题风格」是两套：
-            主题风格管页面级配色，这一组管官方组件的 token（强调色、圆角、边框…）。 */}
+              {/* 组件主题（Astryx 官方 5 套）：管官方组件的 token
+            （强调色、圆角、边框…）。2026-11-21 起页面级 accent 已整套移除，
+            页面配色只由这里的组件主题与语义 token 决定。 */}
               <div className="flex flex-col gap-2">
                 <p id="appearance-astryx" className="text-sm font-medium">
                   组件主题
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  按钮、输入框、弹窗等组件的样式；与上面的主题风格相互独立。
+                  按钮、输入框、弹窗等组件的样式。页面配色已统一为官方灰调，不再有独立的主题风格开关。
                 </p>
                 <Grid
                   columns={{ minWidth: 180, max: 3 }}

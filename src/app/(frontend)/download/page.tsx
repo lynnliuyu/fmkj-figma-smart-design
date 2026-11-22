@@ -92,11 +92,7 @@ const INSTALL_STEPS = [
 /** 下载页：Windows / macOS 桌面客户端与网页安装版 */
 export default function DownloadPage() {
   return (
-    <div
-      data-landing
-      data-accent="fanmeng"
-      className="min-h-svh overflow-x-clip bg-background text-foreground"
-    >
+    <div data-landing className="min-h-svh overflow-x-clip bg-background text-foreground">
       <LandingNav />
       <main>
         <section aria-labelledby="download-title">

@@ -230,11 +230,7 @@ function Surface({
 /** 品牌规范页：标志释义、组合、应用图标、品牌色、字体与使用规范，所有资源可下载。 */
 export default function BrandPage() {
   return (
-    <div
-      data-landing
-      data-accent="fanmeng"
-      className="min-h-svh overflow-x-clip bg-background text-foreground"
-    >
+    <div data-landing className="min-h-svh overflow-x-clip bg-background text-foreground">
       <LandingNav />
       <main>
         <section aria-labelledby="brand-title">

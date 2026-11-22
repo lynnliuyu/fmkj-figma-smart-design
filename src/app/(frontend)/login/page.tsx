@@ -69,11 +69,11 @@ export default async function LoginPage({
         {/* 品牌区：纯装饰 + APP_* 文案，窄屏堆叠在表单之后 */}
         <aside
           aria-hidden
-          className="relative order-2 flex items-center overflow-hidden border-t border-border/60 px-4 py-10 sm:px-6 lg:order-1 lg:w-1/2 lg:border-t-0 lg:border-r lg:px-12 lg:py-16 bg-linear-to-br from-brand-mist via-background to-brand-lavender/40 dark:from-brand-night dark:via-brand-dusk dark:to-brand-indigo/50"
+          className="relative order-2 flex items-center overflow-hidden border-t border-border/60 px-4 py-10 sm:px-6 lg:order-1 lg:w-1/2 lg:border-t-0 lg:border-r lg:px-12 lg:py-16 bg-linear-to-br from-muted via-background to-accent dark:from-card dark:via-background dark:to-accent/60"
         >
           {/* 品牌紫光斑（纯装饰，overflow-hidden 保证不产生横向滚动） */}
-          <div className="pointer-events-none absolute -top-24 -left-16 size-72 rounded-full bg-brand-violet/20 blur-3xl dark:bg-brand-violet/25" />
-          <div className="pointer-events-none absolute -right-10 -bottom-28 size-80 rounded-full bg-brand-indigo/15 blur-3xl dark:bg-brand-indigo/30" />
+          <div className="pointer-events-none absolute -top-24 -left-16 size-72 rounded-full bg-accent/20 blur-3xl dark:bg-accent/25" />
+          <div className="pointer-events-none absolute -right-10 -bottom-28 size-80 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20" />
 
           <VStack gap={5} width="100%" maxWidth={440} hAlign="start" className="relative">
             <Text type="label" color="accent" className="uppercase tracking-[0.2em]">

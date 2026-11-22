@@ -4,7 +4,6 @@ import { Check, Monitor, Moon, Palette, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import { useAstryxTheme } from '@/components/astryx-theme-provider'
-import { useAccent } from '@/components/theme-provider'
 import { IconButton } from '@astryxdesign/core/IconButton'
 import {
   DropdownMenu,
@@ -12,7 +11,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from '@astryxdesign/core/DropdownMenu'
-import { ACCENT_SWATCH, ACCENTS } from '@/lib/appearance'
 import { ASTRYX_SWATCH, ASTRYX_THEMES } from '@/lib/astryx-theme'
 import { cn } from '@/lib/utils'
 
@@ -33,27 +31,6 @@ function SelectionCheck({ selected }: { selected: boolean }) {
   return selected ? <Check aria-hidden className="size-4 text-foreground" /> : null
 }
 
-/**
- * 主题风格色块：官方 item 的 `icon` 槽会把已渲染节点原样透传，尺寸由这里决定。
- *
- * `pill` 用形状反映该主题真实的按钮形态——「官网」的按钮是全圆胶囊（见 `ACCENTS`
- * 里「墨色胶囊」的描述），所以画成胶囊，其余仍是圆点。只靠颜色分不开这两套：
- * 官网 `oklch(0.205 0.012 265)` 和经典 `oklch(0.205 0 0)` 明度相同、彩度只差 0.012，
- * 都是近黑的 14px 圆点，肉眼看不出差别（视觉评审指出过这一点）。
- */
-function AccentSwatch({ className, pill = false }: { className: string; pill?: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        'h-3.5 shrink-0 rounded-full ring-1 ring-foreground/10',
-        pill ? 'w-6' : 'w-3.5',
-        className,
-      )}
-    />
-  )
-}
-
 /** 组件主题色块：颜色来自内联 style，不走 Tailwind 调色板。 */
 function ThemeSwatch({ color }: { color: string }) {
   return (
@@ -68,7 +45,6 @@ function ThemeSwatch({ color }: { color: string }) {
 /** 外观菜单项：颜色模式 + 主题风格 + 组件主题（顶栏按钮共用）。 */
 export function AppearanceMenuItems() {
   const { theme, setTheme } = useTheme()
-  const { accent, setAccent } = useAccent()
   const { themeId, setThemeId } = useAstryxTheme()
   const mode = theme ?? 'system'
 
@@ -82,18 +58,6 @@ export function AppearanceMenuItems() {
             icon={<Icon className="size-4" />}
             endContent={<SelectionCheck selected={mode === value} />}
             onClick={() => setTheme(value)}
-          />
-        ))}
-      </DropdownMenuGroup>
-      <DropdownMenuDivider />
-      <DropdownMenuGroup title="主题风格">
-        {ACCENTS.map((a) => (
-          <DropdownMenuItem
-            key={a.id}
-            label={a.label}
-            icon={<AccentSwatch className={ACCENT_SWATCH[a.id]} pill={a.id === 'official'} />}
-            endContent={<SelectionCheck selected={accent === a.id} />}
-            onClick={() => setAccent(a.id)}
           />
         ))}
       </DropdownMenuGroup>
