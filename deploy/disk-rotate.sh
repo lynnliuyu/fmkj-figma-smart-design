@@ -73,11 +73,13 @@ REL_LIST=$(ls -1dt "$RELEASES"/20*/ 2>/dev/null | sed 's:/*$::' || true)
 kept=0
 while IFS= read -r dir; do
   [[ -n "$dir" ]] || continue
+  # 在用的目录（当前服务 + 上一版回滚点）已经占掉配额，不能再额外多留：
+  # 之前这里 continue 得太早、没计入 kept，实测会留下 4 个而不是 2 个。
+  kept=$((kept+1))
   if is_protected "$dir" || is_protected "$dir/src"; then
-    log "保留（在用） $(basename "$dir")"
+    log "保留（在用，占第 ${kept} 个名额） $(basename "$dir")"
     continue
   fi
-  kept=$((kept+1))
   if (( kept <= KEEP_RELEASES )); then
     log "保留（最新 ${kept}） $(basename "$dir")"
     continue

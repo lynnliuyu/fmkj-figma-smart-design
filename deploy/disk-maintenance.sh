@@ -51,8 +51,13 @@ log "/tmp 清理：${freed_mb} MB"
 run "docker builder prune -f --keep-storage 2GB >/dev/null 2>&1 || true"
 
 # ── 旧发布目录：走同一套轮转逻辑 ──────────────────────────
-if [[ -f "$(dirname "$0")/disk-rotate.sh" ]]; then
-  bash "$(dirname "$0")/disk-rotate.sh" || log "轮转跳过（失败不影响本次）"
+# 本脚本装到 /opt/fmkj/bin/ 后，同目录还要有 disk-rotate.sh（安装步骤会一起装）。
+# 找不到就明确说出来 —— 之前是静默跳过，等于这条维护从来没生效过。
+HERE=$(cd "$(dirname "$0")" && pwd)
+if [[ -f "$HERE/disk-rotate.sh" ]]; then
+  DRY_RUN="$DRY_RUN" bash "$HERE/disk-rotate.sh" || log "轮转失败（不影响本次其它清理）"
+else
+  log "⚠️  未找到 $HERE/disk-rotate.sh，跳过发布目录轮转（安装步骤缺了一步）"
 fi
 
 # ── 系统日志 ──────────────────────────────────────────

@@ -12,7 +12,13 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-const script = readFileSync(new URL('../../deploy/shadow-release.sh', import.meta.url), 'utf8')
+const read = (name: string) =>
+  readFileSync(new URL(`../../deploy/${name}`, import.meta.url), 'utf8')
+const script = read('shadow-release.sh')
+const maintenance = read('disk-maintenance.sh')
+const rotate = read('disk-rotate.sh')
+const deployDoc = read('DEPLOY.md')
+const journaldConf = read('journald-disk.conf')
 
 /** 把闸的判定逻辑照抄成纯函数，参数与脚本里的算术一致（KB → GB 取整）。 */
 function diskGate(freeKb: number, minFreeGbEnv?: string) {
@@ -91,5 +97,53 @@ describe('发布磁盘水位闸', () => {
     const rotateAt = script.indexOf('7/7 轮转旧发布目录')
     expect(rotateAt).toBeGreaterThan(-1)
     expect(script).toContain('KEEP_RELEASES=2')
+  })
+})
+
+describe('磁盘维护脚本能被照抄安装并跑通', () => {
+  it('维护脚本按同目录查找 disk-rotate.sh，找不到要明说而不是静默跳过', () => {
+    // 2026-11-22 实测缺陷：只装维护脚本时，`$(dirname "$0")/disk-rotate.sh` 不存在，
+    // 轮转被静默跳过 —— 等于这条维护从来没生效过。
+    expect(maintenance).toContain('HERE=$(cd "$(dirname "$0")" && pwd)')
+    expect(maintenance).toContain('未找到 $HERE/disk-rotate.sh')
+    expect(maintenance).toContain('DRY_RUN="$DRY_RUN" bash "$HERE/disk-rotate.sh"')
+  })
+
+  it('DEPLOY.md 的安装命令同时装两个脚本', () => {
+    const block = deployDoc.slice(
+      deployDoc.indexOf('一次性安装'),
+      deployDoc.indexOf('**验证方式**'),
+    )
+    expect(block).toContain('install -m 755 deploy/disk-maintenance.sh')
+    expect(block).toContain('install -m 755 deploy/disk-rotate.sh')
+    // 必须写明在仓库根目录执行，否则相对路径装不上
+    expect(block).toContain('仓库根目录')
+  })
+
+  it('journald 片段头部示例的 mkdir 在 cp 之前（顺序写反会照抄失败）', () => {
+    const head = journaldConf.slice(0, journaldConf.indexOf('[Journal]'))
+    expect(head.indexOf('mkdir -p /etc/systemd/journald.conf.d')).toBeLessThan(
+      head.indexOf('cp deploy/journald-disk.conf'),
+    )
+  })
+
+  it('轮转保留 recent N 且 dry-run 不删东西', () => {
+    expect(rotate).toContain('KEEP_RELEASES=${KEEP_RELEASES:-2}')
+    expect(rotate).toContain('DRY_RUN')
+    // 保护项：在用目录、src-current、备份
+    expect(rotate).toContain('is_protected')
+    expect(rotate).toContain('src-current')
+  })
+})
+
+describe('轮转的保留配额', () => {
+  it('在用目录计入保留名额，不会额外多留', () => {
+    // 2026-11-22 实测缺陷：protected 分支在 kept++ 之前 continue，
+    // 结果「保留 2 个」实际留了 4 个（2 个在用 + 2 个最新）。
+    expect(rotate).toContain('kept=$((kept+1))')
+    const keptAt = rotate.indexOf('kept=$((kept+1))')
+    const protectedAt = rotate.indexOf('is_protected "$dir" || is_protected "$dir/src"')
+    expect(protectedAt).toBeGreaterThan(keptAt)
+    expect(rotate).toContain('占第 ${kept} 个名额')
   })
 })
