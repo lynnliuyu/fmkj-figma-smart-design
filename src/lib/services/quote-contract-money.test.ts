@@ -21,6 +21,7 @@ vi.mock('@/lib/cached-data', () => ({
 }))
 
 import type { CatalogProduct } from '@/lib/cached-data'
+import { MANUAL_QUOTE_PRODUCT_TAG } from '@/lib/quotes'
 import { saveContractInput } from './contract-service'
 import { saveQuoteInput, syncQuoteWithPointMap } from './quote-service'
 
@@ -44,6 +45,15 @@ const product = (over: Partial<CatalogProduct> = {}): CatalogProduct => ({
   image: { id: 'm-1', url: '/img/sw.jpg', alt: 'switch' },
   ...over,
 })
+
+const manualProduct = () =>
+  product({
+    id: 'manual-1',
+    sku: 'MANUAL-1',
+    price: 0,
+    status: 'inactive',
+    tags: [MANUAL_QUOTE_PRODUCT_TAG],
+  })
 
 const user = { id: 'u-1' } as never
 
@@ -148,7 +158,7 @@ describe('saveQuoteInput：写进库的金额由服务端决定', () => {
   })
 
   it('已下架产品不能加入报价', async () => {
-    mocks.getCatalog.mockResolvedValue([product({ status: 'archived' })])
+    mocks.getCatalog.mockResolvedValue([product({ status: 'inactive', tags: ['Aqara 批次'] })])
     mocks.getPayloadClient.mockResolvedValue(fakePayload({ findByID: vi.fn(async () => stored()) }))
 
     const r = await saveQuoteInput(user, 'q-1', {
@@ -157,6 +167,81 @@ describe('saveQuoteInput：写进库的金额由服务端决定', () => {
     })
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error).toContain('已下架')
+  })
+
+  it.each([undefined, 0, -1])('拒绝手工报价商品的无效单价 %s（新增及再次编辑）', async (price) => {
+    const manual = manualProduct()
+    mocks.getCatalog.mockResolvedValue([manual])
+    const payload = fakePayload({
+      findByID: vi.fn(async () => ({ items: [{ id: 'saved', product: manual.id }] })),
+    })
+    mocks.getPayloadClient.mockResolvedValue(payload)
+    for (const id of [undefined, 'saved']) {
+      const result = await saveQuoteInput(user, 'q-1', {
+        ...baseInput(),
+        items: [{ id, product: manual.id, name: manual.name, price: price as number, quantity: 1 }],
+      })
+      expect(result.ok).toBe(false)
+    }
+    expect(payload.update).not.toHaveBeenCalled()
+  })
+
+  it('手填单价和数量只写当前报价，保留型号图片及零价赠品', async () => {
+    const manual = manualProduct()
+    const gift = product({ price: 0 })
+    mocks.getCatalog.mockResolvedValue([manual, gift])
+    const quotes = new Map<string, { items: Record<string, unknown>[] }>([
+      ['q-1', { items: [] }],
+      ['q-2', { items: [{ id: 'other', product: manual.id, price: 347, quantity: 1 }] }],
+    ])
+    const update = vi.fn(
+      async ({
+        id,
+        collection,
+        data,
+      }: {
+        id: string
+        collection: string
+        data: { items: Record<string, unknown>[] }
+      }) => {
+        expect(collection).toBe('quotes')
+        quotes.set(id, { items: data.items.map((row, i) => ({ ...row, id: `row-${i}` })) })
+        return { total: 0 }
+      },
+    )
+    mocks.getPayloadClient.mockResolvedValue(
+      fakePayload({
+        findByID: vi.fn(async ({ id }: { id: string }) => quotes.get(id)),
+        update,
+      }),
+    )
+    const line = { product: manual.id, name: manual.name, price: 159, quantity: 1 }
+    const giftLine = { product: gift.id, name: '零价赠品', price: 0, quantity: 1 }
+    const input = baseInput()
+    expect((await saveQuoteInput(user, 'q-1', { ...input, items: [line, giftLine] })).ok).toBe(true)
+    expect(quotes.get('q-1')?.items[0]).toMatchObject({
+      sku: manual.sku,
+      image: manual.image?.id,
+      price: 159,
+    })
+    expect(
+      (
+        await saveQuoteInput(user, 'q-1', {
+          ...input,
+          items: [
+            { ...line, id: 'row-0', price: 169, quantity: 3 },
+            { ...giftLine, id: 'row-1' },
+          ],
+        })
+      ).ok,
+    ).toBe(true)
+    expect(quotes.get('q-1')?.items).toMatchObject([
+      { sku: manual.sku, image: manual.image?.id, price: 169, quantity: 3 },
+      { price: 0 },
+    ])
+    expect(quotes.get('q-2')?.items[0]).toMatchObject({ price: 347, quantity: 1 })
+    expect(manual.price).toBe(0)
+    expect(update.mock.calls.every(([args]) => args.id === 'q-1')).toBe(true)
   })
 
   it('换型号只能换成同一设备类型', async () => {
@@ -314,6 +399,38 @@ describe('syncQuoteWithPointMap：同步后保留人工改过的价格', () => {
       shortName: '人工短名',
     })
     if (r.ok) expect(r.total).toBe(566.64)
+  })
+
+  it('同步不从点位选待价商品，也不覆盖已存手工行的数量或单价', async () => {
+    const manual = manualProduct()
+    mocks.getCatalog.mockResolvedValue([manual, product()])
+    const manualLine = {
+      id: 'manual-line',
+      product: manual.id,
+      deviceType: 'switch-2',
+      name: manual.name,
+      price: 168,
+      quantity: 4,
+    }
+    const quote = { title: '项目报价', project: 'p-1', items: [manualLine] }
+    const project = {
+      id: 'p-1',
+      platform: '米家',
+      defaultProducts: { 'switch-2': manual.id },
+      pointMap: { elements: [{ customData: { deviceType: 'switch-2', productId: manual.id } }] },
+    }
+    const update = write({ total: 871 })
+    mocks.getPayloadClient.mockResolvedValue({
+      findByID: vi.fn(async ({ collection }: { collection: string }) =>
+        collection === 'quotes' ? quote : project,
+      ),
+      update,
+    })
+    expect((await syncQuoteWithPointMap(user, 'q-1')).ok).toBe(true)
+    expect(update.mock.calls[0]![0].data.items).toMatchObject([
+      { product: 'prod-1', price: 199, quantity: 1 },
+      manualLine,
+    ])
   })
 
   it('点位全部消失时明细随之清空（不留下幽灵条目）', async () => {

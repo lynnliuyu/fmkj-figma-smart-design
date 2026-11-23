@@ -14,6 +14,15 @@ export const quoteStatusVariant = (v?: string | null): 'neutral' | 'warning' | '
 export const quoteStatusLabel = (v?: string | null) =>
   QUOTE_STATUSES.find((s) => s.value === v)?.label ?? '草稿'
 
+export const MANUAL_QUOTE_PRODUCT_TAG = '仅限手工报价'
+
+export function requiresManualQuotePrice(product?: { status?: string; tags?: string[] | null }) {
+  return product?.status === 'inactive' && product.tags?.includes(MANUAL_QUOTE_PRODUCT_TAG) === true
+}
+
+export const isPositiveQuotePrice = (price: unknown) =>
+  typeof price === 'number' && Number.isFinite(price) && price > 0
+
 export type QuoteLine = { price?: number | null; quantity?: number | null }
 export type QuoteFee = { amount?: number | null }
 

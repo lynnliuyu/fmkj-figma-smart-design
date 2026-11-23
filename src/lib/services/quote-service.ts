@@ -19,7 +19,7 @@ import {
   POINT_SCOPES,
   type PointScope,
 } from '@/lib/point-scopes'
-import { QUOTE_STATUSES } from '@/lib/quotes'
+import { isPositiveQuotePrice, QUOTE_STATUSES, requiresManualQuotePrice } from '@/lib/quotes'
 import type { Media, User } from '@/payload-types'
 
 /**
@@ -190,8 +190,13 @@ export async function syncQuoteWithPointMap(
   const storedItems = quote.items ?? []
   const byProductId = new Map<string, (typeof storedItems)[number]>()
   const byDeviceType = new Map<string, (typeof storedItems)[number]>()
+  const manualItems: typeof storedItems = []
   for (const row of storedItems) {
     const pid = mediaId(row.product)
+    if (pid && requiresManualQuotePrice(byId.get(pid))) {
+      manualItems.push(row)
+      continue
+    }
     if (pid && !byProductId.has(pid)) byProductId.set(pid, row)
     if (row.deviceType && !byDeviceType.has(row.deviceType)) byDeviceType.set(row.deviceType, row)
   }
@@ -242,7 +247,7 @@ export async function syncQuoteWithPointMap(
     const updated = await payload.update({
       collection: 'quotes',
       id: quoteId,
-      data: { title: `${baseTitle}${scopeSuffix(scope)}`, items: nextItems },
+      data: { title: `${baseTitle}${scopeSuffix(scope)}`, items: [...nextItems, ...manualItems] },
       user,
       overrideAccess: false,
       depth: 0,
@@ -326,11 +331,14 @@ export async function saveQuoteInput(
     if (productId && !product)
       return { ok: false, error: `第 ${i + 1} 行「${name}」关联的产品不存在` }
 
+    const manualPrice = requiresManualQuotePrice(product)
+    if (manualPrice && !isPositiveQuotePrice(price))
+      return { ok: false, error: `第 ${i + 1} 行「${name}」请填写大于 0 的单价` }
+
     let deviceType = before?.deviceType ?? null
     let image = before ? mediaId(before.image) : null
     if (product && productId !== beforeProduct) {
-      // 新增行或更换了型号：只允许在售产品；换型号时必须与原设备类型一致
-      if (product.status !== 'active')
+      if (product.status !== 'active' && !manualPrice)
         return { ok: false, error: `「${product.name}」已下架，不能加入报价` }
       if (before?.deviceType && product.deviceType !== before.deviceType)
         return { ok: false, error: `第 ${i + 1} 行只能更换为同一设备类型的产品` }
@@ -353,7 +361,10 @@ export async function saveQuoteInput(
       image,
       name,
       shortName,
-      sku: text(raw.sku, 100) || null,
+      sku:
+        product && manualPrice
+          ? (beforeProduct === productId ? before?.sku : null) || product.sku
+          : text(raw.sku, 100) || null,
       unit: text(raw.unit, 10) || null,
       price,
       quantity,

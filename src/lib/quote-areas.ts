@@ -9,6 +9,7 @@ import { areaTypeLabel } from './area-types'
 import { DEVICE_TYPE_ORDER, deviceTypeOf } from './device-types'
 import { parseDefaults, resolvePoint, type ResolvableProduct } from './point-map-items'
 import { analyzeScene, planAreaOf, type StoredScene } from './point-scene'
+import { requiresManualQuotePrice } from './quotes'
 
 export type QuoteLineRef = {
   key?: string
@@ -71,7 +72,7 @@ export function floorNameFromSheet(name: string, index: number): string {
 export function buildQuoteFloorGroups(
   pointMap: Partial<StoredScene> | null | undefined,
   defaultProducts: unknown,
-  catalog: ResolvableProduct[],
+  catalog: (ResolvableProduct & { tags?: string[] | null })[],
   quoteItems: QuoteLineRef[],
 ): QuoteFloorGroup[] {
   const { sheets, areas, points } = analyzeScene(pointMap)
@@ -88,6 +89,8 @@ export function buildQuoteFloorGroups(
   const byProduct = new Map<string, QuoteLineRef[]>()
   const byType = new Map<string, QuoteLineRef[]>()
   for (const item of activeItems) {
+    // 手工报价商品作为增项展示，不替代图纸上的同类点位。
+    if (item.product && requiresManualQuotePrice(byId.get(item.product))) continue
     if (item.product) byProduct.set(item.product, [...(byProduct.get(item.product) ?? []), item])
     if (item.deviceType) byType.set(item.deviceType, [...(byType.get(item.deviceType) ?? []), item])
   }

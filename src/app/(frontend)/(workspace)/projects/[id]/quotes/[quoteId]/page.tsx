@@ -57,6 +57,7 @@ export default async function QuotePage({
     unit: p.unit,
     price: p.price,
     status: p.status,
+    tags: p.tags,
     deviceType: p.deviceType,
     brand: p.brand ? { slug: p.brand.slug, name: p.brand.name, logo: p.brand.logo } : null,
     platforms: p.platforms,

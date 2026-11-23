@@ -12,6 +12,7 @@ vi.mock('@/lib/project-guards', () => ({
   readableError: () => 'x',
 }))
 
+import { MANUAL_QUOTE_PRODUCT_TAG } from '@/lib/quotes'
 import { Quotes } from './Quotes'
 
 const beforeChange = Quotes.hooks!.beforeChange as unknown as Array<
@@ -19,6 +20,7 @@ const beforeChange = Quotes.hooks!.beforeChange as unknown as Array<
 >
 const archiveLock = beforeChange[0]!
 const recomputeTotals = beforeChange[1]!
+const checkManualPrices = beforeChange[2]!
 
 const memberReq = (find: unknown = vi.fn(async () => ({ docs: [] }))) =>
   ({
@@ -105,6 +107,36 @@ describe('报价金额由服务端重算', () => {
     })
     expect(data.productTotal).toBe(0)
     expect(data.total).toBe(0)
+  })
+})
+
+describe('手工报价商品的集合写入校验', () => {
+  it.each([undefined, 0, -1])('直接写入时拒绝单价 %s', async (price) => {
+    const find = vi.fn(async () => ({
+      docs: [{ name: '待价开关', status: 'inactive', tags: [MANUAL_QUOTE_PRODUCT_TAG] }],
+    }))
+    await expect(
+      checkManualPrices({ data: { items: [{ product: 'manual', price }] }, req: memberReq(find) }),
+    ).rejects.toMatchObject({ status: 400, message: '「待价开关」请填写大于 0 的单价' })
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'products',
+        overrideAccess: false,
+        where: { id: { in: ['manual'] } },
+      }),
+    )
+  })
+
+  it('保留复制后的正价快照和正常商品的零价赠品', async () => {
+    const find = vi.fn(async () => ({ docs: [{ status: 'active', tags: [] }] }))
+    const data = {
+      items: [
+        { product: 'manual', price: 177 },
+        { product: 'gift', price: 0 },
+      ],
+    }
+    await expect(checkManualPrices({ data, req: memberReq(find) })).resolves.toEqual(data)
+    expect(find).toHaveBeenCalledWith(expect.objectContaining({ where: { id: { in: ['gift'] } } }))
   })
 })
 

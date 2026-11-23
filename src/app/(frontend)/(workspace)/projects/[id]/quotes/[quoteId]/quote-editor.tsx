@@ -75,7 +75,13 @@ import {
   type MarginSummary,
   type UnitCost,
 } from '@/lib/quote-costs'
-import { QUOTE_STATUSES, quoteTotals, yuan } from '@/lib/quotes'
+import {
+  isPositiveQuotePrice,
+  QUOTE_STATUSES,
+  quoteTotals,
+  requiresManualQuotePrice,
+  yuan,
+} from '@/lib/quotes'
 import { cn } from '@/lib/utils'
 
 import { createContract } from '../../contract/actions'
@@ -91,6 +97,7 @@ export type ProductOption = {
   unit: string
   price: number
   status: string
+  tags?: string[]
   deviceType: string | null
   brand: { slug: string; name: string; logo: string | null } | null
   platforms: string[]
@@ -160,7 +167,7 @@ export function newQuoteLine(p: ProductOption): Line {
     shortName: p.shortName,
     sku: p.sku,
     unit: p.unit,
-    price: p.price,
+    price: requiresManualQuotePrice(p) ? 0 : p.price,
     quantity: 1,
   }
 }
@@ -200,19 +207,22 @@ function EditableNumber({
   onChange,
   label,
   disabled,
+  manualPrice = false,
   className = 'w-24',
 }: {
   value: number
   onChange: (n: number) => void
   label: string
   disabled?: boolean
+  manualPrice?: boolean
   className?: string
 }) {
-  const [text, setText] = useState(() => String(value))
+  const displayValue = manualPrice && value === 0 ? '' : String(value)
+  const [text, setText] = useState(displayValue)
   const [focused, setFocused] = useState(false)
   useEffect(() => {
-    if (!focused) setText(String(value))
-  }, [value, focused])
+    if (!focused) setText(displayValue)
+  }, [displayValue, focused])
   return (
     <input
       type="number"
@@ -220,18 +230,20 @@ function EditableNumber({
       step="any"
       inputMode="decimal"
       aria-label={label}
-      value={focused ? text : String(value)}
+      placeholder={manualPrice ? '手填单价' : undefined}
+      value={focused ? text : displayValue}
       disabled={disabled}
       className={cn(NATIVE_NUM_CLASS, 'h-7 px-2 text-right tabular-nums', className)}
       onFocus={() => {
         setFocused(true)
-        setText(String(value))
+        setText(displayValue)
       }}
       onBlur={() => setFocused(false)}
       onChange={(e) => {
         setText(e.target.value)
         const n = toNum(e.target.value)
-        if (Number.isFinite(n) && n >= 0) onChange(n)
+        if (manualPrice) onChange(isPositiveQuotePrice(n) ? n : 0)
+        else if (Number.isFinite(n) && n >= 0) onChange(n)
       }}
     />
   )
@@ -316,10 +328,18 @@ export function QuoteEditor({
     setPickerOpen(false)
   }
 
-  const activeProducts = useMemo(() => products.filter((p) => p.status === 'active'), [products])
+  const quoteProducts = useMemo(
+    () => products.filter((p) => p.status === 'active' || requiresManualQuotePrice(p)),
+    [products],
+  )
+  const manualPriceIds = useMemo(
+    () => new Set(products.filter(requiresManualQuotePrice).map((p) => p.id)),
+    [products],
+  )
   const catalogPriceById = useMemo(() => new Map(products.map((p) => [p.id, p.price])), [products])
   // 产品库未定价（0 元）时没有可参照的原价，不提示「已改价」
   const catalogPriceOf = (productId: string | null) => {
+    if (productId && manualPriceIds.has(productId)) return undefined
     const price = productId ? catalogPriceById.get(productId) : undefined
     return price && price > 0 ? price : undefined
   }
@@ -327,11 +347,11 @@ export function QuoteEditor({
     () =>
       DEVICE_TYPE_ORDER.map((t) => ({
         type: t,
-        items: activeProducts.filter((p) => p.deviceType === t),
+        items: quoteProducts.filter((p) => p.deviceType === t),
       }))
-        .concat([{ type: '', items: activeProducts.filter((p) => !p.deviceType) }])
+        .concat([{ type: '', items: quoteProducts.filter((p) => !p.deviceType) }])
         .filter((g) => g.items.length),
-    [activeProducts],
+    [quoteProducts],
   )
 
   // 旧 cmdk 命令面板换成官方 DropdownMenu 的数据模式：搜索框进 header，产品按设备类型分组。
@@ -369,7 +389,11 @@ export function QuoteEditor({
               )}
             </span>
           ),
-          endContent: <span className="text-xs tabular-nums">{yuan(p.price)}</span>,
+          endContent: (
+            <span className="text-xs tabular-nums">
+              {requiresManualQuotePrice(p) ? '手填单价' : yuan(p.price)}
+            </span>
+          ),
           onClick: () => addProduct(p),
         })),
       }))
@@ -543,6 +567,14 @@ export function QuoteEditor({
   }, [dirty])
 
   const persist = async () => {
+    const missingPrice = quote.items.find(
+      (line) =>
+        line.product && manualPriceIds.has(line.product) && !isPositiveQuotePrice(line.price),
+    )
+    if (missingPrice) {
+      showToast({ body: `「${missingPrice.name}」请填写大于 0 的单价`, type: 'error' })
+      return false
+    }
     const result = await saveQuote(quote.id, {
       title: quote.title,
       status: quote.status,
@@ -641,12 +673,14 @@ export function QuoteEditor({
     onChange: (n: number) => void,
     label: string,
     className = 'w-24',
+    manualPrice = false,
   ) => (
     <EditableNumber
       value={value}
       onChange={onChange}
       label={label}
       disabled={readOnly}
+      manualPrice={manualPrice}
       className={cn('h-8', className)}
     />
   )
@@ -1236,6 +1270,9 @@ export function QuoteEditor({
                                       value={line.price}
                                       disabled={readOnly || !line.lineKey}
                                       label={`${room.name} ${line.name} 单价`}
+                                      manualPrice={Boolean(
+                                        line.productId && manualPriceIds.has(line.productId),
+                                      )}
                                       className={cn('h-6 w-20 px-1.5 text-xs', INLINE_NUM)}
                                       onChange={(n) =>
                                         line.lineKey && updateLine(line.lineKey, { price: n })
@@ -1349,6 +1386,7 @@ export function QuoteEditor({
                           (n) => updateLine(l.key, { price: n }),
                           `${l.name} 单价`,
                           'w-24',
+                          Boolean(l.product && manualPriceIds.has(l.product)),
                         )}
                         <span className="text-muted-foreground">×</span>
                         {numInput(
@@ -1503,6 +1541,7 @@ export function QuoteEditor({
                                 (n) => updateLine(l.key, { price: n }),
                                 `${l.name} 单价`,
                                 cn('ml-auto w-28', INLINE_NUM),
+                                Boolean(l.product && manualPriceIds.has(l.product)),
                               )}
                               {(() => {
                                 const originPrice = catalogPriceOf(l.product)

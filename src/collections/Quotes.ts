@@ -9,7 +9,12 @@ import {
 import { cmsAdminOrMember, isCmsAdmin, isMember, relId } from '@/lib/access'
 import { DEVICE_TYPE_OPTIONS } from '@/lib/device-types'
 import { assertProjectEditable } from '@/lib/project-guards'
-import { QUOTE_STATUSES, quoteTotals } from '@/lib/quotes'
+import {
+  isPositiveQuotePrice,
+  QUOTE_STATUSES,
+  quoteTotals,
+  requiresManualQuotePrice,
+} from '@/lib/quotes'
 
 /** 行级读取控制：只能读取自己有权访问的项目的报价单。 */
 const readQuoteAccess: Access = ({ req }) => {
@@ -80,6 +85,35 @@ export const Quotes: CollectionConfig = {
         data.productTotal = totals.productTotal
         data.feeTotal = totals.feeTotal
         data.total = totals.total
+        return data
+      },
+      // 直接写报价的入口（含后台复制）也必须遵守手工报价商品的单价规则。
+      async ({ data, originalDoc, req }) => {
+        const items = (data.items ?? originalDoc?.items ?? []) as {
+          product?: unknown
+          price?: unknown
+        }[]
+        const ids = [
+          ...new Set(
+            items
+              .filter((item) => !isPositiveQuotePrice(item.price))
+              .map((item) => relId(item.product))
+              .filter(Boolean),
+          ),
+        ]
+        if (!ids.length) return data
+        const { docs } = await req.payload.find({
+          collection: 'products',
+          where: { id: { in: ids } },
+          pagination: false,
+          depth: 0,
+          req,
+          user: req.user,
+          overrideAccess: !req.user,
+          select: { name: true, status: true, tags: true },
+        })
+        const product = docs.find(requiresManualQuotePrice)
+        if (product) throw new APIError(`「${product.name}」请填写大于 0 的单价`, 400)
         return data
       },
     ],
