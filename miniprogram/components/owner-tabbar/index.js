@@ -26,6 +26,10 @@ Component({
     },
   },
   methods: {
+    /** 页面 onShow 主动调用：切页后重算高亮。 */
+    sync() {
+      this.render()
+    },
     render() {
       const pages = getCurrentPages()
       const current = pages[pages.length - 1]

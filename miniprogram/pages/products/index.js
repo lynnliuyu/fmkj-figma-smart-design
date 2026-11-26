@@ -1,7 +1,9 @@
 const { requireLogin } = require('../../utils/auth')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 
 Page({
   onShow() {
+    syncTabBar(this, false)
     requireLogin()
   },
   onReachBottom() {

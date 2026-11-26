@@ -1,4 +1,5 @@
 const { api, toast } = require('../../utils/request')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin, logout } = require('../../utils/auth')
 const { getIdentity, isOwner } = require('../../utils/identity')
 const { captureLaunchTicket, consumePendingWebLogin, scanAndConfirmWebLogin } = require('../../utils/web-login')
@@ -21,6 +22,7 @@ Page({
   },
 
   onShow() {
+    syncTabBar(this, isOwner())
     this.setData({ identityLabel: isOwner() ? '业主版' : '集成商版' })
     // 业主版免登录：没有员工会话也能打开「我的」，只显示身份切换和公开入口。
     if (isOwner()) {

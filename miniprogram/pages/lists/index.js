@@ -8,6 +8,9 @@ const { ownerNeedToken, ownerNeedRevision } = require('../../utils/identity')
 Page({
   data: { loading: true, error: '', token: '', revision: '' },
   onShow() {
+    // 自定义组件内的 pageLifetimes 不可靠，切页后由页面主动重算高亮。
+    const bar = this.selectComponent && this.selectComponent('owner-tabbar')
+    if (bar && bar.sync) bar.sync()
     this.open()
   },
   async open() {
