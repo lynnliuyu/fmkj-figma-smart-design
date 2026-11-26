@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "找顾问" }
+{
+  "navigationBarTitleText": "找顾问",
+  "usingComponents": {
+    "owner-tabbar": "/components/owner-tabbar/index"
+  }
+}

@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest'
  */
 const IDENTITY_KEY = 'fmkj_mp_identity'
 
-function harness(storage = new Map<string, unknown>()) {
+function harness(storage = new Map<string, unknown>(), route = '') {
   const wx = {
     getStorageSync: (key: string) => storage.get(key) ?? '',
     setStorageSync: (key: string, value: unknown) => storage.set(key, value),
@@ -56,7 +56,7 @@ function harness(storage = new Map<string, unknown>()) {
         }
       },
       wx,
-      getCurrentPages: () => [],
+      getCurrentPages: () => (route ? [{ route }] : []),
       console,
       module: mod,
       exports: mod.exports,
@@ -144,5 +144,56 @@ describe('小程序双身份', () => {
     const hidden = none.load('custom-tab-bar/index.js')
     hidden.render()
     expect(hidden.data.hidden).toBe(true)
+  })
+})
+
+/**
+ * 界面级断言：前两轮都漏掉 N1（业主页没有底部导航），因为测试只调 page.choose()、
+ * 从不检查 WXML 绑定与「业主页是否真的能互相到达」。这两条直接读模板与路由表。
+ */
+describe('界面绑定与业主侧可达性', () => {
+  const read = (path: string) =>
+    readFileSync(new URL(`../../../miniprogram/${path}`, import.meta.url), 'utf8')
+
+  it('身份页每张卡片都绑定了 choose，且 data-identity 合法', () => {
+    const wxml = read('pages/identity/index.wxml')
+    // 抓出每个带 data-identity 的开始标签，逐张断言 bindtap 存在。
+    const tags = wxml.match(/<view\b[^>]*data-identity="[^"]+"[^>]*>/g) ?? []
+    expect(tags.length).toBe(2)
+    for (const tag of tags) {
+      expect(tag).toMatch(/data-identity="(owner|vendor)"/)
+      expect(tag).toContain('bindtap="choose"')
+    }
+  })
+
+  it('业主四项导航在业主三个页面都能到达（页面内导航覆盖全部 pagePath）', () => {
+    const app = JSON.parse(read('app.json'))
+    const nativeList = new Set<string>(app.tabBar.list.map((t: { pagePath: string }) => t.pagePath))
+    const ownerTabs: { pagePath: string }[] = (() => {
+      const { tabsFor } = harness().load('utils/identity.js')
+      return tabsFor('owner')
+    })()
+    expect(ownerTabs).toHaveLength(4)
+
+    for (const tab of ownerTabs) {
+      // 微信只在 tabBar.list 内注入原生 tabBar；不在名单里的页面必须有页面内导航。
+      if (nativeList.has(tab.pagePath)) continue
+      const wxml = read(`${tab.pagePath}.wxml`)
+      expect(wxml, `${tab.pagePath} 缺少页面内导航`).toContain('<owner-tabbar')
+      const json = JSON.parse(read(`${tab.pagePath}.json`))
+      expect(json.usingComponents?.['owner-tabbar']).toBe('/components/owner-tabbar/index')
+    }
+  })
+
+  it('业主页面内导航能跳到四个业主页，且当前项高亮正确', () => {
+    const bar = harness(new Map(), 'pages/advisor/index').load('components/owner-tabbar/index.js')
+    bar.render()
+    expect(bar.data.list.map((t: { pagePath: string }) => t.pagePath)).toEqual([
+      'pages/plans/index',
+      'pages/lists/index',
+      'pages/advisor/index',
+      'pages/mine/index',
+    ])
+    expect(bar.data.selected).toBe(2)
   })
 })
