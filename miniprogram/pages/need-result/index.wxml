@@ -64,7 +64,7 @@
     </view>
     <view wx:else class="card mt-16">
       <view class="title">已提交 ✓</view>
-      <view class="small muted mt-8">顾问会在工作台打开这份需求并联系你。</view>
+      <view class="small muted mt-8">顾问会在工作台打开这份需求并联系你。已提交，可继续修改，顾问看到的是最新版本。</view>
     </view>
 
     <view class="btn btn-outline btn-block mt-16" bindtap="goBack">返回修改</view>
