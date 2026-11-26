@@ -197,3 +197,58 @@ describe('界面绑定与业主侧可达性', () => {
     expect(bar.data.selected).toBe(2)
   })
 })
+
+/**
+ * 身份切换回归（#236 复验发现，main 上也复现）：
+ * 「我的」→「切换身份」如果只是无参 reLaunch 到身份页，身份页 onLoad 见已存身份
+ * 会立刻把人送回原首页，用户永远换不了身份。
+ * 这里断言「手动切换带参数、且带参数时不被自动跳回」，同时守住冷启动规则不变。
+ */
+describe('身份切换不会被自动跳回', () => {
+  it('「我的」→ 切换身份 必须带 switch=1', () => {
+    const { wx, load } = harness(new Map([[IDENTITY_KEY, 'owner']]))
+    const page = load('pages/mine/index.js')
+    page.switchIdentity()
+    expect(wx.reLaunch).toHaveBeenCalledTimes(1)
+    const url = wx.reLaunch.mock.calls[0]![0].url as string
+    expect(url).toContain('/pages/identity/index')
+    expect(url).toContain('switch=1')
+  })
+
+  it('手动切换进入身份页时停在原地，旧身份不被改写', () => {
+    const storage = new Map<string, unknown>([[IDENTITY_KEY, 'owner']])
+    const { wx, load } = harness(storage)
+    const page = load('pages/identity/index.js')
+    page.onLoad({ switch: '1' })
+    expect(wx.reLaunch).not.toHaveBeenCalled()
+    expect(storage.get(IDENTITY_KEY)).toBe('owner')
+  })
+
+  it('冷启动进入身份页仍按已存身份分流（业主→业主首页）', () => {
+    const storage = new Map<string, unknown>([[IDENTITY_KEY, 'owner']])
+    const { wx, load } = harness(storage)
+    const page = load('pages/identity/index.js')
+    page.onLoad({})
+    expect(wx.reLaunch).toHaveBeenCalledWith({ url: '/pages/plans/index' })
+  })
+
+  it('手动切换后选择集成商：写 vendor，无员工令牌则进登录页', () => {
+    const storage = new Map<string, unknown>([[IDENTITY_KEY, 'owner']])
+    const { wx, load } = harness(storage)
+    const page = load('pages/identity/index.js')
+    page.onLoad({ switch: '1' })
+    page.choose({ currentTarget: { dataset: { identity: 'vendor' } } })
+    expect(storage.get(IDENTITY_KEY)).toBe('vendor')
+    expect(wx.reLaunch).toHaveBeenLastCalledWith({ url: '/pages/login/index' })
+  })
+
+  it('手动切换后选择业主：写 owner 并进业主首页', () => {
+    const storage = new Map<string, unknown>([[IDENTITY_KEY, 'vendor']])
+    const { wx, load } = harness(storage)
+    const page = load('pages/identity/index.js')
+    page.onLoad({ switch: '1' })
+    page.choose({ currentTarget: { dataset: { identity: 'owner' } } })
+    expect(storage.get(IDENTITY_KEY)).toBe('owner')
+    expect(wx.reLaunch).toHaveBeenLastCalledWith({ url: '/pages/plans/index' })
+  })
+})

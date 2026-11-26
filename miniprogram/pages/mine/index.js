@@ -14,7 +14,8 @@ Page({
   },
 
   switchIdentity() {
-    wx.reLaunch({ url: '/pages/identity/index' })
+    // 带 switch=1：这是用户主动要换身份，身份页不能按「已存身份」把人送回去。
+    wx.reLaunch({ url: '/pages/identity/index?switch=1' })
   },
 
   onLoad(options) {
