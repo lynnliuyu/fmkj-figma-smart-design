@@ -105,9 +105,11 @@ describe('小程序双身份', () => {
     app.onLaunch({})
     expect(first.wx.reLaunch).toHaveBeenCalledWith({ url: '/pages/identity/index' })
 
+    // 入口页是员工工作台，业主停在 home 会被 requireLogin 踢到员工登录页，
+    // 所以已选业主必须直接被带到业主首页。
     const owner = harness(new Map([[IDENTITY_KEY, 'owner']]))
     owner.load('app.js').onLaunch({})
-    expect(owner.wx.reLaunch).not.toHaveBeenCalled()
+    expect(owner.wx.reLaunch).toHaveBeenCalledWith({ url: '/pages/plans/index' })
 
     const vendor = harness(new Map([[IDENTITY_KEY, 'vendor']]))
     vendor.load('app.js').onLaunch({})
