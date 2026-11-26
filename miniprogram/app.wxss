@@ -134,7 +134,7 @@ button::after { border: none; }
 /* 底部操作条 */
 .bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; gap: 16rpx; padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); border-top: 1rpx solid var(--rule); }
 .bottom-bar .btn { flex: 1; }
-.fab { position: fixed; right: 32rpx; bottom: calc(40rpx + env(safe-area-inset-bottom)); z-index: 20; height: 96rpx; padding: 0 36rpx; border-radius: 48rpx; background: var(--ink-primary); color: #ffffff; display: flex; align-items: center; gap: 12rpx; font-size: 28rpx; font-weight: 500; box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.18); }
+.fab { position: fixed; right: 32rpx; bottom: calc(140rpx + env(safe-area-inset-bottom)); z-index: 60; height: 96rpx; padding: 0 36rpx; border-radius: 48rpx; background: var(--ink-primary); color: #ffffff; display: flex; align-items: center; gap: 12rpx; font-size: 28rpx; font-weight: 500; box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.18); }
 
 /* 底部弹层 */
 .mask { position: fixed; inset: 0; z-index: 90; background: rgba(0, 0, 0, 0.4); }

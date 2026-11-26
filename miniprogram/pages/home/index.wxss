@@ -1,8 +1,15 @@
-.credits { display: flex; align-items: center; gap: 8rpx; height: 64rpx; padding: 0 22rpx; border-radius: 999rpx; background: var(--paper); border: 1rpx solid var(--rule); }
+.credits { display: flex; align-items: baseline; gap: 6rpx; height: 44rpx; padding: 0 16rpx; border-radius: 999rpx; background: var(--paper-muted); }
+.credits-num { font-size: 24rpx; font-weight: 600; color: var(--ink-secondary); font-variant-numeric: tabular-nums; }
+.credits-label { font-size: 20rpx; color: var(--pencil); }
+.group-title { font-size: 24rpx; font-weight: 500; color: var(--pencil); padding: 0 4rpx 12rpx; }
+.stats-plain { gap: 0; border-top: 1rpx solid var(--rule); border-bottom: 1rpx solid var(--rule); }
+.stats-plain .stat { background: transparent; border: none; border-radius: 0; padding: 18rpx 0; text-align: left; }
+.stats-plain .stat + .stat { border-left: 1rpx solid var(--rule); padding-left: 20rpx; }
+.stats-plain .stat .num { font-size: 36rpx; font-weight: 600; }
 .mt-4 { margin-top: 4rpx; }
 .quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx; }
 .quick-item { display: flex; flex-direction: column; align-items: center; gap: 12rpx; padding: 24rpx 0 20rpx; border-radius: 24rpx; background: var(--paper); border: 1rpx solid var(--rule); }
 .quick-icon { width: 72rpx; height: 72rpx; border-radius: 20rpx; background: var(--paper-muted); display: flex; align-items: center; justify-content: center; }
-.scan-banner { display: flex; align-items: center; gap: 20rpx; padding: 20rpx 24rpx; border-radius: 22rpx; background: var(--paper); border: 1rpx solid var(--rule); }
+.scan-banner { display: flex; align-items: center; gap: 16rpx; padding: 16rpx 20rpx; border-radius: 16rpx; background: var(--paper); border: 1rpx solid var(--rule); }
 .scan-icon { width: 64rpx; height: 64rpx; border-radius: 16rpx; background: var(--paper-muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.scan-title { font-size: 26rpx; font-weight: 600; }
+.scan-title { font-size: 26rpx; font-weight: 500; }

@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page page-pad-bottom">
   <view class="row between">
     <view class="grow">
       <view class="label">{{greeting}}</view>
@@ -8,13 +8,13 @@
       </view>
     </view>
     <view class="credits" hover-class="btn-hover" bindtap="toAi">
-      <image class="icon-sm" src="/assets/icons/sparkles.svg" />
-      <text class="num">{{me.aiCredits || 0}}</text>
-      <text class="small muted">积分</text>
+      <text class="credits-num">{{me.aiCredits || 0}}</text>
+      <text class="credits-label">积分</text>
     </view>
   </view>
 
-  <view class="stats mt-24">
+  <view class="group-title mt-24">概览</view>
+  <view class="stats stats-plain">
     <view class="stat" hover-class="list-item-hover" bindtap="toProjects">
       <text class="label">进行中项目</text>
       <text class="num">{{stats.activeProjects || 0}}</text>
@@ -29,7 +29,8 @@
     </view>
   </view>
 
-  <view class="quick mt-24">
+  <view class="group-title mt-24">快捷操作</view>
+  <view class="quick">
     <view class="quick-item" hover-class="list-item-hover" bindtap="newProject">
       <view class="quick-icon"><image class="icon" src="/assets/icons/plus.svg" /></view>
       <text class="small">新建项目</text>
@@ -48,7 +49,7 @@
     </view>
   </view>
 
-  <view class="scan-banner mt-16" hover-class="list-item-hover" bindtap="scanWebLogin">
+  <view class="scan-banner mt-24" hover-class="list-item-hover" bindtap="scanWebLogin">
     <view class="scan-icon"><image class="icon-sm" src="/assets/icons/maximize.svg" /></view>
     <view class="grow">
       <view class="scan-title">扫码登录电脑网页端</view>
