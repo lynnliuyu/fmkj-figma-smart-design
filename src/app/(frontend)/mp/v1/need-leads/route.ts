@@ -117,7 +117,6 @@ export const POST = mpPublicRoute(async (request) => {
       (!source || source === lead.source) &&
       (!phone || phone === lead.phone)
     if (sameWrite) return ok({ token, id: String(lead.id), status: lead.status, revision: current })
-    if (lead.status !== 'draft') return fail(409, '需求单已提交，无法继续保存', 'DRAFT_SUBMITTED')
     if (revision !== current) return fail(409, '需求单已更新，请确认后重试', 'DRAFT_CHANGED')
 
     const updated = await payload.update({

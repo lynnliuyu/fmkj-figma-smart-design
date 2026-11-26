@@ -81,6 +81,11 @@ Page({
         data: { revision: this.data.revision, phone: this.data.phone || undefined },
       })
       this.setData({ submitted: true, projectId: res.projectId })
+      // 提交后版本号已变：写回本机草稿，返回修改时不会被误判为冲突。
+      const draft = wx.getStorageSync(SYNC_KEY)
+      if (draft && res.revision) {
+        wx.setStorageSync(SYNC_KEY, { ...draft, revision: res.revision, confirmed: draft.change })
+      }
       toast('已提交，顾问会联系你')
     } catch (error) {
       if (error.code === 'DRAFT_CHANGED') this.showStaleAnswers()
@@ -91,7 +96,8 @@ Page({
   },
 
   goBack() {
-    if (this.data.needsSave) this.getOpenerEventChannel?.()?.emit('needDraftChanged')
+    // 提交后需求单状态变了，版本号也会变；回到采集页必须重新取一次，否则保存会报版本冲突。
+    this.getOpenerEventChannel?.()?.emit('needDraftChanged')
     wx.navigateBack({ fail: () => wx.redirectTo({ url: '/pages/need/index' }) })
   },
 })
