@@ -1,0 +1,16 @@
+<view class="page">
+  <view class="h1">你是哪一种用户？</view>
+  <view class="small muted mt-8">选择后可在「我的」里随时切换。</view>
+
+  <view class="card mt-24" hover-class="list-item-hover" data-identity="owner" bindtap="choose">
+    <view class="h2">我是业主</view>
+    <view class="small muted mt-8">想看看家里做智能家居大概多少钱。免登录，直接填需求、看清单、找顾问。</view>
+    <view class="btn btn-primary btn-block mt-16">以业主身份进入</view>
+  </view>
+
+  <view class="card mt-16" hover-class="list-item-hover" data-identity="vendor">
+    <view class="h2">我是集成商</view>
+    <view class="small muted mt-8">管理项目、报价、客户。需要员工账号登录。</view>
+    <view class="btn btn-outline btn-block mt-16">以集成商身份进入</view>
+  </view>
+</view>

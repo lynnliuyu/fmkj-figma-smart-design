@@ -1,0 +1,27 @@
+<view class="page page-pad-bottom">
+  <view class="h1">我的方案</view>
+  <view class="small muted mt-8">你的需求只保存在这台手机上，凭需求单查看。</view>
+
+  <view wx:if="{{loading}}" class="card mt-16 small muted">正在读取…</view>
+
+  <view wx:elif="{{error}}" class="card mt-16">
+    <view class="small muted">{{error}}</view>
+    <view class="btn btn-outline btn-sm mt-8" bindtap="retry">重试</view>
+  </view>
+
+  <block wx:elif="{{token}}">
+    <view class="card mt-16">
+      <view class="section-title">{{project ? project.name : '我的需求'}}</view>
+      <view wx:if="{{project}}" class="small muted mt-8">{{project.community || ''}}{{project.budget ? ' · 预算约 ' + project.budget + ' 元' : ''}}</view>
+      <view class="small muted mt-8">{{status === 'converted' ? '已提交给顾问，可继续修改' : status === 'draft' ? '还在填写中' : '已提交'}}</view>
+      <view class="btn btn-primary btn-block mt-16" bindtap="openList">看清单和估算</view>
+      <view class="btn btn-outline btn-block mt-8" bindtap="startNeed">继续修改需求</view>
+    </view>
+  </block>
+
+  <view wx:else class="card mt-16">
+    <view class="section-title">还没有方案</view>
+    <view class="small muted mt-8">选几个问题，就能看到设备清单和大概预算。</view>
+    <view class="btn btn-primary btn-block mt-16" bindtap="startNeed">开始填写需求</view>
+  </view>
+</view>
