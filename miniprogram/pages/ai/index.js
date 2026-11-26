@@ -1,4 +1,5 @@
 const { api, upload, absUrl, toast } = require('../../utils/request')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin } = require('../../utils/auth')
 const { getMeta } = require('../../utils/meta')
 const { relTime } = require('../../utils/format')
@@ -149,6 +150,7 @@ Page({
   },
 
   onShow() {
+    syncTabBar(this, false)
     if (!requireLogin()) return
     const me = getApp().globalData.me
     if (me) this.setData({ credits: me.aiCredits })

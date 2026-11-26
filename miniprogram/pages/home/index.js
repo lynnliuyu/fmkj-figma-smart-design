@@ -1,4 +1,5 @@
 const { api } = require('../../utils/request')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin } = require('../../utils/auth')
 const { captureLaunchTicket, consumePendingWebLogin, scanAndConfirmWebLogin } = require('../../utils/web-login')
 const decorate = require('../../utils/decorate')
@@ -10,6 +11,7 @@ Page({
     captureLaunchTicket(options)
   },
   onShow() {
+    syncTabBar(this, false)
     if (!requireLogin()) return
     this.load()
     consumePendingWebLogin()

@@ -1,14 +1,20 @@
 const { api, toast } = require('../../utils/request')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin, logout } = require('../../utils/auth')
+const { getIdentity, isOwner } = require('../../utils/identity')
 const { captureLaunchTicket, consumePendingWebLogin, scanAndConfirmWebLogin } = require('../../utils/web-login')
 const { getMeta } = require('../../utils/meta')
 const config = require('../../config')
 
 Page({
-  data: { me: {}, initial: '', companyName: '', pluginCount: 0, host: '', version: config.VERSION, editing: false, redeeming: false, redeemCode: '', form: { name: '', phone: '' }, saving: false },
+  data: { me: {}, guest: false, identityLabel: '', initial: '', companyName: '', pluginCount: 0, host: '', version: config.VERSION, editing: false, redeeming: false, redeemCode: '', form: { name: '', phone: '' }, saving: false },
 
   openNeed() {
     wx.navigateTo({ url: '/pages/need/index' })
+  },
+
+  switchIdentity() {
+    wx.reLaunch({ url: '/pages/identity/index' })
   },
 
   onLoad(options) {
@@ -16,6 +22,13 @@ Page({
   },
 
   onShow() {
+    syncTabBar(this, isOwner())
+    this.setData({ identityLabel: isOwner() ? '业主版' : '集成商版' })
+    // 业主版免登录：没有员工会话也能打开「我的」，只显示身份切换和公开入口。
+    if (isOwner()) {
+      this.setData({ host: config.BASE_URL.replace(/^https?:\/\//, ''), me: {}, guest: true })
+      return
+    }
     if (!requireLogin()) return
     this.setData({ host: config.BASE_URL.replace(/^https?:\/\//, '') })
     this.load()
