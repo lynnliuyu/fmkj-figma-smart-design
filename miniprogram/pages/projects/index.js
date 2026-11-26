@@ -1,4 +1,5 @@
 const { api } = require('../../utils/request')
+const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin } = require('../../utils/auth')
 const decorate = require('../../utils/decorate')
 
@@ -20,6 +21,7 @@ Page({
   version: -1,
 
   onShow() {
+    syncTabBar(this, false)
     if (!requireLogin()) return
     const v = getApp().globalData.dataVersion
     if (v !== this.version) {

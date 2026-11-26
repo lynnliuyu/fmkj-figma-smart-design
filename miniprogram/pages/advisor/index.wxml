@@ -1,0 +1,14 @@
+<view class="page page-pad-bottom">
+  <view class="h1">找顾问</view>
+  <view class="small muted mt-8">需要上门测量、看样板或确认方案，可以直接联系我们。</view>
+
+  <view wx:if="{{error}}" class="card mt-16 small muted">{{error}}</view>
+  <view wx:elif="{{company}}" class="card mt-16">
+    <view class="title">{{company.name || '繁梦空间'}}</view>
+    <view wx:if="{{company.phone}}" class="small muted mt-8">电话 {{company.phone}}</view>
+    <view wx:if="{{company.address}}" class="small muted mt-8">{{company.address}}</view>
+    <view wx:if="{{company.phone}}" class="btn btn-primary btn-block mt-16" bindtap="call">拨打电话</view>
+    <view wx:else class="small muted mt-16">顾问电话暂未配置，请在微信里联系我们。</view>
+  </view>
+</view>
+<owner-tabbar />

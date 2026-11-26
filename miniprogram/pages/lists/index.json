@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "看清单",
+  "usingComponents": {
+    "owner-tabbar": "/components/owner-tabbar/index"
+  }
+}

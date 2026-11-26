@@ -1,4 +1,5 @@
 const { getToken } = require('./utils/request')
+const { getIdentity, isOwner } = require('./utils/identity')
 const { captureLaunchTicket, consumePendingWebLogin } = require('./utils/web-login')
 
 App({
@@ -14,7 +15,16 @@ App({
   onLaunch(options) {
     captureLaunchTicket(options, this)
     this.setupPrivacyAuthorization()
-    if (!getToken()) wx.reLaunch({ url: '/pages/login/index' })
+    // 首次进入先选身份；业主免登录，集成商沿用原来的登录要求。
+    // 入口页是 home（员工工作台），所以已选业主的人必须立刻被带到业主首页，
+    // 否则 home 的 requireLogin 会把他踢到员工登录页。
+    if (!getIdentity()) {
+      wx.reLaunch({ url: '/pages/identity/index' })
+    } else if (isOwner()) {
+      wx.reLaunch({ url: '/pages/plans/index' })
+    } else if (!getToken()) {
+      wx.reLaunch({ url: '/pages/login/index' })
+    }
     const update = wx.getUpdateManager && wx.getUpdateManager()
     if (update) {
       update.onUpdateReady(() => {
@@ -24,7 +34,7 @@ App({
   },
   onShow(options) {
     const ticket = captureLaunchTicket(options, this)
-    if (ticket && getToken()) {
+    if (ticket && !isOwner() && getToken()) {
       setTimeout(() => consumePendingWebLogin(), 300)
     }
   },
