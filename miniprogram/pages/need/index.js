@@ -148,7 +148,7 @@ Page({
     this.setAnswer('level', Object.assign({}, this.data.answers.level, { prefer: e.currentTarget.dataset.value }))
   },
   pickCamera(e) {
-    this.setAnswer('security', Object.assign({}, this.data.answers.security, { camera: e.currentTarget.dataset.value }))
+    this.setAnswer('security', Object.assign({}, this.data.answers.security, { camera: e.currentTarget.dataset.value, cameraConfirmed: true }))
   },
   toggleSensor(e) {
     const v = e.currentTarget.dataset.value

@@ -1,9 +1,23 @@
 import type { PayloadRequest } from 'payload'
 
-import { getPayloadClient } from '@/lib/payload'
-import { computeDefaults, estimateArea, type NeedHouse } from '@/lib/need-defaults'
+import { deviceTypeOf } from '@/lib/device-types'
+import {
+  CAMERA_CHOICES,
+  SCENE_CARDS,
+  SENSORS,
+  type NeedCamera,
+  type NeedLightingDesign,
+  type NeedTier,
+} from '@/lib/need-flow'
+import {
+  computeDefaults,
+  estimateArea,
+  type DeviceDefault,
+  type NeedHouse,
+} from '@/lib/need-defaults'
 import { computePricing, QUANTITY_FACTORS, type PricingResult } from '@/lib/need-pricing'
-import type { NeedCamera, NeedLightingDesign, NeedTier } from '@/lib/need-flow'
+import { getPayloadClient } from '@/lib/payload'
+import { autoSelectProducts } from '@/plugins/smart-select/auto-select'
 
 /**
  * 需求单归一化（issue #194）：answers → 默认值 + 清单 + 计价。
@@ -11,6 +25,32 @@ import type { NeedCamera, NeedLightingDesign, NeedTier } from '@/lib/need-flow'
  * `structure`（预览）与 `submit`（生成草稿）**必须走同一个函数**，
  * 否则两处各算一遍会出现「预览价 ≠ 提交价」的漂移（已实测踩到）。
  */
+type NeedDevice = DeviceDefault & {
+  name: string
+  recommendation: { brand: string; name: string; sku: string } | null
+}
+
+const SCENE_CONFIRMATION = {
+  security: '请补充监控范围。已选的传感器会列入清单，摄像头仅在你明确选择监控后加入。',
+  hvac: '请确认空调或地暖类型及现有设备，再确定控制器和数量。',
+  av: '请确认要联动的影音设备与控制方式，再确定是否需要增配。',
+  lock: '请确认门锁数量、门体与锁体规格，再确定型号。',
+} as const
+
+const SELECTION_PLATFORM = {
+  mijia: { project: '米家', catalog: '米家' },
+  apple: { project: 'Apple Home', catalog: 'Apple Home' },
+  harmony: { project: '华为鸿蒙智家', catalog: '华为' },
+  knx: { project: 'KNX', catalog: 'KNX' },
+} as const
+
+const deviceName = (type: string) =>
+  type === 'switch-2'
+    ? '双键开关'
+    : type === 'gas-sensor'
+      ? '燃气传感器'
+      : (deviceTypeOf(type)?.name ?? '待确认设备')
+
 export type NeedBuildResult = {
   structured: {
     house: NeedHouse & { areaEstimated: boolean }
@@ -19,27 +59,45 @@ export type NeedBuildResult = {
     security: { camera: NeedCamera; sensors: string[] }
     sceneCards: string[]
     rooms: ReturnType<typeof computeDefaults>['rooms']
-    devices: ReturnType<typeof computeDefaults>['devices']
+    devices: NeedDevice[]
+    pendingScenes: { key: keyof typeof SCENE_CONFIRMATION; label: string; hint: string }[]
     hints: string[]
     estimate: { min: number; max: number; basis: 'market' }
   }
   pricing: PricingResult
 }
 
-/** 从在售产品取每类设备的京东日常价中位数（缺失即待查，不猜） */
-export async function marketPriceByDeviceType(req?: Partial<PayloadRequest>) {
+async function readNeedCatalog(req?: Partial<PayloadRequest>) {
   const payload = await getPayloadClient()
-  const catalog = await payload.find({
+  const { docs } = await payload.find({
     collection: 'products',
     where: { status: { equals: 'active' } },
     limit: 2000,
-    depth: 0,
+    depth: 1,
     overrideAccess: true,
-    select: { name: true, deviceType: true, marketPrice: true, priceSource: true },
+    select: {
+      name: true,
+      sku: true,
+      status: true,
+      deviceType: true,
+      brand: true,
+      platforms: true,
+      price: true,
+      stock: true,
+      image: true,
+      marketPrice: true,
+      priceSource: true,
+    },
+    populate: { brands: { name: true }, media: { filename: true } },
     req,
   })
+  return docs
+}
+
+/** 从在售目录取每类设备的京东日常价中位数。 */
+function marketPriceByDeviceType(catalog: Awaited<ReturnType<typeof readNeedCatalog>>) {
   const byType = new Map<string, { prices: number[]; name: string; source: string | null }>()
-  for (const p of catalog.docs as unknown as Record<string, unknown>[]) {
+  for (const p of catalog) {
     const t = String(p.deviceType ?? '')
     if (!t) continue
     const mp = typeof p.marketPrice === 'number' ? p.marketPrice : null
@@ -67,7 +125,9 @@ function roomCount(value: unknown, fallback: number) {
 }
 
 function choices(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((item) => typeof item === 'string').slice(0, 8) : []
+  return Array.isArray(value)
+    ? [...new Set(value.filter((item) => typeof item === 'string'))].slice(0, 8)
+    : []
 }
 
 export function parseAnswers(answers: Record<string, unknown>) {
@@ -80,13 +140,31 @@ export function parseAnswers(answers: Record<string, unknown>) {
     area: Number.isFinite(area) && area > 0 ? area : null,
     stage: (houseRaw.stage as NeedHouse['stage']) ?? 'rough',
   }
+  const security = answers.security as
+    | { camera?: unknown; cameraConfirmed?: unknown; sensors?: unknown }
+    | undefined
+  const cameraChoice = CAMERA_CHOICES.find((option) => option.value === security?.camera)
+  const ecosystem = (answers.ecosystem as { primary?: unknown } | undefined)?.primary
+  const platform =
+    typeof ecosystem === 'string' && Object.hasOwn(SELECTION_PLATFORM, ecosystem)
+      ? SELECTION_PLATFORM[ecosystem as keyof typeof SELECTION_PLATFORM]
+      : undefined
   return {
     house,
     lighting: ((answers.lighting as { design?: string })?.design ?? 'main') as NeedLightingDesign,
     tier: ((answers.level as { tier?: string })?.tier ?? 'light') as NeedTier,
-    sensors: choices((answers.security as { sensors?: unknown })?.sensors),
-    camera: ((answers.security as { camera?: string })?.camera ?? 'none') as NeedCamera,
-    sceneCards: choices(answers.sceneCards),
+    sensors: choices(security?.sensors).filter((value) =>
+      SENSORS.some((option) => option.value === value),
+    ),
+    camera: cameraChoice?.value ?? 'none',
+    cameraConfirmed: Boolean(
+      cameraChoice && (cameraChoice.value === 'none' || security?.cameraConfirmed === true),
+    ),
+    sceneCards: choices(answers.sceneCards).filter((value) =>
+      SCENE_CARDS.some((option) => option.value === value),
+    ),
+    lockRequested: (answers.panels as { lock?: unknown } | undefined)?.lock === true,
+    platform,
     edits: (answers.deviceEdits ?? {}) as Record<string, number>,
   }
 }
@@ -95,10 +173,28 @@ export async function buildNeedResult(
   answers: Record<string, unknown>,
   req?: Partial<PayloadRequest>,
 ): Promise<NeedBuildResult> {
-  const { house, lighting, tier, sensors, camera, sceneCards, edits } = parseAnswers(answers)
+  const {
+    house,
+    lighting,
+    tier,
+    sensors,
+    camera,
+    cameraConfirmed,
+    sceneCards,
+    lockRequested,
+    platform,
+    edits,
+  } = parseAnswers(answers)
   const wantsCurtain = sceneCards.includes('curtain')
 
-  const defaults = computeDefaults({ house, lighting, tier, sensors, camera, wantsCurtain })
+  const defaults = computeDefaults({
+    house,
+    lighting,
+    tier,
+    sensors,
+    camera: cameraConfirmed ? camera : 'none',
+    wantsCurtain,
+  })
   const devices = defaults.devices.map((d) => ({
     deviceType: d.deviceType,
     qty:
@@ -107,7 +203,56 @@ export async function buildNeedResult(
         : d.qty,
   }))
 
-  const marketPriceByType = await marketPriceByDeviceType(req)
+  const catalog = await readNeedCatalog(req)
+  const marketPriceByType = marketPriceByDeviceType(catalog)
+  const quantities = new Map(devices.map((device) => [device.deviceType, device.qty]))
+  // 公共清单只推荐有明确兼容标注、库存可覆盖建议数量的型号。监控安装位置和人体传感方式需要细核。
+  const selectable = platform
+    ? catalog.flatMap((p) => {
+        const qty = quantities.get(p.deviceType ?? '') ?? 0
+        const brand = typeof p.brand === 'object' && p.brand?.name.trim() ? p.brand : null
+        if (
+          p.status !== 'active' ||
+          !brand ||
+          !p.sku.trim() ||
+          qty <= 0 ||
+          (p.stock ?? 0) < qty ||
+          !p.platforms?.includes(platform.catalog) ||
+          p.deviceType === 'camera' ||
+          p.deviceType === 'motion-sensor'
+        )
+          return []
+        return [
+          {
+            ...p,
+            brand,
+            platforms: p.platforms,
+            deviceType: p.deviceType ?? null,
+            image: p.image ?? null,
+          },
+        ]
+      })
+    : []
+  const { chosen } = autoSelectProducts(selectable, [...quantities.keys()], {
+    platform: platform?.project,
+    tier: tier === 'light' ? 'economy' : 'standard',
+  })
+  const available = new Map(selectable.map((product) => [product.id, product]))
+  const recommendations = new Map(
+    chosen.map(({ deviceType, product }) => [deviceType, available.get(product.id)!]),
+  )
+  const pendingScenes = SCENE_CARDS.flatMap(({ value, label }) => {
+    if (!Object.hasOwn(SCENE_CONFIRMATION, value)) return []
+    const key = value as keyof typeof SCENE_CONFIRMATION
+    if (
+      key === 'security'
+        ? sceneCards.includes(key) && !cameraConfirmed
+        : sceneCards.includes(key) || (key === 'lock' && lockRequested)
+    ) {
+      return [{ key, label, hint: SCENE_CONFIRMATION[key] }]
+    }
+    return []
+  })
   const area = house.area ?? estimateArea(house)
 
   // 型材（按米）：与默认值同一套系数，避免预览/提交两处漂移
@@ -137,7 +282,18 @@ export async function buildNeedResult(
       sceneCards,
       rooms: defaults.rooms,
       // 对外展示的数量 = 用户改过的数量（否则「改了数量但清单不变」）
-      devices: defaults.devices.map((d, i) => ({ ...d, qty: devices[i]!.qty })),
+      devices: defaults.devices.map((d, i) => {
+        const product = recommendations.get(d.deviceType)
+        return {
+          ...d,
+          qty: devices[i]!.qty,
+          name: deviceName(d.deviceType),
+          recommendation: product
+            ? { brand: product.brand.name, name: product.name, sku: product.sku }
+            : null,
+        }
+      }),
+      pendingScenes,
       hints: defaults.hints,
       estimate: {
         min: pricing.totals.total,
@@ -160,7 +316,8 @@ export function needSummary(result: NeedBuildResult) {
     `面积：${house.area}㎡${house.areaEstimated ? '（估算，可改）' : ''}｜装修阶段：${house.stage}`,
     `灯光：${structured.lighting}｜档次：${structured.tier}`,
     `场景：${structured.sceneCards.join('、') || '未选'}`,
-    `设备：${structured.devices.map((d) => `${d.deviceType}×${d.qty}`).join('、')}`,
+    `设备：${structured.devices.map((d) => `${d.name}×${d.qty}${d.recommendation ? `（推荐 ${d.recommendation.brand} ${d.recommendation.sku}）` : '（待选型）'}`).join('、')}`,
+    ...structured.pendingScenes.map((scene) => `${scene.label}待确认：${scene.hint}`),
     `估算：设备 ¥${pricing.totals.equipment} + 安装 ¥${pricing.totals.install} = ¥${pricing.totals.total}`,
     `不含：${pricing.exclusions.join('、')}`,
     ...(pricing.pendingPrice.length
