@@ -73,7 +73,7 @@
   </view>
   <view class="small muted mt-24">账号、产品库和插件由管理员在网页版后台维护；小程序与网页版使用同一份数据。</view>
 
-  <button class="btn btn-danger btn-block mt-32" hover-class="btn-hover" bindtap="logout"><image class="icon-sm" src="/assets/icons/logout.svg" />退出登录</button>
+  <button wx:if="{{!guest}}" class="btn btn-danger btn-block mt-32" hover-class="btn-hover" bindtap="logout"><image class="icon-sm" src="/assets/icons/logout.svg" />退出登录</button>
 
   <block wx:if="{{editing}}">
     <view class="mask" bindtap="closeEdit" />

@@ -18,7 +18,7 @@ const ICONS = {
 }
 
 Component({
-  data: { list: [], selected: 0, hidden: true },
+  data: { list: [], selected: 0, hidden: true, native: true },
   lifetimes: {
     attached() {
       this.render()
@@ -35,16 +35,25 @@ Component({
       const pages = getCurrentPages()
       const current = pages[pages.length - 1]
       const path = current ? current.route : ''
+      const native = identity !== 'owner'
       const list = tabsFor(identity).map((tab) => ({
         ...tab,
         iconPath: ICONS[tab.icon],
         selectedIconPath: ICONS[`${tab.icon}-active`],
       }))
-      this.setData({ list, selected: Math.max(0, list.findIndex((t) => t.pagePath === path)), hidden: !identity })
+      this.setData({
+        list,
+        native,
+        selected: Math.max(0, list.findIndex((t) => t.pagePath === path)),
+        hidden: !identity,
+      })
     },
     switchTab(e) {
       const url = e.currentTarget.dataset.path
-      if (url) wx.switchTab({ url: `/${url}` })
+      if (!url) return
+      // 业主版页面不在原生 tabBar list 里（微信上限 5 项），只能用 reLaunch。
+      if (this.data.native) wx.switchTab({ url: `/${url}` })
+      else wx.reLaunch({ url: `/${url}` })
     },
   },
 })

@@ -18,7 +18,7 @@ const isOwner = () => getIdentity() === OWNER
 const TABS = {
   [OWNER]: [
     { pagePath: 'pages/plans/index', text: '我的方案', icon: 'home' },
-    { pagePath: 'pages/need-result/index', text: '看清单', icon: 'list' },
+    { pagePath: 'pages/lists/index', text: '看清单', icon: 'list' },
     { pagePath: 'pages/advisor/index', text: '找顾问', icon: 'chat' },
     { pagePath: 'pages/mine/index', text: '我的', icon: 'mine' },
   ],
@@ -32,6 +32,9 @@ const TABS = {
 }
 const tabsFor = (identity) => TABS[identity] || TABS[VENDOR]
 
+/** 各身份的首页；身份页与启动分流都用它，避免两处各写一份路径。 */
+const homeFor = (identity) => (identity === OWNER ? '/pages/plans/index' : '/pages/home/index')
+
 /** 业主的需求单：先取已保存的 token，再看本机草稿有没有更新的版本。 */
 const ownerNeedToken = () => {
   const draft = wx.getStorageSync(NEED_DRAFT_KEY)
@@ -40,4 +43,9 @@ const ownerNeedToken = () => {
   return typeof token === 'string' ? token : ''
 }
 
-module.exports = { IDENTITY_KEY, OWNER, VENDOR, getIdentity, setIdentity, isOwner, tabsFor, ownerNeedToken }
+const ownerNeedRevision = () => {
+  const draft = wx.getStorageSync(NEED_DRAFT_KEY)
+  return draft && typeof draft.revision === 'string' ? draft.revision : ''
+}
+
+module.exports = { IDENTITY_KEY, OWNER, VENDOR, getIdentity, setIdentity, isOwner, tabsFor, homeFor, ownerNeedToken, ownerNeedRevision }

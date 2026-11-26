@@ -8,7 +8,7 @@
     <view class="btn btn-primary btn-block mt-16">以业主身份进入</view>
   </view>
 
-  <view class="card mt-16" hover-class="list-item-hover" data-identity="vendor">
+  <view class="card mt-16" hover-class="list-item-hover" data-identity="vendor" bindtap="choose">
     <view class="h2">我是集成商</view>
     <view class="small muted mt-8">管理项目、报价、客户。需要员工账号登录。</view>
     <view class="btn btn-outline btn-block mt-16">以集成商身份进入</view>

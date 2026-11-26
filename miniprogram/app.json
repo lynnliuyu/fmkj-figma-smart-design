@@ -1,9 +1,10 @@
 {
   "pages": [
+    "pages/home/index",
     "pages/identity/index",
+    "pages/lists/index",
     "pages/plans/index",
     "pages/advisor/index",
-    "pages/home/index",
     "pages/projects/index",
     "pages/ai/index",
     "pages/products/index",
@@ -53,18 +54,6 @@
       {
         "pagePath": "pages/mine/index",
         "text": "我的"
-      },
-      {
-        "pagePath": "pages/plans/index",
-        "text": "我的方案"
-      },
-      {
-        "pagePath": "pages/need-result/index",
-        "text": "看清单"
-      },
-      {
-        "pagePath": "pages/advisor/index",
-        "text": "找顾问"
       }
     ]
   },

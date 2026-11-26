@@ -1,5 +1,5 @@
 const { request, toast } = require('../../utils/request')
-const { ownerNeedToken } = require('../../utils/identity')
+const { ownerNeedToken, ownerNeedRevision } = require('../../utils/identity')
 
 Page({
   data: { loading: true, error: '', token: '', status: '', answers: null, project: null },
@@ -31,9 +31,19 @@ Page({
   startNeed() {
     wx.navigateTo({ url: '/pages/need/index' })
   },
-  openList() {
-    if (!this.data.token) return toast('先填写一次需求')
-    wx.navigateTo({ url: '/pages/need-result/index?token=' + encodeURIComponent(this.data.token) })
+  async openList() {
+    const token = ownerNeedToken()
+    if (!token) return toast('先填写一次需求')
+    // tabBar 传不了参数：token/revision 从这里读本机草稿再带进去。
+    let revision = ownerNeedRevision()
+    if (!revision) {
+      const data = await request('/need-leads/' + encodeURIComponent(token), { auth: false, silent: true }).catch(() => null)
+      revision = (data && data.revision) || ''
+    }
+    if (!revision) return toast('清单还没同步，请稍后重试')
+    wx.navigateTo({
+      url: '/pages/need-result/index?token=' + encodeURIComponent(token) + '&revision=' + encodeURIComponent(revision),
+    })
   },
   retry() {
     this.load()

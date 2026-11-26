@@ -1,0 +1,18 @@
+<view class="page page-pad-bottom">
+  <view class="h1">看清单</view>
+  <view wx:if="{{loading}}" class="card mt-16 small muted">正在读取…</view>
+  <view wx:elif="{{error}}" class="card mt-16">
+    <view class="small muted">{{error}}</view>
+    <view class="btn btn-outline btn-sm mt-8" bindtap="retry">重试</view>
+  </view>
+  <view wx:elif="{{token}}" class="card mt-16">
+    <view class="section-title">需求清单</view>
+    <view class="small muted mt-8">清单已准备好，点下面按钮查看设备与估算。</view>
+    <view class="btn btn-primary btn-block mt-16" bindtap="open">打开清单</view>
+  </view>
+  <view wx:else class="card mt-16">
+    <view class="section-title">还没有清单</view>
+    <view class="small muted mt-8">先填一次需求，就能看到设备清单和大概预算。</view>
+    <view class="btn btn-primary btn-block mt-16" bindtap="startNeed">开始填写需求</view>
+  </view>
+</view>
