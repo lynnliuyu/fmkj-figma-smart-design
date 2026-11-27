@@ -17,13 +17,25 @@
     <!-- 设备清单 -->
     <view class="card card-flush mt-16">
       <view class="section-title" style="padding:12px 16px 0">设备（{{result.devices.length}} 类）</view>
+      <view class="small muted" style="padding:4px 16px">型号待选的项目会由顾问核对兼容与现场条件后确认。</view>
       <view wx:for="{{result.devices}}" wx:key="deviceType" class="list-item">
         <view class="grow">
-          <view class="title">{{item.deviceType}} × {{item.qty}}</view>
+          <view class="title">{{item.name || '设备'}} × {{item.qty}}</view>
           <view class="small muted">{{item.reason}}</view>
+          <view wx:if="{{item.recommendation}}" class="small mt-8">推荐型号：{{item.recommendation.brand}} · {{item.recommendation.name}}（{{item.recommendation.sku}}）</view>
+          <view wx:else class="small muted mt-8">待选型 · 由顾问核对兼容和现场条件</view>
         </view>
         <view wx:if="{{!item.editable}}" class="small muted">必需</view>
       </view>
+    </view>
+
+    <view wx:if="{{result.pendingScenes.length}}" class="card mt-16">
+      <view class="section-title">待确认场景</view>
+      <view wx:for="{{result.pendingScenes}}" wx:key="key" class="mt-8">
+        <view class="title">{{item.label}}待确认</view>
+        <view class="small muted">{{item.hint}}</view>
+      </view>
+      <view class="btn btn-outline btn-sm mt-8" bindtap="goBack">返回补充需求</view>
     </view>
 
     <view wx:if="{{result.hints.length}}" class="card mt-16">

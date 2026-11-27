@@ -8,7 +8,13 @@
  * - 安防传感器**按用户选择**（不强制勾选）；厨房/卫生间/阳台在用户选了水浸/烟雾时给出建议。
  * - 面积/房型/数量都是**可改的估算默认**，不是施工标准（UI 必须能改）。
  */
-import type { NeedCamera, NeedHouseType, NeedLightingDesign, NeedTier } from './need-flow'
+import {
+  SENSORS,
+  type NeedCamera,
+  type NeedHouseType,
+  type NeedLightingDesign,
+  type NeedTier,
+} from './need-flow'
 
 export type RoomKey =
   | 'entrance'
@@ -183,7 +189,7 @@ export function computeDefaults(input: DefaultInput): DefaultsResult {
     devices.push({
       deviceType,
       qty,
-      reason: `你勾选了「${s}」，按房间建议数量（可改）`,
+      reason: `你勾选了「${SENSORS.find((option) => option.value === s)?.label ?? '传感器'}」，按房间建议数量（可改）`,
       editable: true,
     })
   }

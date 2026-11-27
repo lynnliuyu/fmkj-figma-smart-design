@@ -66,7 +66,7 @@ Page({
     if (replaceAnswers && draft.change === change) {
       draft.answers = Object.assign({}, draft.answers, data.answers)
       draft.confirmed = draft.change
-      this.setData({ answers: draft.answers })
+      this.setData(Object.assign({ answers: draft.answers }, this.buildView(draft.answers, this.data.catalog)))
     }
     this.persistDraft()
     this.showSaveStatus()
@@ -82,7 +82,10 @@ Page({
           assetUrl: option.alt && /^\/need-assets\/[a-z0-9.-]+$/.test(option.asset) ? absUrl(option.asset) : '',
         }))
       }
-      this.setData({ catalog: { ...data, options }, steps: data.steps || [], loading: false })
+      this.setData(Object.assign(
+        { catalog: { ...data, options }, steps: data.steps || [], loading: false },
+        this.buildView(this._draft.answers, { options }),
+      ))
     } catch (e) {
       this.setData({ loading: false })
       toast('选项目录加载失败，请检查网络')
@@ -148,7 +151,7 @@ Page({
     this.setAnswer('level', Object.assign({}, this.data.answers.level, { prefer: e.currentTarget.dataset.value }))
   },
   pickCamera(e) {
-    this.setAnswer('security', Object.assign({}, this.data.answers.security, { camera: e.currentTarget.dataset.value }))
+    this.setAnswer('security', Object.assign({}, this.data.answers.security, { camera: e.currentTarget.dataset.value, cameraConfirmed: true }))
   },
   toggleSensor(e) {
     const v = e.currentTarget.dataset.value
@@ -179,11 +182,36 @@ Page({
     this.setAnswer('ecosystem', { primary: e.currentTarget.dataset.value })
   },
 
+  /**
+   * 把「哪些选项已选中」预计算成布尔/子数组。
+   * WXML 表达式不支持调用 indexOf，直接在模板里比较会永远得到 false（#229 首轮就栽在这）。
+   */
+  buildView(answers, catalog) {
+    const options = (catalog && catalog.options) || {}
+    const sceneCards = answers.sceneCards || []
+    const sensors = (answers.security && answers.security.sensors) || []
+    const camera = answers.security && answers.security.camera
+    const cameraConfirmed = Boolean(answers.security && answers.security.cameraConfirmed)
+    const mark = (list, chosen) => list.map((item) => ({ ...item, selected: chosen.includes(item.value) }))
+    return {
+      sceneCardsView: mark(options.sceneCards || [], sceneCards),
+      selectedSceneCards: (options.sceneCards || []).filter((item) => sceneCards.includes(item.value)),
+      securitySceneSelected: sceneCards.includes('security'),
+      camerasView: mark(options.cameras || [], cameraConfirmed && camera !== 'none' ? [camera] : (camera === 'none' && cameraConfirmed ? ['none'] : [])),
+      sensorsView: mark(options.sensors || [], sensors),
+      selectedSensors: (options.sensors || []).filter((item) => sensors.includes(item.value)),
+    }
+  },
+
+  refreshView() {
+    this.setData(this.buildView(this._draft.answers, this.data.catalog))
+  },
+
   setAnswer(key, value) {
     const draft = this._draft
     draft.answers = Object.assign({}, draft.answers, { [key]: value })
     draft.change += 1
-    this.setData({ answers: draft.answers })
+    this.setData(Object.assign({ answers: draft.answers }, this.buildView(draft.answers, this.data.catalog)))
     this.persistDraft()
     if (!this.data.draftConflict) {
       this.showSaveStatus()
