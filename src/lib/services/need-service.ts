@@ -3,8 +3,11 @@ import type { PayloadRequest } from 'payload'
 import { deviceTypeOf } from '@/lib/device-types'
 import {
   CAMERA_CHOICES,
+  LIGHTING_DESIGNS,
   SCENE_CARDS,
   SENSORS,
+  STAGES,
+  TIERS,
   type NeedCamera,
   type NeedLightingDesign,
   type NeedTier,
@@ -157,9 +160,9 @@ export function parseAnswers(answers: Record<string, unknown>) {
       SENSORS.some((option) => option.value === value),
     ),
     camera: cameraChoice?.value ?? 'none',
-    cameraConfirmed: Boolean(
-      cameraChoice && (cameraChoice.value === 'none' || security?.cameraConfirmed === true),
-    ),
+    // 只有用户真的点过监控选项才算确认。页面初始值 `camera:'none'` 是「还没问过」，
+    // 不能当成「明确不需要」，否则安防待确认永远不出现。
+    cameraConfirmed: security?.cameraConfirmed === true,
     sceneCards: choices(answers.sceneCards).filter((value) =>
       SCENE_CARDS.some((option) => option.value === value),
     ),
@@ -306,22 +309,44 @@ export async function buildNeedResult(
 }
 
 /** 生成给销售看的项目备注（人类可读） */
+// 销售备注给人工阅读，不能出现 rough / switch-2 这类内部代号。
+const STAGE_LABEL = Object.fromEntries(STAGES.map((o) => [o.value, o.label])) as Record<
+  string,
+  string
+>
+const LIGHTING_LABEL = Object.fromEntries(
+  LIGHTING_DESIGNS.map((o) => [o.value, o.label]),
+) as Record<string, string>
+const TIER_LABEL = Object.fromEntries(TIERS.map((o) => [o.value, o.label])) as Record<
+  string,
+  string
+>
+const SCENE_LABEL = Object.fromEntries(SCENE_CARDS.map((o) => [o.value, o.label])) as Record<
+  string,
+  string
+>
+const HOUSE_LABEL = { flat: '平层', duplex: '复式', villa: '别墅' } as Record<string, string>
+
 export function needSummary(result: NeedBuildResult) {
   const { structured, pricing } = result
   const { house } = structured
-  const houseLabel = house.type === 'villa' ? '别墅' : house.type === 'duplex' ? '复式' : '平层'
+  const houseLabel = HOUSE_LABEL[house.type] ?? '平层'
+  const stage = STAGE_LABEL[house.stage] ?? house.stage
+  const lighting = LIGHTING_LABEL[structured.lighting] ?? structured.lighting
+  const tier = TIER_LABEL[structured.tier] ?? structured.tier
+  const scenes = structured.sceneCards.map((v) => SCENE_LABEL[v] ?? v)
   return [
     '【来自业主需求单 · 待销售接管】',
     `【业主需求单】${houseLabel} ${house.bedrooms}室${house.livingRooms}厅`,
-    `面积：${house.area}㎡${house.areaEstimated ? '（估算，可改）' : ''}｜装修阶段：${house.stage}`,
-    `灯光：${structured.lighting}｜档次：${structured.tier}`,
-    `场景：${structured.sceneCards.join('、') || '未选'}`,
+    `面积：${house.area}㎡${house.areaEstimated ? '（估算，可改）' : ''}｜装修阶段：${stage}`,
+    `灯光：${lighting}｜档次：${tier}`,
+    `场景：${scenes.join('、') || '未选'}`,
     `设备：${structured.devices.map((d) => `${d.name}×${d.qty}${d.recommendation ? `（推荐 ${d.recommendation.brand} ${d.recommendation.sku}）` : '（待选型）'}`).join('、')}`,
     ...structured.pendingScenes.map((scene) => `${scene.label}待确认：${scene.hint}`),
     `估算：设备 ¥${pricing.totals.equipment} + 安装 ¥${pricing.totals.install} = ¥${pricing.totals.total}`,
     `不含：${pricing.exclusions.join('、')}`,
     ...(pricing.pendingPrice.length
-      ? [`待查价：${pricing.pendingPrice.map((p) => p.deviceType).join('、')}`]
+      ? [`待查价：${pricing.pendingPrice.map((p) => deviceName(p.deviceType)).join('、')}`]
       : []),
     ...(pricing.commissioning.confirmed ? [] : ['调试费待确认，未计入合计']),
   ].join('\n')

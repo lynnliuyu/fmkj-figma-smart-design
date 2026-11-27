@@ -20,18 +20,18 @@
   <view class="small muted mt-8">按需选择，未确认的安防需求会留在清单里。</view>
   <view class="label">监控</view>
   <view class="row wrap gap-8">
-    <view wx:for="{{catalog.options.cameras}}" wx:key="value"
-          class="btn btn-sm {{answers.security.camera === item.value && (item.value !== 'none' || answers.security.cameraConfirmed) ? 'btn-primary' : 'btn-outline'}}"
+    <view wx:for="{{camerasView}}" wx:key="value"
+          class="btn btn-sm {{item.selected ? 'btn-primary' : 'btn-outline'}}"
           data-value="{{item.value}}" bindtap="pickCamera">{{item.label}}</view>
   </view>
   <view class="label mt-16">传感器（按需要选，不选就不配）</view>
   <view class="row wrap gap-8">
-    <view wx:for="{{catalog.options.sensors}}" wx:key="value"
-          class="btn btn-sm {{answers.security.sensors.indexOf(item.value) >= 0 ? 'btn-primary' : 'btn-outline'}}"
+    <view wx:for="{{sensorsView}}" wx:key="value"
+          class="btn btn-sm {{item.selected ? 'btn-primary' : 'btn-outline'}}"
           data-value="{{item.value}}" bindtap="toggleSensor">{{item.label}}</view>
   </view>
-  <view wx:for="{{catalog.options.sensors}}" wx:key="value"
-        wx:if="{{answers.security.sensors.indexOf(item.value) >= 0}}" class="small muted mt-8">· {{item.label}}：{{item.explain}}</view>
+  <view wx:for="{{selectedSensors}}" wx:key="value"
+        class="small muted mt-8">· {{item.label}}：{{item.explain}}</view>
 </template>
 
 <view class="page page-pad-bottom">
@@ -51,17 +51,17 @@
       <view class="section-title">你最想要哪些能力？</view>
       <view class="small muted mt-8">可多选，选完自动带出设备与数量，后面还能改。</view>
       <view class="row wrap gap-8 mt-16">
-        <view wx:for="{{catalog.options.sceneCards}}" wx:key="value"
-              class="btn btn-sm {{answers.sceneCards.indexOf(item.value) >= 0 ? 'btn-primary' : 'btn-outline'}}"
+        <view wx:for="{{sceneCardsView}}" wx:key="value"
+              class="btn btn-sm {{item.selected ? 'btn-primary' : 'btn-outline'}}"
               data-value="{{item.value}}" bindtap="toggleSceneCard">{{item.label}}</view>
       </view>
-      <view wx:for="{{catalog.options.sceneCards}}" wx:key="value" wx:if="{{answers.sceneCards.indexOf(item.value) >= 0}}"
+      <view wx:for="{{selectedSceneCards}}" wx:key="value"
             class="small muted mt-8">· {{item.label}}：{{item.explain}}</view>
     </view>
 
-    <view wx:if="{{answers.sceneCards.indexOf('security') >= 0}}" class="card mt-16">
+    <view wx:if="{{securitySceneSelected}}" class="card mt-16">
       <view class="section-title">安防与传感</view>
-      <template is="security-options" data="{{catalog: catalog, answers: answers}}" />
+      <template is="security-options" data="{{camerasView: camerasView, sensorsView: sensorsView, selectedSensors: selectedSensors}}" />
     </view>
 
     <view class="card mt-16">
@@ -150,7 +150,7 @@
 
       <!-- 3 安防 -->
       <block wx:if="{{steps[step].key === 'security'}}">
-        <template is="security-options" data="{{catalog: catalog, answers: answers}}" />
+        <template is="security-options" data="{{camerasView: camerasView, sensorsView: sensorsView, selectedSensors: selectedSensors}}" />
       </block>
 
       <!-- 4 面板 -->
