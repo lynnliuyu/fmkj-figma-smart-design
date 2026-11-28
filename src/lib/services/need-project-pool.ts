@@ -6,6 +6,8 @@ import { LIGHTING_DESIGNS, SCENE_CARDS, STAGES, TIERS } from '@/lib/need-flow'
 import { lockRow } from '@/lib/pg-row-lock'
 import type { Project, User } from '@/payload-types'
 
+import { deviceName } from './need-service'
+
 const projectIdPattern = /^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/i
 const ticketPattern = /^(\d{13})\.([\w-]{43})$/
 const ticketLifetimeMs = 15 * 60 * 1000
@@ -95,6 +97,7 @@ export async function readNeedProjectPool(payload: Payload, id: Project['id'], u
       lighting: string | null
       tier: string | null
       scenes: unknown
+      pendingDeviceTypes: string[] | null
     }
   >(sql`
     SELECT ${summaryFields},
@@ -104,7 +107,8 @@ export async function readNeedProjectPool(payload: Payload, id: Project['id'], u
       n.structured #>> '{house,stage}' AS stage,
       n.structured ->> 'lighting' AS lighting,
       n.structured ->> 'tier' AS tier,
-      n.structured -> 'sceneCards' AS scenes
+      n.structured -> 'sceneCards' AS scenes,
+      jsonb_path_query_array(n.pricing, '$.pendingPrice[*].deviceType ? (@.type() == "string")') AS "pendingDeviceTypes"
     ${fromPool} AND p.id = ${id}
   `)
   if (!row) return null
@@ -122,6 +126,7 @@ export async function readNeedProjectPool(payload: Payload, id: Project['id'], u
   )
   return {
     ...presentSummary(row),
+    pendingPriceCategories: (row.pendingDeviceTypes ?? []).map(deviceName),
     summary: [
       `${house}${rooms}`,
       stage && `装修阶段：${stage}`,
