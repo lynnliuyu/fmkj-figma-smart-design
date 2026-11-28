@@ -3,11 +3,19 @@ import { presentContract, presentProject } from '@/lib/mp/present'
 import { presentProjectTemplates } from '@/lib/mp/templates'
 import { loadProjectDocs } from '@/lib/project-docs'
 import { quoteStatusLabel } from '@/lib/quotes'
+import { getPayloadClient } from '@/lib/payload'
+import { readNeedProjectPool } from '@/lib/services/need-project-pool'
 import { saveProjectInput, setProjectStatus } from '@/lib/services/project-service'
 import { getPluginFlags } from '@/plugins/state'
 
 /** 项目详情：资料、进度、点位与预算概况、报价、合同、可打印的文档。 */
-export const GET = mpRoute<{ id: string }>(async ({ user, params }) => {
+export const GET = mpRoute<{ id: string }>(async ({ request, user, params }) => {
+  if (new URL(request.url).searchParams.get('view') === 'unassigned') {
+    const unassigned = await readNeedProjectPool(await getPayloadClient(), params.id, user.id)
+    return unassigned
+      ? ok({ unassigned }, { headers: { 'Cache-Control': 'private, no-store' } })
+      : fail(404, '项目不存在或已被删除')
+  }
   const d = await loadProjectDocs(params.id, user, 'all')
   if (!d) return fail(404, '项目不存在或已被删除')
   const flags = await getPluginFlags(d.owner?.id ?? user.id)

@@ -1,7 +1,7 @@
 <view class="page page-pad-bottom">
   <view class="search">
     <image class="icon-sm" src="/assets/icons/search-muted.svg" />
-    <input placeholder="搜索项目、客户、小区" placeholder-class="placeholder" value="{{q}}" confirm-type="search" bindinput="onQuery" bindconfirm="reload" />
+    <input placeholder="{{status === 'unassigned' ? '搜索小区' : '搜索项目、客户、小区'}}" placeholder-class="placeholder" value="{{q}}" confirm-type="search" bindinput="onQuery" bindconfirm="reload" />
     <image wx:if="{{q}}" class="icon-sm" src="/assets/icons/x-muted.svg" bindtap="clearQuery" />
   </view>
   <view class="seg mt-24">
@@ -9,20 +9,31 @@
   </view>
 
   <view class="card card-flush mt-24">
-    <view wx:for="{{items}}" wx:key="id" class="list-item" hover-class="list-item-hover" data-id="{{item.id}}" bindtap="open">
-      <view class="grow">
-        <view class="row gap-8">
-          <text class="title truncate">{{item.displayName}}</text>
-          <text wx:if="{{item.isDemo}}" class="badge badge-brand shrink-0">示例</text>
-          <text class="badge {{item.stageBadge}} shrink-0">{{item.stageLabel}}</text>
+    <block wx:if="{{status === 'unassigned'}}">
+      <view wx:for="{{items}}" wx:key="id" class="list-item" hover-class="list-item-hover" data-id="{{item.id}}" bindtap="open">
+        <view class="grow">
+          <view class="title truncate">{{item.community || '业主需求'}}</view>
+          <view class="small muted mt-8">{{item.area ? item.area + '㎡ · ' : ''}}{{item.budgetText}} · {{item.pendingPriceCount}} 项待查价</view>
         </view>
-        <view class="small muted mt-8 truncate">{{item.metaLine}}</view>
+        <text class="small muted shrink-0">{{item.date}}</text>
       </view>
-      <text class="small muted shrink-0">{{item.time}}</text>
-    </view>
+    </block>
+    <block wx:else>
+      <view wx:for="{{items}}" wx:key="id" class="list-item" hover-class="list-item-hover" data-id="{{item.id}}" bindtap="open">
+        <view class="grow">
+          <view class="row gap-8">
+            <text class="title truncate">{{item.displayName}}</text>
+            <text wx:if="{{item.isDemo}}" class="badge badge-brand shrink-0">示例</text>
+            <text class="badge {{item.stageBadge}} shrink-0">{{item.stageLabel}}</text>
+          </view>
+          <view class="small muted mt-8 truncate">{{item.metaLine}}</view>
+        </view>
+        <text class="small muted shrink-0">{{item.time}}</text>
+      </view>
+    </block>
     <view wx:if="{{!loading && !items.length}}" class="empty">
       <image class="icon-lg" src="/assets/icons/folder-muted.svg" />
-      <text>{{q ? '没有找到匹配的项目' : status === 'archived' ? '还没有归档的项目' : '还没有项目'}}</text>
+      <text>{{q ? '没有找到匹配的项目' : status === 'unassigned' ? '暂无待领取的项目' : status === 'archived' ? '还没有归档的项目' : '还没有项目'}}</text>
     </view>
     <view wx:if="{{loading}}" class="empty small">加载中…</view>
   </view>

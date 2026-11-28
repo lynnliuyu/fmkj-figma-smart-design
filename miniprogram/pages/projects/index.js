@@ -2,6 +2,7 @@ const { api } = require('../../utils/request')
 const { syncTabBar } = require('../../utils/tabbar-sync')
 const { requireLogin } = require('../../utils/auth')
 const decorate = require('../../utils/decorate')
+const { dateTime, yuan } = require('../../utils/format')
 
 Page({
   data: {
@@ -11,6 +12,7 @@ Page({
       { value: 'active', label: '进行中' },
       { value: 'archived', label: '已归档' },
       { value: 'all', label: '全部' },
+      { value: 'unassigned', label: '未分配公海' },
     ],
     items: [],
     page: 1,
@@ -24,7 +26,7 @@ Page({
     syncTabBar(this, false)
     if (!requireLogin()) return
     const v = getApp().globalData.dataVersion
-    if (v !== this.version) {
+    if (v !== this.version || this.data.status === 'unassigned') {
       this.version = v
       this.reload()
     }
@@ -40,13 +42,19 @@ Page({
     return this.load(1)
   },
   async load(page) {
+    const { q, status } = this.data
+    const requestId = (this.requestId || 0) + 1
+    this.requestId = requestId
     this.setData({ loading: true })
     try {
-      const d = await api.get('/projects', { q: this.data.q, status: this.data.status, page, limit: 20 })
-      const items = d.items.map(decorate.project)
+      const d = await api.get('/projects', { q, status, page, limit: 20 })
+      if (this.requestId !== requestId) return
+      const items = status === 'unassigned'
+        ? d.items.map((item) => ({ ...item, budgetText: item.budget == null ? '待估算' : yuan(item.budget), date: dateTime(item.submittedAt) }))
+        : d.items.map(decorate.project)
       this.setData({ items: page === 1 ? items : this.data.items.concat(items), page, hasMore: d.hasMore, total: d.total })
     } finally {
-      this.setData({ loading: false })
+      if (this.requestId === requestId) this.setData({ loading: false })
     }
   },
 
@@ -60,11 +68,12 @@ Page({
     this.reload()
   },
   onFilter(e) {
-    this.setData({ status: e.currentTarget.dataset.value })
+    this.setData({ status: e.currentTarget.dataset.value, items: [], hasMore: false })
     this.reload()
   },
   open(e) {
-    wx.navigateTo({ url: '/pages/project/index?id=' + e.currentTarget.dataset.id })
+    const view = this.data.status === 'unassigned' ? '&view=unassigned' : ''
+    wx.navigateTo({ url: '/pages/project/index?id=' + e.currentTarget.dataset.id + view })
   },
   create() {
     wx.navigateTo({ url: '/pages/project-edit/index' })

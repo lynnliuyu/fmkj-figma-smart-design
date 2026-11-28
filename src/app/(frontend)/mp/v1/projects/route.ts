@@ -4,12 +4,21 @@ import { relId } from '@/lib/access'
 import { getPayloadClient } from '@/lib/payload'
 import { intParam, mpRoute, ok, readJson, text } from '@/lib/mp/http'
 import { fillPointCounts, presentProject } from '@/lib/mp/present'
+import { listNeedProjectPool } from '@/lib/services/need-project-pool'
 import { saveProjectInput } from '@/lib/services/project-service'
 
-/** 项目列表：?q=关键词&status=active|archived|all&page=1&limit=20 */
+/** 项目列表：?q=关键词&status=active|archived|all|unassigned&page=1&limit=20 */
 export const GET = mpRoute(async ({ request, user }) => {
   const sp = new URL(request.url).searchParams
   const q = text(sp.get('q'), 60)
+  const page = intParam(sp.get('page') ?? '1', 1, 1, 1000)
+  const limit = intParam(sp.get('limit') ?? '20', 20, 1, 50)
+  const payload = await getPayloadClient()
+  if (sp.get('status') === 'unassigned') {
+    return ok(await listNeedProjectPool(payload, page, limit, q), {
+      headers: { 'Cache-Control': 'private, no-store' },
+    })
+  }
   const status =
     sp.get('status') === 'archived' ? 'archived' : sp.get('status') === 'all' ? 'all' : 'active'
   const and: Where[] = []
@@ -23,13 +32,12 @@ export const GET = mpRoute(async ({ request, user }) => {
         { address: { like: q } },
       ],
     })
-  const payload = await getPayloadClient()
   const res = await payload.find({
     collection: 'projects',
     where: and.length ? { and } : undefined,
     sort: '-updatedAt',
-    page: intParam(sp.get('page'), 1, 1, 1000),
-    limit: intParam(sp.get('limit'), 20, 1, 50),
+    page,
+    limit,
     depth: 0,
     user,
     overrideAccess: false,

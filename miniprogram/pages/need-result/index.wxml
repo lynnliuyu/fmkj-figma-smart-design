@@ -71,6 +71,7 @@
     <!-- 提交 -->
     <view wx:if="{{!submitted}}" class="card mt-16">
       <view class="section-title">留下手机号，顾问联系你（可选）</view>
+      <input class="mt-8" placeholder="小区名称（选填，销售领取前可见）" maxlength="80" value="{{community}}" bindinput="onCommunityInput" />
       <input class="mt-8" type="number" placeholder="手机号" value="{{phone}}" bindinput="onPhoneInput" />
       <view class="btn btn-primary btn-block mt-16" bindtap="submit">{{submitting ? '提交中…' : '提交，生成项目草稿'}}</view>
     </view>

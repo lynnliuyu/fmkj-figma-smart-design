@@ -1,4 +1,15 @@
-<view wx:if="{{p}}" class="page page-pad-bottom">
+<view wx:if="{{unassigned}}" class="page page-pad-bottom">
+  <view class="card">
+    <view class="h2">{{unassigned.community || '业主需求'}}</view>
+    <view class="kv mt-16"><text class="muted">面积</text><text>{{unassigned.area ? unassigned.area + '㎡' : '待确认'}}</text></view>
+    <view class="kv"><text class="muted">预算</text><text>{{unassigned.budgetText}}</text></view>
+    <view class="kv"><text class="muted">提交时间</text><text>{{unassigned.date}}</text></view>
+    <view class="kv"><text class="muted">待查价</text><text>{{unassigned.pendingPriceCount}} 项</text></view>
+    <view class="notice mt-16"><text>{{unassigned.summary}}</text></view>
+    <button class="btn btn-primary btn-block mt-24" loading="{{claiming}}" disabled="{{claiming}}" bindtap="claim">领取</button>
+  </view>
+</view>
+<view wx:elif="{{p}}" class="page page-pad-bottom">
   <view class="card">
     <view class="row between gap-16">
       <view class="row gap-8 grow">
@@ -191,4 +202,5 @@
   </block>
 </view>
 <view wx:elif="{{loading}}" class="empty">加载中…</view>
+<view wx:else class="empty">项目暂时不可查看</view>
 <privacy-popup id="privacy-popup" />

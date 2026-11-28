@@ -16,6 +16,13 @@ function date(iso) {
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
 }
 
+function dateTime(iso) {
+  const day = date(iso)
+  if (day === '—') return day
+  const d = new Date(iso)
+  return day + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())
+}
+
 function relTime(iso) {
   if (!iso) return ''
   const t = new Date(iso).getTime()
@@ -30,4 +37,4 @@ function relTime(iso) {
 const quoteBadge = (status) => (status === 'accepted' ? 'badge-success' : status === 'sent' ? 'badge-warning' : '')
 const contractBadge = (status) => (status === 'signed' ? 'badge-success' : 'badge-warning')
 
-module.exports = { yuan, date, relTime, quoteBadge, contractBadge, pad }
+module.exports = { yuan, date, dateTime, relTime, quoteBadge, contractBadge, pad }
