@@ -17,6 +17,7 @@ Page({
     submitted: false,
     projectId: null,
     phone: '',
+    community: '',
   },
 
   onLoad(options) {
@@ -66,6 +67,10 @@ Page({
     if (!this.data.loading) return this.load()
   },
 
+  onCommunityInput(e) {
+    this.setData({ community: e.detail.value })
+  },
+
   onPhoneInput(e) {
     this.setData({ phone: e.detail.value })
   },
@@ -79,7 +84,7 @@ Page({
         method: 'POST',
         auth: false,
         silent: true,
-        data: { revision: this.data.revision, phone: this.data.phone || undefined },
+        data: { revision: this.data.revision, phone: this.data.phone, community: this.data.community },
       })
       this.setData({ submitted: true, projectId: res.projectId })
       // 提交后版本号已变：写回本机草稿，返回修改时不会被误判为冲突。

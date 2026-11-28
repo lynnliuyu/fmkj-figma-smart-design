@@ -23,6 +23,7 @@ export async function syncNeedProject(
   summary: string,
   req?: Partial<PayloadRequest>,
   phone?: string | null,
+  community?: string,
 ): Promise<string> {
   const budget = result.pricing.totals.total || null
   const projectId = relId(lead.project)
@@ -49,6 +50,7 @@ export async function syncNeedProject(
         budget,
         notes: `${summary}\n${END}`,
         customerPhone: phone || lead.phone || null,
+        ...(community ? { community } : {}),
       },
       overrideAccess: true,
       depth: 0,

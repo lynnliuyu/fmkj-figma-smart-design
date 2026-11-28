@@ -9,8 +9,12 @@ export const POST = mpPublicRoute(async (request) => {
   const payload = await getPayloadClient()
   const url = new URL(request.url)
   const token = decodeURIComponent(url.pathname.split('/').slice(-2)[0] ?? '')
-  const body = await readJson<{ phone?: string; revision?: string }>(request)
+  const body = await readJson<{ phone?: string; community?: string; revision?: string }>(request)
   const phone = text(body.phone, 30)
+  const community = text(body.community, 80)
+  if (/\d(?:[\s-]*\d){6}/.test(community)) {
+    return fail(400, '小区名称请勿填写联系电话')
+  }
 
   return withNeedDraft(payload, token, async (lead, req) => {
     if (!lead) return fail(404, '需求单不存在或已过期')
@@ -27,6 +31,7 @@ export const POST = mpPublicRoute(async (request) => {
       needSummary(result),
       req,
       phone || null,
+      community,
     )
 
     const saved = await payload.update({

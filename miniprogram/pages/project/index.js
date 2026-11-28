@@ -1,5 +1,5 @@
 const { api, upload, toast, absUrl } = require('../../utils/request')
-const { yuan, quoteBadge, contractBadge } = require('../../utils/format')
+const { dateTime, yuan, quoteBadge, contractBadge } = require('../../utils/format')
 const { openDocument } = require('../../utils/route')
 const { pickImage } = require('../../utils/pick')
 const { getMeta } = require('../../utils/meta')
@@ -10,6 +10,8 @@ Page({
     id: '',
     loading: true,
     p: null,
+    unassigned: null,
+    claiming: false,
     owner: null,
     summary: null,
     quotes: [],
@@ -28,6 +30,7 @@ Page({
   version: -1,
 
   onLoad(query) {
+    this.poolView = query.view === 'unassigned'
     this.setData({ id: query.id })
   },
   onShow() {
@@ -43,12 +46,22 @@ Page({
 
   async load() {
     try {
-      const d = await api.get('/projects/' + this.data.id)
+      const d = await api.get('/projects/' + this.data.id, this.poolView ? { view: 'unassigned' } : undefined)
+      if (d.unassigned) {
+        const entry = d.unassigned
+        wx.setNavigationBarTitle({ title: '未分配项目' })
+        this.setData({
+          loading: false, p: null,
+          unassigned: { ...entry, budgetText: entry.budget == null ? '待估算' : yuan(entry.budget), date: dateTime(entry.submittedAt) },
+        })
+        return
+      }
       const p = decorate.project(d.project)
       wx.setNavigationBarTitle({ title: p.displayName })
       const c = d.contract
       this.setData({
         loading: false,
+        unassigned: null,
         p,
         owner: d.owner,
         archived: d.project.status === 'archived',
@@ -59,7 +72,29 @@ Page({
         proposal: d.proposal ? Object.assign({}, d.proposal, { thumbUrl: absUrl(d.proposal.thumb) }) : null,
       })
     } catch (e) {
-      this.setData({ loading: false })
+      this.setData({ loading: false, ...(e.status === 404 ? { unassigned: null, p: null } : {}) })
+    }
+  },
+
+  async claim() {
+    const entry = this.data.unassigned
+    if (!entry || this.data.claiming) return
+    this.setData({ claiming: true })
+    try {
+      await api.post('/projects/' + this.data.id + '/claim', { ticket: entry.claimTicket })
+      this.poolView = false
+      getApp().touchData()
+      toast('已领取')
+      await this.load()
+    } catch (error) {
+      if (error.code === 'PROJECT_CLAIMED') {
+        getApp().touchData()
+        wx.navigateBack()
+      } else if (error.status === 404) {
+        await this.load()
+      }
+    } finally {
+      this.setData({ claiming: false })
     }
   },
 
