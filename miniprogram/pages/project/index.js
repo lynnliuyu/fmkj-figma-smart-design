@@ -52,7 +52,12 @@ Page({
         wx.setNavigationBarTitle({ title: '未分配项目' })
         this.setData({
           loading: false, p: null,
-          unassigned: { ...entry, budgetText: entry.budget == null ? '待估算' : yuan(entry.budget), date: dateTime(entry.submittedAt) },
+          unassigned: {
+            ...entry,
+            budgetText: entry.budget == null ? '待估算' : yuan(entry.budget),
+            date: dateTime(entry.submittedAt),
+            pendingPriceNames: (entry.pendingPriceCategories || []).join('、'),
+          },
         })
         return
       }

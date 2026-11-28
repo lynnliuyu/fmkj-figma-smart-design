@@ -47,7 +47,7 @@ const SELECTION_PLATFORM = {
   knx: { project: 'KNX', catalog: 'KNX' },
 } as const
 
-const deviceName = (type: string) =>
+export const deviceName = (type: string) =>
   type === 'switch-2'
     ? '双键开关'
     : type === 'gas-sensor'

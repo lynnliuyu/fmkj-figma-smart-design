@@ -4,7 +4,10 @@
     <view class="kv mt-16"><text class="muted">面积</text><text>{{unassigned.area ? unassigned.area + '㎡' : '待确认'}}</text></view>
     <view class="kv"><text class="muted">预算</text><text>{{unassigned.budgetText}}</text></view>
     <view class="kv"><text class="muted">提交时间</text><text>{{unassigned.date}}</text></view>
-    <view class="kv"><text class="muted">待查价</text><text>{{unassigned.pendingPriceCount}} 项</text></view>
+    <view wx:if="{{unassigned.pendingPriceCount > 0}}" class="kv">
+      <text class="muted shrink-0">待查价</text>
+      <text class="text-right">{{unassigned.pendingPriceNames ? unassigned.pendingPriceNames + '（' + unassigned.pendingPriceCount + ' 项）' : unassigned.pendingPriceCount + ' 项'}}</text>
+    </view>
     <view class="notice mt-16"><text>{{unassigned.summary}}</text></view>
     <button class="btn btn-primary btn-block mt-24" loading="{{claiming}}" disabled="{{claiming}}" bindtap="claim">领取</button>
   </view>

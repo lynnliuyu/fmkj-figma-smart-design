@@ -107,6 +107,7 @@ assert.deepEqual(Object.keys(unassigned).sort(), [
   'claimTicket',
   'community',
   'id',
+  'pendingPriceCategories',
   'pendingPriceCount',
   'submittedAt',
   'summary',
@@ -114,6 +115,8 @@ assert.deepEqual(Object.keys(unassigned).sort(), [
 assert.ok(unassigned.summary.includes('平层 3室2厅'))
 assert.ok(!JSON.stringify(unassigned).includes(phone))
 assert.equal(unassigned.budget, need.total)
+const pendingCategories = ['智能网关', '双键开关', '窗帘电轨']
+assert.deepEqual(unassigned.pendingPriceCategories, pendingCategories)
 await request(path + '/claim', {
   ...salesB,
   status: 404,
@@ -129,7 +132,8 @@ const { data: claimed } = await request(path, salesA)
 assert.ok(claimed.project.customerPhone === phone, 'Claimant can read the fixture phone')
 assert.equal(claimed.owner.id, salesA.user.id)
 assert.ok(claimed.project.notes.includes('【业主需求单】'))
-assert.ok(claimed.project.notes.includes('估算：') && claimed.project.notes.includes('待查价：'))
+assert.ok(claimed.project.notes.includes('估算：'))
+assert.ok(claimed.project.notes.includes(`待查价：${pendingCategories.join('、')}`))
 await request(path, {
   ...salesA,
   method: 'PUT',
@@ -162,6 +166,7 @@ console.log(
       'owner submit, both pool lists, redacted detail, forbidden edit, claim, owner edit, resubmit, private isolation',
     total: need.total,
     pending: need.pendingPrice,
+    pendingCategories,
     denied: denied.error,
   }),
 )
