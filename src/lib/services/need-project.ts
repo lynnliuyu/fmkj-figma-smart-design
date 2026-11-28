@@ -1,6 +1,8 @@
+import { sql } from '@payloadcms/db-postgres'
 import type { Payload, PayloadRequest } from 'payload'
 
 import { relId } from '@/lib/access'
+import { lockRow } from '@/lib/pg-row-lock'
 
 import type { NeedLead } from '@/payload-types'
 
@@ -27,6 +29,14 @@ export async function syncNeedProject(
 ): Promise<string> {
   const budget = result.pricing.totals.total || null
   const projectId = relId(lead.project)
+  if (projectId && req?.transactionID != null) {
+    // Payload merges the stored document on update. Read only after a concurrent claim commits.
+    await lockRow(
+      payload,
+      req.transactionID,
+      sql`SELECT id FROM projects WHERE id = ${projectId} FOR UPDATE`,
+    )
+  }
   const project = projectId
     ? await payload
         .findByID({

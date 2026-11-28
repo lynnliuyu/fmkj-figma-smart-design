@@ -203,3 +203,33 @@ console.log(
     ownerCount: 1,
   }),
 )
+
+const ownerResubmit = await submitNeed()
+const resubmitPath = `/projects/${ownerResubmit.projectId}`
+const {
+  data: { unassigned: resubmitEntry },
+} = await request(resubmitPath + summaryView, salesA)
+const [, { data: duringClaim }] = await Promise.all([
+  request(resubmitPath + '/claim', {
+    ...salesA,
+    method: 'POST',
+    body: { ticket: resubmitEntry.claimTicket },
+  }),
+  request(`/need-leads/${ownerResubmit.ownerToken}/submit`, {
+    method: 'POST',
+    body: { revision: ownerResubmit.revision },
+  }),
+])
+assert.equal(duringClaim.projectId, ownerResubmit.projectId)
+const { data: afterRace } = await request(resubmitPath, salesA)
+assert.equal(afterRace.owner.id, salesA.user.id)
+assert.ok(afterRace.project.customerPhone === phone, 'Resubmit racing with claim preserves contact')
+assert.deepEqual(await poolList(salesB), [])
+console.log(
+  JSON.stringify({
+    acceptance: 'owner resubmit concurrently with claim',
+    ownerRetained: true,
+    contactRetained: true,
+    noReentry: true,
+  }),
+)
